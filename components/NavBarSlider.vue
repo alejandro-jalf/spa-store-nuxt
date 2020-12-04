@@ -20,7 +20,7 @@
             class="d-flex justify-content-between align-items-center"
           >
             <div class="any">
-              <b-icon></b-icon>
+              <b-avatar></b-avatar>
               Inicio
             </div>
             <b-badge variant="danger" pill> off </b-badge>
@@ -34,7 +34,7 @@
             class="d-flex justify-content-between align-items-center"
           >
             <div class="any">
-              <b-icon></b-icon>
+              <b-avatar></b-avatar>
               Acerca de
             </div>
             <b-badge variant="danger" pill> off </b-badge>
@@ -54,13 +54,12 @@
 
 <script>
 // import { mapMutations, mapState } from "vuex";
-import { BIcon } from 'bootstrap-vue'
+// import { BIcon } from 'bootstrap-vue'
 
 export default {
-  name: 'NavBarSlider',
-  components: {
-    BIcon,
-  },
+  // components: {
+  //   BIcon,
+  // },
   data() {
     return {
       tabs: [

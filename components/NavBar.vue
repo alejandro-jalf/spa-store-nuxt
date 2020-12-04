@@ -63,7 +63,6 @@
 import NavBarSlider from './NavBarSlider'
 
 export default {
-  name: 'NavBar',
   components: {
     NavBarSlider,
   },
@@ -80,6 +79,10 @@ export default {
         {
           titulo: 'Acerca de',
           ruta: '/about',
+        },
+        {
+          titulo: 'Ofertas',
+          ruta: '/ofertas',
         },
       ],
       userName: 'admin',
