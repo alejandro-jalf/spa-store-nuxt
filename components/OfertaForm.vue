@@ -1,95 +1,282 @@
 <template>
   <div>
-    <b-form v-if="show" @submit="onSubmit" @reset="onReset">
-      <b-form inline>
-        <b-form-input
-          id="input-1"
-          v-model="form.email"
-          type="email"
-          required
-          placeholder="Enter email"
-          class="mb-2 mr-sm-2 mb-sm-0"
-        ></b-form-input>
-        <b-form-input
-          id="input-11"
-          v-model="form.email"
-          type="text"
-          required
-          placeholder="Nombre de usuario"
-        ></b-form-input>
+    <b-card title="Crear una lista de ofertas">
+      <b-card-text>Datos necesarios</b-card-text>
+      <b-form class="p-2">
+        <b-input-group prepend="Tipo" class="mb-3 p-0 mr-2">
+          <template #prepend>
+            <b-button disabled>Tipo</b-button>
+          </template>
+          <b-form-input
+            ref="inputoftipo"
+            v-model="form_oferta.tipo"
+            type="text"
+            required
+            :disabled="disabled_tipo"
+            placeholder="Seleccione..."
+            class="bg-white"
+          ></b-form-input>
+          <b-input-group-append>
+            <b-dropdown size="sm" right text="" class="m-0" variant="primary">
+              <b-dropdown-item-button @click="setTipo('Sigma')">
+                Sigma
+              </b-dropdown-item-button>
+              <b-dropdown-item-button @click="setTipo('Ofertas diarias')">
+                Ofertas diarias
+              </b-dropdown-item-button>
+              <b-dropdown-item-button @click="setTipo('Ofertas de fin')">
+                Ofertas de fin de semana
+              </b-dropdown-item-button>
+              <b-dropdown-item-button @click="setTipo('Otro')">
+                Otro
+              </b-dropdown-item-button>
+            </b-dropdown>
+          </b-input-group-append>
+        </b-input-group>
+
+        <b-input-group prepend="Fecha Inicio" class="mb-1 p-0 mr-2">
+          <template #prepend>
+            <b-button disabled>Fecha Inicio</b-button>
+          </template>
+          <b-form-input
+            id="input-of-fechaini"
+            v-model="form_oferta.fecha_inicio_complete"
+            type="text"
+            required
+            disabled
+            placeholder="Inicio de oferta"
+            class="bg-white"
+            :state="state_date_start"
+          ></b-form-input>
+          <b-input-group-append>
+            <b-dropdown
+              size="sm"
+              right
+              text=""
+              class="m-0"
+              variant="primary"
+              toggle-class="text-decoration-none"
+              no-caret
+            >
+              <template #button-content>
+                <b-icon-calendar-2-date></b-icon-calendar-2-date>
+              </template>
+              <b-dropdown-form class="text-center">
+                <b-calendar
+                  v-model="form_oferta.fecha_inicio"
+                  selected-variant="success"
+                  today-variant="info"
+                  nav-button-variant="primary"
+                  @context="setContextIni"
+                ></b-calendar>
+              </b-dropdown-form>
+              <b-dropdown-item-button>
+                <b-button block variant="primary">Aceptar</b-button>
+              </b-dropdown-item-button>
+            </b-dropdown>
+          </b-input-group-append>
+        </b-input-group>
+        <message-text
+          :message="textMsgStart"
+          :show-message="messageFechaEnd.show"
+          :color-text="colorMsgStart"
+          class="mb-3"
+        ></message-text>
+
+        <b-input-group
+          prepend="Fecha Termino"
+          class="mb-1 p-0 mr-2"
+          description="We will convert your name to lowercase instantly"
+        >
+          <template #prepend>
+            <b-button disabled>Fecha Termino</b-button>
+          </template>
+          <b-form-input
+            id="input-of-fechafin"
+            v-model="form_oferta.fecha_fin_complete"
+            type="text"
+            required
+            disabled
+            placeholder="Termino de oferta"
+            class="bg-white"
+            :state="state_date_end"
+          ></b-form-input>
+          <b-input-group-append>
+            <b-dropdown
+              size="sm"
+              right
+              text=""
+              toggle-class="text-decoration-none"
+              no-caret
+              class="m-0"
+              variant="primary"
+            >
+              <template #button-content>
+                <b-icon-calendar-2-date></b-icon-calendar-2-date>
+              </template>
+              <b-dropdown-form class="text-center">
+                <b-calendar
+                  v-model="form_oferta.fecha_fin"
+                  selected-variant="success"
+                  today-variant="info"
+                  nav-button-variant="primary"
+                  @context="setContextFin"
+                ></b-calendar>
+              </b-dropdown-form>
+              <b-dropdown-item-button>
+                <b-button block variant="primary">Aceptar</b-button>
+              </b-dropdown-item-button>
+            </b-dropdown>
+          </b-input-group-append>
+        </b-input-group>
+        <message-text
+          :message="textMsgEnd"
+          :show-message="messageFechaStart.show"
+          :color-text="colorMsgEnd"
+          class="mb-3"
+        ></message-text>
       </b-form>
-
-      <b-form-group id="input-group-2" label="Your Name:" label-for="input-2">
-        <b-form-input
-          id="input-2"
-          v-model="form.name"
-          required
-          placeholder="Enter name"
-        ></b-form-input>
+      <b-form-group id="input-group-2" label="Descripcion" label-for="input-2">
+        <b-form-textarea
+          id="textarea"
+          v-model="form_oferta.descripcion"
+          placeholder="Breve descripcion"
+          rows="3"
+          max-rows="6"
+        ></b-form-textarea>
       </b-form-group>
+    </b-card>
 
-      <b-form-group id="input-group-3" label="Food:" label-for="input-3">
-        <b-form-select
-          id="input-3"
-          v-model="form.food"
-          :options="foods"
-          required
-        ></b-form-select>
-      </b-form-group>
-
-      <b-form-group id="input-group-4">
-        <b-form-checkbox-group id="checkboxes-4" v-model="form.checked">
-          <b-form-checkbox value="me">Check me out</b-form-checkbox>
-          <b-form-checkbox value="that">Check that out</b-form-checkbox>
-        </b-form-checkbox-group>
-      </b-form-group>
-
-      <b-button type="submit" variant="primary">Submit</b-button>
-      <b-button type="reset" variant="danger">Reset</b-button>
-    </b-form>
     <b-card class="mt-3" header="Form Data Result">
-      <pre class="m-0">{{ form }}</pre>
+      <pre class="m-0">{{ form_oferta }}</pre>
     </b-card>
   </div>
 </template>
 
 <script>
+import { BIconCalendar2Date } from 'bootstrap-vue'
+import MessageText from './MessageText'
+
 export default {
+  components: {
+    BIconCalendar2Date,
+    MessageText,
+  },
   data() {
     return {
-      form: {
-        email: '',
-        name: '',
-        food: null,
-        checked: [],
+      form_oferta: {
+        tipo: '',
+        fecha_inicio: '',
+        fecha_inicio_complete: '',
+        fecha_fin: '',
+        fecha_fin_complete: '',
+        descripcion: '',
       },
-      foods: [
-        { text: 'Select One', value: null },
-        'Carrots',
-        'Beans',
-        'Tomatoes',
-        'Corn',
-      ],
-      show: true,
+      disabled_tipo: true,
+      state_date_end: false,
+      state_date_start: false,
+      messageFechaStart: {
+        show: true,
+        color: 'text-secondary',
+        message: 'Elija una fecha',
+      },
+      messageFechaEnd: {
+        show: true,
+        color: 'text-secondary',
+        message: 'Elija una fecha',
+      },
     }
   },
-  methods: {
-    onSubmit(evt) {
-      evt.preventDefault()
-      alert(JSON.stringify(this.form))
+  computed: {
+    textMsgStart() {
+      if (this.form_oferta.fecha_inicio === '') {
+        return 'Elija una fecha'
+      }
+      if (!this.state_date_star) {
+        return 'La fecha no puede ser menor al dia actual'
+      }
+      return 'Fecha aprobada'
     },
-    onReset(evt) {
-      evt.preventDefault()
-      // Reset our form values
-      this.form.email = ''
-      this.form.name = ''
-      this.form.food = null
-      this.form.checked = []
-      // Trick to reset/clear native browser form validation state
-      this.show = false
-      this.$nextTick(() => {
-        this.show = true
-      })
+    textMsgEnd() {
+      if (this.form_oferta.fecha_fin === '') {
+        return 'Elija una fecha'
+      }
+      if (!this.state_date_end) {
+        return 'La fecha de termino no puede ser menor a la fecha inicio'
+      }
+      return 'Fecha aprobada'
+    },
+    colorMsgStart() {
+      if (this.form_oferta.fecha_inicio === '') {
+        return 'text-secondary'
+      }
+      if (this.state_date_star) {
+        return 'text-success'
+      }
+      return 'text-danger'
+    },
+    colorMsgEnd() {
+      if (this.form_oferta.fecha_fin === '') {
+        return 'text-secondary'
+      }
+      if (this.state_date_end) {
+        return 'text-success'
+      }
+      return 'text-danger'
+    },
+  },
+  methods: {
+    setStateDateStart() {
+      const dateStart = new Date(this.form_oferta.fecha_inicio)
+      const today = new Date()
+      if (today >= dateStart) {
+        this.state_date_start = false
+      } else {
+        this.state_date_start = true
+      }
+    },
+    setStateDateEnd() {
+      const fechaInicio = new Date(this.form_oferta.fecha_inicio)
+      const fechaFin = new Date(this.form_oferta.fecha_fin)
+      // eslint-disable-next-line no-console
+      console.log(fechaInicio, fechaFin, fechaInicio > fechaFin)
+      if (fechaInicio > fechaFin) {
+        this.state_date_end = false
+      } else {
+        this.state_date_end = true
+      }
+    },
+    setContextIni(ctx) {
+      this.form_oferta.fecha_inicio_complete = ctx.selectedFormatted
+      this.setStateDateStart()
+    },
+    setContextFin(ctx) {
+      this.form_oferta.fecha_fin_complete = ctx.selectedFormatted
+      this.setStateDateEnd()
+    },
+    setTextTipo(text) {
+      this.disabled_tipo = true
+      this.form_oferta.tipo = text
+    },
+    setTipo(tipo) {
+      if (tipo === 'Otro') {
+        this.disabled_tipo = false
+        this.form_oferta.tipo = ''
+        this.$refs.inputoftipo.$el.focus()
+        return true
+      }
+      if (tipo === 'Sigma') {
+        this.setTextTipo('Sigma')
+        return true
+      }
+      if (tipo === 'Ofertas diarias') {
+        this.setTextTipo('Ofertas diarias')
+        return true
+      }
+      if (tipo === 'Ofertas de fin') {
+        this.setTextTipo('Ofertas de fin de semana')
+        return true
+      }
     },
   },
 }
