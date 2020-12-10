@@ -2,6 +2,7 @@
   <div>
     <h1 class="text-center">Programacion de ofertas</h1>
     <oferta-form class="pt-2 pb-2"></oferta-form>
+    <oferta-lista class="pb-2"></oferta-lista>
     <b-table
       hover
       head-variant="dark"
@@ -20,10 +21,12 @@
 </template>
 <script>
 import OfertaForm from '../components/OfertaForm'
+import OfertaLista from '../components/OfertaLista'
 
 export default {
   components: {
     OfertaForm,
+    OfertaLista,
   },
   data() {
     return {
