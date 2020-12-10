@@ -8,7 +8,7 @@
       head-variant="dark"
       fixed
       outlined
-      :items="items"
+      :items="listaOfertas"
       :fields="fields"
     >
       <template #cell(Acciones)="row">
@@ -31,45 +31,19 @@ export default {
   data() {
     return {
       fields: [
-        'Tipo_oferta',
-        'Fecha_inicio',
-        'Fecha_termino',
-        'Descripcion',
+        'uuid',
+        'tipoOferta',
+        'fechaInico',
+        'fechaFin',
+        'descripcion',
         'Acciones',
       ],
-      items: [
-        {
-          Tipo_oferta: 'Sigma',
-          Fecha_inicio: '03/12/2020',
-          Fecha_termino: '07/12/2020',
-          Descripcion: 'Ofertas de sigma',
-        },
-        {
-          Tipo_oferta: 'Fin de semana',
-          Fecha_inicio: '07/11/2020',
-          Fecha_termino: '010/11/2020',
-          Descripcion: 'Ofertas de fin de semana',
-        },
-        {
-          Tipo_oferta: 'Sigma',
-          Fecha_inicio: '01/11/2020',
-          Fecha_termino: '07/11/2020',
-          Descripcion: 'Ofertas de sigma',
-        },
-        {
-          Tipo_oferta: 'Sigma',
-          Fecha_inicio: '28/10/2020',
-          Fecha_termino: '31/10/2020',
-          Descripcion: 'Ofertas de sigma',
-        },
-        {
-          Tipo_oferta: 'Sigma',
-          Fecha_inicio: '28/10/2020',
-          Fecha_termino: '02/11/2020',
-          Descripcion: 'Ofertas de sigma',
-        },
-      ],
     }
+  },
+  computed: {
+    listaOfertas() {
+      return Object.values(this.$store.state.ofertas.listaOfertas)
+    },
   },
 }
 </script>
