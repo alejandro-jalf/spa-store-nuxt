@@ -146,10 +146,6 @@
         ></b-form-textarea>
       </b-form-group>
     </b-card>
-
-    <b-card class="mt-3" header="Form Data Result">
-      <pre class="m-0">{{ form_oferta }}</pre>
-    </b-card>
   </div>
 </template>
 
@@ -168,8 +164,10 @@ export default {
         tipo: '',
         fecha_inicio: '',
         fecha_inicio_complete: '',
+        contextIni: '',
         fecha_fin: '',
         fecha_fin_complete: '',
+        contextFin: '',
         descripcion: '',
       },
       disabled_tipo: true,
@@ -192,7 +190,7 @@ export default {
       if (this.form_oferta.fecha_inicio === '') {
         return 'Elija una fecha'
       }
-      if (!this.state_date_star) {
+      if (!this.state_date_start) {
         return 'La fecha no puede ser menor al dia actual'
       }
       return 'Fecha aprobada'
@@ -210,7 +208,7 @@ export default {
       if (this.form_oferta.fecha_inicio === '') {
         return 'text-secondary'
       }
-      if (this.state_date_star) {
+      if (this.state_date_start) {
         return 'text-success'
       }
       return 'text-danger'
@@ -226,20 +224,43 @@ export default {
     },
   },
   methods: {
+    getDateWithTime0() {
+      const fecha = new Date()
+      const newDate =
+        fecha.getFullYear() +
+        '-' +
+        (fecha.getMonth() + 1) +
+        '-' +
+        fecha.getDate() +
+        'T06:00:00.000Z'
+      return new Date(newDate)
+    },
     setStateDateStart() {
-      const dateStart = new Date(this.form_oferta.fecha_inicio)
-      const today = new Date()
-      if (today >= dateStart) {
+      const dateStart = new Date(this.form_oferta.contextIni.activeDate)
+      const today = this.getDateWithTime0()
+      const dateEnd = new Date(this.form_oferta.contextFin.activeDate)
+      if (dateStart === 'Invalid Date') {
+        this.state_date_start = false
+        return true
+      }
+      if (dateStart < today) {
         this.state_date_start = false
       } else {
         this.state_date_start = true
       }
+      if (dateEnd !== 'Invalid Date' && dateEnd < dateStart) {
+        this.state_date_end = false
+      } else {
+        this.state_date_end = true
+      }
     },
     setStateDateEnd() {
-      const fechaInicio = new Date(this.form_oferta.fecha_inicio)
-      const fechaFin = new Date(this.form_oferta.fecha_fin)
-      // eslint-disable-next-line no-console
-      console.log(fechaInicio, fechaFin, fechaInicio > fechaFin)
+      const fechaInicio = new Date(this.form_oferta.contextIni.activeDate)
+      const fechaFin = new Date(this.form_oferta.contextFin.activeDate)
+      if (fechaFin === 'Invalid Date') {
+        this.state_date_start = false
+        return true
+      }
       if (fechaInicio > fechaFin) {
         this.state_date_end = false
       } else {
@@ -247,10 +268,12 @@ export default {
       }
     },
     setContextIni(ctx) {
+      this.form_oferta.contextIni = ctx
       this.form_oferta.fecha_inicio_complete = ctx.selectedFormatted
       this.setStateDateStart()
     },
     setContextFin(ctx) {
+      this.form_oferta.contextFin = ctx
       this.form_oferta.fecha_fin_complete = ctx.selectedFormatted
       this.setStateDateEnd()
     },
