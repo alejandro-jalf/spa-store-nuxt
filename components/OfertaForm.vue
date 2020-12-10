@@ -34,7 +34,7 @@
           </b-input-group-append>
         </b-input-group>
 
-        <b-input-group prepend="Fecha Inicio" class="mb-1 p-0 mr-2">
+        <b-input-group prepend="Fecha Inicio" class="mb-0 p-0 mr-2">
           <template #prepend>
             <b-button disabled>Fecha Inicio</b-button>
           </template>
@@ -85,7 +85,7 @@
 
         <b-input-group
           prepend="Fecha Termino"
-          class="mb-1 p-0 mr-2"
+          class="mb-0 p-0 mr-2"
           description="We will convert your name to lowercase instantly"
         >
           <template #prepend>
@@ -143,8 +143,16 @@
           placeholder="Breve descripcion"
           rows="3"
           max-rows="6"
+          @keyup="verifyTextArea"
         ></b-form-textarea>
+        <message-text
+          message="Solo pueden ser 50 letras"
+          :show-message="!state_textarea"
+          color-text="text-danger"
+          class="mb-2"
+        ></message-text>
       </b-form-group>
+      <b-button variant="primary">Crear lista de ofertas</b-button>
     </b-card>
   </div>
 </template>
@@ -173,6 +181,11 @@ export default {
       disabled_tipo: true,
       state_date_end: false,
       state_date_start: false,
+      state_textarea: true,
+      messageTextArea: {
+        color: 'text-secondary',
+        message: 'Elija una fecha',
+      },
       messageFechaStart: {
         show: true,
         color: 'text-secondary',
@@ -299,6 +312,15 @@ export default {
       if (tipo === 'Ofertas de fin') {
         this.setTextTipo('Ofertas de fin de semana')
         return true
+      }
+    },
+    verifyTextArea(evt) {
+      if (this.form_oferta.descripcion.length > 51) {
+        this.form_oferta.descripcion = this.form_oferta.descripcion.slice(0, -1)
+        this.state_textarea = false
+      }
+      if (this.form_oferta.descripcion.length <= 50) {
+        this.state_textarea = true
       }
     },
   },
