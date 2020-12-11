@@ -152,19 +152,23 @@
           class="mb-2"
         ></message-text>
       </b-form-group>
-      <b-button variant="primary">Crear lista de ofertas</b-button>
+      <b-button variant="primary">
+        <b-icon-file-earmark-plus-fill></b-icon-file-earmark-plus-fill>
+        Crear lista de ofertas
+      </b-button>
     </b-card>
   </div>
 </template>
 
 <script>
-import { BIconCalendar2Date } from 'bootstrap-vue'
+import { BIconCalendar2Date, BIconFileEarmarkPlusFill } from 'bootstrap-vue'
 import MessageText from './MessageText'
 
 export default {
   components: {
     BIconCalendar2Date,
     MessageText,
+    BIconFileEarmarkPlusFill,
   },
   data() {
     return {
