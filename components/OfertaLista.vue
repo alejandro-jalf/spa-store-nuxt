@@ -4,11 +4,13 @@
       border-variant="primary"
       header-bg-variant="primary"
       header-text-variant="white"
-      :header="'Oferta abierta:' + uuid"
+      :header="'Oferta abierta: ' + uuid"
       :title="tipoOferta + ' Del ' + fechaInico + ' al ' + fechaFin"
     >
-      <b-dropdown-divider class="mt-2"></b-dropdown-divider>
-      <b-card-text class="font-weight-bold">Elija un articulo</b-card-text>
+      <b-card-text class="font-weight-bold mt-3 mb-1">
+        Elija un articulo
+      </b-card-text>
+      <divider></divider>
       <b-container class="mb-3">
         <b-row>
           <b-col cols="3">
@@ -37,8 +39,10 @@
           </b-col>
         </b-row>
       </b-container>
-      <b-dropdown-divider class="mt-2"></b-dropdown-divider>
-      <b-card-text class="font-weight-bold">Datos de la oferta</b-card-text>
+      <b-card-text class="font-weight-bold mb-1">
+        Datos de la oferta
+      </b-card-text>
+      <divider class="mb-2"></divider>
       <b-table
         hover
         head-variant="dark"
@@ -67,12 +71,14 @@
 
 <script>
 import { BIconPencilSquare, BIconTrash } from 'bootstrap-vue'
+import Divider from './Divider'
 // import { mapState } from 'vuex'
 
 export default {
   components: {
     BIconPencilSquare,
     BIconTrash,
+    Divider,
   },
   data() {
     return {
