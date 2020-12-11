@@ -1,4 +1,7 @@
 export const state = () => ({
+  programandoOferta: false,
+  programandoListaOferta: false,
+  ofertaEditable: true,
   ofertaActual: {
     uuid: 'oferta1',
     tipoOferta: 'Sigma',
@@ -41,7 +44,7 @@ export const state = () => ({
       ],
     },
     oferta2: {
-      uuid: 'oferta1',
+      uuid: 'oferta2',
       tipoOferta: 'Sigma',
       fechaInico: 'viernes, 11 de diciembre de 2020',
       fechaFin: 'viernes, 11 de diciembre de 2020',
@@ -61,7 +64,7 @@ export const state = () => ({
       ],
     },
     oferta3: {
-      uuid: 'oferta1',
+      uuid: 'oferta3',
       tipoOferta: 'Sigma',
       fechaInico: 'viernes, 11 de diciembre de 2020',
       fechaFin: 'viernes, 11 de diciembre de 2020',
@@ -86,5 +89,14 @@ export const state = () => ({
 export const mutations = {
   openOferta(state, newOferta) {
     state.ofertaActual = newOferta
+  },
+  setEditable(state, editable) {
+    state.ofertaEditable = editable
+  },
+  setProgramandoOferta(state, programando) {
+    state.programandoOferta = programando
+  },
+  setProgramandoLista(state, programando) {
+    state.programandoListaOferta = programando
   },
 }

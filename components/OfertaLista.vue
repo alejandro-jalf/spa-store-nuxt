@@ -7,64 +7,68 @@
       :header="'Oferta abierta: ' + uuid"
       :title="tipoOferta + ' Del ' + fechaInico + ' al ' + fechaFin"
     >
-      <b-alert variant="warning" show>Oferta no editable</b-alert>
-      <b-card-text class="font-weight-bold mt-3 mb-1">
-        Elija un articulo
-      </b-card-text>
-      <divider></divider>
-      <b-form inline class="mt-2">
-        <b-form-input
-          id="codigo-articulo"
-          placeholder="Codigo de articulo"
-        ></b-form-input>
-        <b-form-input
-          id="codigo-barras"
-          placeholder="Codigo de barras"
-        ></b-form-input>
-        <b-form-input
-          id="nombre-articulo"
-          placeholder="Nombre articulo"
-        ></b-form-input>
-      </b-form>
-      <b-card-text class="font-weight-bold mb-1">
-        Datos de la oferta para el articulo: 0090098
-      </b-card-text>
-      <divider class="mb-2"></divider>
-      <b-form inline class="mt-2 mb-2">
-        <b-form-input
-          id="input-costo"
-          placeholder="Costo"
-          class="input-resp-dt-ofe"
-          readonly
-        ></b-form-input>
-        <b-form-input
-          id="input-precio"
-          placeholder="Precio"
-          class="input-resp-dt-ofe"
-          readonly
-        ></b-form-input>
-        <b-form-input
-          id="input-margen"
-          placeholder="Margen"
-          class="input-resp-dt-ofe"
-          readonly
-        ></b-form-input>
-        <b-form-input
-          id="input-oferta"
-          placeholder="Precio de oferta"
-          class="input-resp-dt-ofe"
-        ></b-form-input>
-        <b-form-input
-          id="input-utilidad"
-          placeholder="Utilidad"
-          class="input-resp-dt-ofe"
-          readonly
-        ></b-form-input>
-      </b-form>
-      <b-button variant="success" class="mb-3">
-        <b-icon-plus-circle-fill></b-icon-plus-circle-fill>
-        Agregar a la lista
-      </b-button>
+      <b-alert variant="warning" :show="!ofertaEditable">
+        Oferta no editable
+      </b-alert>
+      <div :show="ofertaEditable">
+        <b-card-text class="font-weight-bold mt-3 mb-1">
+          Elija un articulo
+        </b-card-text>
+        <divider></divider>
+        <b-form inline class="mt-2">
+          <b-form-input
+            id="codigo-articulo"
+            placeholder="Codigo de articulo"
+          ></b-form-input>
+          <b-form-input
+            id="codigo-barras"
+            placeholder="Codigo de barras"
+          ></b-form-input>
+          <b-form-input
+            id="nombre-articulo"
+            placeholder="Nombre articulo"
+          ></b-form-input>
+        </b-form>
+        <b-card-text class="font-weight-bold mb-1">
+          Datos de la oferta para el articulo: 0090098
+        </b-card-text>
+        <divider class="mb-2"></divider>
+        <b-form inline class="mt-2 mb-2">
+          <b-form-input
+            id="input-costo"
+            placeholder="Costo"
+            class="input-resp-dt-ofe"
+            readonly
+          ></b-form-input>
+          <b-form-input
+            id="input-precio"
+            placeholder="Precio"
+            class="input-resp-dt-ofe"
+            readonly
+          ></b-form-input>
+          <b-form-input
+            id="input-margen"
+            placeholder="Margen"
+            class="input-resp-dt-ofe"
+            readonly
+          ></b-form-input>
+          <b-form-input
+            id="input-oferta"
+            placeholder="Precio de oferta"
+            class="input-resp-dt-ofe"
+          ></b-form-input>
+          <b-form-input
+            id="input-utilidad"
+            placeholder="Utilidad"
+            class="input-resp-dt-ofe"
+            readonly
+          ></b-form-input>
+        </b-form>
+        <b-button variant="success" class="mb-3">
+          <b-icon-plus-circle-fill></b-icon-plus-circle-fill>
+          Agregar a la lista
+        </b-button>
+      </div>
       <b-card-text class="font-weight-bold mb-1">
         Articulos incluidos
       </b-card-text>
@@ -79,7 +83,7 @@
           :fields="fields"
           class="table-productos"
         >
-          <template #cell(Acciones)="row">
+          <template #cell(Acciones)="row" :show="ofertaEditable">
             <b-button
               variant="warning"
               size="sm"
@@ -99,8 +103,8 @@
           </template>
         </b-table>
       </div>
-      <div class="text-right mt-3 buttons-end">
-        <b-button variant="danger">
+      <div v-if="ofertaEditable" class="text-right mt-3 buttons-end">
+        <b-button variant="danger" @click="cancelarOferta">
           <b-icon-trash-fill></b-icon-trash-fill>
           Cancelar oferta
         </b-button>
@@ -128,8 +132,8 @@
           para su programacion
         </b-toast>
       </div>
-      <div class="text-right mt-3 buttons-end">
-        <b-button variant="secondary">
+      <div v-if="!ofertaEditable" class="text-right mt-3 buttons-end">
+        <b-button variant="secondary" @click="setProgramandoLista(false)">
           <b-icon-file-earmark-excel-fill></b-icon-file-earmark-excel-fill>
           Cerrar
         </b-button>
@@ -165,6 +169,7 @@
 </template>
 
 <script>
+import { mapMutations } from 'vuex'
 import {
   BIconPencilSquare,
   BIconTrash,
@@ -204,6 +209,9 @@ export default {
     }
   },
   computed: {
+    ofertaEditable() {
+      return this.$store.state.ofertas.ofertaEditable
+    },
     listaProductos() {
       return this.$store.state.ofertas.ofertaActual.listaProductos
     },
@@ -225,6 +233,14 @@ export default {
   },
   mounted() {
     // eslint-disable-next-line no-console
+  },
+  methods: {
+    ...mapMutations({
+      setProgramandoLista: 'ofertas/setProgramandoLista',
+    }),
+    cancelarOferta() {
+      this.setProgramandoLista(false)
+    },
   },
 }
 </script>

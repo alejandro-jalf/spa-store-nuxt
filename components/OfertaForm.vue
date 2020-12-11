@@ -152,11 +152,11 @@
           class="mb-2"
         ></message-text>
       </b-form-group>
-      <b-button variant="success">
+      <b-button variant="success" @click="generarOFerta">
         <b-icon-file-earmark-plus-fill></b-icon-file-earmark-plus-fill>
         Generar lista de ofertas
       </b-button>
-      <b-button variant="warning">
+      <b-button variant="warning" @click="setProgramandoOferta(false)">
         <b-icon-file-earmark-excel-fill></b-icon-file-earmark-excel-fill>
         Cancelar
       </b-button>
@@ -165,6 +165,7 @@
 </template>
 
 <script>
+import { mapMutations } from 'vuex'
 import {
   BIconCalendar2Date,
   BIconFileEarmarkPlusFill,
@@ -250,6 +251,24 @@ export default {
     },
   },
   methods: {
+    validaFormulario() {
+      if (this.form_oferta.tipo.trim() === '') {
+        this.showAlertDialog(['Falta elejir el tipo de oferta'])
+        return false
+      }
+    },
+    generarOFerta() {
+      if (!this.validaFormulario()) {
+        return true
+      }
+      this.setProgramandoOferta(false)
+      this.setProgramandoLista(true)
+    },
+    ...mapMutations({
+      setProgramandoLista: 'ofertas/setProgramandoLista',
+      setProgramandoOferta: 'ofertas/setProgramandoOferta',
+      showAlertDialog: 'general/showAlertDialog',
+    }),
     getDateWithTime0() {
       const fecha = new Date()
       const newDate =
