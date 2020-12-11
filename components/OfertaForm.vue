@@ -152,16 +152,24 @@
           class="mb-2"
         ></message-text>
       </b-form-group>
-      <b-button variant="primary">
+      <b-button variant="success">
         <b-icon-file-earmark-plus-fill></b-icon-file-earmark-plus-fill>
-        Crear lista de ofertas
+        Generar lista de ofertas
+      </b-button>
+      <b-button variant="warning">
+        <b-icon-file-earmark-excel-fill></b-icon-file-earmark-excel-fill>
+        Cancelar
       </b-button>
     </b-card>
   </div>
 </template>
 
 <script>
-import { BIconCalendar2Date, BIconFileEarmarkPlusFill } from 'bootstrap-vue'
+import {
+  BIconCalendar2Date,
+  BIconFileEarmarkPlusFill,
+  BIconFileEarmarkExcelFill,
+} from 'bootstrap-vue'
 import MessageText from './MessageText'
 
 export default {
@@ -169,6 +177,7 @@ export default {
     BIconCalendar2Date,
     MessageText,
     BIconFileEarmarkPlusFill,
+    BIconFileEarmarkExcelFill,
   },
   data() {
     return {
