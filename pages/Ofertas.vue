@@ -1,6 +1,10 @@
 <template>
   <div>
     <h1 class="text-center">Programacion de ofertas</h1>
+    <b-button variant="success" class="mb-3">
+      <b-icon-folder-plus></b-icon-folder-plus>
+      Programar nueva oferta
+    </b-button>
     <oferta-form class="pt-2 pb-2"></oferta-form>
     <oferta-lista class="pb-2"></oferta-lista>
     <div class="container-table-ofe">
@@ -23,6 +27,7 @@
   </div>
 </template>
 <script>
+import { BIconFolderPlus } from 'bootstrap-vue'
 import OfertaForm from '../components/OfertaForm'
 import OfertaLista from '../components/OfertaLista'
 
@@ -30,6 +35,7 @@ export default {
   components: {
     OfertaForm,
     OfertaLista,
+    BIconFolderPlus,
   },
   data() {
     return {
