@@ -7,6 +7,7 @@
       :header="'Oferta abierta: ' + uuid"
       :title="tipoOferta + ' Del ' + fechaInico + ' al ' + fechaFin"
     >
+      <b-alert variant="warning" show>Oferta no editable</b-alert>
       <b-card-text class="font-weight-bold mt-3 mb-1">
         Elija un articulo
       </b-card-text>
@@ -107,11 +108,11 @@
           <b-icon-cloud-upload-fill></b-icon-cloud-upload-fill>
           Guardar y enviar
         </b-button>
-        <b-button variant="info" @click="$bvToast.show('example-toast')">
+        <b-button variant="info" @click="$bvToast.show('toast-create-ofer')">
           <b-icon-question-circle-fill></b-icon-question-circle-fill>
         </b-button>
         <b-toast
-          id="example-toast"
+          id="toast-create-ofer"
           title="Ayuda"
           static
           no-auto-hide
@@ -127,6 +128,38 @@
           para su programacion
         </b-toast>
       </div>
+      <div class="text-right mt-3 buttons-end">
+        <b-button variant="secondary">
+          <b-icon-file-earmark-excel-fill></b-icon-file-earmark-excel-fill>
+          Cerrar
+        </b-button>
+        <b-button variant="primary">
+          <b-icon-folder-symlink-fill></b-icon-folder-symlink-fill>
+          Guardar cambios
+        </b-button>
+        <b-button variant="info" @click="$bvToast.show('toast-view-ofert')">
+          <b-icon-question-circle-fill></b-icon-question-circle-fill>
+        </b-button>
+        <b-toast
+          id="toast-view-ofert"
+          title="Ayuda"
+          static
+          no-auto-hide
+          class="toast-buttons text-justify"
+          variant="info"
+          solid
+        >
+          Al dar click en "Cerrar" solamente se cerrar la oferta, esto no afecta
+          en nada a los datos ya registrado.
+          <br />
+          <br />
+          <div>
+            Al dar click en "Guardar cambios" Se guardara los ajustes que se le
+            haya realizado a algun producto y en automatico se enviaran los
+            datos.
+          </div>
+        </b-toast>
+      </div>
     </b-card>
   </div>
 </template>
@@ -139,6 +172,8 @@ import {
   BIconTrashFill,
   BIconCloudUploadFill,
   BIconQuestionCircleFill,
+  BIconFileEarmarkExcelFill,
+  BIconFolderSymlinkFill,
 } from 'bootstrap-vue'
 import Divider from './Divider'
 
@@ -151,6 +186,8 @@ export default {
     BIconTrashFill,
     BIconCloudUploadFill,
     BIconQuestionCircleFill,
+    BIconFileEarmarkExcelFill,
+    BIconFolderSymlinkFill,
   },
   data() {
     return {
