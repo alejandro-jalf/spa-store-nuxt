@@ -11,60 +11,49 @@
         Elija un articulo
       </b-card-text>
       <divider></divider>
-      <b-container class="mb-3">
-        <b-row>
-          <b-col cols="3">
-            <b-form-group
-              label="Codigo de articulo"
-              label-for="codigo-articulo"
-            >
-              <b-form-input
-                id="codigo-articulo"
-                placeholder="Articulo"
-              ></b-form-input>
-            </b-form-group>
-          </b-col>
-          <b-col cols="6">
-            <b-form-group label="Codigo de barras" label-for="codigo-barras">
-              <b-form-input
-                id="codigo-barras"
-                placeholder="Codigo"
-              ></b-form-input>
-            </b-form-group>
-          </b-col>
-          <b-col cols="3">
-            <b-form-group label="Nombre articulo" label-for="nombre">
-              <b-form-input id="nombre" placeholder="Nombre"></b-form-input>
-            </b-form-group>
-          </b-col>
-        </b-row>
-      </b-container>
+      <b-form inline class="mt-2">
+        <b-form-input
+          id="codigo-articulo"
+          placeholder="Codigo de articulo"
+        ></b-form-input>
+        <b-form-input
+          id="codigo-barras"
+          placeholder="Codigo de barras"
+        ></b-form-input>
+        <b-form-input
+          id="nombre-articulo"
+          placeholder="Nombre articulo"
+        ></b-form-input>
+      </b-form>
       <b-card-text class="font-weight-bold mb-1">
         Datos de la oferta
       </b-card-text>
       <divider class="mb-2"></divider>
-      <b-table
-        hover
-        head-variant="dark"
-        fixed
-        outlined
-        :items="listaProductos"
-        :fields="fields"
-      >
-        <template #cell(Acciones)="row">
-          <b-button
-            variant="warning"
-            size="sm"
-            class="mb-1"
-            @click="row.toggleDetails"
-          >
-            <b-icon-pencil-square></b-icon-pencil-square>
-          </b-button>
-          <b-button variant="danger" size="sm" @click="row.toggleDetails">
-            <b-icon-trash></b-icon-trash>
-          </b-button>
-        </template>
-      </b-table>
+      <div class="container-table">
+        <b-table
+          hover
+          head-variant="dark"
+          fixed
+          outlined
+          :items="listaProductos"
+          :fields="fields"
+          class="table-productos"
+        >
+          <template #cell(Acciones)="row">
+            <b-button
+              variant="warning"
+              size="sm"
+              class="mb-1"
+              @click="row.toggleDetails"
+            >
+              <b-icon-pencil-square></b-icon-pencil-square>
+            </b-button>
+            <b-button variant="danger" size="sm" @click="row.toggleDetails">
+              <b-icon-trash></b-icon-trash>
+            </b-button>
+          </template>
+        </b-table>
+      </div>
     </b-card>
   </div>
 </template>
@@ -83,7 +72,6 @@ export default {
   data() {
     return {
       fields: [
-        'Sucursal',
         'Articulo',
         'Nombre',
         'Costo',
@@ -120,3 +108,34 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+.container-table {
+  overflow: auto;
+}
+
+.table-productos {
+  min-width: 1000px;
+}
+
+#codigo-articulo,
+#codigo-barras {
+  width: 25%;
+  margin-right: 2%;
+  margin-bottom: 2%;
+}
+
+#nombre-articulo {
+  width: 44%;
+  margin-bottom: 2%;
+}
+
+@media screen and (max-width: 768px) {
+  #codigo-articulo,
+  #codigo-barras,
+  #nombre-articulo {
+    width: 100%;
+    margin-right: 0px;
+  }
+}
+</style>

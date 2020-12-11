@@ -3,20 +3,23 @@
     <h1 class="text-center">Programacion de ofertas</h1>
     <oferta-form class="pt-2 pb-2"></oferta-form>
     <oferta-lista class="pb-2"></oferta-lista>
-    <b-table
-      hover
-      head-variant="dark"
-      fixed
-      outlined
-      :items="listaOfertas"
-      :fields="fields"
-    >
-      <template #cell(Acciones)="row">
-        <b-button size="sm" class="mr-2" @click="row.toggleDetails">
-          Details
-        </b-button>
-      </template>
-    </b-table>
+    <div class="container-table-ofe">
+      <b-table
+        hover
+        head-variant="dark"
+        fixed
+        outlined
+        :items="listaOfertas"
+        :fields="fields"
+        class="table-ofertas"
+      >
+        <template #cell(Acciones)="row">
+          <b-button size="sm" class="mr-2" @click="row.toggleDetails">
+            Details
+          </b-button>
+        </template>
+      </b-table>
+    </div>
   </div>
 </template>
 <script>
@@ -47,3 +50,14 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+.container-table-ofe {
+  overflow: auto;
+  margin-bottom: 30px;
+}
+
+.table-ofertas {
+  min-width: 990px;
+}
+</style>
