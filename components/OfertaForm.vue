@@ -256,17 +256,53 @@ export default {
         this.showAlertDialog(['Falta elejir el tipo de oferta'])
         return false
       }
+      if (this.form_oferta.fecha_inicio.trim() === '') {
+        this.showAlertDialog(['Falta seleccionar la fecha de inicio'])
+        return false
+      }
+      if (this.form_oferta.fecha_fin.trim() === '') {
+        this.showAlertDialog([
+          'Falta seleccionar la fecha de termino de la oferta',
+        ])
+        return false
+      }
+      const dateStart = new Date(this.form_oferta.contextIni.activeDate)
+      const today = this.getDateWithTime0()
+      if (dateStart < today) {
+        this.showAlertDialog([
+          'La fecha de inicio no puede ser menor que la fecha actual',
+        ])
+        return false
+      }
+      const dateEnd = new Date(this.form_oferta.contextFin.activeDate)
+      if (dateStart > dateEnd) {
+        this.showAlertDialog([
+          'La fecha de termino no puede ser menor que la fecha de inicio',
+        ])
+        return false
+      }
+      return true
     },
     generarOFerta() {
       if (!this.validaFormulario()) {
-        return true
+        return false
       }
+      const newOferta = {
+        uuid: 'oferta0102',
+        tipoOferta: this.form_oferta.tipo,
+        fechaInico: this.form_oferta.fecha_inicio,
+        fechaFin: this.form_oferta.fecha_inicio,
+        descripcion: this.form_oferta.descripcion,
+        listaProductos: [],
+      }
+      this.openOferta(newOferta)
       this.setProgramandoOferta(false)
       this.setProgramandoLista(true)
     },
     ...mapMutations({
       setProgramandoLista: 'ofertas/setProgramandoLista',
       setProgramandoOferta: 'ofertas/setProgramandoOferta',
+      openOferta: 'ofertas/openOferta',
       showAlertDialog: 'general/showAlertDialog',
     }),
     getDateWithTime0() {

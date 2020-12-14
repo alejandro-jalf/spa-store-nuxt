@@ -9,7 +9,7 @@ export const state = () => ({
   loading: false,
 })
 
-export const mutations = () => ({
+export const mutations = {
   showAlertDialog: (
     state,
     [
@@ -27,9 +27,9 @@ export const mutations = () => ({
     state.alert.headerTexColor = textColor
   },
   hideAlertDialog(state) {
-    state.alertShow = false
+    state.alert.show = false
   },
   setLoading(state, value) {
     state.loading = value
   },
-})
+}
