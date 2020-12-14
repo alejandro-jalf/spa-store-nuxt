@@ -18,17 +18,27 @@
         <b-form inline class="mt-2">
           <b-form-input
             id="codigo-articulo"
+            v-model="formArticulo.articulo"
             placeholder="Codigo de articulo"
+            @keyup.enter="getArticuloByArticulo"
           ></b-form-input>
           <b-form-input
             id="codigo-barras"
+            v-model="formArticulo.codigobarras"
             placeholder="Codigo de barras"
           ></b-form-input>
           <b-form-input
             id="nombre-articulo"
+            v-model="formArticulo.nombre"
             placeholder="Nombre articulo"
           ></b-form-input>
         </b-form>
+        <message-text
+          message="No se encontro el articulo"
+          :show-message="showError"
+          color-text="text-danger"
+          class="mb-2"
+        ></message-text>
         <b-card-text class="font-weight-bold mb-1">
           Datos de la oferta para el articulo: 0090098
         </b-card-text>
@@ -36,31 +46,38 @@
         <b-form inline class="mt-2 mb-2">
           <b-form-input
             id="input-costo"
+            v-model="formArticulo.costo"
             placeholder="Costo"
             class="input-resp-dt-ofe"
             readonly
           ></b-form-input>
           <b-form-input
             id="input-precio"
+            v-model="formArticulo.precio"
             placeholder="Precio"
             class="input-resp-dt-ofe"
             readonly
           ></b-form-input>
           <b-form-input
             id="input-margen"
+            v-model="formArticulo.margen"
             placeholder="Margen"
             class="input-resp-dt-ofe"
             readonly
           ></b-form-input>
           <b-form-input
             id="input-oferta"
+            v-model="formArticulo.oferta"
             placeholder="Precio de oferta"
             class="input-resp-dt-ofe"
+            @keyup="calcUtilidad"
           ></b-form-input>
           <b-form-input
             id="input-utilidad"
+            v-model="formArticulo.utilidad"
             placeholder="Utilidad"
             class="input-resp-dt-ofe"
+            :state="state_utulidad"
             readonly
           ></b-form-input>
         </b-form>
@@ -180,7 +197,9 @@ import {
   BIconFileEarmarkExcelFill,
   BIconFolderSymlinkFill,
 } from 'bootstrap-vue'
+import utils from '../modules/utils'
 import Divider from './Divider'
+import MessageText from './MessageText'
 
 export default {
   components: {
@@ -193,9 +212,22 @@ export default {
     BIconQuestionCircleFill,
     BIconFileEarmarkExcelFill,
     BIconFolderSymlinkFill,
+    MessageText,
   },
   data() {
     return {
+      formArticulo: {
+        articulo: '',
+        codigobarras: '',
+        nombre: '',
+        precio: '',
+        costo: '',
+        margen: '',
+        oferta: '0.00',
+        utilidad: '',
+      },
+      showError: false,
+      state_utulidad: false,
       fields: [
         'Articulo',
         'Nombre',
@@ -205,6 +237,141 @@ export default {
         'Precio_Oferta',
         'Margen',
         'Acciones',
+      ],
+      articulos: [
+        {
+          articulo: '0102126',
+          codigobarras: '7501003337887',
+          nombre: 'Ablandador Carnes MC 155gr',
+          precio: '16.000000',
+          costo: '12.713600',
+        },
+        {
+          articulo: '0102134',
+          codigobarras: '7501003300843',
+          nombre: 'Te Manzanilla MC C/25',
+          precio: '17.000000',
+          costo: '13.560000',
+        },
+        {
+          articulo: '0102137',
+          codigobarras: '7501005151955',
+          nombre: 'Mayo. Hellmanns 190gr',
+          precio: '10.000000',
+          costo: '8.330000',
+        },
+        {
+          articulo: '0102159',
+          codigobarras: '041351914639',
+          nombre: 'Pimienta negra mol tones 511g',
+          precio: '218.000000',
+          costo: '186.088661',
+        },
+        {
+          articulo: '0102160',
+          codigobarras: '041351913878',
+          nombre: 'Ablandador Carnes Tones 1.175KG',
+          precio: '138.000000',
+          costo: '54.659518',
+        },
+        {
+          articulo: '0102161',
+          codigobarras: '041351914899',
+          nombre: 'Sazonador Carnes Tones 681gr',
+          precio: '195.000000',
+          costo: '159.964464',
+        },
+        {
+          articulo: '0102340',
+          codigobarras: '7501017043262',
+          nombre: 'Mayo. La Costeña 330gr',
+          precio: '22.000000',
+          costo: '20.400000',
+        },
+        {
+          articulo: '0102343',
+          codigobarras: '7506192505802',
+          nombre: 'Ade. Riko Pollo 33gr',
+          precio: '4.500000',
+          costo: '3.250000',
+        },
+        {
+          articulo: '0102346',
+          codigobarras: '7501003308696',
+          nombre: 'Mayo. MC Habanero SQ 345gr',
+          precio: '23.000000',
+          costo: '19.480000',
+        },
+        {
+          articulo: '0102350',
+          codigobarras: '7501058628503',
+          nombre: 'Salsa Soya Maggi 140ml',
+          precio: '17.000000',
+          costo: '14.330000',
+        },
+        {
+          articulo: '0102372',
+          codigobarras: '7501003312808',
+          nombre: 'Te Manzanilla MC C/200',
+          precio: '118.000000',
+          costo: '90.700000',
+        },
+        {
+          articulo: '0102377',
+          codigobarras: '7501005100854',
+          nombre: 'Sazonador Costilla Knorr 10g',
+          precio: '24.000000',
+          costo: '12.900000',
+        },
+        {
+          articulo: '0102391',
+          codigobarras: '7501052470016',
+          nombre: 'Ade. Ensalada Est. Cesar CJ 237ml',
+          precio: '21.000000',
+          costo: '17.460000',
+        },
+        {
+          articulo: '0102394',
+          codigobarras: '7501003314918',
+          nombre: 'Te Jengibre/Limon Mc Cormick 35gr c/25',
+          precio: '40.000000',
+          costo: '32.500000',
+        },
+        {
+          articulo: '0102433',
+          codigobarras: '7501017035168',
+          nombre: 'Mayo. La Costeña 1.8kg',
+          precio: '98.500000',
+          costo: '98.000000',
+        },
+        {
+          articulo: '0102436',
+          codigobarras: '086141002615',
+          nombre: 'Te de Manzanilla Anis La Pastora 24gr',
+          precio: '25.000000',
+          costo: '21.000000',
+        },
+        {
+          articulo: '0102441',
+          codigobarras: '7500533001602',
+          nombre: 'Paprika Est. Esp Tones 405gr',
+          precio: '130.000000',
+          costo: '109.040000',
+        },
+        {
+          articulo: '0102446',
+          codigobarras: '7501791601313',
+          nombre: 'Sal con Ajo Great Value 125gr',
+          precio: '20.000000',
+          costo: '15.900000',
+        },
+        {
+          articulo: '0103001',
+          codigobarras: '7501000913343',
+          nombre: 'Pap. Gerber E2 Pera 100gr',
+          precio: '8.500000',
+          costo: '7.080000',
+        },
       ],
     }
   },
@@ -222,10 +389,10 @@ export default {
       return this.$store.state.ofertas.ofertaActual.tipoOferta
     },
     fechaInico() {
-      return this.$store.state.ofertas.ofertaActual.fechaInico
+      return utils.parseFecha(this.$store.state.ofertas.ofertaActual.fechaInico)
     },
     fechaFin() {
-      return this.$store.state.ofertas.ofertaActual.fechaFin
+      return utils.parseFecha(this.$store.state.ofertas.ofertaActual.fechaFin)
     },
     descripcion() {
       return this.$store.state.ofertas.ofertaActual.descripcion
@@ -235,11 +402,50 @@ export default {
     // eslint-disable-next-line no-console
   },
   methods: {
+    calcUtilidad() {
+      const porcentaje = utils.parseToPorcent(
+        utils.roundTo(1 - this.formArticulo.costo / this.formArticulo.oferta)
+      )
+      this.formArticulo.utilidad = `${porcentaje}%`
+      if (porcentaje < 9) {
+        this.state_utulidad = false
+      } else {
+        this.state_utulidad = true
+      }
+    },
     ...mapMutations({
       setProgramandoLista: 'ofertas/setProgramandoLista',
     }),
     cancelarOferta() {
       this.setProgramandoLista(false)
+    },
+    getArticuloByArticulo() {
+      const articulofinded = this.articulos.find((element) => {
+        return element.articulo === this.formArticulo.articulo
+      })
+      if (articulofinded === undefined) {
+        this.showError = true
+        this.formArticulo = {
+          articulo: '',
+          codigobarras: '',
+          nombre: '',
+          precio: '',
+          costo: '',
+          margen: '',
+          oferta: '0.00',
+          utilidad: '',
+        }
+        return true
+      }
+      this.showError = false
+      this.formArticulo.articulo = articulofinded.articulo
+      this.formArticulo.codigobarras = articulofinded.codigobarras
+      this.formArticulo.nombre = articulofinded.nombre
+      this.formArticulo.costo = utils.roundTo(articulofinded.costo)
+      this.formArticulo.precio = utils.roundTo(articulofinded.precio)
+      this.formArticulo.margen = `${utils.parseToPorcent(
+        utils.roundTo(1 - articulofinded.costo / articulofinded.precio)
+      )}%`
     },
   },
 }

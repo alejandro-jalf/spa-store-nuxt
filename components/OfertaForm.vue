@@ -291,7 +291,7 @@ export default {
         uuid: 'oferta0102',
         tipoOferta: this.form_oferta.tipo,
         fechaInico: this.form_oferta.fecha_inicio,
-        fechaFin: this.form_oferta.fecha_inicio,
+        fechaFin: this.form_oferta.fecha_fin,
         descripcion: this.form_oferta.descripcion,
         listaProductos: [],
       }
