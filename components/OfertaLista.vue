@@ -18,6 +18,7 @@
         <b-form inline class="mt-2">
           <b-form-input
             id="codigo-articulo"
+            ref="articulo"
             v-model="formArticulo.articulo"
             placeholder="Codigo de articulo"
             @keyup.enter="getArticuloByArticulo"
@@ -37,7 +38,7 @@
           message="No se encontro el articulo"
           :show-message="showError"
           color-text="text-danger"
-          class="mb-2"
+          class="mb-2 text-center"
         ></message-text>
         <b-card-text class="font-weight-bold mb-1">
           Datos de la oferta para el articulo: 0090098
@@ -67,23 +68,29 @@
           ></b-form-input>
           <b-form-input
             id="input-oferta"
+            ref="oferta"
             v-model="formArticulo.oferta"
             placeholder="Precio de oferta"
             class="input-resp-dt-ofe"
             @keyup="calcUtilidad"
+            @keyup.enter="agregarArticulo"
           ></b-form-input>
           <b-form-input
             id="input-utilidad"
             v-model="formArticulo.utilidad"
             placeholder="Utilidad"
             class="input-resp-dt-ofe"
-            :state="state_utulidad"
+            :state="status_utulidad"
             readonly
           ></b-form-input>
         </b-form>
-        <b-button variant="success" class="mb-3">
+        <b-button variant="success" class="mb-3" @click="agregarArticulo">
           <b-icon-plus-circle-fill></b-icon-plus-circle-fill>
           Agregar a la lista
+        </b-button>
+        <b-button variant="warning" class="mb-3" @click="clearFormArticulo">
+          <b-icon-backspace-fill></b-icon-backspace-fill>
+          Limpiar campos
         </b-button>
       </div>
       <b-card-text class="font-weight-bold mb-1">
@@ -105,7 +112,7 @@
               variant="warning"
               size="sm"
               class="mb-1"
-              @click="row.toggleDetails"
+              @click="editArticle(row)"
             >
               <b-icon-pencil-square></b-icon-pencil-square>
             </b-button>
@@ -113,7 +120,7 @@
               variant="danger"
               size="sm"
               class="mb-1"
-              @click="row.toggleDetails"
+              @click="deleteArticulo(row.item.articulo)"
             >
               <b-icon-trash></b-icon-trash>
             </b-button>
@@ -196,6 +203,7 @@ import {
   BIconQuestionCircleFill,
   BIconFileEarmarkExcelFill,
   BIconFolderSymlinkFill,
+  BIconBackspaceFill,
 } from 'bootstrap-vue'
 import utils from '../modules/utils'
 import Divider from './Divider'
@@ -213,6 +221,7 @@ export default {
     BIconFileEarmarkExcelFill,
     BIconFolderSymlinkFill,
     MessageText,
+    BIconBackspaceFill,
   },
   data() {
     return {
@@ -223,19 +232,20 @@ export default {
         precio: '',
         costo: '',
         margen: '',
-        oferta: '0.00',
+        oferta: '',
         utilidad: '',
       },
       showError: false,
-      state_utulidad: false,
+      status_utulidad: false,
+      editingArticle: false,
       fields: [
-        'Articulo',
-        'Nombre',
-        'Costo',
-        'Precio',
-        'Utilidad',
-        'Precio_Oferta',
-        'Margen',
+        'articulo',
+        'nombre',
+        'costo',
+        'precio',
+        'margen',
+        'oferta',
+        'utilidad',
         'Acciones',
       ],
       articulos: [
@@ -400,21 +410,102 @@ export default {
   },
   mounted() {
     // eslint-disable-next-line no-console
+    console.log(this.$store.state.ofertas.ofertaActual.listaProductos)
   },
   methods: {
+    editArticle(articuloRe) {
+      this.setArticle(articuloRe.item.articulo)
+      const {
+        articulo,
+        codigobarras,
+        nombre,
+        precio,
+        costo,
+        margen,
+        oferta,
+        utilidad,
+      } = this.$store.state.ofertas.formArticulo
+      this.formArticulo = {
+        articulo,
+        codigobarras,
+        nombre,
+        precio,
+        costo,
+        margen,
+        oferta,
+        utilidad,
+      }
+      this.editingArticle = true
+    },
+    clearFormArticulo() {
+      this.formArticulo = {
+        articulo: '',
+        codigobarras: '',
+        nombre: '',
+        precio: '',
+        costo: '',
+        margen: '',
+        oferta: '',
+        utilidad: '',
+      }
+    },
+    validaArticulo() {
+      if (this.formArticulo.costo.trim() === '') {
+        this.showAlertDialog(['No a seleccionado algun producto'])
+        return false
+      }
+      if (this.formArticulo.nombre.trim() === '') {
+        this.showAlertDialog(['No puede dejar vacio el campo de nombre'])
+        return false
+      }
+      if (this.formArticulo.articulo.trim() === '') {
+        this.showAlertDialog(['No puede quedar vacio el campo de articulo'])
+        return false
+      }
+      if (this.formArticulo.oferta.trim() === '') {
+        this.showAlertDialog(['Falta ingresar el precio de oferta'])
+        return false
+      }
+      if (!this.status_utulidad) {
+        this.showAlertDialog(['La utilidad no puede ser menor que el 8%'])
+        return false
+      }
+      return true
+    },
+    agregarArticulo() {
+      if (this.validaArticulo()) {
+        const articulofinded = this.$store.state.ofertas.ofertaActual.listaProductos.find(
+          (elemento) => this.formArticulo.articulo === elemento.articulo
+        )
+        if (this.editingArticle) {
+          this.deleteArticulo(this.formArticulo.articulo)
+          this.editingArticle = false
+        } else if (articulofinded !== undefined) {
+          this.showAlertDialog(['Este articulo ya esta en la lista'])
+          return false
+        }
+        this.addArticulo(this.formArticulo)
+        this.clearFormArticulo()
+        this.$refs.articulo.focus()
+      }
+    },
     calcUtilidad() {
       const porcentaje = utils.parseToPorcent(
         utils.roundTo(1 - this.formArticulo.costo / this.formArticulo.oferta)
       )
       this.formArticulo.utilidad = `${porcentaje}%`
       if (porcentaje < 9) {
-        this.state_utulidad = false
+        this.status_utulidad = false
       } else {
-        this.state_utulidad = true
+        this.status_utulidad = true
       }
     },
     ...mapMutations({
       setProgramandoLista: 'ofertas/setProgramandoLista',
+      addArticulo: 'ofertas/addArticulo',
+      deleteArticulo: 'ofertas/deleteArticulo',
+      setArticle: 'ofertas/setArticle',
+      showAlertDialog: 'general/showAlertDialog',
     }),
     cancelarOferta() {
       this.setProgramandoLista(false)
@@ -425,16 +516,7 @@ export default {
       })
       if (articulofinded === undefined) {
         this.showError = true
-        this.formArticulo = {
-          articulo: '',
-          codigobarras: '',
-          nombre: '',
-          precio: '',
-          costo: '',
-          margen: '',
-          oferta: '0.00',
-          utilidad: '',
-        }
+        this.clearFormArticulo()
         return true
       }
       this.showError = false
@@ -446,6 +528,7 @@ export default {
       this.formArticulo.margen = `${utils.parseToPorcent(
         utils.roundTo(1 - articulofinded.costo / articulofinded.precio)
       )}%`
+      this.$refs.oferta.focus()
     },
   },
 }

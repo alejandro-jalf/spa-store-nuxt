@@ -2,6 +2,7 @@ export const state = () => ({
   programandoOferta: false,
   programandoListaOferta: false,
   ofertaEditable: true,
+  formArticulo: {},
   ofertaActual: {
     uuid: 'oferta1',
     tipoOferta: 'Sigma',
@@ -98,5 +99,33 @@ export const mutations = {
   },
   setProgramandoLista(state, programando) {
     state.programandoListaOferta = programando
+  },
+  addArticulo(state, articulo) {
+    state.ofertaActual.listaProductos.push(articulo)
+  },
+  deleteArticulo(state, articulo) {
+    const filterArticle = state.ofertaActual.listaProductos.filter(
+      (article) => article.articulo !== articulo
+    )
+    state.ofertaActual.listaProductos = filterArticle
+  },
+  setArticle(state, articulo) {
+    const articleFinded = state.ofertaActual.listaProductos.find(
+      (elemento) => elemento.articulo === articulo
+    )
+    if (articleFinded !== undefined) {
+      state.formArticulo = articleFinded
+      return true
+    }
+    state.formArticulo = {
+      articulo: '',
+      codigobarras: '',
+      nombre: '',
+      precio: '',
+      costo: '',
+      margen: '',
+      oferta: '',
+      utilidad: '',
+    }
   },
 }
