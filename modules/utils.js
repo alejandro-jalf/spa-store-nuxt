@@ -79,16 +79,26 @@ const utils = {
     }
     digitsString = arrayDivision[1].slice(0, digits - 1)
     let digitToRound = parseInt(arrayDivision[1].slice(digits, digits + 1))
+    digitsString = arrayDivision[1].slice(0, digits - 1)
     if (isNaN(digitToRound)) digitToRound = 0
     let digitRounded = -1
+    const endDigit = arrayDivision[1].slice(digits - 1, digits)
     if (digitToRound < 5) {
-      digitRounded = arrayDivision[1].slice(digits - 1, digits)
+      digitRounded = endDigit
     }
     if (digitToRound >= 5 && digitToRound < 9) {
-      digitRounded = parseInt(arrayDivision[1].slice(digits - 1, digits)) + 1
+      if (parseInt(endDigit) < 9) {
+        digitRounded = parseInt(endDigit) + 1
+      } else {
+        digitRounded = parseInt(endDigit)
+      }
     }
     if (digitToRound === 9) {
-      digitRounded = 9
+      if (parseInt(endDigit) < 9) {
+        digitRounded = parseInt(endDigit) + 1
+      } else {
+        digitRounded = parseInt(endDigit)
+      }
     }
     rounded = arrayDivision[0] + '.' + digitsString + digitRounded
     return rounded
