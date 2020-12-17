@@ -152,9 +152,17 @@
           class="mb-2"
         ></message-text>
       </b-form-group>
-      <b-button variant="success" @click="generarOFerta">
+      <b-button v-if="!editandoOferta" variant="success" @click="generarOFerta">
         <b-icon-file-earmark-plus-fill></b-icon-file-earmark-plus-fill>
         Generar lista de ofertas
+      </b-button>
+      <b-button
+        v-if="editandoOferta"
+        variant="success"
+        @click="setDataUpdateForm()"
+      >
+        Lista de articulos
+        <b-icon-arrow-right-circle-fill></b-icon-arrow-right-circle-fill>
       </b-button>
       <b-button variant="warning" @click="setProgramandoOferta(false)">
         <b-icon-file-earmark-excel-fill></b-icon-file-earmark-excel-fill>
@@ -170,6 +178,7 @@ import {
   BIconCalendar2Date,
   BIconFileEarmarkPlusFill,
   BIconFileEarmarkExcelFill,
+  BIconArrowRightCircleFill,
 } from 'bootstrap-vue'
 import MessageText from './MessageText'
 
@@ -179,6 +188,7 @@ export default {
     MessageText,
     BIconFileEarmarkPlusFill,
     BIconFileEarmarkExcelFill,
+    BIconArrowRightCircleFill,
   },
   data() {
     return {
@@ -213,6 +223,9 @@ export default {
     }
   },
   computed: {
+    editandoOferta() {
+      return this.$store.state.ofertas.editandoOferta
+    },
     textMsgStart() {
       if (this.form_oferta.fecha_inicio === '') {
         return 'Elija una fecha'
@@ -250,6 +263,13 @@ export default {
       return 'text-danger'
     },
   },
+  mounted() {
+    this.form_oferta.uuid = this.$store.state.ofertas.ofertaActual.tipo
+    this.form_oferta.tipo = this.$store.state.ofertas.ofertaActual.tipoOferta
+    this.form_oferta.fecha_inicio = this.$store.state.ofertas.ofertaActual.fechaInico
+    this.form_oferta.fecha_fin = this.$store.state.ofertas.ofertaActual.fechaFin
+    this.form_oferta.descripcion = this.$store.state.ofertas.ofertaActual.descripcion
+  },
   methods: {
     validaFormulario() {
       if (this.form_oferta.tipo.trim() === '') {
@@ -283,6 +303,17 @@ export default {
       }
       return true
     },
+    setDataUpdateForm() {
+      const newOferta = {
+        tipoOferta: this.form_oferta.tipo,
+        fechaInico: this.form_oferta.fecha_inicio,
+        fechaFin: this.form_oferta.fecha_fin,
+        descripcion: this.form_oferta.descripcion,
+      }
+      this.updateDataForm(newOferta)
+      this.setProgramandoOferta(false)
+      this.setProgramandoLista(true)
+    },
     generarOFerta() {
       if (!this.validaFormulario()) {
         return false
@@ -303,6 +334,7 @@ export default {
       setProgramandoLista: 'ofertas/setProgramandoLista',
       setProgramandoOferta: 'ofertas/setProgramandoOferta',
       openOferta: 'ofertas/openOferta',
+      updateDataForm: 'ofertas/updateDataForm',
       showAlertDialog: 'general/showAlertDialog',
     }),
     getDateWithTime0() {

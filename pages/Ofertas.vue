@@ -5,14 +5,17 @@
       v-if="viewCrearOferta"
       variant="success"
       class="mb-3"
-      @click="setProgramandoOferta(true)"
+      @click="programarOferta()"
     >
       <b-icon-folder-plus></b-icon-folder-plus>
       Programar nueva oferta
     </b-button>
-    <oferta-form v-if="programandoOferta" class="pt-2 pb-2"></oferta-form>
-    <oferta-lista v-if="programandoListaOferta" class="pb-2"></oferta-lista>
-    <div class="container-table-ofe">
+    <oferta-form v-if="programandoOferta" class="pt-2 pb-2 mb-3"></oferta-form>
+    <oferta-lista
+      v-if="programandoListaOferta"
+      class="pb-2 mb-3"
+    ></oferta-lista>
+    <div v-if="viewCrearOferta" class="container-table-ofe">
       <b-table
         hover
         head-variant="dark"
@@ -23,9 +26,15 @@
         class="table-ofertas"
       >
         <template #cell(Acciones)="row">
-          <b-button size="sm" class="mr-2" @click="row.toggleDetails">
-            Details
+          <b-button size="sm" class="mr-2" @click="viewDetails(row.item.uuid)">
+            Detalles
           </b-button>
+        </template>
+        <template #cell(fechaInico)="row">
+          {{ utils.parseFecha(row.item.fechaInico) }}
+        </template>
+        <template #cell(fechaFin)="row">
+          {{ utils.parseFecha(row.item.fechaFin) }}
         </template>
       </b-table>
     </div>
@@ -36,6 +45,7 @@ import { mapMutations } from 'vuex'
 import { BIconFolderPlus } from 'bootstrap-vue'
 import OfertaForm from '../components/OfertaForm'
 import OfertaLista from '../components/OfertaLista'
+import utils from '../modules/utils'
 
 export default {
   components: {
@@ -45,6 +55,7 @@ export default {
   },
   data() {
     return {
+      utils,
       fields: [
         'uuid',
         'tipoOferta',
@@ -78,7 +89,20 @@ export default {
   methods: {
     ...mapMutations({
       setProgramandoOferta: 'ofertas/setProgramandoOferta',
+      setEditandoOferta: 'ofertas/setEditandoOferta',
+      openOfertaByUuid: 'ofertas/openOfertaByUuid',
+      setEditable: 'ofertas/setEditable',
+      setProgramandoLista: 'ofertas/setProgramandoLista',
     }),
+    programarOferta() {
+      this.setEditandoOferta(false)
+      this.setProgramandoOferta(true)
+    },
+    viewDetails(uuid) {
+      this.setProgramandoLista(true)
+      this.setEditable(false)
+      this.openOfertaByUuid(uuid)
+    },
   },
 }
 </script>

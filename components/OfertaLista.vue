@@ -7,10 +7,10 @@
       :header="'Oferta abierta: ' + uuid"
       :title="tipoOferta + ' Del ' + fechaInico + ' al ' + fechaFin"
     >
-      <b-alert variant="warning" :show="!ofertaEditable">
+      <b-alert v-if="!ofertaEditable" variant="warning">
         Oferta no editable
       </b-alert>
-      <div :show="ofertaEditable">
+      <div v-if="ofertaEditable">
         <b-card-text class="font-weight-bold mt-3 mb-1">
           Elija un articulo
         </b-card-text>
@@ -107,7 +107,7 @@
           :fields="fields"
           class="table-productos"
         >
-          <template #cell(Acciones)="row" :show="ofertaEditable">
+          <template v-if="ofertaEditable" #cell(Acciones)="row">
             <b-button
               variant="warning"
               size="sm"
@@ -128,15 +128,23 @@
         </b-table>
       </div>
       <div v-if="ofertaEditable" class="text-right mt-3 buttons-end">
-        <b-button variant="danger" @click="cancelarOferta">
+        <b-button variant="secondary" class="mb-2" @click="editarDatosOferta">
+          <b-icon-arrow-left-circle-fill></b-icon-arrow-left-circle-fill>
+          Datos de oferta
+        </b-button>
+        <b-button variant="danger" class="mb-2" @click="cancelarOferta">
           <b-icon-trash-fill></b-icon-trash-fill>
           Cancelar oferta
         </b-button>
-        <b-button variant="primary">
+        <b-button variant="primary" class="mb-2" @click="saveAndSend">
           <b-icon-cloud-upload-fill></b-icon-cloud-upload-fill>
           Guardar y enviar
         </b-button>
-        <b-button variant="info" @click="$bvToast.show('toast-create-ofer')">
+        <b-button
+          variant="info"
+          class="mb-2"
+          @click="$bvToast.show('toast-create-ofer')"
+        >
           <b-icon-question-circle-fill></b-icon-question-circle-fill>
         </b-button>
         <b-toast
@@ -148,6 +156,10 @@
           variant="info"
           solid
         >
+          Al dar click en "Datos de oferta" podra editar los datos generales de
+          la oferta, como lo es el tipo, fechas o descripcion.
+          <br />
+          <br />
           Al dar click en "Cancelar oferta" se eliminara toda la oferta junto
           con todos los articulos registrados.
           <br />
@@ -157,15 +169,23 @@
         </b-toast>
       </div>
       <div v-if="!ofertaEditable" class="text-right mt-3 buttons-end">
-        <b-button variant="secondary" @click="setProgramandoLista(false)">
+        <b-button
+          variant="secondary"
+          class="mb-2"
+          @click="setProgramandoLista(false)"
+        >
           <b-icon-file-earmark-excel-fill></b-icon-file-earmark-excel-fill>
           Cerrar
         </b-button>
-        <b-button variant="primary">
+        <b-button variant="primary" class="mb-2">
           <b-icon-folder-symlink-fill></b-icon-folder-symlink-fill>
           Guardar cambios
         </b-button>
-        <b-button variant="info" @click="$bvToast.show('toast-view-ofert')">
+        <b-button
+          variant="info"
+          class="mb-2"
+          @click="$bvToast.show('toast-view-ofert')"
+        >
           <b-icon-question-circle-fill></b-icon-question-circle-fill>
         </b-button>
         <b-toast
@@ -189,6 +209,13 @@
         </b-toast>
       </div>
     </b-card>
+    <alert-option
+      :alert-title="alert.title"
+      :alert-message="alert.message"
+      :alert-show="showAlert"
+      :click-cancel="hideAlertDialog"
+      :click-acept="functionGeneralAcept"
+    ></alert-option>
   </div>
 </template>
 
@@ -204,10 +231,12 @@ import {
   BIconFileEarmarkExcelFill,
   BIconFolderSymlinkFill,
   BIconBackspaceFill,
+  BIconArrowLeftCircleFill,
 } from 'bootstrap-vue'
 import utils from '../modules/utils'
 import Divider from './Divider'
 import MessageText from './MessageText'
+import AlertOption from './AlertOption'
 
 export default {
   components: {
@@ -222,9 +251,16 @@ export default {
     BIconFolderSymlinkFill,
     MessageText,
     BIconBackspaceFill,
+    BIconArrowLeftCircleFill,
+    AlertOption,
   },
   data() {
     return {
+      alert: {
+        title: 'Accion',
+        message: 'Realizar',
+      },
+      showAlert: false,
       formArticulo: {
         articulo: '',
         codigobarras: '',
@@ -413,6 +449,16 @@ export default {
     console.log(this.$store.state.ofertas.ofertaActual.listaProductos)
   },
   methods: {
+    functionGeneralAcept() {},
+    showAlertDialogOption(title, message, functionR) {
+      this.alert.title = title
+      this.alert.message = message
+      this.functionGeneralAcept = functionR
+      this.showAlert = true
+    },
+    hideAlertDialog() {
+      this.showAlert = false
+    },
     editArticle(articuloRe) {
       this.setArticle(articuloRe.item.articulo)
       const {
@@ -502,13 +548,39 @@ export default {
     },
     ...mapMutations({
       setProgramandoLista: 'ofertas/setProgramandoLista',
+      setProgramandoOferta: 'ofertas/setProgramandoOferta',
       addArticulo: 'ofertas/addArticulo',
       deleteArticulo: 'ofertas/deleteArticulo',
       setArticle: 'ofertas/setArticle',
+      setEditandoOferta: 'ofertas/setEditandoOferta',
+      addOFerta: 'ofertas/addOFerta',
       showAlertDialog: 'general/showAlertDialog',
     }),
-    cancelarOferta() {
+    editarDatosOferta() {
+      this.setEditandoOferta(true)
+      this.setProgramandoOferta(true)
       this.setProgramandoLista(false)
+    },
+    saveAndSend() {
+      const newFunction = () => {
+        this.addOFerta(this.$store.state.ofertas.ofertaActual)
+        this.setProgramandoLista(false)
+      }
+      this.showAlertDialogOption(
+        'Guardando la lista de ofertas',
+        '¿Teminar el proceso de guardar la oferta?',
+        newFunction
+      )
+    },
+    cancelarOferta() {
+      const newFunction = () => {
+        this.setProgramandoLista(false)
+      }
+      this.showAlertDialogOption(
+        'Cancelando oferta',
+        '¿Quiere cancelar la oferta?',
+        newFunction
+      )
     },
     getArticuloByArticulo() {
       const articulofinded = this.articulos.find((element) => {
