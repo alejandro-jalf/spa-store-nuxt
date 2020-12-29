@@ -314,12 +314,18 @@ export default {
       this.setProgramandoOferta(false)
       this.setProgramandoLista(true)
     },
+    pseudoUuid() {
+      const ramdonNum = parseInt(Math.random() * 100000)
+      return 'Oferta_' + ramdonNum
+    },
     generarOFerta() {
       if (!this.validaFormulario()) {
         return false
       }
+      const uuid = this.pseudoUuid()
       const newOferta = {
-        uuid: 'oferta0102',
+        status: 'En espera',
+        uuid,
         tipoOferta: this.form_oferta.tipo,
         fechaInico: this.form_oferta.fecha_inicio,
         fechaFin: this.form_oferta.fecha_fin,

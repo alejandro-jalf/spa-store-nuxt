@@ -15,6 +15,7 @@ export const state = () => ({
   },
   listaOfertas: {
     oferta1: {
+      status: 'Programada',
       editable: false,
       uuid: 'oferta1',
       tipoOferta: 'Sigma',
@@ -36,6 +37,7 @@ export const state = () => ({
       ],
     },
     oferta2: {
+      status: 'Programada',
       editable: true,
       uuid: 'oferta2',
       tipoOferta: 'Sigma',
@@ -57,6 +59,7 @@ export const state = () => ({
       ],
     },
     oferta3: {
+      status: 'Atendida',
       editable: false,
       uuid: 'oferta3',
       tipoOferta: 'Sigma',
@@ -82,6 +85,8 @@ export const state = () => ({
 
 export const mutations = {
   addOFerta(state, oferta) {
+    // eslint-disable-next-line no-console
+    console.log('Agregando', oferta)
     state.listaOfertas[`${oferta.uuid}`] = oferta
   },
   setEditandoOferta(state, status) {
@@ -89,6 +94,17 @@ export const mutations = {
   },
   openOferta(state, newOferta) {
     state.ofertaActual = newOferta
+  },
+  cleanOfertaActual(state) {
+    state.ofertaActual = {
+      editable: true,
+      uuid: '',
+      tipoOferta: '',
+      fechaInico: '',
+      fechaFin: '',
+      descripcion: '',
+      listaProductos: [],
+    }
   },
   openOfertaByUuid(state, uuid) {
     state.ofertaActual = state.listaOfertas[`${uuid}`]

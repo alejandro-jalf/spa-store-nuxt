@@ -29,6 +29,14 @@
           <b-button size="sm" class="mr-2" @click="viewDetails(row.item.uuid)">
             Detalles
           </b-button>
+          <b-button
+            size="sm"
+            class="mr-2 mt-2"
+            variant="danger"
+            @click="viewDetails(row.item.uuid)"
+          >
+            Eliminar
+          </b-button>
         </template>
         <template #cell(fechaInico)="row">
           {{ utils.parseFecha(row.item.fechaInico) }}
@@ -58,6 +66,7 @@ export default {
       utils,
       fields: [
         'uuid',
+        'status',
         'tipoOferta',
         'fechaInico',
         'fechaFin',
@@ -90,6 +99,7 @@ export default {
     ...mapMutations({
       setProgramandoOferta: 'ofertas/setProgramandoOferta',
       setEditandoOferta: 'ofertas/setEditandoOferta',
+      cleanOfertaActual: 'ofertas/cleanOfertaActual',
       openOfertaByUuid: 'ofertas/openOfertaByUuid',
       setEditable: 'ofertas/setEditable',
       setProgramandoLista: 'ofertas/setProgramandoLista',
@@ -97,6 +107,8 @@ export default {
     programarOferta() {
       this.setEditandoOferta(false)
       this.setProgramandoOferta(true)
+      this.setEditable(true)
+      this.cleanOfertaActual()
     },
     viewDetails(uuid) {
       this.setProgramandoLista(true)

@@ -169,44 +169,56 @@
         </b-toast>
       </div>
       <div v-if="!ofertaEditable" class="text-right mt-3 buttons-end">
-        <b-button
-          variant="secondary"
-          class="mb-2"
-          @click="setProgramandoLista(false)"
-        >
-          <b-icon-file-earmark-excel-fill></b-icon-file-earmark-excel-fill>
-          Cerrar
-        </b-button>
-        <b-button variant="primary" class="mb-2">
-          <b-icon-folder-symlink-fill></b-icon-folder-symlink-fill>
-          Guardar cambios
-        </b-button>
-        <b-button
-          variant="info"
-          class="mb-2"
-          @click="$bvToast.show('toast-view-ofert')"
-        >
-          <b-icon-question-circle-fill></b-icon-question-circle-fill>
-        </b-button>
-        <b-toast
-          id="toast-view-ofert"
-          title="Ayuda"
-          static
-          no-auto-hide
-          class="toast-buttons text-justify"
-          variant="info"
-          solid
-        >
-          Al dar click en "Cerrar" solamente se cerrar la oferta, esto no afecta
-          en nada a los datos ya registrado.
-          <br />
-          <br />
-          <div>
-            Al dar click en "Guardar cambios" Se guardara los ajustes que se le
-            haya realizado a algun producto y en automatico se enviaran los
-            datos.
-          </div>
-        </b-toast>
+        <div v-if="!status">
+          <b-button
+            variant="secondary"
+            class="mb-2"
+            @click="setProgramandoLista(false)"
+          >
+            <b-icon-file-earmark-excel-fill></b-icon-file-earmark-excel-fill>
+            Cerrar
+          </b-button>
+        </div>
+        <div v-if="status">
+          <b-button
+            variant="secondary"
+            class="mb-2"
+            @click="setProgramandoLista(false)"
+          >
+            <b-icon-file-earmark-excel-fill></b-icon-file-earmark-excel-fill>
+            Cerrar
+          </b-button>
+          <b-button variant="primary" class="mb-2">
+            <b-icon-folder-symlink-fill></b-icon-folder-symlink-fill>
+            Guardar cambios
+          </b-button>
+          <b-button
+            variant="info"
+            class="mb-2"
+            @click="$bvToast.show('toast-view-ofert')"
+          >
+            <b-icon-question-circle-fill></b-icon-question-circle-fill>
+          </b-button>
+          <b-toast
+            id="toast-view-ofert"
+            title="Ayuda"
+            static
+            no-auto-hide
+            class="toast-buttons text-justify"
+            variant="info"
+            solid
+          >
+            Al dar click en "Cerrar" solamente se cerrar la oferta, esto no
+            afecta en nada a los datos ya registrado.
+            <br />
+            <br />
+            <div>
+              Al dar click en "Guardar cambios" Se guardara los ajustes que se
+              le haya realizado a algun producto y en automatico se enviaran los
+              datos.
+            </div>
+          </b-toast>
+        </div>
       </div>
     </b-card>
     <alert-option
@@ -424,6 +436,15 @@ export default {
   computed: {
     ofertaEditable() {
       return this.$store.state.ofertas.ofertaEditable
+    },
+    status() {
+      if (
+        this.$store.state.ofertas.ofertaActual.status === 'Atendida' ||
+        this.$store.state.ofertas.ofertaActual.status === 'Programada'
+      ) {
+        return false
+      }
+      return true
     },
     listaProductos() {
       return this.$store.state.ofertas.ofertaActual.listaProductos
