@@ -9,7 +9,7 @@
       <b-navbar-nav v-if="display > 0" class="mr-auto">
         <b-nav-item>
           <b-badge variant="light" class="p-2 text-uppercase mr-2">
-            <b-icon icon="door-open"></b-icon>
+            <b-icon-door-open></b-icon-door-open>
             {{ tabActual }}
           </b-badge>
         </b-nav-item>
@@ -60,11 +60,13 @@
 
 <script>
 // import { mapMutations, mapState } from 'vuex'
+import { BIconDoorOpen } from 'bootstrap-vue'
 import NavBarSlider from './NavBarSlider'
 
 export default {
   components: {
     NavBarSlider,
+    BIconDoorOpen,
   },
   data() {
     return {
@@ -83,6 +85,10 @@ export default {
         {
           titulo: 'Ofertas',
           ruta: '/ofertas',
+        },
+        {
+          titulo: 'Punto de venta',
+          ruta: '/ventav',
         },
       ],
       userName: 'admin',
