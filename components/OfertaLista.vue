@@ -27,6 +27,7 @@
             id="codigo-barras"
             v-model="formArticulo.codigobarras"
             placeholder="Codigo de barras"
+            @keyup.enter="getArticuloByCodigoCarras"
           ></b-form-input>
           <b-form-input
             id="nombre-articulo"
@@ -610,6 +611,27 @@ export default {
         '¿Quiere cancelar la oferta?',
         newFunction
       )
+    },
+    getArticuloByCodigoCarras() {
+      const articulofinded = this.articulos.find((element) => {
+        return element.codigobarras === this.formArticulo.codigobarras
+      })
+      if (articulofinded === undefined) {
+        this.showError = true
+        this.clearFormArticulo()
+        return true
+      }
+      this.showError = false
+      this.formArticulo.articulo = articulofinded.articulo
+      this.formArticulo.codigobarras = articulofinded.codigobarras
+      this.formArticulo.nombre = articulofinded.nombre
+      this.formArticulo.costo = utils.roundTo(articulofinded.costo)
+      this.formArticulo.precio = utils.roundTo(articulofinded.precio)
+      const operacion = 1 - articulofinded.costo / articulofinded.precio
+      const rounded = utils.roundTo(operacion, 4)
+      const porcentaje = utils.parseToPorcent(rounded)
+      this.formArticulo.margen = `${porcentaje}%`
+      this.$refs.oferta.focus()
     },
     getArticuloByArticulo() {
       const articulofinded = this.articulos.find((element) => {
