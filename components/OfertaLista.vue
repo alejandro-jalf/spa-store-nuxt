@@ -72,6 +72,7 @@
             v-model="formArticulo.oferta"
             placeholder="Precio de oferta"
             class="input-resp-dt-ofe"
+            @keydown="verifyData"
             @keyup="calcUtilidad"
             @keyup.enter="agregarArticulo"
           ></b-form-input>
@@ -556,12 +557,19 @@ export default {
         this.$refs.articulo.focus()
       }
     },
+    verifyData(evt) {
+      if (evt.keyCode !== 190 && evt.keyCode !== 13 && evt.keyCode !== 8) {
+        if (isNaN(parseInt(evt.key))) {
+          evt.preventDefault()
+        }
+      }
+    },
     calcUtilidad() {
       const porcentaje = utils.parseToPorcent(
-        utils.roundTo(1 - this.formArticulo.costo / this.formArticulo.oferta)
+        utils.roundTo(1 - this.formArticulo.costo / this.formArticulo.oferta, 4)
       )
       this.formArticulo.utilidad = `${porcentaje}%`
-      if (porcentaje < 9) {
+      if (porcentaje < 8) {
         this.status_utulidad = false
       } else {
         this.status_utulidad = true
@@ -618,9 +626,10 @@ export default {
       this.formArticulo.nombre = articulofinded.nombre
       this.formArticulo.costo = utils.roundTo(articulofinded.costo)
       this.formArticulo.precio = utils.roundTo(articulofinded.precio)
-      this.formArticulo.margen = `${utils.parseToPorcent(
-        utils.roundTo(1 - articulofinded.costo / articulofinded.precio)
-      )}%`
+      const operacion = 1 - articulofinded.costo / articulofinded.precio
+      const rounded = utils.roundTo(operacion, 4)
+      const porcentaje = utils.parseToPorcent(rounded)
+      this.formArticulo.margen = `${porcentaje}%`
       this.$refs.oferta.focus()
     },
   },

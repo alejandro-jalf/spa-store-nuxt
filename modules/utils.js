@@ -111,6 +111,10 @@ const utils = {
     if (value < 0) {
       return -parseInt(arrayValue[1])
     }
+    if (arrayValue[1].length > 2) {
+      arrayValue[1] = `${arrayValue[1].slice(0, 2)}.${arrayValue[1].slice(2)}`
+      return parseFloat(arrayValue[1])
+    }
     return parseInt(arrayValue[1])
   },
 }
