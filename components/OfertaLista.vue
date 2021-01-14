@@ -236,7 +236,6 @@
       :handle-ok="handleOk"
       :on-row-selected="onRowSelected"
       :enter-select="enterSelect"
-      :show-selected="showSelected"
     ></OfertaListProducts>
   </div>
 </template>
@@ -495,11 +494,6 @@ export default {
         this.getArticuloByPosition()
         this.$refs.oferta.focus()
       }
-    },
-    showSelected() {
-      // eslint-disable-next-line no-console
-      console.log('selecciona fila 1')
-      this.$refs.tableSelectProduct.selectRow(0)
     },
     onRowSelected(items) {
       if (items.length > 0) {

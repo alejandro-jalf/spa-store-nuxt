@@ -21,7 +21,6 @@
         @keydown.stop.native="enterSelect"
         @keyup.down.stop.native="downSelect"
         @keyup.up.stop.native="upSelect"
-        @mounted="showSelected"
       >
         <template #cell(seleccionado)="{ rowSelected }">
           <template v-if="rowSelected">
@@ -54,10 +53,6 @@ export default {
       required: true,
     },
     enterSelect: {
-      type: Function,
-      required: true,
-    },
-    showSelected: {
       type: Function,
       required: true,
     },
