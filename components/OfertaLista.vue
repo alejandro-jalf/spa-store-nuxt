@@ -32,7 +32,8 @@
           <b-form-input
             id="nombre-articulo"
             v-model="formArticulo.nombre"
-            placeholder="Nombre articulo"
+            placeholder="*Nombre articulo*"
+            @keyup.enter="showTableArticulosFinded"
           ></b-form-input>
         </b-form>
         <message-text
@@ -230,6 +231,13 @@
       :click-cancel="hideAlertDialog"
       :click-acept="functionGeneralAcept"
     ></alert-option>
+    <OfertaListProducts
+      :form-modal-productos="formModalProductos"
+      :handle-ok="handleOk"
+      :on-row-selected="onRowSelected"
+      :enter-select="enterSelect"
+      :show-selected="showSelected"
+    ></OfertaListProducts>
   </div>
 </template>
 
@@ -251,6 +259,7 @@ import utils from '../modules/utils'
 import Divider from './Divider'
 import MessageText from './MessageText'
 import AlertOption from './AlertOption'
+import OfertaListProducts from './OfertaListaProducts'
 
 export default {
   components: {
@@ -267,9 +276,17 @@ export default {
     BIconBackspaceFill,
     BIconArrowLeftCircleFill,
     AlertOption,
+    OfertaListProducts,
   },
   data() {
     return {
+      formModalProductos: {
+        position: 0,
+        selected: [],
+        showModal: false,
+        fields: ['seleccionado', 'articulo', 'codigobarras', 'nombre'],
+        products: [],
+      },
       alert: {
         title: 'Accion',
         message: 'Realizar',
@@ -472,6 +489,36 @@ export default {
     console.log(this.$store.state.ofertas.ofertaActual.listaProductos)
   },
   methods: {
+    enterSelect(evt) {
+      if (evt.keyCode === 65) {
+        this.formModalProductos.showModal = false
+        this.getArticuloByPosition()
+        this.$refs.oferta.focus()
+      }
+    },
+    showSelected() {
+      // eslint-disable-next-line no-console
+      console.log('selecciona fila 1')
+      this.$refs.tableSelectProduct.selectRow(0)
+    },
+    onRowSelected(items) {
+      if (items.length > 0) {
+        this.formModalProductos.position = this.formModalProductos.products.findIndex(
+          (product) => product.articulo === items[0].articulo
+        )
+      }
+      this.formModalProductos.selected = items
+    },
+    rowClass(item, type) {
+      if (!item || type !== 'row') return
+      if (item.status === 'selected') return 'table-secondary'
+    },
+    handleOk(bvModalEvt) {
+      bvModalEvt.preventDefault()
+      this.formModalProductos.showModal = false
+      this.getArticuloByPosition()
+      this.$refs.oferta.focus()
+    },
     functionGeneralAcept() {},
     showAlertDialogOption(title, message, functionR) {
       this.alert.title = title
@@ -611,6 +658,46 @@ export default {
         '¿Quiere cancelar la oferta?',
         newFunction
       )
+    },
+    showTableArticulosFinded() {
+      if (this.formArticulo.nombre.trim() === '') {
+        this.showAlertDialog(['No ha ingresado a ningun nombre'])
+        return
+      }
+      const palabreFormated = this.formArticulo.nombre
+        .toLowerCase()
+        .replace(/\*/, '')
+      const expresion = new RegExp(palabreFormated)
+      const articulosLike = this.articulos.filter((articulo) =>
+        expresion.test(articulo.nombre.toLowerCase())
+      )
+      this.formModalProductos.products = articulosLike
+      this.formModalProductos.showModal = true
+      this.formModalProductos.position = -1
+    },
+    getArticuloByPosition() {
+      if (this.formModalProductos.products.length === 0) {
+        this.showError = true
+        this.clearFormArticulo()
+        return true
+      }
+      const productSelected = this.formModalProductos.products[
+        this.formModalProductos.position
+      ]
+      const articulofinded = this.articulos.find(
+        (product) => product.articulo === productSelected.articulo
+      )
+      this.showError = false
+      this.formArticulo.articulo = articulofinded.articulo
+      this.formArticulo.codigobarras = articulofinded.codigobarras
+      this.formArticulo.nombre = articulofinded.nombre
+      this.formArticulo.costo = utils.roundTo(articulofinded.costo)
+      this.formArticulo.precio = utils.roundTo(articulofinded.precio)
+      const operacion = 1 - articulofinded.costo / articulofinded.precio
+      const rounded = utils.roundTo(operacion, 4)
+      const porcentaje = utils.parseToPorcent(rounded)
+      this.formArticulo.margen = `${porcentaje}%`
+      this.$refs.oferta.focus()
     },
     getArticuloByCodigoCarras() {
       const articulofinded = this.articulos.find((element) => {
