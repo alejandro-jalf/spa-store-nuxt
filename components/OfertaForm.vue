@@ -146,7 +146,7 @@
           @keyup="verifyTextArea"
         ></b-form-textarea>
         <message-text
-          message="Solo pueden ser 50 letras"
+          message="Solo pueden ser 1000 letras"
           :show-message="!state_textarea"
           color-text="text-danger"
           class="mb-2"
@@ -421,11 +421,13 @@ export default {
       }
     },
     verifyTextArea(evt) {
-      if (this.form_oferta.descripcion.length > 51) {
-        this.form_oferta.descripcion = this.form_oferta.descripcion.slice(0, -1)
+      if (this.form_oferta.descripcion.length > 1001) {
+        this.form_oferta.descripcion = this.form_oferta.descripcion.slice(
+          0,
+          1001
+        )
         this.state_textarea = false
-      }
-      if (this.form_oferta.descripcion.length <= 50) {
+      } else {
         this.state_textarea = true
       }
     },
