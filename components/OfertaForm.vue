@@ -345,13 +345,14 @@ export default {
     }),
     getDateWithTime0() {
       const fecha = new Date()
+      let mes = (fecha.getMonth() + 1).toString()
+      mes = mes.length < 2 ? '0' + mes : mes
+
+      let dia = fecha.getDate().toString()
+      dia = dia.length < 2 ? '0' + dia : dia
+
       const newDate =
-        fecha.getFullYear() +
-        '-' +
-        (fecha.getMonth() + 1) +
-        '-' +
-        fecha.getDate() +
-        'T06:00:00.000Z'
+        fecha.getFullYear() + '-' + mes + '-' + dia + 'T06:00:00.000Z'
       return new Date(newDate)
     },
     setStateDateStart() {
