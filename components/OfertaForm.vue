@@ -12,12 +12,21 @@
             v-model="form_oferta.tipo"
             type="text"
             required
-            :disabled="disabled_tipo"
+            :readonly="disabled_tipo"
             placeholder="Seleccione..."
             class="bg-white"
+            @click="clickInputTipo"
           ></b-form-input>
           <b-input-group-append>
-            <b-dropdown size="sm" right text="" class="m-0" variant="primary">
+            <b-dropdown
+              id="btnSelectTipoid"
+              ref="btnSelectTipo"
+              size="sm"
+              right
+              text=""
+              class="m-0"
+              variant="primary"
+            >
               <b-dropdown-item-button @click="setTipo('Sigma')">
                 Sigma
               </b-dropdown-item-button>
@@ -43,13 +52,16 @@
             v-model="form_oferta.fecha_inicio_complete"
             type="text"
             required
-            disabled
+            readonly
             placeholder="Inicio de oferta"
             class="bg-white"
             :state="state_date_start"
+            @click="clickInputFechaI"
           ></b-form-input>
           <b-input-group-append>
             <b-dropdown
+              id="btnSelectFechaI"
+              ref="btnSelectFechaIR"
               size="sm"
               right
               text=""
@@ -96,13 +108,16 @@
             v-model="form_oferta.fecha_fin_complete"
             type="text"
             required
-            disabled
+            readonly
             placeholder="Termino de oferta"
             class="bg-white"
             :state="state_date_end"
+            @click="clickInputFechaR"
           ></b-form-input>
           <b-input-group-append>
             <b-dropdown
+              id="btnSelectFechaF"
+              ref="btnSelectFechaFR"
               size="sm"
               right
               text=""
@@ -193,6 +208,9 @@ export default {
   data() {
     return {
       form_oferta: {
+        isVisibleTipo: false,
+        isVisibleFechaI: false,
+        isVisibleFechaF: false,
         tipo: '',
         fecha_inicio: '',
         fecha_inicio_complete: '',
@@ -269,6 +287,42 @@ export default {
     this.form_oferta.fecha_inicio = this.$store.state.ofertas.ofertaActual.fechaInico
     this.form_oferta.fecha_fin = this.$store.state.ofertas.ofertaActual.fechaFin
     this.form_oferta.descripcion = this.$store.state.ofertas.ofertaActual.descripcion
+    this.$root.$on('bv::dropdown::show', (bvEvent) => {})
+    this.$root.$on('bv::dropdown::show', (bvEvent) => {
+      if (bvEvent.componentId === 'btnSelectFechaF') {
+        // eslint-disable-next-line no-console
+        console.log('Fecha fin')
+        this.form_oferta.isVisibleFechaF = true
+      }
+      if (bvEvent.componentId === 'btnSelectFechaI') {
+        // eslint-disable-next-line no-console
+        console.log('Fecha ini')
+        this.form_oferta.isVisibleFechaI = true
+      }
+      if (bvEvent.componentId === 'btnSelectTipoid') {
+        // eslint-disable-next-line no-console
+        console.log('Tipo de oferta')
+        this.form_oferta.isVisibleTipo = true
+      }
+    })
+    this.$root.$on('bv::dropdown::hide', (bvEvent) => {})
+    this.$root.$on('bv::dropdown::hide', (bvEvent) => {
+      if (bvEvent.componentId === 'btnSelectFechaF') {
+        // eslint-disable-next-line no-console
+        console.log('Fecha fin cierre')
+        this.form_oferta.isVisibleFechaF = false
+      }
+      if (bvEvent.componentId === 'btnSelectFechaI') {
+        // eslint-disable-next-line no-console
+        console.log('Fecha ini cierre')
+        this.form_oferta.isVisibleFechaI = false
+      }
+      if (bvEvent.componentId === 'btnSelectTipoid') {
+        // eslint-disable-next-line no-console
+        console.log('Tipo de oferta cierre')
+        this.form_oferta.isVisibleTipo = false
+      }
+    })
   },
   methods: {
     validaFormulario() {
@@ -397,6 +451,41 @@ export default {
       this.form_oferta.fecha_fin_complete = ctx.selectedFormatted
       this.setStateDateEnd()
     },
+    clickInputTipo() {
+      if (this.disabled_tipo) {
+        // eslint-disable-next-line no-console
+        console.log(this.form_oferta.isVisibleTipo)
+        if (!this.form_oferta.isVisibleTipo) {
+          this.form_oferta.isVisibleTipo = true
+          this.$refs.btnSelectTipo.show()
+          // eslint-disable-next-line no-console
+          console.log('entra show', this.form_oferta.isVisibleTipo)
+        } else {
+          this.form_oferta.isVisibleTipo = false
+          this.$refs.btnSelectTipo.hide()
+          // eslint-disable-next-line no-console
+          console.log('entra hide', this.form_oferta.isVisibleTipo)
+        }
+      }
+    },
+    clickInputFechaR() {
+      if (!this.form_oferta.isVisibleFechaF) {
+        this.form_oferta.isVisibleFechaF = true
+        this.$refs.btnSelectFechaFR.show()
+      } else {
+        this.$refs.btnSelectFechaFR.hide()
+        this.form_oferta.isVisibleFechaF = false
+      }
+    },
+    clickInputFechaI() {
+      if (!this.form_oferta.isVisibleFechaI) {
+        this.form_oferta.isVisibleFechaI = true
+        this.$refs.btnSelectFechaIR.show()
+      } else {
+        this.form_oferta.isVisibleFechaI = false
+        this.$refs.btnSelectFechaIR.hide()
+      }
+    },
     setTextTipo(text) {
       this.disabled_tipo = true
       this.form_oferta.tipo = text
@@ -405,7 +494,7 @@ export default {
       if (tipo === 'Otro') {
         this.disabled_tipo = false
         this.form_oferta.tipo = ''
-        this.$refs.inputoftipo.$el.focus()
+        this.$refs.inputoftipo.focus()
         return true
       }
       if (tipo === 'Sigma') {
