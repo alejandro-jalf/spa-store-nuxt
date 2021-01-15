@@ -10,7 +10,7 @@
       <b-icon-folder-plus></b-icon-folder-plus>
       Programar nueva oferta
     </b-button>
-    <div id="groupDate">
+    <div v-if="viewCrearOferta" id="groupDate">
       <b-button-group>
         <b-button
           :pressed="activeDateM"
