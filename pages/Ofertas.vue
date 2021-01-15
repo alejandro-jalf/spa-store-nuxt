@@ -10,6 +10,31 @@
       <b-icon-folder-plus></b-icon-folder-plus>
       Programar nueva oferta
     </b-button>
+    <div id="groupDate">
+      <b-button-group>
+        <b-button
+          :pressed="activeDateM"
+          variant="outline-primary"
+          @click="setActiveDate('month')"
+        >
+          {{ textDateM }}
+        </b-button>
+        <b-button
+          :pressed="activeDateY"
+          variant="outline-primary"
+          @click="setActiveDate('year')"
+        >
+          {{ textDateY }}
+        </b-button>
+        <b-button
+          :pressed="activeDateA"
+          variant="outline-primary"
+          @click="setActiveDate('all')"
+        >
+          Todas
+        </b-button>
+      </b-button-group>
+    </div>
     <oferta-form v-if="programandoOferta" class="pt-2 pb-2 mb-3"></oferta-form>
     <oferta-lista
       v-if="programandoListaOferta"
@@ -63,6 +88,12 @@ export default {
   },
   data() {
     return {
+      activeDateY: false,
+      activeDateM: true,
+      activeDateA: false,
+      textDateY: '',
+      textDateM: '',
+      active: 'month',
       utils,
       fields: [
         'uuid',
@@ -95,7 +126,21 @@ export default {
       return false
     },
   },
+  mounted() {
+    const date = new Date()
+    this.textDateY = date.getFullYear().toString()
+    this.textDateM = utils._arrayMonths[date.getMonth()] + '/' + this.textDateY
+  },
   methods: {
+    setActiveDate(from) {
+      this.active = from
+      this.activeDateY = false
+      this.activeDateA = false
+      this.activeDateM = false
+      if (this.active === 'month') this.activeDateM = true
+      if (this.active === 'year') this.activeDateY = true
+      if (this.active === 'all') this.activeDateA = true
+    },
     ...mapMutations({
       setProgramandoOferta: 'ofertas/setProgramandoOferta',
       setEditandoOferta: 'ofertas/setEditandoOferta',
@@ -127,5 +172,16 @@ export default {
 
 .table-ofertas {
   min-width: 990px;
+}
+
+#groupDate {
+  float: right;
+}
+
+@media screen and (max-width: 480px) {
+  #groupDate {
+    float: none;
+    margin-bottom: 5px;
+  }
 }
 </style>

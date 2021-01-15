@@ -117,6 +117,8 @@ const utils = {
     }
     return parseInt(arrayValue[1])
   },
+
+  _arrayMonths,
 }
 
 export default utils
