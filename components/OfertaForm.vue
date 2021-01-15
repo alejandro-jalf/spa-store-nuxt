@@ -208,6 +208,7 @@ export default {
   data() {
     return {
       form_oferta: {
+        clickTipo: false,
         isVisibleTipo: false,
         isVisibleFechaI: false,
         isVisibleFechaF: false,
@@ -287,40 +288,20 @@ export default {
     this.form_oferta.fecha_inicio = this.$store.state.ofertas.ofertaActual.fechaInico
     this.form_oferta.fecha_fin = this.$store.state.ofertas.ofertaActual.fechaFin
     this.form_oferta.descripcion = this.$store.state.ofertas.ofertaActual.descripcion
-    this.$root.$on('bv::dropdown::show', (bvEvent) => {})
     this.$root.$on('bv::dropdown::show', (bvEvent) => {
       if (bvEvent.componentId === 'btnSelectFechaF') {
-        // eslint-disable-next-line no-console
-        console.log('Fecha fin')
-        this.form_oferta.isVisibleFechaF = true
       }
       if (bvEvent.componentId === 'btnSelectFechaI') {
-        // eslint-disable-next-line no-console
-        console.log('Fecha ini')
-        this.form_oferta.isVisibleFechaI = true
       }
       if (bvEvent.componentId === 'btnSelectTipoid') {
-        // eslint-disable-next-line no-console
-        console.log('Tipo de oferta')
-        this.form_oferta.isVisibleTipo = true
       }
     })
-    this.$root.$on('bv::dropdown::hide', (bvEvent) => {})
     this.$root.$on('bv::dropdown::hide', (bvEvent) => {
       if (bvEvent.componentId === 'btnSelectFechaF') {
-        // eslint-disable-next-line no-console
-        console.log('Fecha fin cierre')
-        this.form_oferta.isVisibleFechaF = false
       }
       if (bvEvent.componentId === 'btnSelectFechaI') {
-        // eslint-disable-next-line no-console
-        console.log('Fecha ini cierre')
-        this.form_oferta.isVisibleFechaI = false
       }
       if (bvEvent.componentId === 'btnSelectTipoid') {
-        // eslint-disable-next-line no-console
-        console.log('Tipo de oferta cierre')
-        this.form_oferta.isVisibleTipo = false
       }
     })
   },
@@ -453,18 +434,12 @@ export default {
     },
     clickInputTipo() {
       if (this.disabled_tipo) {
-        // eslint-disable-next-line no-console
-        console.log(this.form_oferta.isVisibleTipo)
         if (!this.form_oferta.isVisibleTipo) {
           this.form_oferta.isVisibleTipo = true
           this.$refs.btnSelectTipo.show()
-          // eslint-disable-next-line no-console
-          console.log('entra show', this.form_oferta.isVisibleTipo)
         } else {
           this.form_oferta.isVisibleTipo = false
           this.$refs.btnSelectTipo.hide()
-          // eslint-disable-next-line no-console
-          console.log('entra hide', this.form_oferta.isVisibleTipo)
         }
       }
     },
