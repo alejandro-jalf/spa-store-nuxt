@@ -13,7 +13,7 @@
             type="text"
             required
             :readonly="disabled_tipo"
-            placeholder="Seleccione..."
+            :placeholder="form_oferta.placeholderTipo"
             class="bg-white"
             @click="clickInputTipo"
           ></b-form-input>
@@ -208,7 +208,7 @@ export default {
   data() {
     return {
       form_oferta: {
-        clickTipo: false,
+        placeholderTipo: 'Seleccione...',
         isVisibleTipo: false,
         isVisibleFechaI: false,
         isVisibleFechaF: false,
@@ -464,13 +464,15 @@ export default {
     setTextTipo(text) {
       this.disabled_tipo = true
       this.form_oferta.tipo = text
+      this.form_oferta.placeholderTipo = 'Seleccione...'
     },
     setTipo(tipo) {
       if (tipo === 'Otro') {
         this.disabled_tipo = false
         this.form_oferta.tipo = ''
+        this.form_oferta.placeholderTipo = 'Escriba el tipo de oferta'
         this.$refs.inputoftipo.focus()
-        return true
+        return
       }
       if (tipo === 'Sigma') {
         this.setTextTipo('Sigma')
