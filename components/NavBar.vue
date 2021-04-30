@@ -3,7 +3,7 @@
     <b-navbar toggleable="lg" type="dark" variant="info">
       <b-navbar-brand>
         <img src="../assets/cesta.png" width="30px" height="30px" />
-        SPA 2020
+        SPA
       </b-navbar-brand>
 
       <b-navbar-nav v-if="display > 0" class="mr-auto">
@@ -24,13 +24,13 @@
       <b-collapse id="nav-collapse" is-nav>
         <b-navbar-nav>
           <b-nav-item
-            v-for="(tab, index) in tabs"
+            v-for="(tab, index) in tabsAccess"
             :key="index"
-            :to="tab.ruta"
+            :to="tab.path"
             :disabled="false"
             replace
           >
-            {{ tab.titulo }}
+            {{ tab.nickname }}
           </b-nav-item>
         </b-navbar-nav>
 
@@ -44,9 +44,6 @@
             </template>
             <b-dropdown-item @click="logout()">Cerrar sesion</b-dropdown-item>
             <!-- temp -->
-            <b-dropdown-item @click="resetUrlApi()">
-              Reset urlApi
-            </b-dropdown-item>
           </b-nav-item-dropdown>
         </b-navbar-nav>
       </b-collapse>
@@ -70,31 +67,25 @@ export default {
     return {
       data: 0,
       display: 0,
-      tabActual: 'Inicio',
-      tabs: [
-        {
-          titulo: 'Inicio',
-          ruta: '/',
-        },
-        {
-          titulo: 'Acerca de',
-          ruta: '/about',
-        },
-        {
-          titulo: 'Ofertas',
-          ruta: '/ofertas',
-        },
-        {
-          titulo: 'Punto de venta',
-          ruta: '/ventav',
-        },
-        {
-          titulo: 'Login',
-          ruta: '/login',
-        },
-      ],
-      userName: 'admin',
+      tabActual: this.$store.state.general.tabActual,
+      tabs: this.$store.state.general.listTabs,
+      userName: this.$store.state.user.name,
     }
+  },
+  computed: {
+    tabsAccess() {
+      const user = this.$store.state.user.user
+      // eslint-disable-next-line no-console
+      console.log('User', user)
+      const tabsPermission = this.tabs.filter((tab) => {
+        const arrayTabs = user.access_to_user.trim().split(',')
+        const findTab = arrayTabs.find(
+          (ftab) => tab.name.trim().toLowerCase() === ftab.trim().toLowerCase()
+        )
+        return !!findTab
+      })
+      return tabsPermission
+    },
   },
   mounted() {
     const btnToggle = document.getElementById('toggle')
@@ -116,19 +107,6 @@ export default {
       this.setUser({})
       this.$router.push({ name: 'Login' })
     },
-    // actived({ name }, access) {
-    //   const finded = access.find((element) => element === name)
-    //   return typeof finded === 'undefined'
-    // },
-    // temp
-    // resetUrlApi() {
-    //   localStorage.removeItem("apiConexiones");
-    //   this.showAlertDialog(["Url eliminada"]);
-    //   this.logout(this.$router);
-    // }
   },
-  // computed: {
-  //   ...mapState(["tabs", "userAccessTo", "userName", "tabActual"])
-  // }
 }
 </script>

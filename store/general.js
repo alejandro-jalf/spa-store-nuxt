@@ -7,6 +7,29 @@ export const state = () => ({
     headerTexColor: 'light',
   },
   loading: false,
+  listTabs: [
+    {
+      path: '/',
+      name: 'index',
+      nickname: 'Inicio',
+    },
+    {
+      path: '/about',
+      name: 'about',
+      nickname: 'Acerca de',
+    },
+    {
+      path: '/ofertas',
+      name: 'ofertas',
+      nickname: 'Ofertas',
+    },
+    {
+      path: '/ventav',
+      name: 'ventav',
+      nickname: 'Ventas',
+    },
+  ],
+  tabActual: 'Inicio',
 })
 
 export const mutations = {
@@ -31,5 +54,8 @@ export const mutations = {
   },
   setLoading(state, value) {
     state.loading = value
+  },
+  setTabActual(state, nameTab) {
+    state.tabActual = nameTab
   },
 }
