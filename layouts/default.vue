@@ -1,10 +1,12 @@
 <template>
   <div id="app">
-    <nav-bar />
-    <div class="container">
-      <Nuxt />
-    </div>
-    <alert></alert>
+    <b-overlay :show="loading" rounded="sm" spinner-variant="primary">
+      <nav-bar v-if="login" />
+      <div class="container">
+        <Nuxt />
+      </div>
+      <alert></alert>
+    </b-overlay>
   </div>
 </template>
 
@@ -16,6 +18,14 @@ export default {
   components: {
     NavBar,
     Alert,
+  },
+  computed: {
+    login() {
+      return this.$store.state.user.login
+    },
+    loading() {
+      return this.$store.state.general.loading
+    },
   },
 }
 </script>

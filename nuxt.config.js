@@ -10,6 +10,8 @@ export default {
     link: [{ rel: 'icon', type: 'image/x-icon', href: '/cesta.png' }],
   },
 
+  ssr: false,
+
   // Global CSS (https://go.nuxtjs.dev/config-css)
   css: [],
 
@@ -43,4 +45,14 @@ export default {
 
   // Build Configuration (https://go.nuxtjs.dev/config-build)
   build: {},
+
+  env: {
+    spastore_token: process.env.SPASTORE_TOKEN || 'token',
+    spastore_url_base: process.env.SPASTORE_URL_BASE || 'empty',
+  },
+
+  privateRuntimeConfig: {
+    spastore_token1: process.env.SPASTORE_TOKEN || 'token',
+    spastore_url_base1: process.env.SPASTORE_URL_BASE || 'empty',
+  },
 }

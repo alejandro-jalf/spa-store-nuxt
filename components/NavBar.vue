@@ -42,9 +42,7 @@
                 {{ userName }}
               </em>
             </template>
-            <b-dropdown-item @click="logout($router)">
-              Cerrar sesion
-            </b-dropdown-item>
+            <b-dropdown-item @click="logout()">Cerrar sesion</b-dropdown-item>
             <!-- temp -->
             <b-dropdown-item @click="resetUrlApi()">
               Reset urlApi
@@ -59,7 +57,7 @@
 </template>
 
 <script>
-// import { mapMutations, mapState } from 'vuex'
+import { mapMutations } from 'vuex'
 import { BIconDoorOpen } from 'bootstrap-vue'
 import NavBarSlider from './NavBarSlider'
 
@@ -90,6 +88,10 @@ export default {
           titulo: 'Punto de venta',
           ruta: '/ventav',
         },
+        {
+          titulo: 'Login',
+          ruta: '/login',
+        },
       ],
       userName: 'admin',
     }
@@ -105,7 +107,15 @@ export default {
     })
   },
   methods: {
-    // ...mapMutations(['logout', 'showAlertDialog']),
+    ...mapMutations({
+      setLogin: 'user/setLogin',
+      setUser: 'user/setUser',
+    }),
+    logout() {
+      this.setLogin(false)
+      this.setUser({})
+      this.$router.push({ name: 'Login' })
+    },
     // actived({ name }, access) {
     //   const finded = access.find((element) => element === name)
     //   return typeof finded === 'undefined'
