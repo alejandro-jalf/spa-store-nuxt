@@ -64,9 +64,7 @@ export default {
     }
   },
   computed: {},
-  mounted() {
-    if (this.login) this.$router.push({ name: 'About' })
-  },
+  mounted() {},
   methods: {
     focusPassword() {
       this.$refs.password.focus()

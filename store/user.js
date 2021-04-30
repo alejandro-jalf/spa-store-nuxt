@@ -1,3 +1,9 @@
+if (!localStorage.getItem('spastore_login'))
+  localStorage.setItem('spastore_login', 'false')
+
+if (!localStorage.getItem('spastore_user'))
+  localStorage.setItem('spastore_user', '{}')
+
 export const state = () => ({
   login: localStorage.getItem('spastore_login') === 'true' || false,
   user: JSON.parse(localStorage.getItem('spastore_user')) || {},

@@ -10,6 +10,10 @@ export default {
     link: [{ rel: 'icon', type: 'image/x-icon', href: '/cesta.png' }],
   },
 
+  router: {
+    middleware: ['verifyRouters'],
+  },
+
   ssr: false,
 
   // Global CSS (https://go.nuxtjs.dev/config-css)
