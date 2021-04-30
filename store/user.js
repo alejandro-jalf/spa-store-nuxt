@@ -16,14 +16,12 @@ export const mutations = {
 
 export const actions = {
   async initSesion({ commit }, [user, password]) {
-    // eslint-disable-next-line no-console
-    console.log('Data en proccess: ', this.$config)
     try {
       const response = await this.$axios({
-        url: `${process.env.spastore_url_base1}api/v1/usuarios/${user}/login`,
+        url: `${process.env.spastore_base_url}api/v1/usuarios/${user}/login`,
         method: 'post',
         headers: {
-          'access-token': process.env.spastore_token1,
+          'access-token': process.env.spastore_token,
         },
         data: {
           password_user: password,

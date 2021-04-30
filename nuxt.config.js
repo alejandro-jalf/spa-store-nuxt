@@ -47,12 +47,7 @@ export default {
   build: {},
 
   env: {
-    spastore_token: process.env.SPASTORE_TOKEN || 'token',
-    spastore_url_base: process.env.SPASTORE_URL_BASE || 'empty',
-  },
-
-  privateRuntimeConfig: {
-    spastore_token1: process.env.SPASTORE_TOKEN || 'token',
-    spastore_url_base1: process.env.SPASTORE_URL_BASE || 'empty',
+    spastore_base_url: process.env.SPASTORE_URL_BASE,
+    spastore_token: process.env.SPASTORE_TOKEN,
   },
 }

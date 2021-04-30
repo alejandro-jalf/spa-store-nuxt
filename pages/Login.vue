@@ -15,16 +15,19 @@
           type="email"
           placeholder="Ingrese su correo electronico"
           required
+          @keyup.enter="focusPassword()"
         ></b-form-input>
       </b-form-group>
 
       <b-form-group id="input-group-2" label="Contraseña:" label-for="input-2">
         <b-form-input
           id="input-2"
+          ref="password"
           v-model="form.password"
           :type="form.typePassword"
           placeholder="Contraseña"
           required
+          @keyup.enter="iniciaSesion()"
         ></b-form-input>
       </b-form-group>
 
@@ -63,22 +66,10 @@ export default {
   computed: {},
   mounted() {
     if (this.login) this.$router.push({ name: 'About' })
-    // eslint-disable-next-line no-console
-    console.log(
-      'Variables de entorno: ',
-      this.$config,
-      this.$config.spastore_token1
-    )
   },
   methods: {
-    onSubmit(event) {
-      event.preventDefault()
-      alert(JSON.stringify(this.form))
-    },
-    onReset(event) {
-      event.preventDefault()
-      this.form.email = ''
-      this.form.password = ''
+    focusPassword() {
+      this.$refs.password.focus()
     },
     ...mapActions({
       initSesion: 'user/initSesion',
@@ -93,8 +84,6 @@ export default {
         this.form.email,
         this.form.password,
       ])
-      // eslint-disable-next-line no-console
-      console.log(response)
       if (response.case)
         this.showAlertDialog([
           'Ha ocurrido en la aplicacion',
