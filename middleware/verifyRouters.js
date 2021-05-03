@@ -1,11 +1,11 @@
 export default function verifyRouters({ store, redirect, route, from }) {
   const login = store.state.user.login
   const user = store.state.user.user
-  const listTabPermission = user.access_to_user.trim().split(',')
 
   if (!login && route.path.toLowerCase() !== '/login') redirect('/login')
 
   if (login) {
+    const listTabPermission = user.access_to_user.trim().split(',')
     if (
       route.path.toLowerCase() === '/login' &&
       from.path.toLowerCase() !== '/login'

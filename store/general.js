@@ -28,6 +28,11 @@ export const state = () => ({
       name: 'ventav',
       nickname: 'Ventas',
     },
+    {
+      path: '/usuarios',
+      name: 'usuarios',
+      nickname: 'Usuarios',
+    },
   ],
   tabActual: 'Inicio',
 })
