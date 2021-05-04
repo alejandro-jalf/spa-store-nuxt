@@ -6,7 +6,7 @@ export const state = () => ({
     headerBackground: 'warning',
     headerTexColor: 'light',
   },
-  loading: false,
+  loading: 0,
   listTabs: [
     {
       path: '/',
@@ -58,7 +58,9 @@ export const mutations = {
     state.alert.show = false
   },
   setLoading(state, value) {
-    state.loading = value
+    if (value) state.loading++
+    else if (state.loading <= 0) state.loading = 0
+    else state.loading--
   },
   setTabActual(state, nameTab) {
     state.tabActual = nameTab

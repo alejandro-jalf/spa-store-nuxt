@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <b-overlay :show="loading" rounded="sm" spinner-variant="primary">
+    <b-overlay :show="loading > 0" rounded="sm" spinner-variant="primary">
       <nav-bar v-if="login" />
       <div class="container">
         <Nuxt />

@@ -2,6 +2,7 @@
   <div>
     <float-button :click="loadUsers"></float-button>
     <b-table
+      v-if="!userViewed"
       hover
       head-variant="dark"
       fixed
@@ -15,17 +16,20 @@
           variant="warning"
           size="sm"
           class="mb-1"
-          @click="console.log(row)"
+          @click="viewUser(row.item)"
         >
           <b-icon-pencil-square></b-icon-pencil-square>
         </b-button>
         <b-button
-          variant="danger"
+          :variant="activo_user(row.item.Status)"
           size="sm"
           class="mb-1"
-          @click="console.log(row.item.articulo)"
+          @click="showAlertDialogOpt(row.item)"
         >
-          <b-icon-trash></b-icon-trash>
+          <b-icon-toggle-on
+            v-if="row.item.Status === 'Activo'"
+          ></b-icon-toggle-on>
+          <b-icon-toggle-off v-else></b-icon-toggle-off>
         </b-button>
       </template>
       <template #cell(Accesos)="row">
@@ -40,19 +44,33 @@
         </b-dropdown>
       </template>
     </b-table>
+    <usuarios-view v-else class="mt-5" :load-users="loadUsers"></usuarios-view>
+
+    <alert-option
+      :alert-title="dataAlertOptions.title"
+      :alert-message="dataAlertOptions.message"
+      :alert-show="dataAlertOptions.show"
+      :click-cancel="hideAlertDialogOpt"
+      :click-acept="aceptOption"
+    ></alert-option>
   </div>
 </template>
 
 <script>
 import { mapMutations } from 'vuex'
-import { BIconTrash, BIconPencilSquare } from 'bootstrap-vue'
+import { BIconToggleOff, BIconToggleOn, BIconPencilSquare } from 'bootstrap-vue'
 import FloatButton from '../components/FloatButton'
+import UsuariosView from '../components/UsuariosView'
+import AlertOption from '../components/AlertOption'
 
 export default {
   components: {
     FloatButton,
     BIconPencilSquare,
-    BIconTrash,
+    BIconToggleOn,
+    BIconToggleOff,
+    UsuariosView,
+    AlertOption,
   },
   data() {
     return {
@@ -65,12 +83,15 @@ export default {
         'Acciones',
       ],
       listUsers: [],
+      dataAlertOptions: {
+        show: false,
+        title: 'Cambiando status del usuario',
+        message: '¿Quiere cambiar el estatus del usuario _ a _',
+      },
     }
   },
   computed: {
     usersList() {
-      // eslint-disable-next-line no-console
-      console.log(this.listUsers)
       if (this.listUsers.length > 0) {
         const users = this.listUsers.reduce((acumUsers, user) => {
           acumUsers.push({
@@ -78,7 +99,7 @@ export default {
             Nombre: `${user.nombre_user} ${user.apellido_p_user} ${user.apellido_m_user}`,
             Accesos: user.access_to_user.split(','),
             Privilegios: user.tipo_user,
-            Status: user.activo_user,
+            Status: user.activo_user ? 'Activo' : 'Inactivo',
           })
 
           return acumUsers
@@ -87,15 +108,13 @@ export default {
       }
       return this.listUsers
     },
+    userViewed() {
+      return this.$store.state.user.userViewed
+    },
   },
   mounted() {
-    // localStorage.removeItem('spastore_users_list')
-    // eslint-disable-next-line no-console
-    console.log(sessionStorage.getItem('spastore_users_list'))
     if (sessionStorage.getItem('spastore_users_list')) {
       const jsonData = JSON.parse(sessionStorage.getItem('spastore_users_list'))
-      // eslint-disable-next-line no-console
-      console.log(jsonData)
       this.listUsers = jsonData.a
     }
   },
@@ -103,7 +122,21 @@ export default {
     ...mapMutations({
       showAlertDialog: 'general/showAlertDialog',
       setLoading: 'general/setLoading',
+      changeUSer: 'user/changeUSer',
+      setUserViewed: 'user/setUserViewed',
     }),
+    activo_user(activo) {
+      if (activo === 'Activo') return 'success'
+      return 'danger'
+    },
+    viewUser(user) {
+      const userFinded = this.listUsers.find(
+        (userSearch) => userSearch.correo_user === user.Correo
+      )
+      const userToSave = userFinded || {}
+      this.changeUSer(userToSave)
+      this.setUserViewed(true)
+    },
     async loadUsers() {
       try {
         this.setLoading(true)
@@ -118,8 +151,6 @@ export default {
         if (response.data.success) {
           this.listUsers = response.data.data
           const arrayTemporal = { a: response.data.data }
-          // eslint-disable-next-line no-console
-          console.log(arrayTemporal)
           sessionStorage.setItem(
             'spastore_users_list',
             JSON.stringify(arrayTemporal)
@@ -136,6 +167,57 @@ export default {
           this.showAlertDialog([error.response.data.error])
         }
       }
+    },
+    async changeActivoUser(user) {
+      try {
+        this.setLoading(true)
+        const response = await this.$axios({
+          url:
+            process.env.spastore_base_url +
+            'api/v1/usuarios/' +
+            user.Correo +
+            '/status',
+          method: 'put',
+          headers: {
+            'access-token': process.env.spastore_token,
+          },
+          data: {
+            activo_user: !(user.Status === 'Activo'),
+          },
+        })
+
+        if (response.data.success) {
+          this.showAlertDialog([
+            response.data.message,
+            'Exito en la actualizacion',
+            'success',
+          ])
+          this.loadUsers()
+        }
+        this.setLoading(false)
+      } catch (error) {
+        this.setLoading(false)
+        // eslint-disable-next-line no-console
+        console.log(error)
+        if (error.response) {
+          // eslint-disable-next-line no-console
+          console.log(error.response)
+          this.showAlertDialog([error.response.data.error])
+        }
+      }
+    },
+    showAlertDialogOpt(user) {
+      this.dataAlertOptions.show = true
+      const newStatus = user.Status === 'Activo' ? 'Inactivo' : 'Activo'
+      this.dataAlertOptions.user = user
+      this.dataAlertOptions.message = `¿Quiere cambiar el estatus del usuario "${user.Correo}" a ${newStatus}`
+    },
+    hideAlertDialogOpt() {
+      this.dataAlertOptions.show = false
+    },
+    aceptOption() {
+      this.changeActivoUser(this.dataAlertOptions.user)
+      this.dataAlertOptions.show = false
     },
   },
 }

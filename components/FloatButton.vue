@@ -72,5 +72,6 @@ export default {
 .Floatbtn {
   position: fixed;
   cursor: pointer;
+  z-index: 15;
 }
 </style>

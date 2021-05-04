@@ -7,10 +7,16 @@ if (!localStorage.getItem('spastore_user'))
 if (!localStorage.getItem('spastore_user_name'))
   localStorage.setItem('spastore_user_name', 'Invited')
 
+if (!localStorage.getItem('spastore_user_actual_view'))
+  localStorage.setItem('spastore_user_actual_view', '{}')
+
 export const state = () => ({
   login: localStorage.getItem('spastore_login') === 'true' || false,
   user: JSON.parse(localStorage.getItem('spastore_user')) || {},
   name: localStorage.getItem('spastore_user_name') || 'Invited',
+  userActualView:
+    JSON.parse(localStorage.getItem('spastore_user_actual_view')) || {},
+  userViewed: false,
 })
 
 export const mutations = {
@@ -25,6 +31,13 @@ export const mutations = {
   setNameUser(state, name) {
     state.name = name
     localStorage.setItem('spastore_user_name', name)
+  },
+  changeUSer(state, user) {
+    state.userActualView = user
+    localStorage.setItem('spastore_user_actual_view', JSON.stringify(user))
+  },
+  setUserViewed(state, view) {
+    state.userViewed = view
   },
 }
 
