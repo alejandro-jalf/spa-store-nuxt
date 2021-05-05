@@ -9,7 +9,7 @@
       <b-navbar-nav v-if="display > 0" class="mr-auto">
         <b-nav-item>
           <b-badge variant="light" class="p-2 text-uppercase mr-2">
-            <b-icon-door-open></b-icon-door-open>
+            <b-icon icon="geo-fill"></b-icon>
             {{ tabActual }}
           </b-badge>
         </b-nav-item>
@@ -43,36 +43,34 @@
               </em>
             </template>
             <b-dropdown-item @click="logout()">Cerrar sesion</b-dropdown-item>
-            <!-- temp -->
           </b-nav-item-dropdown>
         </b-navbar-nav>
       </b-collapse>
     </b-navbar>
-    <!-- <NavBarSlider :router="$router" /> -->
     <NavBarSlider />
   </div>
 </template>
 
 <script>
 import { mapMutations } from 'vuex'
-import { BIconDoorOpen } from 'bootstrap-vue'
 import NavBarSlider from './NavBarSlider'
 
 export default {
   components: {
     NavBarSlider,
-    BIconDoorOpen,
   },
   data() {
     return {
       data: 0,
       display: 0,
-      tabActual: this.$store.state.general.tabActual,
       tabs: this.$store.state.general.listTabs,
       userName: this.$store.state.user.name,
     }
   },
   computed: {
+    tabActual() {
+      return this.$store.state.general.tabActual
+    },
     tabsAccess() {
       const user = this.$store.state.user.user
       // eslint-disable-next-line no-console
