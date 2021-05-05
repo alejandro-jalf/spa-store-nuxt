@@ -73,8 +73,6 @@ export default {
     },
     tabsAccess() {
       const user = this.$store.state.user.user
-      // eslint-disable-next-line no-console
-      console.log('User', user)
       const tabsPermission = this.tabs.filter((tab) => {
         const arrayTabs = user.access_to_user.trim().split(',')
         const findTab = arrayTabs.find(

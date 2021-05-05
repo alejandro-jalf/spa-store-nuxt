@@ -1,8 +1,17 @@
 <template>
   <div>
     <float-button :click="loadUsers"></float-button>
+    <b-button
+      v-if="userViewed === 0"
+      variant="success"
+      class="mt-5"
+      @click="newUser()"
+    >
+      <b-icon icon="person-plus-fill"></b-icon>
+      Agregar usuario
+    </b-button>
     <b-table
-      v-if="!userViewed"
+      v-if="userViewed === 0"
       hover
       head-variant="dark"
       fixed
@@ -135,7 +144,24 @@ export default {
       )
       const userToSave = userFinded || {}
       this.changeUSer(userToSave)
-      this.setUserViewed(true)
+      this.setUserViewed(1)
+    },
+    newUser() {
+      const userNew = {
+        nombre_user: '',
+        apellido_p_user: '',
+        apellido_m_user: '',
+        direccion_user: '',
+        sucursal_user: 'Zaragoza',
+        correo_user: '',
+        tipo_user: 'invited',
+        access_to_user: '',
+        activo_user: true,
+        password_user: '',
+        password_user_repeat: '',
+      }
+      this.changeUSer(userNew)
+      this.setUserViewed(2)
     },
     async loadUsers() {
       try {
@@ -225,6 +251,6 @@ export default {
 
 <style scoped>
 .table-productos {
-  margin-top: 40px;
+  margin-top: 10px;
 }
 </style>

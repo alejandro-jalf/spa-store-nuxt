@@ -16,7 +16,7 @@ export const state = () => ({
   name: localStorage.getItem('spastore_user_name') || 'Invited',
   userActualView:
     JSON.parse(localStorage.getItem('spastore_user_actual_view')) || {},
-  userViewed: false,
+  userViewed: 0, // 0 || 1 || 2
 })
 
 export const mutations = {
