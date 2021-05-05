@@ -5,54 +5,49 @@
     :size="size"
     :button="true"
     :style="style"
+    :icon="icon"
     @click="click"
   >
-    <b-icon-arrow-clockwise :font-scale="scaleIcon"></b-icon-arrow-clockwise>
   </b-avatar>
 </template>
 
 <script>
-import { BIconArrowClockwise } from 'bootstrap-vue'
-
 export default {
   name: 'FloatButton',
-  components: {
-    BIconArrowClockwise,
-  },
   props: {
     icon: {
       type: String,
-      require: false,
-      default: 'iconDefault',
+      required: false,
+      default: 'arrow-clockwise',
     },
     variant: {
       type: String,
-      require: false,
+      required: false,
       default: 'primary',
     },
     size: {
       type: String,
-      require: false,
+      required: false,
       default: '3rem',
     },
     scaleIcon: {
       type: String,
-      require: false,
+      required: false,
       default: '2',
     },
     alignVertical: {
       type: String,
-      require: false,
+      required: false,
       default: 'bottom',
     },
     alignHorizontal: {
       type: String,
-      require: false,
+      required: false,
       default: 'right',
     },
     click: {
       type: Function,
-      require: false,
+      required: false,
       default: () => {},
     },
   },
