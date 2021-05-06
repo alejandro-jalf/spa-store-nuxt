@@ -44,6 +44,12 @@ export const state = () => ({
       nickname: 'Conexiones',
       icon: 'cloud-check-fill',
     },
+    {
+      path: '/existenciasarticulo',
+      name: 'existenciasarticulo',
+      nickname: 'Existencias Articulos',
+      icon: 'collection',
+    },
   ],
   tabActual: 'Inicio',
 })

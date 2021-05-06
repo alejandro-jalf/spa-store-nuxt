@@ -1,5 +1,5 @@
 <template>
-  <b-card v-if="!thereAreConections">
+  <b-card>
     <b-row>
       <b-col cols="2">
         <b-skeleton type="avatar" width="20px" height="20px"></b-skeleton>
@@ -13,15 +13,3 @@
     </b-row>
   </b-card>
 </template>
-
-<script>
-export default {
-  computed: {
-    thereAreConections() {
-      return this.$store.state.conexiones.conexiones.data
-        ? this.$store.state.conexiones.conexiones.data.length
-        : 0
-    },
-  },
-}
-</script>

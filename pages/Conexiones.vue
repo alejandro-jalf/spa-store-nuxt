@@ -2,15 +2,19 @@
   <div>
     <float-button :click="loadConexiones"></float-button>
     <b-list-group class="mt-5">
-      <ConexionesItemSkeleton
-        v-for="skeleto in conexionesSkeleton"
-        :key="skeleto + 'skeleto'"
-      />
-      <ConexionesItem
-        v-for="(item, index) of conexiones"
-        :key="index"
-        :sucursal="item"
-      />
+      <div v-if="!thereAreConections">
+        <conexiones-item-skeleton
+          v-for="skeleto in conexionesSkeleton"
+          :key="skeleto + 'skeleto'"
+        ></conexiones-item-skeleton>
+      </div>
+      <div v-else>
+        <conexiones-item
+          v-for="(item, index) of conexiones"
+          :key="index"
+          :sucursal="item"
+        ></conexiones-item>
+      </div>
     </b-list-group>
   </div>
 </template>
@@ -35,6 +39,11 @@ export default {
   computed: {
     conexiones() {
       return this.$store.state.conexiones.conexiones.data
+    },
+    thereAreConections() {
+      return this.$store.state.conexiones.conexiones.data
+        ? this.$store.state.conexiones.conexiones.data.length
+        : 0
     },
   },
   methods: {
