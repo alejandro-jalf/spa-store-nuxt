@@ -53,5 +53,10 @@ export default {
   env: {
     spastore_base_url: process.env.SPASTORE_URL_BASE,
     spastore_token: process.env.SPASTORE_TOKEN,
+    spastore_url_conexiones: process.env.SPASTORE_URL_CONECTIONS,
+    spastore_url_existencia_articulos:
+      process.env.SPASTORE_URL_EXISTENCIA_ARTICULOS,
+    spastore_url_existencia_detalle:
+      process.env.SPASTORE_URL_EXISTENCIA_DETALLE,
   },
 }

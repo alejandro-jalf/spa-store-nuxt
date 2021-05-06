@@ -38,6 +38,12 @@ export const state = () => ({
       nickname: 'Usuarios',
       icon: 'people-fill',
     },
+    {
+      path: '/conexiones',
+      name: 'conexiones',
+      nickname: 'Conexiones',
+      icon: 'cloud-check-fill',
+    },
   ],
   tabActual: 'Inicio',
 })

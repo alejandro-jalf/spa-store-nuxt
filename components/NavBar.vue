@@ -99,6 +99,8 @@ export default {
       setUser: 'user/setUser',
     }),
     logout() {
+      sessionStorage.removeItem('spastore_users_list')
+      sessionStorage.removeItem('spastore_conexiones')
       this.setLogin(false)
       this.setUser({})
       this.$router.push({ name: 'Login' })
