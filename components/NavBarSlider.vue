@@ -66,6 +66,8 @@ export default {
     logout() {
       sessionStorage.removeItem('spastore_users_list')
       sessionStorage.removeItem('spastore_conexiones')
+      localStorage.setItem('spastore_articulos_existencias', '{data:[]}')
+      localStorage.setItem('spastore_articulos_count', '0')
       this.setLogin(false)
       this.setUser({})
       this.$router.push({ name: 'Login' })

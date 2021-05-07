@@ -18,20 +18,45 @@
     >
       <b-input-group id="inpSearch">
         <template #append>
-          <b-button type="button" variant="primary">Buscar</b-button>
+          <b-button type="button" variant="primary" @click="loadAriculos()">
+            Buscar
+          </b-button>
         </template>
         <b-form-input
           v-model="inputSearch.search"
           name="iS"
           :placeholder="placeholder"
+          @keyup.enter="loadAriculos()"
         ></b-form-input>
       </b-input-group>
     </b-form-group>
+
+    <b-alert show>Articulos encontrados: {{ finded }}</b-alert>
+
+    <existencias-articulo-card
+      v-if="isMovil"
+      :articulos="listArt"
+      :show-details="showDetails"
+    ></existencias-articulo-card>
+
+    <existencias-articulo-table
+      v-else
+      :list-articulos="listArt"
+      :show-details="showDetails"
+    ></existencias-articulo-table>
   </div>
 </template>
 
 <script>
+import { mapMutations, mapActions } from 'vuex'
+import ExistenciasArticuloTable from '../components/ExistenciasArticuloTable'
+import ExistenciasArticuloCard from '../components/ExistenciasArticuloCard'
+
 export default {
+  components: {
+    ExistenciasArticuloTable,
+    ExistenciasArticuloCard,
+  },
   data() {
     return {
       inputSearch: {
@@ -42,6 +67,9 @@ export default {
         { text: 'Nombre', value: 'nombre' },
         { text: 'Codigo', value: 'codigo' },
       ],
+      listArt: this.$store.state.existenciasarticulo.listArticulos.data,
+      finded: this.$store.state.existenciasarticulo.articulosFinded,
+      isMovil: false,
     }
   },
   computed: {
@@ -58,6 +86,33 @@ export default {
     placeholder() {
       return this.inputSearch.selected === 'nombre' ? '*articulo*' : '0000000'
     },
+  },
+  mounted() {
+    this.isMovil = this.isDiplayMovil()
+  },
+  methods: {
+    ...mapActions({
+      getListArticulos: 'existenciasarticulo/getListArticulos',
+    }),
+    ...mapMutations({
+      setLoading: 'general/setLoading',
+      showAlertDialog: 'general/showAlertDialog',
+    }),
+    async loadAriculos() {
+      if (this.inputSearch.search.trim() === '') {
+        this.showAlertDialog(['Nombre o Codigo articulo no puede quedar vacio'])
+        return
+      }
+      this.setLoading(true)
+      const response = await this.getListArticulos(this.inputSearch.search)
+      this.listArt = response.data
+      this.finded = response.count
+      this.setLoading(false)
+    },
+    isDiplayMovil() {
+      return screen.width <= 800
+    },
+    showDetails() {},
   },
 }
 </script>
