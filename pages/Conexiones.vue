@@ -2,12 +2,9 @@
   <div>
     <float-button :click="loadConexiones"></float-button>
     <b-list-group class="mt-5">
-      <div v-if="!thereAreConections">
-        <conexiones-item-skeleton
-          v-for="skeleto in conexionesSkeleton"
-          :key="skeleto + 'skeleto'"
-        ></conexiones-item-skeleton>
-      </div>
+      <conexiones-item-skeleton
+        v-if="!thereAreConections"
+      ></conexiones-item-skeleton>
       <div v-else>
         <conexiones-item
           v-for="(item, index) of conexiones"
@@ -30,11 +27,6 @@ export default {
     ConexionesItem,
     ConexionesItemSkeleton,
     FloatButton,
-  },
-  data() {
-    return {
-      conexionesSkeleton: [0, 1, 2, 3, 4],
-    }
   },
   computed: {
     conexiones() {
