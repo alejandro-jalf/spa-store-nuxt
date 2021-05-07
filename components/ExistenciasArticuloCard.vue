@@ -1,9 +1,9 @@
 <template>
   <div>
-    <b-card
+    <div
       v-for="(articulo, indexArt) in articulos"
       :key="indexArt"
-      class="mb-3 container-gen"
+      class="card mb-3 container-gen"
       @click="showDetails(articulo.Articulo)"
     >
       <div class="row no-gutters rowsCard">
@@ -37,7 +37,7 @@
           </div>
         </div>
       </div>
-    </b-card>
+    </div>
   </div>
 </template>
 
