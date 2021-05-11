@@ -1,14 +1,5 @@
 <template>
   <div>
-    <b-form inline class="mt-4 font-weight-bold">
-      <label class="mr-sm-2" for="checkBy">Buscar por: </label>
-      <b-form-radio-group
-        v-model="inputSearch.selected"
-        :options="options"
-        name="busqueda"
-        class="mr-4"
-      ></b-form-radio-group>
-    </b-form>
     <b-form-group
       id="input-group-1"
       :label="label"
@@ -20,16 +11,18 @@
         <template #append>
           <b-button
             :pressed="!searchByName"
-            variant="outline-success"
+            variant="info"
             @click="setSearchBy('codigo')"
           >
+            <b-icon :icon="iconSelectedCodigo"></b-icon>
             Codigo
           </b-button>
           <b-button
             :pressed="searchByName"
-            variant="outline-success"
+            variant="info"
             @click="setSearchBy('nombre')"
           >
+            <b-icon :icon="iconSelectedName"></b-icon>
             Nombre
           </b-button>
           <b-button type="button" variant="primary" @click="loadAriculos()">
@@ -131,6 +124,14 @@ export default {
     },
     searchByName() {
       return this.inputSearch.selected === 'nombre'
+    },
+    iconSelectedCodigo() {
+      if (this.inputSearch.selected === 'codigo') return 'check-square-fill'
+      return 'check-square'
+    },
+    iconSelectedName() {
+      if (this.inputSearch.selected === 'nombre') return 'check-square-fill'
+      return 'check-square'
     },
   },
   mounted() {
