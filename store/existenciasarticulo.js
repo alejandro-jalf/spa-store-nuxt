@@ -80,7 +80,8 @@ export const actions = {
       if (error.response) {
         // eslint-disable-next-line no-console
         console.log(error.response)
-        return error.response.data
+        commit('setArticuloDetails', {})
+        return {}
       }
       return {}
     }

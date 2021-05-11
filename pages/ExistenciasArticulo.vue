@@ -31,7 +31,7 @@
         </template>
         <b-form-input
           v-model="inputSearch.search"
-          name="iS"
+          :name="nameInputSearch"
           :placeholder="placeholder"
           @keyup.enter="loadAriculos()"
         ></b-form-input>
@@ -96,10 +96,6 @@ export default {
         search: '',
         selected: 'nombre',
       },
-      options: [
-        { text: 'Nombre', value: 'nombre' },
-        { text: 'Codigo', value: 'codigo' },
-      ],
       listArt: this.$store.state.existenciasarticulo.listArticulos.data,
       finded: this.$store.state.existenciasarticulo.articulosFinded,
       isMovil: false,
@@ -127,11 +123,15 @@ export default {
     },
     iconSelectedCodigo() {
       if (this.inputSearch.selected === 'codigo') return 'check-square-fill'
-      return 'check-square'
+      return 'square'
     },
     iconSelectedName() {
       if (this.inputSearch.selected === 'nombre') return 'check-square-fill'
-      return 'check-square'
+      return 'square'
+    },
+    nameInputSearch() {
+      if (this.inputSearch.selected === 'nombre') return 'searchName'
+      return 'searchCode'
     },
   },
   mounted() {
@@ -147,14 +147,28 @@ export default {
       showAlertDialog: 'general/showAlertDialog',
     }),
     async loadAriculos() {
-      if (this.inputSearch.search.trim() === '') {
-        this.showAlertDialog(['Nombre o Codigo articulo no puede quedar vacio'])
+      const search = this.inputSearch.search
+      if (search.trim() === '') {
+        const find =
+          this.inputSearch.selected === 'nombre' ? 'Nombre' : 'Codigo'
+        this.showAlertDialog([`${find} de articulo no puede quedar vacio`])
         return
       }
       this.setLoading(true)
-      const response = await this.getListArticulos(this.inputSearch.search)
-      this.listArt = response.data
-      this.finded = response.count
+      if (this.inputSearch.selected === 'nombre') {
+        const response = await this.getListArticulos(search)
+        this.listArt = response.data
+        this.finded = response.count
+        this.stateBtn('list')
+      } else {
+        const response = await this.getDetailsArticulo(search)
+        if (Object.values(response).length === 0) {
+          this.setLoading(false)
+          this.showAlertDialog([`El codigo de articulo ${search} no existe`])
+          this.detailsArticulo = response
+        } else this.detailsArticulo = response
+        this.stateBtn('details')
+      }
       this.setLoading(false)
     },
     isDiplayMovil() {
@@ -164,6 +178,7 @@ export default {
       this.setLoading(true)
       const response = await this.getDetailsArticulo(articulo)
       this.detailsArticulo = response
+      this.stateBtn('details')
       this.setLoading(false)
     },
     stateBtn(from) {
