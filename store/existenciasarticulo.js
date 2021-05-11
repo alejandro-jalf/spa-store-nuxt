@@ -4,11 +4,15 @@ if (!localStorage.getItem('spastore_articulos_existencias'))
 if (!localStorage.getItem('spastore_articulos_count'))
   localStorage.setItem('spastore_articulos_count', '0')
 
+if (!localStorage.getItem('spastore_articulos_details'))
+  localStorage.setItem('spastore_articulos_details', '{}')
+
 export const state = () => ({
   articulosFinded: localStorage.getItem('spastore_articulos_count') || 0,
   listArticulos: JSON.parse(
     localStorage.getItem('spastore_articulos_existencias')
   ) || { data: [] },
+  details: JSON.parse(localStorage.getItem('spastore_articulos_details')) || {},
 })
 
 export const mutations = {
@@ -19,6 +23,10 @@ export const mutations = {
   setArticulosFinded(state, finded) {
     state.articulosFinded = finded
     localStorage.setItem('spastore_articulos_count', finded)
+  },
+  setArticuloDetails(state, details) {
+    state.details = details
+    localStorage.setItem('spastore_articulos_details', JSON.stringify(details))
   },
 }
 
@@ -31,12 +39,13 @@ export const actions = {
       })
 
       if (response.data.success) {
-        // eslint-disable-next-line no-console
-        console.log(response.data)
         commit('setListArticulos', response.data)
         commit('setArticulosFinded', response.data.count)
         return response.data
       }
+
+      commit('setListArticulos', { data: [], count: 0 })
+      commit('setArticulosFinded', 0)
       return { data: [], count: 0 }
     } catch (error) {
       // eslint-disable-next-line no-console
@@ -47,6 +56,33 @@ export const actions = {
         return error.response.data
       }
       return { data: [], count: 0 }
+    }
+  },
+  async getDetailsArticulo({ commit }, articulo) {
+    try {
+      const response = await this.$axios({
+        url: process.env.spastore_url_existencia_detalle + '=' + articulo,
+        method: 'get',
+      })
+
+      if (response.data.success) {
+        // eslint-disable-next-line no-console
+        console.log(response.data)
+        commit('setArticuloDetails', response.data.data)
+        return response.data.data
+      }
+
+      commit('setArticuloDetails', {})
+      return {}
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.log(error)
+      if (error.response) {
+        // eslint-disable-next-line no-console
+        console.log(error.response)
+        return error.response.data
+      }
+      return {}
     }
   },
 }

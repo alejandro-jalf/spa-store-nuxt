@@ -18,6 +18,20 @@
     >
       <b-input-group id="inpSearch">
         <template #append>
+          <b-button
+            :pressed="!searchByName"
+            variant="outline-success"
+            @click="setSearchBy('codigo')"
+          >
+            Codigo
+          </b-button>
+          <b-button
+            :pressed="searchByName"
+            variant="outline-success"
+            @click="setSearchBy('nombre')"
+          >
+            Nombre
+          </b-button>
           <b-button type="button" variant="primary" @click="loadAriculos()">
             Buscar
           </b-button>
@@ -31,19 +45,43 @@
       </b-input-group>
     </b-form-group>
 
-    <b-alert show>Articulos encontrados: {{ finded }}</b-alert>
+    <b-button-group size="md">
+      <b-button
+        :pressed="stateList"
+        variant="outline-info"
+        @click="stateBtn('list')"
+      >
+        Lista de articulos
+      </b-button>
+      <b-button
+        :pressed="stateDetails"
+        variant="outline-info"
+        @click="stateBtn('details')"
+      >
+        Detalles de articulo
+      </b-button>
+    </b-button-group>
+    <div class="line-buttons bg-info"></div>
 
-    <existencias-articulo-card
-      v-if="isMovil"
-      :articulos="listArt"
-      :show-details="showDetails"
-    ></existencias-articulo-card>
+    <div v-if="stateList">
+      <b-alert show>Articulos encontrados: {{ finded }}</b-alert>
+      <existencias-articulo-card
+        v-if="isMovil"
+        :articulos="listArt"
+        :show-details="showDetails"
+      ></existencias-articulo-card>
 
-    <existencias-articulo-table
+      <existencias-articulo-table
+        v-else
+        :list-articulos="listArt"
+        :show-details="showDetails"
+      ></existencias-articulo-table>
+    </div>
+
+    <existencias-articulo-details
       v-else
-      :list-articulos="listArt"
-      :show-details="showDetails"
-    ></existencias-articulo-table>
+      :details="detailsArticulo"
+    ></existencias-articulo-details>
   </div>
 </template>
 
@@ -51,11 +89,13 @@
 import { mapMutations, mapActions } from 'vuex'
 import ExistenciasArticuloTable from '../components/ExistenciasArticuloTable'
 import ExistenciasArticuloCard from '../components/ExistenciasArticuloCard'
+import ExistenciasArticuloDetails from '../components/ExistenciasArticuloDetails'
 
 export default {
   components: {
     ExistenciasArticuloTable,
     ExistenciasArticuloCard,
+    ExistenciasArticuloDetails,
   },
   data() {
     return {
@@ -70,6 +110,9 @@ export default {
       listArt: this.$store.state.existenciasarticulo.listArticulos.data,
       finded: this.$store.state.existenciasarticulo.articulosFinded,
       isMovil: false,
+      detailsArticulo: this.$store.state.existenciasarticulo.details,
+      stateList: true,
+      stateDetails: false,
     }
   },
   computed: {
@@ -86,6 +129,9 @@ export default {
     placeholder() {
       return this.inputSearch.selected === 'nombre' ? '*articulo*' : '0000000'
     },
+    searchByName() {
+      return this.inputSearch.selected === 'nombre'
+    },
   },
   mounted() {
     this.isMovil = this.isDiplayMovil()
@@ -93,6 +139,7 @@ export default {
   methods: {
     ...mapActions({
       getListArticulos: 'existenciasarticulo/getListArticulos',
+      getDetailsArticulo: 'existenciasarticulo/getDetailsArticulo',
     }),
     ...mapMutations({
       setLoading: 'general/setLoading',
@@ -112,7 +159,34 @@ export default {
     isDiplayMovil() {
       return screen.width <= 800
     },
-    showDetails() {},
+    async showDetails(articulo) {
+      this.setLoading(true)
+      const response = await this.getDetailsArticulo(articulo)
+      this.detailsArticulo = response
+      this.setLoading(false)
+    },
+    stateBtn(from) {
+      if (from === 'list') {
+        this.stateList = true
+        this.stateDetails = false
+      } else {
+        this.stateList = false
+        this.stateDetails = true
+      }
+    },
+    setSearchBy(searchBy) {
+      this.inputSearch.selected = searchBy
+    },
   },
 }
 </script>
+
+<style scoped>
+.line-buttons {
+  margin-bottom: 20px;
+  width: calc(100% - 5px);
+  margin-left: 5px;
+  height: 1px;
+  margin-top: -1px;
+}
+</style>

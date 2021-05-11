@@ -1,0 +1,283 @@
+<template>
+  <div class="pb-5">
+    <div class="form-group m-2">
+      <span class="font-weight-bold">Articulo:</span>{{ details.Articulo }}
+    </div>
+    <div class="form-group m-2">
+      <span class="font-weight-bold">Nombre:</span>{{ details.Nombre }}
+    </div>
+    <div class="form-group m-2">
+      <span class="font-weight-bold">Relacion:</span>{{ details.Relacion }}
+    </div>
+    <div class="form-group m-2">
+      <span class="font-weight-bold">Existencia actual UC:</span>
+      {{ utils.roundTo(details.ExistActualUC) }}
+    </div>
+    <div class="form-group m-2">
+      <span class="font-weight-bold">Stock30 UC:</span>
+      {{ utils.roundTo(details.Stock30UC) }}
+    </div>
+    <div class="form-group m-2">
+      <span class="font-weight-bold">Costo Existencia Actual:</span>
+      {{ utils.aplyFormatNumeric(utils.roundTo(details.CostoExistActual, 3)) }}
+    </div>
+
+    <b-card
+      v-for="(sucursal, indexSuc) in details.existencias"
+      :key="indexSuc"
+      :header-bg-variant="colorHeader(sucursal.status)"
+      header-text-variant="white"
+      header="Sucursal Zaragoza"
+      class="p-0 m-0"
+      no-body
+    >
+      <template #header>
+        <b-button
+          v-b-toggle="'collapse-' + refactorNameSuc(sucursal.sucursal)"
+          variant="link"
+          class="btn-block text-right text-white dropdown-toggle"
+        >
+          {{ refactorNameSuc(sucursal.sucursal) }}
+        </b-button>
+      </template>
+
+      <b-collapse :id="'collapse-' + refactorNameSuc(sucursal.sucursal)">
+        <b-card-body>
+          <div class="row">
+            <div class="col-sm">
+              <div class="form-group mt-1 mb-0">
+                <span class="font-weight-bold">Estado de la conexion:</span>
+                {{ sucursal.status }}
+              </div>
+              <div class="divider-h"></div>
+              <div class="form-group mt-1 mb-0">
+                <span class="font-weight-bold">Almacen:</span>
+                {{ sucursal.Almacen }}
+              </div>
+              <div class="divider-h"></div>
+              <div class="form-group mt-1 mb-0">
+                <span class="font-weight-bold">Tienda:</span>
+                {{ sucursal.Tienda }}
+              </div>
+              <div class="divider-h"></div>
+              <div class="form-group mt-1 mb-0">
+                <span class="font-weight-bold">Articulo:</span>
+                {{ sucursal.Articulo }}
+              </div>
+              <div class="divider-h"></div>
+              <div class="form-group mt-1 mb-0">
+                <span class="font-weight-bold">Codigo de Barras:</span>
+                {{ sucursal.CodigoBarras }}
+              </div>
+              <div class="divider-h"></div>
+              <div class="form-group mt-1 mb-0">
+                <span class="font-weight-bold">Nombre:</span>
+                {{ sucursal.Nombre }}
+              </div>
+              <div class="divider-h"></div>
+              <div class="form-group mt-1 mb-0">
+                <span class="font-weight-bold">Relacion:</span>
+                {{ sucursal.Relacion }}
+              </div>
+              <div class="divider-h"></div>
+              <div class="form-group mt-1 mb-0">
+                <span class="font-weight-bold">Existencia UV:</span>
+                {{ utils.roundTo(sucursal.ExistUV, 2) }}
+              </div>
+              <div class="divider-h"></div>
+              <div class="form-group mt-1 mb-0">
+                <span class="font-weight-bold">Existencia UC:</span>
+                {{ utils.roundTo(sucursal.ExistUC, 2) }}
+              </div>
+              <div class="divider-h"></div>
+              <div class="form-group mt-1 mb-0">
+                <span class="font-weight-bold">Costo Neto:</span>
+                {{ sucursal.CostoNet }}
+              </div>
+              <div class="divider-h"></div>
+              <div class="form-group mt-1 mb-0">
+                <span class="font-weight-bold">Costo Neto UC:</span>
+                {{ sucursal.CostoNetUC }}
+              </div>
+              <div class="divider-h"></div>
+            </div>
+            <div class="col-sm">
+              <div class="form-group mt-1 mb-0">
+                <span class="font-weight-bold">Costo Existencia:</span>
+                {{
+                  utils.aplyFormatNumeric(utils.roundTo(sucursal.CostoExist, 3))
+                }}
+              </div>
+              <div class="divider-h"></div>
+              <div class="form-group mt-1 mb-0">
+                <span class="font-weight-bold">Precio UNO:</span>
+                {{
+                  utils.aplyFormatNumeric(
+                    utils.roundTo(sucursal.PrecioUNO, 2, true)
+                  )
+                }}
+              </div>
+              <div class="divider-h"></div>
+              <div class="form-group mt-1 mb-0">
+                <span class="font-weight-bold">Utilidad UNO:</span>
+                {{ parseToPorcent(utils.roundTo(sucursal.UtilUNO, 2, true)) }}%
+              </div>
+              <div class="divider-h"></div>
+              <div class="form-group mt-1 mb-0">
+                <span class="font-weight-bold">Precio DOS:</span>
+                {{
+                  utils.aplyFormatNumeric(
+                    utils.roundTo(sucursal.PrecioDOS, 2, true)
+                  )
+                }}
+              </div>
+              <div class="divider-h"></div>
+              <div class="form-group mt-1 mb-0">
+                <span class="font-weight-bold">Utilidad DOS:</span>
+                {{ parseToPorcent(utils.roundTo(sucursal.UtilDOS, 2, true)) }}%
+              </div>
+              <div class="divider-h"></div>
+              <div class="form-group mt-1 mb-0">
+                <span class="font-weight-bold">Estatus:</span>
+                {{ sucursal.Estatus }}
+              </div>
+              <div class="divider-h"></div>
+              <div class="form-group mt-1 mb-0">
+                <span class="font-weight-bold">Stock30:</span>
+                {{ sucursal.Stock30 }}
+              </div>
+              <div class="divider-h"></div>
+              <div class="form-group mt-1 mb-0">
+                <span class="font-weight-bold">Stock 30 UC:</span>
+                {{ sucursal.Stock30UC }}
+              </div>
+              <div class="divider-h"></div>
+              <div class="form-group mt-1 mb-0">
+                <span class="font-weight-bold">Subfamilia:</span>
+                {{ sucursal.Subfamilia }}
+              </div>
+              <div class="divider-h"></div>
+              <div class="form-group mt-1 mb-0">
+                <span class="font-weight-bold">Descripcion Sub:</span>
+                {{ sucursal.DescSubfamila }}
+              </div>
+              <div class="divider-h"></div>
+              <div class="form-group mt-1 mb-0">
+                <span class="font-weight-bold">Ultima Actualizacion:</span>
+                {{ utils.parseFecha(sucursal.Updated, true) }}
+              </div>
+              <div class="divider-h"></div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm">
+              <div class="form-group mt-1 mb-0">
+                <b-button
+                  v-b-toggle="
+                    'collapse-compras-' + refactorNameSuc(sucursal.sucursal)
+                  "
+                  class="btn btn-success btn-block dropdown-toggle"
+                >
+                  Compras encontradas: {{ count(sucursal.compras) }}
+                </b-button>
+              </div>
+              <b-collapse
+                :id="'collapse-compras-' + refactorNameSuc(sucursal.sucursal)"
+              >
+                <div
+                  v-for="(value, key) in verifyCompras(sucursal.compras)"
+                  :key="key + 'compra'"
+                >
+                  <div class="alert alert-info" role="alert">
+                    Compra #{{ key * 1 + 1 }}
+                  </div>
+                  <div class="form-group mt-2">
+                    <label for="#">
+                      <span class="font-weight-bold">Fecha:</span>
+                      {{ utils.parseFecha(value.Fecha) }}
+                    </label>
+                    <div class="divider-h"></div>
+                    <label for="#">
+                      <span class="font-weight-bold">NombreTercero:</span>
+                      {{ value.NombreTercero }}
+                    </label>
+                    <div class="divider-h"></div>
+                    <label for="#">
+                      <span class="font-weight-bold">CantidadRegularUC:</span>
+                      {{ value.CantidadRegularUC }}
+                    </label>
+                    <div class="divider-h"></div>
+                    <label for="#">
+                      <span class="font-weight-bold">CostoUnitarioNetoUC:</span>
+                      {{ value.CostoUnitarioNetoUC }}
+                    </label>
+                    <div class="divider-h"></div>
+                    <label for="#">
+                      <span class="font-weight-bold">Updated:</span>
+                      {{ utils.parseFecha(value.Updated, true) }}
+                    </label>
+                    <div class="divider-h"></div>
+                  </div>
+                </div>
+              </b-collapse>
+              <div class="divider-h"></div>
+            </div>
+          </div>
+        </b-card-body>
+      </b-collapse>
+    </b-card>
+  </div>
+</template>
+
+<script>
+import utils from '../modules/utils'
+
+export default {
+  props: {
+    details: {
+      type: Object,
+      required: true,
+    },
+  },
+  data() {
+    return {
+      utils,
+    }
+  },
+  methods: {
+    refactorNameSuc(sucursal) {
+      const arraySucursal = sucursal.split('.')
+      const name = arraySucursal[0].slice(3)
+      if (name === 'SUPERUNO') return 'ZARAGOZA'
+      if (name === 'CENTRO') return 'VICTORIA'
+      return name
+    },
+    parseToPorcent(value) {
+      const stringValue = value.toString()
+      const arrayValue = stringValue.split('.')
+      return parseInt(arrayValue[1])
+    },
+    count(anyObject) {
+      if (anyObject === 'Array vacio') return 0
+      const length = Object.keys(anyObject).length
+      return length
+    },
+    verifyCompras(compras) {
+      if (compras === 'Array vacio') return []
+      return compras
+    },
+    colorHeader(status) {
+      if (status === 'Online') return 'info'
+      return 'danger'
+    },
+  },
+}
+</script>
+
+<style scoped>
+.divider-h {
+  width: 100%;
+  height: 1px;
+  background: #c3c3c3;
+}
+</style>
