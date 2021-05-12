@@ -1,14 +1,9 @@
 <template>
   <div>
-    <b-form-group
-      id="input-group-1"
-      :label="label"
-      label-for="inpSearch"
-      :description="description"
-      class="mt-5"
-    >
-      <b-input-group id="inpSearch">
-        <template #append>
+    <b-form-group id="input-group-1" label-for="inpSearch" class="mt-5">
+      <div class="text-left mb-1">
+        <span class="font-weight-bold">Busqueda por:</span>
+        <b-button-group class="ml-2" size="md">
           <b-button
             :pressed="!searchByName"
             variant="info"
@@ -25,6 +20,10 @@
             <b-icon :icon="iconSelectedName"></b-icon>
             Nombre
           </b-button>
+        </b-button-group>
+      </div>
+      <b-input-group id="inpSearch">
+        <template #append>
           <b-button type="button" variant="primary" @click="loadAriculos()">
             Buscar
           </b-button>
@@ -33,12 +32,17 @@
           v-model="inputSearch.search"
           :name="nameInputSearch"
           :placeholder="placeholder"
+          style="min-width: 150px"
+          aria-describedby="search-help-block"
           @keyup.enter="loadAriculos()"
         ></b-form-input>
       </b-input-group>
+      <b-form-text id="search-help-block">
+        {{ description }}
+      </b-form-text>
     </b-form-group>
 
-    <b-button-group size="md">
+    <b-button-group size="md mt-5">
       <b-button
         :pressed="stateList"
         variant="outline-info"
@@ -116,7 +120,9 @@ export default {
         : 'Solo codigo del articulo'
     },
     placeholder() {
-      return this.inputSearch.selected === 'nombre' ? '*articulo*' : '0000000'
+      return this.inputSearch.selected === 'nombre'
+        ? '*nombre_articulo*'
+        : '0000000'
     },
     searchByName() {
       return this.inputSearch.selected === 'nombre'

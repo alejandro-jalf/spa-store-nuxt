@@ -171,12 +171,12 @@
           </div>
           <div class="row">
             <div class="col-sm">
-              <div class="form-group mt-1 mb-0">
+              <div class="form-group mt-1 mb-1">
                 <b-button
                   v-b-toggle="
                     'collapse-compras-' + refactorNameSuc(sucursal.sucursal)
                   "
-                  class="btn btn-success btn-block dropdown-toggle"
+                  class="btn btn-success btn-block dropdown-toggle text-right"
                 >
                   Compras encontradas: {{ count(sucursal.compras) }}
                 </b-button>
@@ -188,9 +188,9 @@
                   v-for="(value, key) in verifyCompras(sucursal.compras)"
                   :key="key + 'compra'"
                 >
-                  <div class="alert alert-info" role="alert">
+                  <b-alert show variant="info">
                     Compra #{{ key * 1 + 1 }}
-                  </div>
+                  </b-alert>
                   <div class="form-group mt-2">
                     <label for="#">
                       <span class="font-weight-bold">Fecha:</span>
@@ -220,12 +220,75 @@
                   </div>
                 </div>
               </b-collapse>
-              <div class="divider-h"></div>
             </div>
           </div>
         </b-card-body>
       </b-collapse>
     </b-card>
+
+    <div class="form-group mt-3 mb-1">
+      <b-button
+        v-b-toggle.collapse-proveedores
+        class="btn btn-success btn-block dropdown-toggle text-right"
+      >
+        Resumen de compras
+      </b-button>
+    </div>
+    <b-collapse id="collapse-proveedores">
+      <b-alert show variant="success">Mejor Precio</b-alert>
+      <div>
+        <label>
+          <span class="font-weight-bold">Fecha:</span>
+          {{ utils.parseFecha(detailsProveedor.mejorPrecio.Fecha) }}
+        </label>
+        <div class="divider-h"></div>
+        <label>
+          <span class="font-weight-bold">Nombre tercero:</span>
+          {{ detailsProveedor.mejorPrecio.NombreTercero }}
+        </label>
+        <div class="divider-h"></div>
+        <label>
+          <span class="font-weight-bold">Cantidad Regular UC:</span>
+          {{
+            utils.aplyFormatNumeric(
+              detailsProveedor.mejorPrecio.CantidadRegularUC
+            )
+          }}
+        </label>
+        <div class="divider-h"></div>
+        <label>
+          <span class="font-weight-bold">Costo Unitario Neto UC:</span>
+          {{ utils.roundTo(detailsProveedor.mejorPrecio.CostoUnitarioNetoUC) }}
+        </label>
+        <div class="divider-h"></div>
+        <label>
+          <span class="font-weight-bold">Actualizado:</span>
+          {{ utils.parseFecha(detailsProveedor.mejorPrecio.Updated, true) }}
+        </label>
+        <div class="divider-h"></div>
+      </div>
+      <b-alert show variant="success">Compras por proveedor</b-alert>
+      <div
+        v-for="(proveedor, indexPrv) in detailsProveedor.cantidadCompras"
+        :key="indexPrv"
+      >
+        <label>
+          <b-badge variant="primary">
+            {{ proveedor.Cantidad }}
+          </b-badge>
+          {{ proveedor.Proveedor }}
+        </label>
+        <div class="divider-h"></div>
+      </div>
+      <b-alert show variant="success">Precio Promedio</b-alert>
+      <label>
+        <span class="font-weight-bold">Precio promedio:</span>
+        <b-badge variant="primary">
+          {{ utils.roundTo(detailsProveedor.precioPromedio, 3) }}
+        </b-badge>
+      </label>
+      <div class="divider-h"></div>
+    </b-collapse>
   </div>
 </template>
 
@@ -244,6 +307,29 @@ export default {
       utils,
     }
   },
+  computed: {
+    detailsProveedor() {
+      if (
+        this.details.proveedores.mejorPrecio ===
+        'Parametro enviado es no valido'
+      )
+        return {
+          mejorPrecio: {},
+          cantidadCompras: {},
+          precioPromedio: 0,
+        }
+      return this.details.proveedores
+    },
+    validProveedores() {
+      if (
+        this.details.proveedores.mejorPrecio ===
+        'Parametro enviado es no valido'
+      )
+        return false
+      return true
+    },
+  },
+  mounted() {},
   methods: {
     refactorNameSuc(sucursal) {
       const arraySucursal = sucursal.split('.')

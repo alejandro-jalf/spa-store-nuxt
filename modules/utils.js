@@ -30,6 +30,7 @@ const utils = {
     if (numberString === null || typeof numberString === 'undefined') {
       return true
     }
+    numberString = numberString.toString()
     if (numberString.trim().length <= 2) return numberString
     const arrayDivision = numberString.split('.')
     let numberFormated = '00,000.000'
