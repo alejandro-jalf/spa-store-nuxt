@@ -1,5 +1,14 @@
 <template>
   <div>
+    <transition name="fade">
+      <float-button
+        v-if="showFloatButton"
+        icon="arrow-up-circle"
+        :click="upPage"
+        size="50px"
+        variant="info"
+      ></float-button>
+    </transition>
     <b-form-group id="input-group-1" label-for="inpSearch" class="mt-5">
       <div class="text-left mb-1">
         <span class="font-weight-bold">Busqueda por:</span>
@@ -87,12 +96,14 @@ import { mapMutations, mapActions } from 'vuex'
 import ExistenciasArticuloTable from '../components/ExistenciasArticuloTable'
 import ExistenciasArticuloCard from '../components/ExistenciasArticuloCard'
 import ExistenciasArticuloDetails from '../components/ExistenciasArticuloDetails'
+import FloatButton from '../components/FloatButton'
 
 export default {
   components: {
     ExistenciasArticuloTable,
     ExistenciasArticuloCard,
     ExistenciasArticuloDetails,
+    FloatButton,
   },
   data() {
     return {
@@ -106,6 +117,7 @@ export default {
       detailsArticulo: this.$store.state.existenciasarticulo.details,
       stateList: true,
       stateDetails: false,
+      showFloatButton: false,
     }
   },
   computed: {
@@ -141,7 +153,11 @@ export default {
     },
   },
   mounted() {
+    const that = this
     this.isMovil = this.isDiplayMovil()
+    window.addEventListener('scroll', () => {
+      that.showFloatButton = window.scrollY >= 500
+    })
   },
   methods: {
     ...mapActions({
@@ -199,6 +215,15 @@ export default {
     setSearchBy(searchBy) {
       this.inputSearch.selected = searchBy
     },
+    upPage() {
+      // eslint-disable-next-line no-console
+      console.log('Subiendo pagina')
+      window.scroll({
+        top: 0,
+        left: 0,
+        behavior: 'smooth',
+      })
+    },
   },
 }
 </script>
@@ -210,5 +235,13 @@ export default {
   margin-left: 5px;
   height: 1px;
   margin-top: -1px;
+}
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s;
+}
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>
