@@ -1,5 +1,8 @@
 if (!localStorage.getItem('spastore_articulos_existencias'))
-  localStorage.setItem('spastore_articulos_existencias', '{data:[]}')
+  localStorage.setItem(
+    'spastore_articulos_existencias',
+    '{ data: [], count: 0 }'
+  )
 
 if (!localStorage.getItem('spastore_articulos_count'))
   localStorage.setItem('spastore_articulos_count', '0')
@@ -66,8 +69,6 @@ export const actions = {
       })
 
       if (response.data.success) {
-        // eslint-disable-next-line no-console
-        console.log(response.data)
         commit('setArticuloDetails', response.data.data)
         return response.data.data
       }

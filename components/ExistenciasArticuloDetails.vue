@@ -171,7 +171,10 @@
           </div>
           <div class="row">
             <div class="col-sm">
-              <div class="form-group mt-1 mb-1">
+              <div
+                v-if="verifyAccess(sucursal.sucursal)"
+                class="form-group mt-1 mb-1"
+              >
                 <b-button
                   v-b-toggle="
                     'collapse-compras-' + refactorNameSuc(sucursal.sucursal)
@@ -226,7 +229,7 @@
       </b-collapse>
     </b-card>
 
-    <div class="form-group mt-3 mb-1">
+    <div v-if="tipo_user === 'manager'" class="form-group mt-3 mb-1">
       <b-button
         v-b-toggle.collapse-proveedores
         class="btn btn-success btn-block dropdown-toggle text-right"
@@ -328,10 +331,14 @@ export default {
         return false
       return true
     },
+    tipo_user() {
+      return this.$store.state.user.user.tipo_user || 'invited'
+    },
   },
   mounted() {},
   methods: {
     refactorNameSuc(sucursal) {
+      if (!sucursal) return sucursal
       const arraySucursal = sucursal.split('.')
       const name = arraySucursal[0].slice(3)
       if (name === 'SUPERUNO') return 'ZARAGOZA'
@@ -339,6 +346,7 @@ export default {
       return name
     },
     parseToPorcent(value) {
+      if (!value) return value
       const stringValue = value.toString()
       const arrayValue = stringValue.split('.')
       return parseInt(arrayValue[1])
@@ -355,6 +363,10 @@ export default {
     colorHeader(status) {
       if (status === 'Online') return 'info'
       return 'danger'
+    },
+    verifyAccess(sucursal) {
+      if (this.refactorNameSuc(sucursal) !== 'BODEGA') return true
+      return this.tipo_user === 'manager'
     },
   },
 }

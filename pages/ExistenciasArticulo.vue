@@ -85,9 +85,13 @@
     </div>
 
     <existencias-articulo-details
-      v-else
+      v-else-if="!isEmptyDetails"
       :details="detailsArticulo"
     ></existencias-articulo-details>
+
+    <b-alert v-else show variant="warning">
+      No se ha solicitado el detalle de ningun producto
+    </b-alert>
   </div>
 </template>
 
@@ -150,6 +154,9 @@ export default {
     nameInputSearch() {
       if (this.inputSearch.selected === 'nombre') return 'searchName'
       return 'searchCode'
+    },
+    isEmptyDetails() {
+      return Object.values(this.detailsArticulo).length === 0
     },
   },
   mounted() {
@@ -216,8 +223,6 @@ export default {
       this.inputSearch.selected = searchBy
     },
     upPage() {
-      // eslint-disable-next-line no-console
-      console.log('Subiendo pagina')
       window.scroll({
         top: 0,
         left: 0,
