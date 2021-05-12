@@ -47,7 +47,7 @@
         </b-navbar-nav>
       </b-collapse>
     </b-navbar>
-    <NavBarSlider />
+    <NavBarSlider :logout="logout" />
   </div>
 </template>
 
@@ -97,12 +97,17 @@ export default {
     ...mapMutations({
       setLogin: 'user/setLogin',
       setUser: 'user/setUser',
+      setConexiones: 'conexiones/setConexiones',
+      setListArticulos: 'existenciasarticulo/setListArticulos',
+      setArticulosFinded: 'existenciasarticulo/setArticulosFinded',
+      setArticuloDetails: 'existenciasarticulo/setArticuloDetails',
     }),
     logout() {
       sessionStorage.removeItem('spastore_users_list')
-      sessionStorage.removeItem('spastore_conexiones')
-      localStorage.setItem('spastore_articulos_existencias', '{data:[]}')
-      localStorage.setItem('spastore_articulos_count', '0')
+      this.setConexiones({})
+      this.setListArticulos({ data: [] })
+      this.setArticulosFinded(0)
+      this.setArticuloDetails({})
       this.setLogin(false)
       this.setUser({})
       this.$router.push({ name: 'Login' })

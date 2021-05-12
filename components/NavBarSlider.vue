@@ -36,9 +36,13 @@
 </template>
 
 <script>
-import { mapMutations } from 'vuex'
-
 export default {
+  props: {
+    logout: {
+      type: Function,
+      required: true,
+    },
+  },
   data() {
     return {
       tabs: this.$store.state.general.listTabs,
@@ -59,19 +63,6 @@ export default {
     },
   },
   methods: {
-    ...mapMutations({
-      setLogin: 'user/setLogin',
-      setUser: 'user/setUser',
-    }),
-    logout() {
-      sessionStorage.removeItem('spastore_users_list')
-      sessionStorage.removeItem('spastore_conexiones')
-      localStorage.setItem('spastore_articulos_existencias', '{data:[]}')
-      localStorage.setItem('spastore_articulos_count', '0')
-      this.setLogin(false)
-      this.setUser({})
-      this.$router.push({ name: 'Login' })
-    },
     isActive(nickname) {
       return this.$store.state.general.tabActual.trim() === nickname.trim()
     },
