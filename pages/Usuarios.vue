@@ -14,8 +14,8 @@
       v-if="userViewed === 0"
       hover
       head-variant="dark"
-      fixed
       outlined
+      responsive
       :items="usersList"
       :fields="fields"
       class="table-productos"
