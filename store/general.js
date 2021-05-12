@@ -15,12 +15,6 @@ export const state = () => ({
       icon: 'house-door-fill',
     },
     {
-      path: '/about',
-      name: 'about',
-      nickname: 'Acerca de',
-      icon: 'info-square-fill',
-    },
-    {
       path: '/ofertas',
       name: 'ofertas',
       nickname: 'Ofertas',

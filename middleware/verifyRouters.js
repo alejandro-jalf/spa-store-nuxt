@@ -5,6 +5,16 @@ export default function verifyRouters({ store, redirect, route, from }) {
   if (!login && route.path.toLowerCase() !== '/login') redirect('/login')
 
   if (login) {
+    if (route.name === null) {
+      const tabRefactor = route.path.replace('/', '')
+      store.commit('general/showAlertDialog', [
+        `La pestaña "${tabRefactor}" no existe, ha sido redireccionado a la pestaña de inicio`,
+        'Error en la navegacion',
+      ])
+      store.state.general.tabActual = 'Inicio'
+      redirect('/')
+      return
+    }
     const listTabPermission = user.access_to_user.trim().split(',')
     if (
       route.path.toLowerCase() === '/login' &&
