@@ -109,14 +109,12 @@ const utils = {
     // example: 0.45
     const stringValue = value.toString()
     const arrayValue = stringValue.split('.')
-    if (value < 0) {
-      return -parseInt(arrayValue[1])
-    }
+    const signo = value < 0 ? '-' : ''
     if (arrayValue[1].length > 2) {
       arrayValue[1] = `${arrayValue[1].slice(0, 2)}.${arrayValue[1].slice(2)}`
-      return parseFloat(arrayValue[1])
+      return signo + parseFloat(arrayValue[1])
     }
-    return parseInt(arrayValue[1])
+    return signo + parseInt(arrayValue[1])
   },
 
   _arrayMonths,
