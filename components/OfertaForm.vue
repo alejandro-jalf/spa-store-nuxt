@@ -387,7 +387,7 @@ export default {
       dia = dia.length < 2 ? '0' + dia : dia
 
       const newDate =
-        fecha.getFullYear() + '-' + mes + '-' + dia + 'T06:00:00.000Z'
+        fecha.getFullYear() + '-' + mes + '-' + dia + 'T05:00:00.000Z'
       return new Date(newDate)
     },
     setStateDateStart() {
@@ -404,6 +404,8 @@ export default {
         this.state_date_start = true
       }
       if (dateEnd !== 'Invalid Date' && dateEnd < dateStart) {
+        // eslint-disable-next-line no-console
+        console.log('Entra')
         this.state_date_end = false
       } else {
         this.state_date_end = true
