@@ -33,15 +33,21 @@
     >
       <template #header>
         <b-button
-          v-b-toggle="'collapse-' + refactorNameSuc(sucursal.sucursal)"
+          v-b-toggle="
+            'collapse-' + refactorNameSuc(sucursal.sucursal, sucursal.conexion)
+          "
           variant="link"
           class="btn-block text-right text-white dropdown-toggle"
         >
-          {{ refactorNameSuc(sucursal.sucursal) }}
+          {{ refactorNameSuc(sucursal.sucursal, sucursal.conexion) }}
         </b-button>
       </template>
 
-      <b-collapse :id="'collapse-' + refactorNameSuc(sucursal.sucursal)">
+      <b-collapse
+        :id="
+          'collapse-' + refactorNameSuc(sucursal.sucursal, sucursal.conexion)
+        "
+      >
         <b-card-body>
           <div class="row">
             <div class="col-sm">
@@ -172,12 +178,13 @@
           <div class="row">
             <div class="col-sm">
               <div
-                v-if="verifyAccess(sucursal.sucursal)"
+                v-if="verifyAccess(sucursal.sucursal, sucursal.conexion)"
                 class="form-group mt-1 mb-1"
               >
                 <b-button
                   v-b-toggle="
-                    'collapse-compras-' + refactorNameSuc(sucursal.sucursal)
+                    'collapse-compras-' +
+                    refactorNameSuc(sucursal.sucursal, sucursal.conexion)
                   "
                   class="btn btn-success btn-block dropdown-toggle text-right"
                 >
@@ -185,7 +192,10 @@
                 </b-button>
               </div>
               <b-collapse
-                :id="'collapse-compras-' + refactorNameSuc(sucursal.sucursal)"
+                :id="
+                  'collapse-compras-' +
+                  refactorNameSuc(sucursal.sucursal, sucursal.conexion)
+                "
               >
                 <div
                   v-for="(value, key) in verifyCompras(sucursal.compras)"
@@ -337,8 +347,11 @@ export default {
   },
   mounted() {},
   methods: {
-    refactorNameSuc(sucursal) {
-      if (!sucursal) return sucursal
+    refactorNameSuc(sucursal, conexion) {
+      if (!sucursal) {
+        if (!conexion) return sucursal
+        sucursal = conexion
+      }
       const arraySucursal = sucursal.split('.')
       const name = arraySucursal[0].slice(3)
       if (name === 'SUPERUNO') return 'ZARAGOZA'
@@ -352,6 +365,7 @@ export default {
       return parseInt(arrayValue[1])
     },
     count(anyObject) {
+      if (!anyObject) return 0
       if (anyObject === 'Array vacio') return 0
       const length = Object.keys(anyObject).length
       return length
@@ -364,8 +378,8 @@ export default {
       if (status === 'Online') return 'info'
       return 'danger'
     },
-    verifyAccess(sucursal) {
-      if (this.refactorNameSuc(sucursal) !== 'BODEGA') return true
+    verifyAccess(sucursal, conexion) {
+      if (this.refactorNameSuc(sucursal, conexion) !== 'BODEGA') return true
       return this.tipo_user === 'manager'
     },
   },
