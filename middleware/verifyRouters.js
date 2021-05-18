@@ -1,28 +1,59 @@
 export default function verifyRouters({ store, redirect, route, from }) {
   const login = store.state.user.login
   const user = store.state.user.user
+  const sesionInstancia = store.state.user.sesionInstancia
+  const listTabs = store.state.general.listTabs
+
+  // eslint-disable-next-line no-console
+  console.log(sesionInstancia)
 
   if (!login && route.path.toLowerCase() !== '/login') redirect('/login')
 
   if (login) {
+    const tabPrincipal = user.principal
+    const listTabPermission = user.access_to_user
+      ? user.access_to_user.trim().split(',')
+      : []
+
     if (route.name === null) {
       const tabRefactor = route.path.replace('/', '')
       store.commit('general/showAlertDialog', [
         `La pestaña "${tabRefactor}" no existe, ha sido redireccionado a la pestaña de inicio`,
         'Error en la navegacion',
       ])
-      store.state.general.tabActual = 'Inicio'
+
+      if (tabPrincipal) {
+        const tabFinded = listTabs.find((tab) => tab.nickname === tabPrincipal)
+        if (tabFinded) {
+          store.commit('general/setTabActual', tabFinded.nickname)
+          store.commit('user/setSesionInstancia', tabFinded.nickname)
+          redirect(tabFinded.path)
+          return
+        }
+      }
+      store.commit('general/setTabActual', 'Inicio')
+      store.commit('user/setSesionInstancia', 'Inicio')
       redirect('/')
       return
     }
-    const listTabPermission = user.access_to_user.trim().split(',')
+
     if (
       route.path.toLowerCase() === '/login' &&
       from.path.toLowerCase() !== '/login'
     ) {
       redirect(from.path)
     } else if (route.path.toLowerCase() === '/login') {
-      store.state.general.tabActual = 'Inicio'
+      if (tabPrincipal) {
+        const tabFinded = listTabs.find((tab) => tab.nickname === tabPrincipal)
+        if (tabFinded) {
+          store.commit('general/setTabActual', tabFinded.nickname)
+          store.commit('user/setSesionInstancia', tabFinded.nickname)
+          redirect(tabFinded.path)
+          return
+        }
+      }
+      store.commit('general/setTabActual', 'Inicio')
+      store.commit('user/setSesionInstancia', 'Inicio')
       redirect('/')
       return
     }
@@ -32,12 +63,39 @@ export default function verifyRouters({ store, redirect, route, from }) {
     })
 
     if (route.path !== '/' && !findedTab) {
-      store.state.general.tabActual = 'Inicio'
+      if (tabPrincipal) {
+        const tabFinded = listTabs.find((tab) => tab.nickname === tabPrincipal)
+        if (tabFinded) {
+          store.commit('general/setTabActual', tabFinded.nickname)
+          store.commit('user/setSesionInstancia', tabFinded.nickname)
+          redirect(tabFinded.path)
+          return
+        }
+      }
+      store.commit('general/setTabActual', 'Inicio')
+      store.commit('user/setSesionInstancia', 'Inicio')
       redirect('/')
       return
     }
 
-    const findTabOfList = store.state.general.listTabs.find(
+    if (route.path === '/') {
+      if (sesionInstancia === 'null') {
+        if (tabPrincipal) {
+          const tabFinded = listTabs.find(
+            (tab) => tab.nickname === tabPrincipal
+          )
+          if (tabFinded) {
+            store.commit('general/setTabActual', tabFinded.nickname)
+            store.commit('user/setSesionInstancia', tabFinded.nickname)
+            redirect(tabFinded.path)
+            return
+          }
+        }
+        store.commit('user/setSesionInstancia', 'Inicio')
+      }
+    }
+
+    const findTabOfList = listTabs.find(
       (tab) => tab.name.trim().toLowerCase() === route.name.trim().toLowerCase()
     )
 
@@ -46,5 +104,6 @@ export default function verifyRouters({ store, redirect, route, from }) {
       : findTabOfList.nickname
 
     store.commit('general/setTabActual', named)
+    store.commit('user/setSesionInstancia', named)
   }
 }

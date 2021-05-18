@@ -61,6 +61,7 @@ export default {
         typePassword: 'password',
       },
       login: this.$store.state.user.login,
+      listTabs: this.$store.state.general.listTabs,
     }
   },
   computed: {},
@@ -99,7 +100,17 @@ export default {
           'Exito al iniciar sesion',
           'success',
         ])
-        this.$router.push({ name: 'About' })
+        const user = response.data
+        const tabFinded = this.listTabs.find(
+          (tab) => tab.nickname === user.principal
+        )
+        if (tabFinded) this.$router.push({ path: tabFinded.path })
+        else {
+          this.showAlertDialog([
+            'La ruta establecida como principal, ya no esta disponible, esta siendo redireccionado a Inicio',
+          ])
+          this.$router.push({ path: '/' })
+        }
       }
       this.setLoading(false)
     },

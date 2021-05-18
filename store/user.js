@@ -1,3 +1,6 @@
+if (!sessionStorage.getItem('spastore_sesion_instancia'))
+  sessionStorage.setItem('spastore_sesion_instancia', 'null')
+
 if (!localStorage.getItem('spastore_login'))
   localStorage.setItem('spastore_login', 'false')
 
@@ -17,6 +20,8 @@ export const state = () => ({
   userActualView:
     JSON.parse(localStorage.getItem('spastore_user_actual_view')) || {},
   userViewed: 0, // 0 || 1 || 2
+  sesionInstancia:
+    sessionStorage.getItem('spastore_sesion_instancia') || 'null',
 })
 
 export const mutations = {
@@ -38,6 +43,9 @@ export const mutations = {
   },
   setUserViewed(state, view) {
     state.userViewed = view
+  },
+  setSesionInstancia(state, instancia) {
+    state.sesionInstancia = instancia
   },
 }
 
