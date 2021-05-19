@@ -46,6 +46,7 @@ export const mutations = {
   },
   setSesionInstancia(state, instancia) {
     state.sesionInstancia = instancia
+    sessionStorage.setItem('spastore_sesion_instancia', instancia)
   },
 }
 

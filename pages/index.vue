@@ -20,28 +20,91 @@
         <div class="titleConf">
           La opcion seleccionada es la que se abrira al iniciar la aplicación
         </div>
-        <b-button
-          v-for="(tab, indexTab) in listAccess"
-          :key="indexTab"
-          variant="outline-info"
-          class="buttonSelect text-left"
-          :pressed="activo(tab)"
-          :block="blockButton"
-          @click="setActivo(tab)"
-        >
-          <b-icon :icon="iconActivo(tab)" scale="0.7"></b-icon>
-          {{ tab }}
-        </b-button>
+        <div>
+          <b-button
+            v-for="(tab, indexTab) in listAccess"
+            :key="indexTab"
+            variant="outline-info"
+            class="buttonSelect text-left"
+            :pressed="activo(tab)"
+            :block="blockButton"
+            @click="setActivo(tab)"
+          >
+            <b-icon :icon="iconActivo(tab)" scale="0.7"></b-icon>
+            {{ tab }}
+          </b-button>
+        </div>
 
         <b-button
           variant="success"
-          class="float-right mt-5"
+          class="float-right mt-2"
           :block="blockButton"
-          @click="showAlertDialogOpt()"
+          @click="questionSaveMain()"
         >
           <b-icon icon="shield-fill-check"></b-icon>
           Guardar Cambios
         </b-button>
+
+        <div class="DivitionOption">
+          <div class="font-weight-bold">Cambio de contraseña:</div>
+          <hr class="m-0 mb-2" />
+          <div class="titleConf">
+            Puede cambiar su contraseña en el momento que crea conveniente
+          </div>
+          <div>
+            <b-form inline>
+              <b-form-input
+                id="inputName"
+                v-model="password.newPassword"
+                :state="password.statePassword"
+                type="password"
+                placeholder="Nueva contraseña"
+                class="passwordChange"
+                trim
+                @keyup="veryfyPassword()"
+                @keyup.enter="$refs.passwRep.focus()"
+              ></b-form-input>
+              <b-form-input
+                id="inputAp"
+                ref="passwRep"
+                v-model="password.newPasswordRepeat"
+                type="password"
+                :state="password.statePasswordRepeat"
+                placeholder="Repita su contraseña"
+                class="passwordChange"
+                trim
+                @keyup="verifyPasswordRepeat()"
+                @keyup.enter="$refs.passwAct.focus()"
+              ></b-form-input>
+              <b-form-input
+                id="inputAm"
+                ref="passwAct"
+                v-model="password.passwordActual"
+                type="password"
+                placeholder="Contraseña actual"
+                class="passwordChange"
+                trim
+                @keyup.enter="questionChangePassword()"
+              ></b-form-input>
+            </b-form>
+            <div
+              v-if="!password.statePassword || !password.statePasswordRepeat"
+              class="description"
+            >
+              {{ password.textDescription }}
+            </div>
+          </div>
+
+          <b-button
+            variant="success"
+            class="float-right mt-2"
+            :block="blockButton"
+            @click="questionChangePassword()"
+          >
+            <b-icon icon="key-fill"></b-icon>
+            Cambiar contraseña
+          </b-button>
+        </div>
       </b-card>
     </div>
     <alert-option
@@ -49,7 +112,7 @@
       :alert-message="dataAlertOptions.message"
       :alert-show="dataAlertOptions.show"
       :click-cancel="hideAlertDialogOpt"
-      :click-acept="savePrincipal"
+      :click-acept="dataAlertOptions.clickAccept"
     ></alert-option>
   </div>
 </template>
@@ -72,8 +135,17 @@ export default {
         title: 'Modificando la pantalla principal',
         message:
           '¿Quieres establecer a _ como pantalla principal al iniciar la aplicacion web?',
+        clickAccept: () => {},
       },
       listTabs: this.$store.state.general.listTabs,
+      password: {
+        newPassword: '',
+        newPasswordRepeat: '',
+        passwordActual: '',
+        textDescription: '',
+        statePassword: false,
+        statePasswordRepeat: false,
+      },
     }
   },
   computed: {
@@ -104,9 +176,11 @@ export default {
     })
   },
   methods: {
-    showAlertDialogOpt() {
+    showAlertDialogOpt(message = '', title = '', clickAccept = () => {}) {
       this.dataAlertOptions.show = true
-      this.dataAlertOptions.message = `¿Quieres establecer a "${this.principal}" como pantalla principal al iniciar la aplicacion web?`
+      this.dataAlertOptions.message = message
+      this.dataAlertOptions.title = title
+      this.dataAlertOptions.clickAccept = clickAccept
     },
     hideAlertDialogOpt() {
       this.dataAlertOptions.show = false
@@ -115,6 +189,11 @@ export default {
       setLoading: 'general/setLoading',
       showAlertDialog: 'general/showAlertDialog',
       setUser: 'user/setUser',
+      setLogin: 'user/setLogin',
+      setConexiones: 'conexiones/setConexiones',
+      setListArticulos: 'existenciasarticulo/setListArticulos',
+      setArticulosFinded: 'existenciasarticulo/setArticulosFinded',
+      setArticuloDetails: 'existenciasarticulo/setArticuloDetails',
     }),
     activo(tab) {
       return tab === this.principal
@@ -124,6 +203,13 @@ export default {
     },
     setActivo(tab) {
       this.principal = tab
+    },
+    questionSaveMain() {
+      this.showAlertDialogOpt(
+        `¿Quieres establecer a "${this.principal}" como pantalla principal al iniciar la aplicacion web?`,
+        'Cambiando la pantalla principal',
+        this.savePrincipal
+      )
     },
     async savePrincipal() {
       try {
@@ -197,6 +283,134 @@ export default {
         else this.showAlertDialog(['Error inesperado con la api', 'danger'])
       }
     },
+    veryfyPassword() {
+      const password = this.password.newPassword
+
+      if (password.length < 7) {
+        this.password.statePassword = false
+        this.password.textDescription =
+          'La contraseña debe de ser mayor de 6 caracteres'
+        return
+      }
+
+      const expresionLetters = new RegExp('[a-z]|[A-Z]')
+      const expresionNumbers = new RegExp('\\d+')
+
+      this.password.statePassword =
+        expresionLetters.test(this.password.newPassword) &&
+        expresionNumbers.test(this.password.newPassword)
+
+      if (!this.password.statePassword) {
+        this.password.textDescription =
+          'La contraseña debe contener al menos una letra un numero'
+        return
+      }
+
+      if (this.password.newPassword !== this.password.newPasswordRepeat) {
+        this.password.statePasswordRepeat = false
+        this.password.textDescription = 'Las contraseñas no coinciden'
+      } else {
+        this.password.statePasswordRepeat = true
+        this.password.textDescription = ''
+      }
+    },
+    verifyPasswordRepeat() {
+      if (this.password.statePassword) {
+        if (this.password.newPasswordRepeat !== this.password.newPassword) {
+          this.password.statePasswordRepeat = false
+          this.password.textDescription = 'Las contraseñas no coinciden'
+        } else {
+          this.password.statePasswordRepeat = true
+          this.password.textDescription = ''
+        }
+      }
+    },
+    questionChangePassword() {
+      if (!this.password.statePassword || !this.password.statePasswordRepeat) {
+        this.showAlertDialog([
+          'Verifique los requerimientos para su nueva contraseña',
+          'Errores en su nueva contraseña',
+          'warning',
+          'dark',
+        ])
+        return
+      }
+
+      if (this.password.passwordActual === '') {
+        this.showAlertDialog([
+          'Campo contraseña actual no puede quedar vacio',
+          'Error en contraseña actual',
+          'warning',
+          'dark',
+        ])
+        return
+      }
+
+      if (this.password.passwordActual === this.password.newPassword) {
+        this.showAlertDialog([
+          'Los datos de contraseña actual y nueva contraseña son iguales',
+          'Error en el cambio de contraseña',
+          'warning',
+          'dark',
+        ])
+        return
+      }
+
+      this.showAlertDialogOpt(
+        '¿Quiere cambiar su contraseña?',
+        'Cambiando su contraseña',
+        this.changePassword
+      )
+    },
+    async changePassword() {
+      try {
+        this.hideAlertDialogOpt()
+        this.setLoading(true)
+        const response = await this.$axios({
+          url:
+            process.env.spastore_base_url +
+            'api/v1/usuarios/' +
+            this.user +
+            '/password',
+          method: 'put',
+          headers: {
+            'access-token': process.env.spastore_token,
+          },
+          data: {
+            password_user: this.password.passwordActual.trim(),
+            new_password_user: this.password.newPassword.trim(),
+          },
+        })
+
+        if (response.data.success) {
+          this.showAlertDialog([
+            response.data.message,
+            'Exito en la actualizacion',
+            'success',
+          ])
+          sessionStorage.removeItem('spastore_users_list')
+          this.setConexiones({})
+          this.setListArticulos({ data: [] })
+          this.setArticulosFinded(0)
+          this.setArticuloDetails({})
+          this.setLogin(false)
+          this.setUser({})
+          this.$router.push({ name: 'Login' })
+        } else {
+          this.showAlertDialog([
+            response.data.message,
+            'Error en la actualizacion',
+            'warning',
+          ])
+        }
+        this.setLoading(false)
+      } catch (error) {
+        this.setLoading(false)
+        if (error.response)
+          this.showAlertDialog([error.response.data.error, 'danger'])
+        else this.showAlertDialog(['Error inesperado con la api', 'danger'])
+      }
+    },
   },
 }
 </script>
@@ -214,10 +428,33 @@ export default {
   margin-bottom: 10px;
 }
 
+.DivitionOption {
+  margin-top: 70px;
+}
+
+.passwordChange {
+  width: 32%;
+  margin-left: 1%;
+}
+
+.description {
+  color: red;
+  font-size: 14px;
+  margin-left: 2px;
+}
+
 @media screen and (max-width: 768px) {
   .title {
     font-size: 30px;
     font-weight: bold;
+  }
+  .DivitionOption {
+    margin-top: 110px;
+  }
+  .passwordChange {
+    width: 100%;
+    margin-left: 0px;
+    margin-bottom: 5px;
   }
 }
 </style>

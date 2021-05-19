@@ -4,9 +4,6 @@ export default function verifyRouters({ store, redirect, route, from }) {
   const sesionInstancia = store.state.user.sesionInstancia
   const listTabs = store.state.general.listTabs
 
-  // eslint-disable-next-line no-console
-  console.log(sesionInstancia)
-
   if (!login && route.path.toLowerCase() !== '/login') redirect('/login')
 
   if (login) {
