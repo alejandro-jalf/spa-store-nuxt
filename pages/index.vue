@@ -45,7 +45,7 @@
           Guardar Cambios
         </b-button>
 
-        <div class="DivitionOption">
+        <div v-if="typeUSer === 'manager'" class="DivitionOption">
           <div class="font-weight-bold">Cambio de contraseña:</div>
           <hr class="m-0 mb-2" />
           <div class="titleConf">
@@ -118,7 +118,7 @@
 </template>
 
 <script>
-import { mapMutations } from 'vuex'
+import { mapMutations, mapActions } from 'vuex'
 import AlertOption from '../components/AlertOption'
 
 export default {
@@ -163,6 +163,9 @@ export default {
     blockButton() {
       return this.width <= 500
     },
+    typeUSer() {
+      return this.$store.state.user.user.tipo_user
+    },
   },
   mounted() {
     this.width = window.innerWidth
@@ -170,6 +173,9 @@ export default {
 
     const user = { ...that.$store.state.user.user }
     this.principal = user.principal
+
+    // eslint-disable-next-line no-console
+    console.log(user)
 
     window.addEventListener('resize', () => {
       that.width = window.innerWidth
@@ -185,15 +191,13 @@ export default {
     hideAlertDialogOpt() {
       this.dataAlertOptions.show = false
     },
+    ...mapActions({
+      logout: 'user/logout',
+    }),
     ...mapMutations({
       setLoading: 'general/setLoading',
       showAlertDialog: 'general/showAlertDialog',
       setUser: 'user/setUser',
-      setLogin: 'user/setLogin',
-      setConexiones: 'conexiones/setConexiones',
-      setListArticulos: 'existenciasarticulo/setListArticulos',
-      setArticulosFinded: 'existenciasarticulo/setArticulosFinded',
-      setArticuloDetails: 'existenciasarticulo/setArticuloDetails',
     }),
     activo(tab) {
       return tab === this.principal
@@ -388,14 +392,8 @@ export default {
             'Exito en la actualizacion',
             'success',
           ])
-          sessionStorage.removeItem('spastore_users_list')
-          this.setConexiones({})
-          this.setListArticulos({ data: [] })
-          this.setArticulosFinded(0)
-          this.setArticuloDetails({})
-          this.setLogin(false)
-          this.setUser({})
-          this.$router.push({ name: 'Login' })
+          const that = this
+          this.logout([that.$store, that.$router])
         } else {
           this.showAlertDialog([
             response.data.message,
@@ -406,9 +404,23 @@ export default {
         this.setLoading(false)
       } catch (error) {
         this.setLoading(false)
-        if (error.response)
-          this.showAlertDialog([error.response.data.error, 'danger'])
-        else this.showAlertDialog(['Error inesperado con la api', 'danger'])
+        if (error.response) {
+          // eslint-disable-next-line no-console
+          console.log(error.response)
+          this.showAlertDialog([
+            error.response.data.error,
+            'Error al intentar cambiar la contraseña',
+            'danger',
+          ])
+        } else {
+          // eslint-disable-next-line no-console
+          console.log(error)
+          this.showAlertDialog([
+            'Error inesperado con la api',
+            'Error al intentar cambiar la contraseña',
+            'danger',
+          ])
+        }
       }
     },
   },

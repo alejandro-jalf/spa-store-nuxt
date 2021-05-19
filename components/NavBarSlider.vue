@@ -27,7 +27,7 @@
             </div>
           </b-list-group-item>
         </b-list-group>
-        <b-button block variant="info" @click="logout()">
+        <b-button block variant="info" @click="logout([$store, $router])">
           Cerrar sesion
         </b-button>
       </div>

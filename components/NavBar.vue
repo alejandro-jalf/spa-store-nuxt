@@ -42,7 +42,9 @@
                 {{ userName }}
               </em>
             </template>
-            <b-dropdown-item @click="logout()">Cerrar sesion</b-dropdown-item>
+            <b-dropdown-item @click="logout([$store, $router])">
+              Cerrar sesion
+            </b-dropdown-item>
           </b-nav-item-dropdown>
         </b-navbar-nav>
       </b-collapse>
@@ -52,7 +54,7 @@
 </template>
 
 <script>
-import { mapMutations } from 'vuex'
+import { mapActions } from 'vuex'
 import NavBarSlider from './NavBarSlider'
 
 export default {
@@ -94,24 +96,9 @@ export default {
     })
   },
   methods: {
-    ...mapMutations({
-      setLogin: 'user/setLogin',
-      setUser: 'user/setUser',
-      setConexiones: 'conexiones/setConexiones',
-      setListArticulos: 'existenciasarticulo/setListArticulos',
-      setArticulosFinded: 'existenciasarticulo/setArticulosFinded',
-      setArticuloDetails: 'existenciasarticulo/setArticuloDetails',
+    ...mapActions({
+      logout: 'user/logout',
     }),
-    logout() {
-      sessionStorage.removeItem('spastore_users_list')
-      this.setConexiones({})
-      this.setListArticulos({ data: [] })
-      this.setArticulosFinded(0)
-      this.setArticuloDetails({})
-      this.setLogin(false)
-      this.setUser({})
-      this.$router.push({ name: 'Login' })
-    },
   },
 }
 </script>

@@ -89,4 +89,14 @@ export const actions = {
       }
     }
   },
+  logout({ commit }, [store, route]) {
+    sessionStorage.removeItem('spastore_users_list')
+    commit('setLogin', false)
+    commit('setUser', {})
+    store.commit('conexiones/setConexiones', {})
+    store.commit('existenciasarticulo/setListArticulos', { data: [] })
+    store.commit('existenciasarticulo/setArticulosFinded', 0)
+    store.commit('existenciasarticulo/setArticuloDetails', {})
+    route.push({ name: 'Login' })
+  },
 }
