@@ -174,9 +174,6 @@ export default {
     const user = { ...that.$store.state.user.user }
     this.principal = user.principal
 
-    // eslint-disable-next-line no-console
-    console.log(user)
-
     window.addEventListener('resize', () => {
       that.width = window.innerWidth
     })
