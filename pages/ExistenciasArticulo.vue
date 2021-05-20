@@ -3,10 +3,10 @@
     <transition name="fade">
       <float-button
         v-if="showFloatButton"
-        icon="arrow-up-circle"
-        :click="upPage"
-        size="50px"
-        variant="info"
+        icon-float="arrow-up-circle"
+        :click-float="upPage"
+        size-float="50px"
+        variant-float="info"
       ></float-button>
     </transition>
     <b-form-group id="input-group-1" label-for="inpSearch" class="mt-5">

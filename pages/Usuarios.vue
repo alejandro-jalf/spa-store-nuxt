@@ -1,6 +1,6 @@
 <template>
   <div>
-    <float-button :click="loadUsers"></float-button>
+    <float-button :click-float="loadUsers"></float-button>
     <b-button
       v-if="userViewed === 0"
       variant="success"

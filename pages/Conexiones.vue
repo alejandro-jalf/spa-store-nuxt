@@ -1,14 +1,14 @@
 <template>
   <div>
-    <float-button :click="loadConexiones"></float-button>
+    <float-button :click-float="loadConexiones"></float-button>
     <b-list-group class="mt-5">
       <conexiones-item-skeleton
         v-if="!thereAreConections"
       ></conexiones-item-skeleton>
       <div v-else>
         <conexiones-item
-          v-for="(item, index) of conexiones"
-          :key="index"
+          v-for="(item, indexCon) of conexiones"
+          :key="indexCon"
           :sucursal="item"
         ></conexiones-item>
       </div>
@@ -19,8 +19,8 @@
 <script>
 import { mapActions, mapMutations } from 'vuex'
 import ConexionesItem from '../components/ConexionesItem'
-import ConexionesItemSkeleton from '../Components/ConexionesItemSkeleton'
-import FloatButton from '../Components/FloatButton'
+import ConexionesItemSkeleton from '../components/ConexionesItemSkeleton'
+import FloatButton from '../components/FloatButton'
 
 export default {
   components: {
@@ -33,9 +33,7 @@ export default {
       return this.$store.state.conexiones.conexiones.data
     },
     thereAreConections() {
-      return this.$store.state.conexiones.conexiones.data
-        ? this.$store.state.conexiones.conexiones.data.length
-        : 0
+      return !!this.$store.state.conexiones.conexiones.data
     },
   },
   methods: {

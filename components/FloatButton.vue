@@ -1,36 +1,35 @@
 <template>
   <b-avatar
     class="Floatbtn"
-    :variant="variant"
-    :size="size"
+    :variant="variantFloat"
+    :size="sizeFloat"
     :button="true"
-    :style="style"
-    :icon="icon"
-    @click="click"
+    :style="styleFloat"
+    :icon="iconFloat"
+    @click="clickFloat"
   >
   </b-avatar>
 </template>
 
 <script>
 export default {
-  name: 'FloatButton',
   props: {
-    icon: {
+    iconFloat: {
       type: String,
       required: false,
       default: 'arrow-clockwise',
     },
-    variant: {
+    variantFloat: {
       type: String,
       required: false,
       default: 'primary',
     },
-    size: {
+    sizeFloat: {
       type: String,
       required: false,
       default: '3rem',
     },
-    scaleIcon: {
+    scaleIconFloat: {
       type: String,
       required: false,
       default: '2',
@@ -45,14 +44,14 @@ export default {
       required: false,
       default: 'right',
     },
-    click: {
+    clickFloat: {
       type: Function,
       required: false,
       default: () => {},
     },
   },
   computed: {
-    style() {
+    styleFloat() {
       const vertical =
         this.alignVertical === 'bottom' ? 'bottom: 15px;' : 'top: 15px;'
       const horizontal =
