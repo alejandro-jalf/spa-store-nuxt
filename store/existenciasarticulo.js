@@ -1,10 +1,3 @@
-localStorage.removeItem('spastore_articulos_existencias')
-// if (!localStorage.getItem('spastore_articulos_existencias'))
-//   localStorage.setItem(
-//     'spastore_articulos_existencias',
-//     '{ "data": [], "count": 0 }'
-//   )
-
 if (!localStorage.getItem('spastore_articulos_count'))
   localStorage.setItem('spastore_articulos_count', '0')
 
