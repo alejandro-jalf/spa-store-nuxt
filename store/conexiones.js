@@ -2,7 +2,7 @@ if (!sessionStorage.getItem('spastore_conexiones'))
   sessionStorage.setItem('spastore_conexiones', '{}')
 
 export const state = () => ({
-  conexiones: JSON.parse(sessionStorage.getItem('spastore_conexiones')) || {},
+  conexiones: JSON.parse(sessionStorage.getItem('spastore_conexiones')),
 })
 
 export const mutations = {

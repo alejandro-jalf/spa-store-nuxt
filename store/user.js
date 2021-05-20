@@ -14,14 +14,12 @@ if (!localStorage.getItem('spastore_user_actual_view'))
   localStorage.setItem('spastore_user_actual_view', '{}')
 
 export const state = () => ({
-  login: localStorage.getItem('spastore_login') === 'true' || false,
-  user: JSON.parse(localStorage.getItem('spastore_user')) || {},
-  name: localStorage.getItem('spastore_user_name') || 'Invited',
-  userActualView:
-    JSON.parse(localStorage.getItem('spastore_user_actual_view')) || {},
+  login: localStorage.getItem('spastore_login') === 'true',
+  user: JSON.parse(localStorage.getItem('spastore_user')),
+  name: localStorage.getItem('spastore_user_name'),
+  userActualView: JSON.parse(localStorage.getItem('spastore_user_actual_view')),
   userViewed: 0, // 0 || 1 || 2
-  sesionInstancia:
-    sessionStorage.getItem('spastore_sesion_instancia') || 'null',
+  sesionInstancia: sessionStorage.getItem('spastore_sesion_instancia'),
 })
 
 export const mutations = {

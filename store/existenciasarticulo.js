@@ -11,11 +11,11 @@ if (!localStorage.getItem('spastore_articulos_details'))
   localStorage.setItem('spastore_articulos_details', '{}')
 
 export const state = () => ({
-  articulosFinded: localStorage.getItem('spastore_articulos_count') || 0,
+  articulosFinded: localStorage.getItem('spastore_articulos_count'),
   listArticulos: JSON.parse(
     localStorage.getItem('spastore_articulos_existencias')
-  ) || { data: [] },
-  details: JSON.parse(localStorage.getItem('spastore_articulos_details')) || {},
+  ),
+  details: JSON.parse(localStorage.getItem('spastore_articulos_details')),
 })
 
 export const mutations = {
