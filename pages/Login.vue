@@ -1,7 +1,13 @@
 <template>
   <div class="text-center">
     <h1 class="text-center mt-2 mb-5 title">{{ textTitle }}</h1>
-    <b-avatar class="avatar-login" :icon="iconUser"></b-avatar>
+    <b-avatar class="avatar-login">
+      <b-icon-person-badge-fill
+        v-if="recoveryPassword"
+        font-scale="7.5"
+      ></b-icon-person-badge-fill>
+      <b-icon-person-fill v-else font-scale="7.5"></b-icon-person-fill>
+    </b-avatar>
 
     <b-form class="text-left">
       <div v-if="!recoveryPassword">
@@ -98,9 +104,14 @@
 </template>
 
 <script>
+import { BIconPersonBadgeFill, BIconPersonFill } from 'bootstrap-vue'
 import { mapActions, mapMutations } from 'vuex'
 
 export default {
+  components: {
+    BIconPersonBadgeFill,
+    BIconPersonFill,
+  },
   data() {
     return {
       form: {
@@ -118,9 +129,6 @@ export default {
   computed: {
     blockButton() {
       return this.width <= 500
-    },
-    iconUser() {
-      return this.recoveryPassword ? 'person-badge-fill' : 'person-fill'
     },
     textTitle() {
       return this.recoveryPassword

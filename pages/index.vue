@@ -12,7 +12,7 @@
         class="mb-5"
       >
         <template #header>
-          <b-icon icon="gear-fill"></b-icon>
+          <b-icon-gear-fill></b-icon-gear-fill>
           Configuraciones
         </template>
         <div class="font-weight-bold">Pagina inicial:</div>
@@ -30,7 +30,11 @@
             :block="blockButton"
             @click="setActivo(tab)"
           >
-            <b-icon :icon="iconActivo(tab)" scale="0.7"></b-icon>
+            <b-icon-square v-if="iconActivo(tab)" scale="0.7"></b-icon-square>
+            <b-icon-check-square-fill
+              v-else
+              scale="0.7"
+            ></b-icon-check-square-fill>
             {{ tab }}
           </b-button>
         </div>
@@ -41,7 +45,7 @@
           :block="blockButton"
           @click="questionSaveMain()"
         >
-          <b-icon icon="shield-fill-check"></b-icon>
+          <b-icon-shield-fill-check></b-icon-shield-fill-check>
           Guardar Cambios
         </b-button>
 
@@ -101,7 +105,7 @@
             :block="blockButton"
             @click="questionChangePassword()"
           >
-            <b-icon icon="key-fill"></b-icon>
+            <b-icon-key-fill></b-icon-key-fill>
             Cambiar contraseña
           </b-button>
         </div>
@@ -118,12 +122,24 @@
 </template>
 
 <script>
+import {
+  BIconGearFill,
+  BIconSquare,
+  BIconCheckSquareFill,
+  BIconShieldFillCheck,
+  BIconKeyFill,
+} from 'bootstrap-vue'
 import { mapMutations, mapActions } from 'vuex'
 import AlertOption from '../components/AlertOption'
 
 export default {
   components: {
     AlertOption,
+    BIconGearFill,
+    BIconSquare,
+    BIconCheckSquareFill,
+    BIconShieldFillCheck,
+    BIconKeyFill,
   },
   data() {
     return {
@@ -200,7 +216,7 @@ export default {
       return tab === this.principal
     },
     iconActivo(tab) {
-      return tab !== this.principal ? 'square' : 'check-square-fill'
+      return tab !== this.principal
     },
     setActivo(tab) {
       this.principal = tab

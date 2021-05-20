@@ -7,7 +7,7 @@
       class="mt-5"
       @click="newUser()"
     >
-      <b-icon icon="person-plus-fill"></b-icon>
+      <b-icon-person-plus-fill></b-icon-person-plus-fill>
       Agregar usuario
     </b-button>
     <b-table
@@ -67,7 +67,12 @@
 
 <script>
 import { mapMutations } from 'vuex'
-import { BIconToggleOff, BIconToggleOn, BIconPencilSquare } from 'bootstrap-vue'
+import {
+  BIconToggleOff,
+  BIconToggleOn,
+  BIconPencilSquare,
+  BIconPersonPlusFill,
+} from 'bootstrap-vue'
 import FloatButton from '../components/FloatButton'
 import UsuariosView from '../components/UsuariosView'
 import AlertOption from '../components/AlertOption'
@@ -80,6 +85,7 @@ export default {
     BIconToggleOff,
     UsuariosView,
     AlertOption,
+    BIconPersonPlusFill,
   },
   data() {
     return {

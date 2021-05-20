@@ -9,7 +9,7 @@
       <b-navbar-nav v-if="display > 0" class="mr-auto">
         <b-nav-item>
           <b-badge variant="light" class="p-2 text-uppercase mr-2">
-            <b-icon icon="geo-fill"></b-icon>
+            <b-icon-geo-fill></b-icon-geo-fill>
             {{ tabActual }}
           </b-badge>
         </b-nav-item>
@@ -54,12 +54,14 @@
 </template>
 
 <script>
+import { BIconGeoFill } from 'bootstrap-vue'
 import { mapActions } from 'vuex'
 import NavBarSlider from './NavBarSlider'
 
 export default {
   components: {
     NavBarSlider,
+    BIconGeoFill,
   },
   data() {
     return {

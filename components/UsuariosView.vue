@@ -96,7 +96,10 @@
     </div>
 
     <div v-b-toggle.dataExtra class="extras">
-      <b-icon :icon="iconCollapse" variant="success"></b-icon>
+      <b-icon-arrow-down-circle-fill
+        v-if="iconCollapse"
+      ></b-icon-arrow-down-circle-fill>
+      <b-icon-arrow-up-circle-fill v-else></b-icon-arrow-up-circle-fill>
       Datos extras
     </div>
 
@@ -156,9 +159,14 @@
 </template>
 
 <script>
+import { BIconArrowDownCircleFill, BIconArrowUpCircleFill } from 'bootstrap-vue'
 import { mapMutations } from 'vuex'
 
 export default {
+  components: {
+    BIconArrowDownCircleFill,
+    BIconArrowUpCircleFill,
+  },
   props: {
     loadUsers: {
       type: Function,
@@ -199,7 +207,7 @@ export default {
         'usuarios',
         'existenciasArticulos',
       ],
-      iconCollapse: 'arrow-down-circle-fill',
+      iconCollapse: true,
     }
   },
   computed: {
@@ -248,8 +256,8 @@ export default {
 
     this.$root.$on('bv::collapse::state', (collapseId, isJustShown) => {
       if (collapseId === 'dataExtra') {
-        if (!isJustShown) this.iconCollapse = 'arrow-down-circle-fill'
-        else this.iconCollapse = 'arrow-up-circle-fill'
+        if (!isJustShown) this.iconCollapse = true
+        else this.iconCollapse = false
       }
     })
 

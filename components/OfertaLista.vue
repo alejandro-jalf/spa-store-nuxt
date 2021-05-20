@@ -484,8 +484,7 @@ export default {
     },
   },
   mounted() {
-    // eslint-disable-next-line no-console
-    console.log(this.$store.state.ofertas.ofertaActual.listaProductos)
+    // console.log(this.$store.state.ofertas.ofertaActual.listaProductos)
   },
   methods: {
     enterSelect(evt) {

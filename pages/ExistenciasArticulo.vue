@@ -5,7 +5,6 @@
         v-if="showFloatButton"
         icon-float="arrow-up-circle"
         :click-float="upPage"
-        size-float="50px"
         variant-float="info"
       ></float-button>
     </transition>
@@ -18,7 +17,10 @@
             variant="info"
             @click="setSearchBy('codigo')"
           >
-            <b-icon :icon="iconSelectedCodigo"></b-icon>
+            <b-icon-check-square-fill
+              v-if="iconSelectedCodigo"
+            ></b-icon-check-square-fill>
+            <b-icon-square v-else></b-icon-square>
             Codigo
           </b-button>
           <b-button
@@ -26,7 +28,10 @@
             variant="info"
             @click="setSearchBy('nombre')"
           >
-            <b-icon :icon="iconSelectedName"></b-icon>
+            <b-icon-check-square-fill
+              v-if="iconSelectedName"
+            ></b-icon-check-square-fill>
+            <b-icon-square v-else></b-icon-square>
             Nombre
           </b-button>
         </b-button-group>
@@ -96,6 +101,7 @@
 </template>
 
 <script>
+import { BIconSquare, BIconCheckSquareFill } from 'bootstrap-vue'
 import { mapMutations, mapActions } from 'vuex'
 import ExistenciasArticuloTable from '../components/ExistenciasArticuloTable'
 import ExistenciasArticuloCard from '../components/ExistenciasArticuloCard'
@@ -108,6 +114,8 @@ export default {
     ExistenciasArticuloCard,
     ExistenciasArticuloDetails,
     FloatButton,
+    BIconSquare,
+    BIconCheckSquareFill,
   },
   data() {
     return {
@@ -144,12 +152,10 @@ export default {
       return this.inputSearch.selected === 'nombre'
     },
     iconSelectedCodigo() {
-      if (this.inputSearch.selected === 'codigo') return 'check-square-fill'
-      return 'square'
+      return this.inputSearch.selected === 'codigo'
     },
     iconSelectedName() {
-      if (this.inputSearch.selected === 'nombre') return 'check-square-fill'
-      return 'square'
+      return this.inputSearch.selected === 'nombre'
     },
     nameInputSearch() {
       if (this.inputSearch.selected === 'nombre') return 'searchName'

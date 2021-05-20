@@ -11,12 +11,8 @@
 </template>
 
 <script>
-import Vue from 'vue'
-import { BootstrapVueIcons } from 'bootstrap-vue'
 import NavBar from '../components/NavBar.vue'
 import Alert from '../components/Alert'
-
-Vue.use(BootstrapVueIcons)
 
 export default {
   components: {

@@ -5,15 +5,39 @@
     :size="sizeFloat"
     :button="true"
     :style="styleFloat"
-    :icon="iconFloat"
     @click="clickFloat"
   >
+    <b-icon-arrow-clockwise
+      v-if="iconFloat === 'arrow-clockwise'"
+      :font-scale="fontScale"
+    ></b-icon-arrow-clockwise>
+    <b-icon-arrow-up-circle
+      v-else-if="iconFloat === 'arrow-up-circle'"
+      :font-scale="fontScale"
+    ></b-icon-arrow-up-circle>
+    <b-icon-arrow-repeat v-else :font-scale="fontScale"></b-icon-arrow-repeat>
   </b-avatar>
 </template>
 
 <script>
+import {
+  BIconArrowClockwise,
+  BIconArrowUpCircle,
+  BIconArrowRepeat,
+} from 'bootstrap-vue'
+
 export default {
+  components: {
+    BIconArrowClockwise,
+    BIconArrowUpCircle,
+    BIconArrowRepeat,
+  },
   props: {
+    fontScale: {
+      type: String,
+      required: false,
+      default: '2.5',
+    },
     iconFloat: {
       type: String,
       required: false,
@@ -27,7 +51,7 @@ export default {
     sizeFloat: {
       type: String,
       required: false,
-      default: '3rem',
+      default: '60px',
     },
     scaleIconFloat: {
       type: String,
