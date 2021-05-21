@@ -1,59 +1,137 @@
 <template>
   <div>
-    <float-button :click-float="loadUsers"></float-button>
-    <b-button
+    <float-button
       v-if="userViewed === 0"
-      variant="success"
-      class="mt-5"
-      @click="newUser()"
-    >
-      <b-icon-person-plus-fill></b-icon-person-plus-fill>
-      Agregar usuario
-    </b-button>
-    <b-table
-      v-if="userViewed === 0"
-      hover
-      head-variant="dark"
-      outlined
-      responsive
-      :items="usersList"
-      :fields="fields"
-      class="table-productos"
-    >
-      <template #cell(Acciones)="row">
-        <b-button
-          variant="warning"
-          size="sm"
-          class="mb-1"
-          @click="viewUser(row.item)"
+      :click-float="toggleShowOptions"
+      :icon-float="iconFloatUser"
+      font-scale="1.5"
+    ></float-button>
+
+    <transition name="fade">
+      <div v-if="showOptions">
+        <b-avatar
+          class="floatAdd"
+          variant="success"
+          size="45px"
+          :button="true"
+          @click="newUser()"
         >
-          <b-icon-pencil-square></b-icon-pencil-square>
-        </b-button>
-        <b-button
-          :variant="activo_user(row.item.Status)"
-          size="sm"
-          class="mb-1"
-          @click="showAlertDialogOpt(row.item)"
+          <b-icon-plus font-scale="2"></b-icon-plus>
+        </b-avatar>
+        <b-avatar
+          class="floatRefresh"
+          variant="info"
+          size="45px"
+          :button="true"
+          @click="loadUsers()"
         >
-          <b-icon-toggle-on
-            v-if="row.item.Status === 'Activo'"
-          ></b-icon-toggle-on>
-          <b-icon-toggle-off v-else></b-icon-toggle-off>
-        </b-button>
-      </template>
-      <template #cell(Accesos)="row">
-        <b-dropdown id="dropdown-1" text="Pestañas" variant="info">
-          <b-dropdown-item
-            v-for="(acess, indexAccess) in row.item.Accesos"
-            :key="indexAccess"
-            disabled
+          <b-icon-arrow-clockwise font-scale="2"></b-icon-arrow-clockwise>
+        </b-avatar>
+      </div>
+    </transition>
+
+    <div v-if="userViewed === 0">
+      <b-table
+        v-if="width > 767"
+        hover
+        head-variant="dark"
+        outlined
+        responsive
+        :items="usersList"
+        :fields="fields"
+        class="table-productos"
+      >
+        <template #cell(Acciones)="row">
+          <b-button
+            variant="warning"
+            size="sm"
+            class="mb-1"
+            @click="viewUser(row.item)"
           >
-            {{ acess.trim() }}
-          </b-dropdown-item>
-        </b-dropdown>
-      </template>
-    </b-table>
+            <b-icon-pencil-square></b-icon-pencil-square>
+          </b-button>
+          <b-button
+            :variant="activo_user(row.item.Status)"
+            size="sm"
+            class="mb-1"
+            @click="showAlertDialogOpt(row.item)"
+          >
+            <b-icon-toggle-on
+              v-if="row.item.Status === 'Activo'"
+            ></b-icon-toggle-on>
+            <b-icon-toggle-off v-else></b-icon-toggle-off>
+          </b-button>
+        </template>
+        <template #cell(Accesos)="row">
+          <b-dropdown id="dropdown-1" text="Pestañas" variant="info">
+            <b-dropdown-item
+              v-for="(acess, indexAccess) in row.item.Accesos"
+              :key="indexAccess"
+              disabled
+            >
+              {{ acess.trim() }}
+            </b-dropdown-item>
+          </b-dropdown>
+        </template>
+      </b-table>
+
+      <div v-else class="mt-3">
+        <b-card
+          v-for="(user, indexUser) in usersList"
+          :key="indexUser"
+          no-body
+          class="mb-1"
+        >
+          <b-card-body class="bodyCardUser">
+            <div>
+              <div class="leftCard">
+                <b-avatar
+                  :variant="variantCard(user.Status)"
+                  class="avatarUser"
+                ></b-avatar>
+                {{ user.Status }}
+              </div>
+              <div class="rightCard">
+                <div class="listDataCardUSer font-weight-bold">
+                  {{ user.Correo }}
+                </div>
+                <div class="listDataCardUSer">{{ user.Nombre }}</div>
+                <div class="listDataCardUSer privilegiosUser">
+                  {{ user.Privilegios }}
+                </div>
+                <b-dropdown id="dropdown-1" text="Pestañas" variant="info">
+                  <b-dropdown-item
+                    v-for="(acess, indexAccessCard) in user.Accesos"
+                    :key="indexAccessCard"
+                    disabled
+                  >
+                    {{ acess.trim() }}
+                  </b-dropdown-item>
+                </b-dropdown>
+              </div>
+            </div>
+            <div class="actionsUser">
+              <b-button variant="warning" @click="viewUser(user)">
+                <b-icon-pencil-square></b-icon-pencil-square>
+              </b-button>
+              <b-button
+                :variant="activo_user(user.Status)"
+                @click="showAlertDialogOpt(user)"
+              >
+                <b-icon-toggle-on
+                  v-if="user.Status === 'Activo'"
+                ></b-icon-toggle-on>
+                <b-icon-toggle-off v-else></b-icon-toggle-off>
+              </b-button>
+            </div>
+          </b-card-body>
+        </b-card>
+      </div>
+    </div>
+
     <usuarios-view v-else class="mt-5" :load-users="loadUsers"></usuarios-view>
+
+    <div style="margin-top: 90px"></div>
 
     <alert-option
       :alert-title="dataAlertOptions.title"
@@ -71,7 +149,8 @@ import {
   BIconToggleOff,
   BIconToggleOn,
   BIconPencilSquare,
-  BIconPersonPlusFill,
+  BIconArrowClockwise,
+  BIconPlus,
 } from 'bootstrap-vue'
 import FloatButton from '../components/FloatButton'
 import UsuariosView from '../components/UsuariosView'
@@ -85,7 +164,8 @@ export default {
     BIconToggleOff,
     UsuariosView,
     AlertOption,
-    BIconPersonPlusFill,
+    BIconArrowClockwise,
+    BIconPlus,
   },
   data() {
     return {
@@ -103,9 +183,14 @@ export default {
         title: 'Cambiando status del usuario',
         message: '¿Quiere cambiar el estatus del usuario _ a _',
       },
+      width: 0,
+      showOptions: false,
     }
   },
   computed: {
+    iconFloatUser() {
+      return this.showOptions ? 'x' : 'person-lines-fill'
+    },
     usersList() {
       if (this.listUsers.length > 0) {
         const users = this.listUsers.reduce((acumUsers, user) => {
@@ -132,17 +217,32 @@ export default {
       const jsonData = JSON.parse(sessionStorage.getItem('spastore_users_list'))
       this.listUsers = jsonData.a
     }
+
+    this.width = window.innerWidth
+
+    const that = this
+    window.addEventListener('resize', () => {
+      that.width = window.innerWidth
+    })
   },
   methods: {
+    closeOptions() {
+      this.showOptions = false
+    },
+    toggleShowOptions() {
+      this.showOptions = !this.showOptions
+    },
     ...mapMutations({
       showAlertDialog: 'general/showAlertDialog',
       setLoading: 'general/setLoading',
       changeUSer: 'user/changeUSer',
       setUserViewed: 'user/setUserViewed',
     }),
+    variantCard(status) {
+      return status === 'Activo' ? 'info' : 'danger'
+    },
     activo_user(activo) {
-      if (activo === 'Activo') return 'success'
-      return 'danger'
+      return activo === 'Activo' ? 'success' : 'danger'
     },
     viewUser(user) {
       const userFinded = this.listUsers.find(
@@ -153,6 +253,7 @@ export default {
       this.setUserViewed(1)
     },
     newUser() {
+      this.closeOptions()
       const userNew = {
         nombre_user: '',
         apellido_p_user: '',
@@ -170,6 +271,7 @@ export default {
       this.setUserViewed(2)
     },
     async loadUsers() {
+      this.closeOptions()
       try {
         this.setLoading(true)
         const response = await this.$axios({
@@ -258,5 +360,92 @@ export default {
 <style scoped>
 .table-productos {
   margin-top: 10px;
+}
+
+.bodyCardUser {
+  padding: 15px 20px;
+}
+
+.leftCard {
+  text-align: center;
+  display: inline-block;
+  width: 25%;
+}
+
+.avatarUser {
+  width: 100px;
+  height: 100px;
+}
+
+.rightCard {
+  display: inline-block;
+  width: 74%;
+}
+
+.listDataCardUSer {
+  margin-bottom: 5px;
+}
+
+.privilegiosUser {
+  font-style: italic;
+  text-decoration: underline;
+}
+
+.actionsUser {
+  text-align: right;
+  margin-top: 10px;
+}
+
+.floatAdd,
+.floatRefresh {
+  position: fixed;
+  bottom: 95px;
+  right: 23px;
+  z-index: 5;
+  box-shadow: 1px 2px 5px 1px rgb(114, 114, 114);
+}
+
+.floatRefresh {
+  bottom: 150px;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s;
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+  opacity: 0;
+}
+
+@media screen and (max-width: 574px) {
+  .bodyCardUser {
+    padding: 15px 12px;
+  }
+}
+
+@media screen and (max-width: 500px) {
+  .avatarUser {
+    width: 50px;
+    height: 50px;
+  }
+  .leftCard {
+    text-align: left;
+    width: 100%;
+  }
+  .rightCard {
+    width: 100%;
+  }
+  .actionsUser {
+    margin-top: -38px;
+  }
+  .bodyCardUser {
+    padding-left: 20px;
+  }
+}
+
+@media screen and (max-width: 350px) {
+  .bodyCardUser {
+    padding-left: 12px;
+  }
 }
 </style>

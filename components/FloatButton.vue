@@ -15,6 +15,11 @@
       v-else-if="iconFloat === 'arrow-up-circle'"
       :font-scale="fontScale"
     ></b-icon-arrow-up-circle>
+    <b-icon-person-lines-fill
+      v-else-if="iconFloat === 'person-lines-fill'"
+      :font-scale="fontScale"
+    ></b-icon-person-lines-fill>
+    <b-icon-x v-else-if="iconFloat === 'x'" :font-scale="fontScale"></b-icon-x>
     <b-icon-arrow-repeat v-else :font-scale="fontScale"></b-icon-arrow-repeat>
   </b-avatar>
 </template>
@@ -24,6 +29,8 @@ import {
   BIconArrowClockwise,
   BIconArrowUpCircle,
   BIconArrowRepeat,
+  BIconPersonLinesFill,
+  BIconX,
 } from 'bootstrap-vue'
 
 export default {
@@ -31,6 +38,8 @@ export default {
     BIconArrowClockwise,
     BIconArrowUpCircle,
     BIconArrowRepeat,
+    BIconPersonLinesFill,
+    BIconX,
   },
   props: {
     fontScale: {
