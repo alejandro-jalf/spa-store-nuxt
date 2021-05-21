@@ -80,9 +80,10 @@
           v-for="(user, indexUser) in usersList"
           :key="indexUser"
           no-body
-          class="mb-1"
+          class="containerCard"
         >
           <b-card-body class="bodyCardUser">
+            <div class="lineBorder"></div>
             <div>
               <div class="leftCard">
                 <b-avatar
@@ -362,8 +363,25 @@ export default {
   margin-top: 10px;
 }
 
+.containerCard {
+  margin-bottom: 10px;
+  box-shadow: 2px 2px 2px #e6e6e6;
+}
+
 .bodyCardUser {
+  position: relative;
   padding: 15px 20px;
+}
+
+.lineBorder {
+  position: absolute;
+  width: 5px;
+  display: block;
+  height: 96%;
+  top: 2%;
+  left: 5px;
+  border-radius: 2px;
+  background: rgb(50, 0, 83);
 }
 
 .leftCard {
@@ -446,6 +464,12 @@ export default {
 @media screen and (max-width: 350px) {
   .bodyCardUser {
     padding-left: 12px;
+  }
+  .lineBorder {
+    width: 4px;
+    left: 2px;
+    height: 90%;
+    top: 5%;
   }
 }
 </style>
