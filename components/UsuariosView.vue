@@ -146,12 +146,24 @@
       </b-form-checkbox>
     </b-collapse>
 
-    <div class="float-right mt-5">
-      <b-button variant="secondary" @click="back()">Regresar</b-button>
-      <b-button v-if="userViewed === 2" variant="success" @click="createUser()">
+    <div class="containerButtons">
+      <b-button variant="secondary" :block="blockButton" @click="back()">
+        Regresar
+      </b-button>
+      <b-button
+        v-if="userViewed === 2"
+        variant="success"
+        :block="blockButton"
+        @click="createUser()"
+      >
         Registrar
       </b-button>
-      <b-button v-else variant="primary" @click="saveChanges()">
+      <b-button
+        v-else
+        variant="primary"
+        :block="blockButton"
+        @click="saveChanges()"
+      >
         Guardar Cambios
       </b-button>
     </div>
@@ -208,9 +220,13 @@ export default {
         'existenciasArticulos',
       ],
       iconCollapse: true,
+      width: 0,
     }
   },
   computed: {
+    blockButton() {
+      return this.width <= 575
+    },
     userViewed() {
       return this.$store.state.user.userViewed
     },
@@ -251,6 +267,11 @@ export default {
     },
   },
   mounted() {
+    this.width = window.innerWidth
+    window.addEventListener('resize', () => {
+      this.width = window.innerWidth
+    })
+
     const user = this.$store.state.user.userActualView
     this.userActual = user ? { ...user } : {}
 
@@ -459,8 +480,34 @@ export default {
   margin-left: 0px;
 }
 
+.containerButtons {
+  margin-top: 20px;
+}
+
 .extras {
   border-bottom: 1px solid rgb(138, 138, 138);
   padding-bottom: 5px;
+}
+
+@media screen and (max-width: 575px) {
+  .name-complete {
+    width: 100%;
+    margin-left: 0px;
+    margin-bottom: 10px;
+  }
+
+  #inputName {
+    width: 100%;
+    margin-left: 0px;
+  }
+  .btnOptions {
+    width: 100%;
+  }
+}
+
+@media screen and (min-width: 576px) {
+  .containerButtons {
+    float: right;
+  }
 }
 </style>
