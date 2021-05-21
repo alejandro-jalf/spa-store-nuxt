@@ -90,6 +90,7 @@ export default {
 .Floatbtn {
   position: fixed;
   cursor: pointer;
-  z-index: 15;
+  z-index: 5;
+  box-shadow: 1px 2px 5px 1px rgb(114, 114, 114);
 }
 </style>
