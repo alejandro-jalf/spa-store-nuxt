@@ -148,6 +148,7 @@
 
     <div class="containerButtons">
       <b-button variant="secondary" :block="blockButton" @click="back()">
+        <b-icon-arrow-90deg-left></b-icon-arrow-90deg-left>
         Regresar
       </b-button>
       <b-button
@@ -156,6 +157,7 @@
         :block="blockButton"
         @click="createUser()"
       >
+        <b-icon-person-plus-fill></b-icon-person-plus-fill>
         Registrar
       </b-button>
       <b-button
@@ -164,6 +166,7 @@
         :block="blockButton"
         @click="saveChanges()"
       >
+        <b-icon-card-checklist></b-icon-card-checklist>
         Guardar Cambios
       </b-button>
     </div>
@@ -171,13 +174,22 @@
 </template>
 
 <script>
-import { BIconArrowDownCircleFill, BIconArrowUpCircleFill } from 'bootstrap-vue'
+import {
+  BIconArrowDownCircleFill,
+  BIconArrowUpCircleFill,
+  BIconArrow90degLeft,
+  BIconPersonPlusFill,
+  BIconCardChecklist,
+} from 'bootstrap-vue'
 import { mapMutations } from 'vuex'
 
 export default {
   components: {
     BIconArrowDownCircleFill,
     BIconArrowUpCircleFill,
+    BIconArrow90degLeft,
+    BIconPersonPlusFill,
+    BIconCardChecklist,
   },
   props: {
     loadUsers: {
