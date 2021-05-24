@@ -76,6 +76,13 @@
       </b-table>
 
       <div v-else class="mt-3">
+        <b-alert
+          v-if="Object.values(usersList).length === 0"
+          show
+          variant="warning"
+        >
+          {{ messageListUsers }}
+        </b-alert>
         <b-card
           v-for="(user, indexUser) in usersList"
           :key="indexUser"
@@ -186,6 +193,7 @@ export default {
       },
       width: 0,
       showOptions: false,
+      messageListUsers: 'Lista de usuarios no ha sido cargada',
     }
   },
   computed: {
@@ -290,9 +298,13 @@ export default {
             'spastore_users_list',
             JSON.stringify(arrayTemporal)
           )
+          this.messageListUsers = 'Lista de usuarios vacia'
+        } else {
+          this.messageListUsers = 'Fallos al cargar lista de usuarios'
         }
         this.setLoading(false)
       } catch (error) {
+        this.messageListUsers = 'Fallos al cargar lista de usuarios'
         this.setLoading(false)
         // eslint-disable-next-line no-console
         console.log(error)
