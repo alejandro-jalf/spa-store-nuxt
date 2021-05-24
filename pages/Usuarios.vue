@@ -30,7 +30,7 @@
       </div>
     </transition>
 
-    <div v-if="userViewed === 0">
+    <div v-if="userViewed === 0" @click="blurButton()">
       <b-table
         v-if="width > 767"
         hover
@@ -235,6 +235,9 @@ export default {
     })
   },
   methods: {
+    blurButton() {
+      this.showOptions = false
+    },
     closeOptions() {
       this.showOptions = false
     },
@@ -441,7 +444,7 @@ export default {
 
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity 0.5s;
+  transition: opacity 0.3s;
 }
 .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
   opacity: 0;
