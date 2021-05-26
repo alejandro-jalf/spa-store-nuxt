@@ -16,7 +16,7 @@
           Configuraciones
         </template>
         <div class="font-weight-bold">Pagina inicial:</div>
-        <hr class="m-0 mb-2" />
+        <hr class="m-0 mb-2" :class="themeHr" />
         <div class="titleConf">
           La opcion seleccionada es la que se abrira al iniciar la aplicación
         </div>
@@ -48,6 +48,51 @@
           <b-icon-shield-fill-check></b-icon-shield-fill-check>
           Guardar Cambios
         </b-button>
+
+        <div class="DivitionOption">
+          <div class="font-weight-bold">Tema:</div>
+          <hr class="m-0 mb-2 bg-white" />
+          <div class="titleConf">
+            Puede cambiar el color de tema de la aplicacion
+          </div>
+
+          <b-button
+            :variant="variantTheme"
+            :block="blockButton"
+            :pressed="themPreferencesSys"
+            @click="changeTheme('system')"
+          >
+            <b-icon-tv-fill></b-icon-tv-fill>
+            Sistema
+          </b-button>
+          <b-button
+            :variant="variantTheme"
+            :block="blockButton"
+            :pressed="themPreferencesDar"
+            @click="changeTheme('dark')"
+          >
+            <b-icon-moon></b-icon-moon>
+            Oscuro
+          </b-button>
+          <b-button
+            :variant="variantTheme"
+            :block="blockButton"
+            :pressed="themPreferencesLig"
+            @click="changeTheme('light')"
+          >
+            <b-icon-brightness-high-fill></b-icon-brightness-high-fill>
+            Claro
+          </b-button>
+          <b-button
+            :variant="variantTheme"
+            :block="blockButton"
+            :pressed="themPreferencesSep"
+            @click="changeTheme('sepia')"
+          >
+            <b-icon-cup-fill></b-icon-cup-fill>
+            Sepia
+          </b-button>
+        </div>
 
         <div v-if="typeUSer === 'manager'" class="DivitionOption">
           <div class="font-weight-bold">Cambio de contraseña:</div>
@@ -107,61 +152,6 @@
           >
             <b-icon-key-fill></b-icon-key-fill>
             Cambiar contraseña
-          </b-button>
-        </div>
-
-        <div class="DivitionOption">
-          <div class="font-weight-bold">Tema:</div>
-          <hr class="m-0 mb-2" />
-          <div class="titleConf">
-            Puede cambiar el color de tema de la aplicacion
-          </div>
-
-          <b-button
-            :variant="variantTheme"
-            :block="blockButton"
-            :pressed="themPreferencesSys"
-            @click="changeTheme('system')"
-          >
-            <b-icon-tv-fill></b-icon-tv-fill>
-            Sistema
-          </b-button>
-          <b-button
-            :variant="variantTheme"
-            :block="blockButton"
-            :pressed="themPreferencesDar"
-            @click="changeTheme('dark')"
-          >
-            <b-icon-moon></b-icon-moon>
-            Oscuro
-          </b-button>
-          <b-button
-            :variant="variantTheme"
-            :block="blockButton"
-            :pressed="themPreferencesLig"
-            @click="changeTheme('light')"
-          >
-            <b-icon-brightness-high-fill></b-icon-brightness-high-fill>
-            Claro
-          </b-button>
-          <b-button
-            :variant="variantTheme"
-            :block="blockButton"
-            :pressed="themPreferencesSep"
-            @click="changeTheme('sepia')"
-          >
-            <b-icon-cup-fill></b-icon-cup-fill>
-            Sepia
-          </b-button>
-
-          <b-button
-            variant="success"
-            class="float-right mt-2"
-            :block="blockButton"
-            @click="questionChangePassword()"
-          >
-            <b-icon-key-fill></b-icon-key-fill>
-            Guardar Color de tema
           </b-button>
         </div>
       </b-card>
@@ -232,13 +222,13 @@ export default {
       if (this.$store.state.general.themePreferences === 'system') {
         const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
           .matches
-        if (systemDark) return 'headerConfig'
+        if (systemDark) return 'darkBodyCard'
         return ''
       }
       if (this.$store.state.general.themePreferences === 'sepia')
-        return 'headerConfigSepia'
+        return 'sepiaBodyCard'
       return this.$store.state.general.themePreferences === 'dark'
-        ? 'headerConfig'
+        ? 'darkBodyCard'
         : ''
     },
     variantCard() {
@@ -251,6 +241,17 @@ export default {
       return this.$store.state.general.themePreferences === 'dark'
         ? 'dark'
         : 'info'
+    },
+    themeHr() {
+      if (this.$store.state.general.themePreferences === 'system') {
+        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
+          .matches
+        if (systemDark) return 'bg-white'
+        return ''
+      }
+      return this.$store.state.general.themePreferences === 'dark'
+        ? 'bg-white'
+        : ''
     },
     themPreferencesSys() {
       return this.$store.state.general.themePreferences === 'system'
@@ -555,12 +556,6 @@ export default {
 </script>
 
 <style scoped>
-.headerConfig {
-  background: #292929;
-}
-.headerConfigSepia {
-  background: #f1ecdf;
-}
 .buttonSelect {
   padding: 0px 3px;
   padding-right: 5px;

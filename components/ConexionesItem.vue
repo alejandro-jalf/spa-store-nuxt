@@ -1,5 +1,5 @@
 <template>
-  <b-list-group-item class="d-flex align-items-center">
+  <b-list-group-item class="d-flex align-items-center" :class="variantItem">
     <b-icon-toggle-on
       v-if="sucursal.success"
       variant="primary"
@@ -33,6 +33,20 @@ export default {
     sucursal: {
       type: Object,
       required: true,
+    },
+  },
+  computed: {
+    variantItem() {
+      if (this.$store.state.general.themePreferences === 'system') {
+        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
+          .matches
+        if (systemDark) return 'darkThemeItemList'
+        return ''
+      } else if (this.$store.state.general.themePreferences === 'dark')
+        return 'darkThemeItemList'
+      else if (this.$store.state.general.themePreferences === 'sepia')
+        return 'sepiaThemeItemList'
+      else return ''
     },
   },
   methods: {

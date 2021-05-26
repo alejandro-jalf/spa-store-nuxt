@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="containerConexiones">
     <float-button :click-float="loadConexiones"></float-button>
     <b-list-group class="mt-5">
       <conexiones-item-skeleton
@@ -36,6 +36,22 @@ export default {
       return !!this.$store.state.conexiones.conexiones.data
     },
   },
+  mounted() {
+    const heightBody = window.document.body.clientHeight
+    let heightWindow = window.innerHeight
+    let padding = heightWindow - heightBody
+    const paddingInitial = padding
+    const heightInitial = heightWindow
+    const containerConexiones = document.querySelector('#containerConexiones')
+
+    containerConexiones.style.paddingBottom = padding + 'px'
+    window.addEventListener('resize', () => {
+      heightWindow = window.innerHeight
+      padding = paddingInitial - (heightInitial - heightWindow)
+
+      containerConexiones.style.paddingBottom = padding + 'px'
+    })
+  },
   methods: {
     ...mapActions({
       verifyConexiones: 'conexiones/verifyConexiones',
@@ -47,6 +63,11 @@ export default {
       this.setLoading(true)
       await this.verifyConexiones()
       this.setLoading(false)
+      // const heightBody = window.document.body.clientHeight
+      // const heightWindow = window.innerHeight
+      // const padding = heightWindow - heightBody
+      // const containerConexiones = document.querySelector('#containerConexiones')
+      // containerConexiones.style.paddingBottom = padding + 'px'
     },
   },
 }

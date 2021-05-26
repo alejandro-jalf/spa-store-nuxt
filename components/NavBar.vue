@@ -27,7 +27,7 @@
             v-for="(tab, index) in tabsAccess"
             :key="index"
             :to="tab.path"
-            :disabled="false"
+            :active="isActive(tab.nickname)"
             replace
           >
             {{ tab.nickname }}
@@ -113,6 +113,9 @@ export default {
     })
   },
   methods: {
+    isActive(nickname) {
+      return this.$store.state.general.tabActual.trim() === nickname.trim()
+    },
     ...mapActions({
       logout: 'user/logout',
     }),
