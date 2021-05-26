@@ -27,5 +27,13 @@ export default {
       return this.$store.state.general.loading
     },
   },
+  mounted() {
+    if (this.$store.state.general.themePreferences === 'dark') {
+      window.document.body.classList.add('dark-mode')
+    }
+    if (this.$store.state.general.themePreferences === 'sepia') {
+      window.document.body.classList.add('sepia-mode')
+    }
+  },
 }
 </script>

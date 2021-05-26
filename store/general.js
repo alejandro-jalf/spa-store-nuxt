@@ -1,3 +1,6 @@
+if (!localStorage.getItem('spastore_theme_color'))
+  localStorage.setItem('spastore_theme_color', 'light')
+
 export const state = () => ({
   alert: {
     show: false,
@@ -44,8 +47,15 @@ export const state = () => ({
       nickname: 'Existencias Articulos',
       icon: 'collection',
     },
+    {
+      path: '/proveedores',
+      name: 'proveedores',
+      nickname: 'Proveedores',
+      icon: 'box-seam',
+    },
   ],
   tabActual: 'Inicio',
+  themePreferences: localStorage.getItem('spastore_theme_color'),
 })
 
 export const mutations = {
@@ -75,5 +85,25 @@ export const mutations = {
   },
   setTabActual(state, nameTab) {
     state.tabActual = nameTab
+  },
+  setThemePreferences(state, theme) {
+    if (theme !== state.themePreferences) {
+      const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
+        .matches
+
+      if (state.themePreferences === 'dark')
+        window.document.body.classList.remove('dark-mode')
+      if (state.themePreferences === 'sepia')
+        window.document.body.classList.remove('sepia-mode')
+      if (state.themePreferences === 'system' && systemDark)
+        window.document.body.classList.remove('dark-mode')
+
+      state.themePreferences = theme
+      localStorage.setItem('spastore_theme_color', theme)
+      if (theme === 'dark') window.document.body.classList.add('dark-mode')
+      if (theme === 'sepia') window.document.body.classList.add('sepia-mode')
+      if (theme === 'system' && systemDark)
+        window.document.body.classList.add('dark-mode')
+    }
   },
 }

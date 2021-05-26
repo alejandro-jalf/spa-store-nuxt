@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-navbar toggleable="lg" type="dark" variant="info">
+    <b-navbar toggleable="lg" :type="typeNav" :variant="variantNav">
       <b-navbar-brand>
         <img src="../assets/cesta.png" width="30px" height="30px" />
         SPA
@@ -72,6 +72,21 @@ export default {
     }
   },
   computed: {
+    typeNav() {
+      return this.$store.state.general.themePreferences === 'sepia'
+        ? 'light'
+        : 'dark'
+    },
+    variantNav() {
+      if (this.$store.state.general.themePreferences === 'system') {
+        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
+          .matches
+        if (systemDark) return 'dark'
+        return 'info'
+      } else if (this.$store.state.general.themePreferences === 'dark')
+        return 'dark'
+      else return 'info'
+    },
     tabActual() {
       return this.$store.state.general.tabActual
     },

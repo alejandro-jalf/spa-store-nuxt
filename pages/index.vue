@@ -1,15 +1,15 @@
 <template>
-  <div class="container">
+  <div class="pb-5">
     <div>
       <h1 class="mt-4 text-center title">Super Promociones de Acayucan</h1>
       <div class="text-center mb-3">
         <img src="../assets/cesta.png" alt="" width="250px" />
       </div>
       <b-card
-        header-bg-variant="info"
+        :header-bg-variant="variantCard"
         header-text-variant="white"
-        border-variant="info"
-        class="mb-5"
+        :border-variant="variantCard"
+        :class="headerConfig"
       >
         <template #header>
           <b-icon-gear-fill></b-icon-gear-fill>
@@ -109,6 +109,61 @@
             Cambiar contraseña
           </b-button>
         </div>
+
+        <div class="DivitionOption">
+          <div class="font-weight-bold">Tema:</div>
+          <hr class="m-0 mb-2" />
+          <div class="titleConf">
+            Puede cambiar el color de tema de la aplicacion
+          </div>
+
+          <b-button
+            :variant="variantTheme"
+            :block="blockButton"
+            :pressed="themPreferencesSys"
+            @click="changeTheme('system')"
+          >
+            <b-icon-tv-fill></b-icon-tv-fill>
+            Sistema
+          </b-button>
+          <b-button
+            :variant="variantTheme"
+            :block="blockButton"
+            :pressed="themPreferencesDar"
+            @click="changeTheme('dark')"
+          >
+            <b-icon-moon></b-icon-moon>
+            Oscuro
+          </b-button>
+          <b-button
+            :variant="variantTheme"
+            :block="blockButton"
+            :pressed="themPreferencesLig"
+            @click="changeTheme('light')"
+          >
+            <b-icon-brightness-high-fill></b-icon-brightness-high-fill>
+            Claro
+          </b-button>
+          <b-button
+            :variant="variantTheme"
+            :block="blockButton"
+            :pressed="themPreferencesSep"
+            @click="changeTheme('sepia')"
+          >
+            <b-icon-cup-fill></b-icon-cup-fill>
+            Sepia
+          </b-button>
+
+          <b-button
+            variant="success"
+            class="float-right mt-2"
+            :block="blockButton"
+            @click="questionChangePassword()"
+          >
+            <b-icon-key-fill></b-icon-key-fill>
+            Guardar Color de tema
+          </b-button>
+        </div>
       </b-card>
     </div>
     <alert-option
@@ -128,6 +183,10 @@ import {
   BIconCheckSquareFill,
   BIconShieldFillCheck,
   BIconKeyFill,
+  BIconMoon,
+  BIconBrightnessHighFill,
+  BIconCupFill,
+  BIconTvFill,
 } from 'bootstrap-vue'
 import { mapMutations, mapActions } from 'vuex'
 import AlertOption from '../components/AlertOption'
@@ -140,6 +199,10 @@ export default {
     BIconCheckSquareFill,
     BIconShieldFillCheck,
     BIconKeyFill,
+    BIconMoon,
+    BIconBrightnessHighFill,
+    BIconCupFill,
+    BIconTvFill,
   },
   data() {
     return {
@@ -165,6 +228,53 @@ export default {
     }
   },
   computed: {
+    headerConfig() {
+      if (this.$store.state.general.themePreferences === 'system') {
+        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
+          .matches
+        if (systemDark) return 'headerConfig'
+        return ''
+      }
+      if (this.$store.state.general.themePreferences === 'sepia')
+        return 'headerConfigSepia'
+      return this.$store.state.general.themePreferences === 'dark'
+        ? 'headerConfig'
+        : ''
+    },
+    variantCard() {
+      if (this.$store.state.general.themePreferences === 'system') {
+        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
+          .matches
+        if (systemDark) return 'dark'
+        return 'info'
+      }
+      return this.$store.state.general.themePreferences === 'dark'
+        ? 'dark'
+        : 'info'
+    },
+    themPreferencesSys() {
+      return this.$store.state.general.themePreferences === 'system'
+    },
+    themPreferencesDar() {
+      return this.$store.state.general.themePreferences === 'dark'
+    },
+    themPreferencesLig() {
+      return this.$store.state.general.themePreferences === 'light'
+    },
+    themPreferencesSep() {
+      return this.$store.state.general.themePreferences === 'sepia'
+    },
+    variantTheme() {
+      if (this.$store.state.general.themePreferences === 'system') {
+        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
+          .matches
+        if (systemDark) return 'outline-light'
+        return 'outline-dark'
+      }
+      return this.$store.state.general.themePreferences === 'dark'
+        ? 'outline-light'
+        : 'outline-dark'
+    },
     listAccess() {
       if (this.$store.state.user.user.access_to_user) {
         const tabsUser = this.$store.state.user.user.access_to_user.split(',')
@@ -211,7 +321,11 @@ export default {
       setLoading: 'general/setLoading',
       showAlertDialog: 'general/showAlertDialog',
       setUser: 'user/setUser',
+      setThemePreferences: 'general/setThemePreferences',
     }),
+    changeTheme(theme) {
+      this.setThemePreferences(theme)
+    },
     activo(tab) {
       return tab === this.principal
     },
@@ -441,6 +555,12 @@ export default {
 </script>
 
 <style scoped>
+.headerConfig {
+  background: #292929;
+}
+.headerConfigSepia {
+  background: #f1ecdf;
+}
 .buttonSelect {
   padding: 0px 3px;
   padding-right: 5px;

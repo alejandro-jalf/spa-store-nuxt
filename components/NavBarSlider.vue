@@ -1,6 +1,12 @@
 <template>
   <div>
-    <b-sidebar id="sidebar-1" title="SPA" :backdrop="true">
+    <b-sidebar
+      id="sidebar-1"
+      title="SPA"
+      :backdrop="true"
+      :text-variant="textSlider"
+      :bg-variant="bgSlider"
+    >
       <div class="px-3 py-5 overflow-auto">
         <div class="d-flex justify-content-center">
           <b-avatar variant="info" size="6rem"></b-avatar>
@@ -16,7 +22,7 @@
             :key="indexTab"
             :to="tab.path"
             :active="isActive(tab.nickname)"
-            variant="light"
+            :variant="variantList"
             :disabled="false"
             replace
             class="d-flex justify-content-between align-items-center"
@@ -46,13 +52,22 @@
                 v-else-if="tab.icon === 'collection'"
                 class="mr-1"
               ></b-icon-collection>
+              <b-icon-box-seam
+                v-else-if="tab.icon === 'box-seam'"
+                class="mr-1"
+              ></b-icon-box-seam>
               <b-icon-asterisk v-else class="mr-1"></b-icon-asterisk>
 
               {{ tab.nickname }}
             </div>
           </b-list-group-item>
         </b-list-group>
-        <b-button block variant="info mb-5" @click="logout([$store, $router])">
+        <b-button
+          block
+          :variant="variantCloseSesion"
+          @click="logout([$store, $router])"
+        >
+          <b-icon-power></b-icon-power>
           Cerrar sesion
         </b-button>
       </div>
@@ -69,6 +84,8 @@ import {
   BIconCloudCheckFill,
   BIconCollection,
   BIconAsterisk,
+  BIconBoxSeam,
+  BIconPower,
 } from 'bootstrap-vue'
 
 export default {
@@ -80,6 +97,8 @@ export default {
     BIconCloudCheckFill,
     BIconCollection,
     BIconAsterisk,
+    BIconBoxSeam,
+    BIconPower,
   },
   props: {
     logout: {
@@ -105,6 +124,49 @@ export default {
       })
       return tabsPermission
     },
+    variantCloseSesion() {
+      if (this.$store.state.general.themePreferences === 'system') {
+        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
+          .matches
+        if (systemDark) return 'outline-info'
+        return 'info'
+      }
+      return this.$store.state.general.themePreferences === 'dark'
+        ? 'outline-info'
+        : 'info'
+    },
+    variantList() {
+      if (this.$store.state.general.themePreferences === 'system') {
+        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
+          .matches
+        if (systemDark) return 'dark'
+        return 'light'
+      }
+      return this.$store.state.general.themePreferences === 'dark'
+        ? 'dark'
+        : 'light'
+    },
+    textSlider() {
+      if (this.$store.state.general.themePreferences === 'system') {
+        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
+          .matches
+        if (systemDark) return 'light'
+        return 'dark'
+      }
+      return this.$store.state.general.themePreferences === 'dark'
+        ? 'light'
+        : 'dark'
+    },
+    bgSlider() {
+      if (this.$store.state.general.themePreferences === 'system') {
+        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
+          .matches
+        if (systemDark) return 'dark'
+        return 'light'
+      } else if (this.$store.state.general.themePreferences === 'dark')
+        return 'dark'
+      else return 'light'
+    },
   },
   methods: {
     isActive(nickname) {
@@ -113,3 +175,14 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+.sepia-sliderbar {
+  background: #fdf0d0;
+  color: #271601;
+}
+.dark-sliderbar {
+  background: #292929;
+  color: #f3f3f3;
+}
+</style>
