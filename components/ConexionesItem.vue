@@ -44,8 +44,6 @@ export default {
         return ''
       } else if (this.$store.state.general.themePreferences === 'dark')
         return 'darkThemeItemList'
-      else if (this.$store.state.general.themePreferences === 'sepia')
-        return 'sepiaThemeItemList'
       else return ''
     },
   },

@@ -33,6 +33,10 @@
   background: #f1ecdf;
 }
 
+.darkThemeTableBody {
+  background: rgb(182, 182, 182);
+}
+
 .backgroundInput {
   background: rgba(255, 255, 255, 0.514);
 }

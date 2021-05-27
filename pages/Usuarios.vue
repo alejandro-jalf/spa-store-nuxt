@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="pt-5">
     <float-button
       v-if="userViewed === 0"
       :click-float="toggleShowOptions"
@@ -39,7 +39,7 @@
         responsive
         :items="usersList"
         :fields="fields"
-        class="table-productos"
+        :class="variantItem"
       >
         <template #cell(Acciones)="row">
           <b-button
@@ -197,6 +197,16 @@ export default {
     }
   },
   computed: {
+    variantItem() {
+      if (this.$store.state.general.themePreferences === 'system') {
+        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
+          .matches
+        if (systemDark) return 'darkThemeItemList'
+        return ''
+      } else if (this.$store.state.general.themePreferences === 'dark')
+        return 'darkThemeItemList'
+      else return ''
+    },
     iconFloatUser() {
       return this.showOptions ? 'x' : 'person-lines-fill'
     },
@@ -374,10 +384,6 @@ export default {
 </script>
 
 <style scoped>
-.table-productos {
-  padding-top: 10px;
-}
-
 .containerCard {
   margin-bottom: 10px;
   box-shadow: 2px 2px 2px #e6e6e6;

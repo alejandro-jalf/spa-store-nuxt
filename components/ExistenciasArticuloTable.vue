@@ -4,7 +4,7 @@
     head-variant="dark"
     :items="listArticulosrefactor"
     :fields="fields"
-    class="darkThemeTable"
+    :class="variantThemeTableBody"
     responsive
   >
     <template #cell(Acciones)="row">
@@ -41,6 +41,18 @@ export default {
     }
   },
   computed: {
+    variantThemeTableBody() {
+      if (this.$store.state.general.themePreferences === 'system') {
+        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
+          .matches
+        if (systemDark) return 'darkThemeTableBody'
+        return ''
+      } else if (this.$store.state.general.themePreferences === 'dark')
+        return 'darkThemeTableBody'
+      else if (this.$store.state.general.themePreferences === 'sepia')
+        return 'sepiaThemeItemList'
+      else return ''
+    },
     listArticulosrefactor() {
       let arrayAticulos = []
       if (this.listArticulos) {
@@ -62,9 +74,3 @@ export default {
   },
 }
 </script>
-
-<style scoped>
-.darkThemeTable {
-  background: rgb(182, 182, 182);
-}
-</style>
