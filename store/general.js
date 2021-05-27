@@ -92,18 +92,19 @@ export const mutations = {
         .matches
 
       if (state.themePreferences === 'dark')
-        window.document.body.classList.remove('dark-mode')
+        document.documentElement.classList.remove('dark-mode')
       if (state.themePreferences === 'sepia')
-        window.document.body.classList.remove('sepia-mode')
+        document.documentElement.classList.remove('sepia-mode')
       if (state.themePreferences === 'system' && systemDark)
-        window.document.body.classList.remove('dark-mode')
+        document.documentElement.classList.remove('dark-mode')
 
       state.themePreferences = theme
       localStorage.setItem('spastore_theme_color', theme)
-      if (theme === 'dark') window.document.body.classList.add('dark-mode')
-      if (theme === 'sepia') window.document.body.classList.add('sepia-mode')
+      if (theme === 'dark') document.documentElement.classList.add('dark-mode')
+      if (theme === 'sepia')
+        document.documentElement.classList.add('sepia-mode')
       if (theme === 'system' && systemDark)
-        window.document.body.classList.add('dark-mode')
+        document.documentElement.classList.add('dark-mode')
     }
   },
 }
