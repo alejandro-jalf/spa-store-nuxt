@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-card title="Crear una lista de ofertas">
+    <b-card title="Crear una lista de ofertas" :class="variantTheme">
       <b-card-text>Datos necesarios</b-card-text>
       <b-form class="p-2">
         <b-input-group prepend="Tipo" class="mb-3 p-0 mr-2">
@@ -158,6 +158,7 @@
           placeholder="Breve descripcion"
           rows="3"
           max-rows="6"
+          :class="backgroundInputTheme"
           @keyup="verifyTextArea"
         ></b-form-textarea>
         <message-text
@@ -242,6 +243,28 @@ export default {
     }
   },
   computed: {
+    backgroundInputTheme() {
+      if (this.$store.state.general.themePreferences === 'system') {
+        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
+          .matches
+        if (systemDark) return 'backgroundInputDark'
+        return 'backgroundInput'
+      } else if (this.$store.state.general.themePreferences === 'dark')
+        return 'backgroundInputDark'
+      else return 'backgroundInput'
+    },
+    variantTheme() {
+      if (this.$store.state.general.themePreferences === 'system') {
+        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
+          .matches
+        if (systemDark) return 'darkBodyCard container-gen-dark'
+        return ''
+      } else if (this.$store.state.general.themePreferences === 'dark')
+        return 'darkBodyCard container-gen-dark'
+      else if (this.$store.state.general.themePreferences === 'sepia')
+        return 'sepiaBodyCard'
+      else return ''
+    },
     editandoOferta() {
       return this.$store.state.ofertas.editandoOferta
     },

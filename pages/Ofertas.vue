@@ -46,9 +46,10 @@
         head-variant="dark"
         fixed
         outlined
+        responsive
         :items="listaOfertas"
         :fields="fields"
-        class="table-ofertas"
+        :class="variantThemeTableBody"
       >
         <template #cell(Acciones)="row">
           <b-button size="sm" class="mr-2" @click="viewDetails(row.item.uuid)">
@@ -107,6 +108,18 @@ export default {
     }
   },
   computed: {
+    variantThemeTableBody() {
+      if (this.$store.state.general.themePreferences === 'system') {
+        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
+          .matches
+        if (systemDark) return 'darkThemeTableBody'
+        return ''
+      } else if (this.$store.state.general.themePreferences === 'dark')
+        return 'darkThemeTableBody'
+      else if (this.$store.state.general.themePreferences === 'sepia')
+        return 'sepiaThemeItemList'
+      else return ''
+    },
     listaOfertas() {
       return Object.values(this.$store.state.ofertas.listaOfertas)
     },
@@ -168,10 +181,6 @@ export default {
 .container-table-ofe {
   overflow: auto;
   margin-bottom: 30px;
-}
-
-.table-ofertas {
-  min-width: 990px;
 }
 
 #groupDate {

@@ -6,6 +6,7 @@
       header-text-variant="white"
       :header="'Oferta abierta: ' + uuid"
       :title="tipoOferta + ' Del ' + fechaInico + ' al ' + fechaFin"
+      :class="variantTheme"
     >
       <b-alert v-if="!ofertaEditable" variant="warning">
         Oferta no editable
@@ -20,6 +21,7 @@
             id="codigo-articulo"
             ref="articulo"
             v-model="formArticulo.articulo"
+            :class="backgroundInputTheme"
             placeholder="Codigo de articulo"
             @keyup.enter="getArticuloByArticulo"
           ></b-form-input>
@@ -27,12 +29,14 @@
             id="codigo-barras"
             v-model="formArticulo.codigobarras"
             placeholder="Codigo de barras"
+            :class="backgroundInputTheme"
             @keyup.enter="getArticuloByCodigoCarras"
           ></b-form-input>
           <b-form-input
             id="nombre-articulo"
             v-model="formArticulo.nombre"
             placeholder="*Nombre articulo*"
+            :class="backgroundInputTheme"
             @keyup.enter="showTableArticulosFinded"
           ></b-form-input>
         </b-form>
@@ -74,6 +78,7 @@
             v-model="formArticulo.oferta"
             placeholder="Precio de oferta"
             class="input-resp-dt-ofe"
+            :class="backgroundInputTheme"
             @keydown="verifyData"
             @keyup="calcUtilidad"
             @keyup.enter="agregarArticulo"
@@ -100,7 +105,7 @@
         Articulos incluidos
       </b-card-text>
       <divider class="mb-2"></divider>
-      <div class="container-table">
+      <div>
         <b-table
           hover
           head-variant="dark"
@@ -108,7 +113,8 @@
           outlined
           :items="listaProductos"
           :fields="fields"
-          class="table-productos"
+          responsive=""
+          :class="variantThemeTableBody"
         >
           <template v-if="ofertaEditable" #cell(Acciones)="row">
             <b-button
@@ -452,6 +458,40 @@ export default {
     }
   },
   computed: {
+    variantThemeTableBody() {
+      if (this.$store.state.general.themePreferences === 'system') {
+        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
+          .matches
+        if (systemDark) return 'darkThemeTableBody'
+        return ''
+      } else if (this.$store.state.general.themePreferences === 'dark')
+        return 'darkThemeTableBody'
+      else if (this.$store.state.general.themePreferences === 'sepia')
+        return 'sepiaThemeItemList'
+      else return ''
+    },
+    backgroundInputTheme() {
+      if (this.$store.state.general.themePreferences === 'system') {
+        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
+          .matches
+        if (systemDark) return 'backgroundInputDark'
+        return 'backgroundInput'
+      } else if (this.$store.state.general.themePreferences === 'dark')
+        return 'backgroundInputDark'
+      else return 'backgroundInput'
+    },
+    variantTheme() {
+      if (this.$store.state.general.themePreferences === 'system') {
+        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
+          .matches
+        if (systemDark) return 'darkBodyCard container-gen-dark'
+        return ''
+      } else if (this.$store.state.general.themePreferences === 'dark')
+        return 'darkBodyCard container-gen-dark'
+      else if (this.$store.state.general.themePreferences === 'sepia')
+        return 'sepiaBodyCard'
+      else return ''
+    },
     ofertaEditable() {
       return this.$store.state.ofertas.ofertaEditable
     },
@@ -739,14 +779,6 @@ export default {
 </script>
 
 <style scoped>
-.container-table {
-  overflow: auto;
-}
-
-.table-productos {
-  min-width: 1000px;
-}
-
 #codigo-articulo,
 #codigo-barras {
   width: 25%;

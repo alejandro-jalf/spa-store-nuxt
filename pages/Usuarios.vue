@@ -39,7 +39,7 @@
         responsive
         :items="usersList"
         :fields="fields"
-        :class="variantItem"
+        :class="variantThemeTableBody"
       >
         <template #cell(Acciones)="row">
           <b-button
@@ -197,14 +197,16 @@ export default {
     }
   },
   computed: {
-    variantItem() {
+    variantThemeTableBody() {
       if (this.$store.state.general.themePreferences === 'system') {
         const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
           .matches
-        if (systemDark) return 'darkThemeItemList'
+        if (systemDark) return 'darkThemeTableBody'
         return ''
       } else if (this.$store.state.general.themePreferences === 'dark')
-        return 'darkThemeItemList'
+        return 'darkThemeTableBody'
+      else if (this.$store.state.general.themePreferences === 'sepia')
+        return 'sepiaThemeItemList'
       else return ''
     },
     iconFloatUser() {

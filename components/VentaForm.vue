@@ -6,6 +6,7 @@
       header="Agregando producto a la venta"
       header-bg-variant="primary"
       header-text-variant="white"
+      :class="variantTheme"
     >
       <b-form inline class="mt-4 mb-2">
         <b-form-input
@@ -13,18 +14,21 @@
           v-model="formVentaAct.codigoArticulo"
           placeholder="Articulo"
           class="input-resp-dt-ofe"
+          :class="backgroundInputTheme"
         ></b-form-input>
         <b-form-input
           id="textCodigoBarras"
           v-model="formVentaAct.codigoBarras"
           placeholder="Codigo de barras"
           class="input-resp-dt-ofe"
+          :class="backgroundInputTheme"
         ></b-form-input>
         <b-form-input
           id="textNombre"
           v-model="formVentaAct.nombreArticulo"
           placeholder="Nombre del articulo"
           class="input-resp-dt-ofe"
+          :class="backgroundInputTheme"
         ></b-form-input>
         <b-button id="btnSearch" variant="outline-success">Buscar</b-button>
       </b-form>
@@ -42,6 +46,7 @@
           v-model="formVentaAct.codigoBarras"
           placeholder="Cantidad"
           class="input-resp-dt-cant"
+          :class="backgroundInputTheme"
         ></b-form-input>
         <b-form-input
           id="textImporte"
@@ -70,6 +75,30 @@ export default {
         importe: 0,
       },
     }
+  },
+  computed: {
+    backgroundInputTheme() {
+      if (this.$store.state.general.themePreferences === 'system') {
+        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
+          .matches
+        if (systemDark) return 'backgroundInputDark'
+        return 'backgroundInput'
+      } else if (this.$store.state.general.themePreferences === 'dark')
+        return 'backgroundInputDark'
+      else return 'backgroundInput'
+    },
+    variantTheme() {
+      if (this.$store.state.general.themePreferences === 'system') {
+        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
+          .matches
+        if (systemDark) return 'darkBodyCard container-gen-dark'
+        return ''
+      } else if (this.$store.state.general.themePreferences === 'dark')
+        return 'darkBodyCard container-gen-dark'
+      else if (this.$store.state.general.themePreferences === 'sepia')
+        return 'sepiaBodyCard'
+      else return ''
+    },
   },
 }
 </script>
