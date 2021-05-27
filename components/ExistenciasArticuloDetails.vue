@@ -29,6 +29,7 @@
       header-text-variant="white"
       header="Sucursal Zaragoza"
       class="p-0 m-0"
+      :border-variant="borderTheme()"
       no-body
     >
       <template #header>
@@ -48,7 +49,7 @@
           'collapse-' + refactorNameSuc(sucursal.sucursal, sucursal.conexion)
         "
       >
-        <b-card-body>
+        <b-card-body :class="variantBodyCard">
           <div class="row">
             <div class="col-sm">
               <div class="form-group mt-1 mb-0">
@@ -321,6 +322,18 @@ export default {
     }
   },
   computed: {
+    variantBodyCard() {
+      if (this.$store.state.general.themePreferences === 'system') {
+        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
+          .matches
+        if (systemDark) return 'darkBodyCard'
+        return ''
+      } else if (this.$store.state.general.themePreferences === 'dark')
+        return 'darkBodyCard'
+      else if (this.$store.state.general.themePreferences === 'sepia')
+        return 'sepiaBodyCard'
+      else return ''
+    },
     detailsProveedor() {
       if (
         this.details.proveedores.mejorPrecio ===
@@ -374,9 +387,26 @@ export default {
       if (compras === 'Array vacio') return []
       return compras
     },
+    borderTheme() {
+      if (this.$store.state.general.themePreferences === 'system') {
+        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
+          .matches
+        if (systemDark) return 'secondary'
+        return 'light'
+      } else if (this.$store.state.general.themePreferences === 'dark')
+        return 'secondary'
+      return 'light'
+    },
     colorHeader(status) {
-      if (status === 'Online') return 'info'
-      return 'danger'
+      if (status !== 'Online') return 'danger'
+      else if (this.$store.state.general.themePreferences === 'system') {
+        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
+          .matches
+        if (systemDark) return 'dark'
+        return 'info'
+      } else if (this.$store.state.general.themePreferences === 'dark')
+        return 'dark'
+      return 'info'
     },
     verifyAccess(sucursal, conexion) {
       if (this.refactorNameSuc(sucursal, conexion) !== 'BODEGA') return true

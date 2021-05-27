@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="pb-5">
     <transition name="fade">
       <float-button
         v-if="showFloatButton"
@@ -48,6 +48,7 @@
           :placeholder="placeholder"
           style="min-width: 150px"
           aria-describedby="search-help-block"
+          :class="backgroundInputTheme"
           @keyup.enter="loadAriculos()"
         ></b-form-input>
       </b-input-group>
@@ -133,6 +134,16 @@ export default {
     }
   },
   computed: {
+    backgroundInputTheme() {
+      if (this.$store.state.general.themePreferences === 'system') {
+        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
+          .matches
+        if (systemDark) return 'backgroundInputDark'
+        return 'backgroundInput'
+      } else if (this.$store.state.general.themePreferences === 'dark')
+        return 'backgroundInputDark'
+      else return 'backgroundInput'
+    },
     label() {
       return this.inputSearch.selected === 'nombre'
         ? 'Nombre del articulo'
@@ -170,6 +181,9 @@ export default {
     this.isMovil = this.isDiplayMovil()
     window.addEventListener('scroll', () => {
       that.showFloatButton = window.scrollY >= 500
+    })
+    window.addEventListener('resize', () => {
+      this.isMovil = this.isDiplayMovil()
     })
   },
   methods: {
@@ -240,6 +254,14 @@ export default {
 </script>
 
 <style scoped>
+.backgroundInput {
+  background: rgba(255, 255, 255, 0.514);
+}
+.backgroundInputDark {
+  background: rgb(104, 104, 104);
+  color: rgb(255, 255, 255);
+}
+
 .line-buttons {
   margin-bottom: 20px;
   width: calc(100% - 5px);

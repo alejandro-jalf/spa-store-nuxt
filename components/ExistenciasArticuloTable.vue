@@ -4,7 +4,7 @@
     head-variant="dark"
     :items="listArticulosrefactor"
     :fields="fields"
-    class="table-productos"
+    class="darkThemeTable"
     responsive
   >
     <template #cell(Acciones)="row">
@@ -62,3 +62,9 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+.darkThemeTable {
+  background: rgb(182, 182, 182);
+}
+</style>
