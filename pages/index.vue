@@ -108,7 +108,7 @@
                 :state="password.statePassword"
                 type="password"
                 placeholder="Nueva contraseña"
-                class="passwordChange"
+                :class="backgroundInputTheme"
                 trim
                 @keyup="veryfyPassword()"
                 @keyup.enter="$refs.passwRep.focus()"
@@ -120,7 +120,7 @@
                 type="password"
                 :state="password.statePasswordRepeat"
                 placeholder="Repita su contraseña"
-                class="passwordChange"
+                :class="backgroundInputTheme"
                 trim
                 @keyup="verifyPasswordRepeat()"
                 @keyup.enter="$refs.passwAct.focus()"
@@ -131,7 +131,7 @@
                 v-model="password.passwordActual"
                 type="password"
                 placeholder="Contraseña actual"
-                class="passwordChange"
+                :class="backgroundInputTheme"
                 trim
                 @keyup.enter="questionChangePassword()"
               ></b-form-input>
@@ -218,6 +218,16 @@ export default {
     }
   },
   computed: {
+    backgroundInputTheme() {
+      if (this.$store.state.general.themePreferences === 'system') {
+        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
+          .matches
+        if (systemDark) return 'passwordChange backgroundInputDark'
+        return 'passwordChange backgroundInput'
+      } else if (this.$store.state.general.themePreferences === 'dark')
+        return 'passwordChange backgroundInputDark'
+      else return 'passwordChange backgroundInput'
+    },
     headerConfig() {
       if (this.$store.state.general.themePreferences === 'system') {
         const systemDark = window.matchMedia('(prefers-color-scheme: dark)')

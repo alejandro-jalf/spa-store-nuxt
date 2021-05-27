@@ -254,14 +254,6 @@ export default {
 </script>
 
 <style scoped>
-.backgroundInput {
-  background: rgba(255, 255, 255, 0.514);
-}
-.backgroundInputDark {
-  background: rgb(104, 104, 104);
-  color: rgb(255, 255, 255);
-}
-
 .line-buttons {
   margin-bottom: 20px;
   width: calc(100% - 5px);
