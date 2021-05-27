@@ -28,11 +28,6 @@ export default {
     ConexionesItemSkeleton,
     FloatButton,
   },
-  data() {
-    return {
-      paddingInitial: 0,
-    }
-  },
   computed: {
     conexiones() {
       return this.$store.state.conexiones.conexiones.data
@@ -40,22 +35,6 @@ export default {
     thereAreConections() {
       return !!this.$store.state.conexiones.conexiones.data
     },
-  },
-  mounted() {
-    const heightBody = window.document.body.clientHeight
-    let heightWindow = window.innerHeight
-    let padding = heightWindow - heightBody
-    this.paddingInitial = padding
-    const heightInitial = heightWindow
-    const containerConexiones = document.querySelector('#containerConexiones')
-
-    containerConexiones.style.paddingBottom = padding + 'px'
-    window.addEventListener('resize', () => {
-      heightWindow = window.innerHeight
-      padding = this.paddingInitial - (heightInitial - heightWindow)
-
-      containerConexiones.style.paddingBottom = padding + 'px'
-    })
   },
   methods: {
     ...mapActions({
@@ -68,11 +47,6 @@ export default {
       this.setLoading(true)
       await this.verifyConexiones()
       this.setLoading(false)
-      const heightBody = window.document.body.clientHeight
-      const heightWindow = window.innerHeight
-      const padding = this.paddingInitial + (heightWindow - heightBody)
-      const containerConexiones = document.querySelector('#containerConexiones')
-      containerConexiones.style.paddingBottom = padding + 'px'
     },
   },
 }

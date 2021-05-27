@@ -6,6 +6,7 @@
     :header="'Usuario: ' + usuarioActual"
     title="Datos del usuario"
     class="mb-4"
+    :class="variantTheme"
   >
     <b-form-group id="gpCorr" label="Correo electronico:" label-for="ipCorreo">
       <b-form-input
@@ -14,6 +15,7 @@
         type="email"
         placeholder="Direccion de correo"
         required
+        :class="backgroundInputTheme"
       ></b-form-input>
     </b-form-group>
 
@@ -24,18 +26,21 @@
         v-model="userActual.nombre_user"
         placeholder="Nombre(s)"
         class="name-complete"
+        :class="backgroundInputTheme"
       ></b-form-input>
       <b-form-input
         id="inputAp"
         v-model="userActual.apellido_p_user"
         placeholder="Apellido paterno"
         class="name-complete"
+        :class="backgroundInputTheme"
       ></b-form-input>
       <b-form-input
         id="inputAm"
         v-model="userActual.apellido_m_user"
         placeholder="Apellido materno"
         class="name-complete"
+        :class="backgroundInputTheme"
       ></b-form-input>
     </b-form>
 
@@ -46,6 +51,7 @@
         type="email"
         placeholder="Calle, Colonia, Municipio"
         required
+        :class="backgroundInputTheme"
       ></b-form-input>
     </b-form-group>
 
@@ -55,6 +61,7 @@
         v-model="userActual.sucursal_user"
         :options="sucursales"
         required
+        :class="backgroundInputTheme"
       ></b-form-select>
     </b-form-group>
 
@@ -67,6 +74,7 @@
           type="password"
           placeholder="Ingrese su contraseña"
           required
+          :class="backgroundInputTheme"
         ></b-form-input>
         <b-form-invalid-feedback :state="validation">
           Debe ser mayor de 6 caracteres y debe tener al menos una letra y un
@@ -85,6 +93,7 @@
           type="password"
           placeholder="Repita su contraseña"
           required
+          :class="backgroundInputTheme"
         ></b-form-input>
         <b-form-invalid-feedback :state="validationRepeatPassword">
           Las contraseñas no coinciden
@@ -110,6 +119,7 @@
           v-model="userActual.tipo_user"
           :options="privilegios"
           required
+          :class="backgroundInputTheme"
         ></b-form-select>
       </b-form-group>
 
@@ -120,6 +130,7 @@
           :options="listTabs"
           multiple
           required
+          :class="backgroundInputTheme"
         ></b-form-select>
       </b-form-group>
       <div class="mt-3">
@@ -236,6 +247,28 @@ export default {
     }
   },
   computed: {
+    backgroundInputTheme() {
+      if (this.$store.state.general.themePreferences === 'system') {
+        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
+          .matches
+        if (systemDark) return 'backgroundInputDark'
+        return 'backgroundInput'
+      } else if (this.$store.state.general.themePreferences === 'dark')
+        return 'backgroundInputDark'
+      else return 'backgroundInput'
+    },
+    variantTheme() {
+      if (this.$store.state.general.themePreferences === 'system') {
+        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
+          .matches
+        if (systemDark) return 'darkBodyCard container-gen-dark'
+        return ''
+      } else if (this.$store.state.general.themePreferences === 'dark')
+        return 'darkBodyCard container-gen-dark'
+      else if (this.$store.state.general.themePreferences === 'sepia')
+        return 'sepiaBodyCard'
+      else return ''
+    },
     blockButton() {
       return this.width <= 575
     },

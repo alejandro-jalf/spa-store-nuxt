@@ -8,7 +8,7 @@
       opacity="0.5"
       no-wrap
     ></b-overlay>
-    <NavBarLeft v-if="width > 1300 && login" />
+    <NavBarLeft v-if="width > 1390 && login" />
     <nav-bar v-else-if="login" />
     <div class="container container-all">
       <Nuxt />
@@ -60,45 +60,39 @@ export default {
     let paddingLeft = 0
 
     this.width = window.innerWidth
-    if (this.width <= 1300) {
+    if (this.width <= 1390) {
       containerAll.style.width = '100%'
       containerAll.style.marginLeft = 'auto'
-    } else if (this.width > 1390) {
+    } else {
       paddingLeft = 250 + parseInt((widthWindow - 1390) / 2)
       containerAll.style.width = 'calc(100% - 250px)'
       containerAll.style.marginLeft = paddingLeft + 'px'
-    } else {
-      containerAll.style.width = 'calc(100% - 250px)'
-      containerAll.style.marginLeft = '250px'
     }
 
     window.addEventListener('resize', () => {
       widthWindow = window.innerWidth
 
       this.width = window.innerWidth
-      if (this.width <= 1300) {
+      if (this.width <= 1390) {
         containerAll.style.width = '100%'
         containerAll.style.marginLeft = 'auto'
-      } else if (this.width > 1390) {
+      } else {
         paddingLeft = 250 + parseInt((widthWindow - 1390) / 2)
         containerAll.style.width = 'calc(100% - 250px)'
         containerAll.style.marginLeft = paddingLeft + 'px'
-      } else {
-        containerAll.style.width = 'calc(100% - 250px)'
-        containerAll.style.marginLeft = '250px'
       }
     })
 
     if (this.$store.state.general.themePreferences === 'system') {
       const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
         .matches
-      if (systemDark) window.document.body.classList.add('dark-mode')
+      if (systemDark) document.documentElement.classList.add('dark-mode')
     }
     if (this.$store.state.general.themePreferences === 'dark') {
-      window.document.body.classList.add('dark-mode')
+      document.documentElement.classList.add('dark-mode')
     }
     if (this.$store.state.general.themePreferences === 'sepia') {
-      window.document.body.classList.add('sepia-mode')
+      document.documentElement.classList.add('sepia-mode')
     }
   },
 }

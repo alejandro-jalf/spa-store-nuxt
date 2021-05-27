@@ -1,5 +1,5 @@
 <template>
-  <div class="pt-5">
+  <div id="containerUsuarios" class="pt-5">
     <float-button
       v-if="userViewed === 0"
       :click-float="toggleShowOptions"
@@ -238,10 +238,8 @@ export default {
     }
 
     this.width = window.innerWidth
-
-    const that = this
     window.addEventListener('resize', () => {
-      that.width = window.innerWidth
+      this.width = window.innerWidth
     })
   },
   methods: {
