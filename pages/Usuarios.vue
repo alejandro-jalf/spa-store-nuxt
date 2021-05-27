@@ -375,7 +375,7 @@ export default {
 
 <style scoped>
 .table-productos {
-  margin-top: 10px;
+  padding-top: 10px;
 }
 
 .containerCard {

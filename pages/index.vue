@@ -1,7 +1,7 @@
 <template>
   <div class="pb-5">
     <div>
-      <h1 class="mt-4 text-center title">Super Promociones de Acayucan</h1>
+      <h1 class="pt-4 text-center title">Super Promociones de Acayucan</h1>
       <div class="text-center mb-3">
         <img src="../assets/cesta.png" alt="" width="250px" />
       </div>

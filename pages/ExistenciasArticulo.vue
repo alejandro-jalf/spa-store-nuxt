@@ -8,7 +8,7 @@
         variant-float="info"
       ></float-button>
     </transition>
-    <b-form-group id="input-group-1" label-for="inpSearch" class="mt-5">
+    <b-form-group id="input-group-1" label-for="inpSearch" class="pt-5">
       <div class="text-left mb-1">
         <span class="font-weight-bold">Busqueda por:</span>
         <b-button-group class="ml-2" size="md">

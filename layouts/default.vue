@@ -8,8 +8,9 @@
       opacity="0.5"
       no-wrap
     ></b-overlay>
-    <nav-bar v-if="login" />
-    <div class="container">
+    <NavBarLeft v-if="width > 1300 && login" />
+    <nav-bar v-else-if="login" />
+    <div class="container container-all">
       <Nuxt />
     </div>
     <alert></alert>
@@ -19,11 +20,18 @@
 <script>
 import NavBar from '../components/NavBar.vue'
 import Alert from '../components/Alert'
+import NavBarLeft from '../components/NavBarLeft'
 
 export default {
   components: {
     NavBar,
     Alert,
+    NavBarLeft,
+  },
+  data() {
+    return {
+      width: 0,
+    }
   },
   computed: {
     login() {
@@ -46,6 +54,27 @@ export default {
     },
   },
   mounted() {
+    const containerAll = document.querySelector('.container-all')
+    this.width = window.innerWidth
+    if (this.width <= 1300) {
+      containerAll.style.width = '100%'
+      containerAll.style.marginLeft = 'auto'
+    } else {
+      containerAll.style.width = 'calc(100% - 250px)'
+      containerAll.style.marginLeft = '250px'
+    }
+
+    window.addEventListener('resize', () => {
+      this.width = window.innerWidth
+      if (this.width <= 1300) {
+        containerAll.style.width = '100%'
+        containerAll.style.marginLeft = 'auto'
+      } else {
+        containerAll.style.width = 'calc(100% - 250px)'
+        containerAll.style.marginLeft = '250px'
+      }
+    })
+
     if (this.$store.state.general.themePreferences === 'system') {
       const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
         .matches
@@ -62,6 +91,10 @@ export default {
 </script>
 
 <style scoped>
+.container-all {
+  width: calc(100% - 250px);
+  margin-left: 250px;
+}
 .darkThemeOverlay {
   background: rgba(139, 139, 139, 0.63);
 }
