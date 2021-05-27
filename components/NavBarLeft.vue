@@ -43,7 +43,7 @@
         {{ tab.nickname }}
         <b-icon-caret-left-fill
           v-if="isActive(tab.nickname)"
-          class="this"
+          :class="themeThis"
         ></b-icon-caret-left-fill>
       </b-list-group-item>
     </div>
@@ -88,6 +88,18 @@ export default {
     }
   },
   computed: {
+    themeThis() {
+      if (this.$store.state.general.themePreferences === 'system') {
+        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
+          .matches
+        if (systemDark) return 'this thisThemeDark'
+        return 'this'
+      } else if (this.$store.state.general.themePreferences === 'dark')
+        return 'this thisThemeDark'
+      else if (this.$store.state.general.themePreferences === 'sepia')
+        return 'this thisThemeSepia'
+      else return 'this'
+    },
     tabsAccess() {
       const user = this.$store.state.user.user
       const tabsPermission = this.tabs.filter((tab) => {
@@ -115,6 +127,7 @@ export default {
 
 <style scoped>
 .NavBarLeft {
+  color: #fff;
   background: rgb(61, 61, 61);
   position: fixed;
   top: 0px;
@@ -144,7 +157,15 @@ export default {
   top: 0px;
   width: 50px;
   height: 50px;
+  color: #f3f5f4;
+}
+
+.thisThemeDark {
   color: #161616;
+}
+
+.thisThemeSepia {
+  color: #f1e7d0;
 }
 
 .btnCloseSesion {
