@@ -6,7 +6,7 @@
         SPA
       </b-navbar-brand>
 
-      <b-navbar-nav v-if="display > 0" class="mr-auto">
+      <b-navbar-nav v-if="display > 0" class="mr-auto TabActual">
         <b-nav-item>
           <b-badge variant="light" class="p-2 text-uppercase mr-2">
             <b-icon-geo-fill></b-icon-geo-fill>
@@ -122,3 +122,11 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+.TabActual {
+  position: absolute;
+  top: 35px;
+  left: 50px;
+}
+</style>
