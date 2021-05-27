@@ -3,6 +3,8 @@
     <div class="text-center mb-3 mt-3">
       <img src="../assets/cesta.png" width="40px" height="40px" />
       SPA
+      <br />
+      <strong>{{ userName }}</strong>
     </div>
     <div class="container-item-list">
       <b-list-group-item
@@ -82,6 +84,7 @@ export default {
   data() {
     return {
       tabs: this.$store.state.general.listTabs,
+      userName: this.$store.state.user.name,
     }
   },
   computed: {

@@ -55,20 +55,34 @@ export default {
   },
   mounted() {
     const containerAll = document.querySelector('.container-all')
+
+    let widthWindow = window.innerWidth
+    let paddingLeft = 0
+
     this.width = window.innerWidth
     if (this.width <= 1300) {
       containerAll.style.width = '100%'
       containerAll.style.marginLeft = 'auto'
+    } else if (this.width > 1390) {
+      paddingLeft = 250 + parseInt((widthWindow - 1390) / 2)
+      containerAll.style.width = 'calc(100% - 250px)'
+      containerAll.style.marginLeft = paddingLeft + 'px'
     } else {
       containerAll.style.width = 'calc(100% - 250px)'
       containerAll.style.marginLeft = '250px'
     }
 
     window.addEventListener('resize', () => {
+      widthWindow = window.innerWidth
+
       this.width = window.innerWidth
       if (this.width <= 1300) {
         containerAll.style.width = '100%'
         containerAll.style.marginLeft = 'auto'
+      } else if (this.width > 1390) {
+        paddingLeft = 250 + parseInt((widthWindow - 1390) / 2)
+        containerAll.style.width = 'calc(100% - 250px)'
+        containerAll.style.marginLeft = paddingLeft + 'px'
       } else {
         containerAll.style.width = 'calc(100% - 250px)'
         containerAll.style.marginLeft = '250px'
@@ -87,14 +101,13 @@ export default {
       window.document.body.classList.add('sepia-mode')
     }
   },
+  methods: {
+    getLengthMarginLeft() {},
+  },
 }
 </script>
 
 <style scoped>
-.container-all {
-  width: calc(100% - 250px);
-  margin-left: 250px;
-}
 .darkThemeOverlay {
   background: rgba(139, 139, 139, 0.63);
 }
