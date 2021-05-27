@@ -6,8 +6,8 @@
 
 .dark-mode {
   color: #ebf4f1;
-  /* background: #091a28; */
-  background: #161616;
+  background: #091a28;
+  /* background: #161616; */
   border-color: #0d2538;
 }
 .sepia-mode {
