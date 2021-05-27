@@ -47,7 +47,7 @@
         ></b-icon-caret-left-fill>
       </b-list-group-item>
     </div>
-    <b-button class="btnCloseSesion" variant="outline-info">
+    <b-button class="btnCloseSesion" variant="outline-info" @click="logout()">
       <b-icon-power></b-icon-power>
       Cerrar sesion
     </b-button>
@@ -55,6 +55,7 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
 import {
   BIconCaretLeftFill,
   BIconHouseDoorFill,
@@ -113,6 +114,9 @@ export default {
     },
   },
   methods: {
+    ...mapActions({
+      logout: 'user/logout',
+    }),
     isActive(nickname) {
       return this.$store.state.general.tabActual.trim() === nickname.trim()
     },

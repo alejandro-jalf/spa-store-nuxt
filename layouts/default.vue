@@ -101,9 +101,6 @@ export default {
       window.document.body.classList.add('sepia-mode')
     }
   },
-  methods: {
-    getLengthMarginLeft() {},
-  },
 }
 </script>
 
