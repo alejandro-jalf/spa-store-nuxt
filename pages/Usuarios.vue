@@ -88,9 +88,10 @@
           :key="indexUser"
           no-body
           class="containerCard"
+          :class="variantTheme"
         >
           <b-card-body class="bodyCardUser">
-            <div class="lineBorder"></div>
+            <div :class="variantThemeLine"></div>
             <div>
               <div class="leftCard">
                 <b-avatar
@@ -197,6 +198,28 @@ export default {
     }
   },
   computed: {
+    variantThemeLine() {
+      if (this.$store.state.general.themePreferences === 'system') {
+        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
+          .matches
+        if (systemDark) return 'lineBorder lineBorderDark'
+        return 'lineBorder'
+      } else if (this.$store.state.general.themePreferences === 'dark')
+        return 'lineBorder lineBorderDark'
+      else return 'lineBorder'
+    },
+    variantTheme() {
+      if (this.$store.state.general.themePreferences === 'system') {
+        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
+          .matches
+        if (systemDark) return 'darkBodyCard containerCarDark'
+        return 'containerCard'
+      } else if (this.$store.state.general.themePreferences === 'dark')
+        return 'darkBodyCard containerCarDark'
+      else if (this.$store.state.general.themePreferences === 'sepia')
+        return 'sepiaBodyCard containerCard'
+      else return 'containerCard'
+    },
     variantThemeTableBody() {
       if (this.$store.state.general.themePreferences === 'system') {
         const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
@@ -388,6 +411,9 @@ export default {
   margin-bottom: 10px;
   box-shadow: 2px 2px 2px #e6e6e6;
 }
+.containerCarDark {
+  box-shadow: 2px 2px 2px #5d5d5d;
+}
 
 .bodyCardUser {
   position: relative;
@@ -403,6 +429,10 @@ export default {
   left: 5px;
   border-radius: 2px;
   background: rgb(50, 0, 83);
+}
+
+.lineBorderDark {
+  background: rgb(0, 159, 233);
 }
 
 .leftCard {

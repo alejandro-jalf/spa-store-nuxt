@@ -7,7 +7,7 @@
       :text-variant="textSlider"
       :bg-variant="bgSlider"
     >
-      <div class="px-3 py-5 overflow-auto">
+      <div class="px-3 py-5 overflow-auto mb-3">
         <div class="d-flex justify-content-center">
           <b-avatar variant="info" size="6rem"></b-avatar>
         </div>
@@ -16,7 +16,7 @@
             <strong>{{ userName }}</strong>
           </div>
         </div>
-        <b-list-group class="mt-2 mb-5">
+        <b-list-group class="mt-2 mb-4">
           <b-list-group-item
             v-for="(tab, indexTab) in tabsAccess"
             :key="indexTab"
@@ -62,6 +62,36 @@
             </div>
           </b-list-group-item>
         </b-list-group>
+        <div class="mb-4 text-center">
+          <b-button
+            :variant="variantTheme"
+            :pressed="themPreferencesSys"
+            @click="setThemePreferences('system')"
+          >
+            <b-icon-tv-fill></b-icon-tv-fill>
+          </b-button>
+          <b-button
+            :variant="variantTheme"
+            :pressed="themPreferencesDar"
+            @click="setThemePreferences('dark')"
+          >
+            <b-icon-moon></b-icon-moon>
+          </b-button>
+          <b-button
+            :variant="variantTheme"
+            :pressed="themPreferencesLig"
+            @click="setThemePreferences('light')"
+          >
+            <b-icon-brightness-high-fill></b-icon-brightness-high-fill>
+          </b-button>
+          <b-button
+            :variant="variantTheme"
+            :pressed="themPreferencesSep"
+            @click="setThemePreferences('sepia')"
+          >
+            <b-icon-cup-fill></b-icon-cup-fill>
+          </b-button>
+        </div>
         <b-button
           block
           :variant="variantCloseSesion"
@@ -76,6 +106,7 @@
 </template>
 
 <script>
+import { mapMutations } from 'vuex'
 import {
   BIconHouseDoorFill,
   BIconPercent,
@@ -86,6 +117,10 @@ import {
   BIconAsterisk,
   BIconBoxSeam,
   BIconPower,
+  BIconMoon,
+  BIconBrightnessHighFill,
+  BIconCupFill,
+  BIconTvFill,
 } from 'bootstrap-vue'
 
 export default {
@@ -99,6 +134,10 @@ export default {
     BIconAsterisk,
     BIconBoxSeam,
     BIconPower,
+    BIconMoon,
+    BIconBrightnessHighFill,
+    BIconCupFill,
+    BIconTvFill,
   },
   props: {
     logout: {
@@ -113,6 +152,29 @@ export default {
     }
   },
   computed: {
+    themPreferencesSys() {
+      return this.$store.state.general.themePreferences === 'system'
+    },
+    themPreferencesDar() {
+      return this.$store.state.general.themePreferences === 'dark'
+    },
+    themPreferencesLig() {
+      return this.$store.state.general.themePreferences === 'light'
+    },
+    themPreferencesSep() {
+      return this.$store.state.general.themePreferences === 'sepia'
+    },
+    variantTheme() {
+      if (this.$store.state.general.themePreferences === 'system') {
+        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
+          .matches
+        if (systemDark) return 'outline-light'
+        return 'outline-dark'
+      }
+      return this.$store.state.general.themePreferences === 'dark'
+        ? 'outline-light'
+        : 'outline-dark'
+    },
     tabsAccess() {
       const user = this.$store.state.user.user
       const tabsPermission = this.tabs.filter((tab) => {
@@ -172,6 +234,9 @@ export default {
     isActive(nickname) {
       return this.$store.state.general.tabActual.trim() === nickname.trim()
     },
+    ...mapMutations({
+      setThemePreferences: 'general/setThemePreferences',
+    }),
   },
 }
 </script>

@@ -92,6 +92,11 @@
             <b-icon-cup-fill></b-icon-cup-fill>
             Sepia
           </b-button>
+          <div>
+            <b-form-checkbox v-model="atajoTheme" class="mt-3">
+              Agregar a menu lateral
+            </b-form-checkbox>
+          </div>
         </div>
 
         <div v-if="typeUSer === 'manager'" class="DivitionOption">
@@ -215,6 +220,7 @@ export default {
         statePassword: false,
         statePasswordRepeat: false,
       },
+      atajoTheme: false,
     }
   },
   computed: {
