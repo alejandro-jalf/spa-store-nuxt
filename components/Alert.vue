@@ -5,6 +5,8 @@
     :header-bg-variant="alertHeaderBg"
     :header-text-variant="alertHeaderText"
     :centered="true"
+    :body-bg-variant="bodyBgVariant"
+    :footer-bg-variant="bodyBgVariant"
   >
     <b-container fluid>
       {{ alertMessage }}
@@ -30,6 +32,16 @@ import { mapMutations } from 'vuex'
 
 export default {
   computed: {
+    bodyBgVariant() {
+      if (this.$store.state.general.themePreferences === 'system') {
+        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
+          .matches
+        if (systemDark) return 'dark'
+        return 'light'
+      } else if (this.$store.state.general.themePreferences === 'dark')
+        return 'dark'
+      else return 'light'
+    },
     alertShow() {
       return this.$store.state.general.alert.show
     },
