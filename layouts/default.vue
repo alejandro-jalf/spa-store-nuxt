@@ -7,6 +7,7 @@
       :class="themeOverlay"
       opacity="0.5"
       no-wrap
+      fixed
     ></b-overlay>
     <NavBarLeft v-if="width > 1390 && login" />
     <nav-bar v-else-if="login" />
