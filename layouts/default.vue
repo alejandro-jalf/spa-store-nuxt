@@ -100,6 +100,9 @@ export default {
 </script>
 
 <style scoped>
+#app {
+  margin-top: 80px;
+}
 .darkThemeOverlay {
   background: rgba(139, 139, 139, 0.63);
 }

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-navbar toggleable="lg" :type="typeNav" :variant="variantNav">
+    <b-navbar toggleable="lg" :type="typeNav" :variant="variantNav" fixed="top">
       <b-navbar-brand>
         <img src="../assets/cesta.png" width="30px" height="30px" />
         SPA
