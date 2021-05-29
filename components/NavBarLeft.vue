@@ -6,6 +6,36 @@
       <br />
       <strong>{{ userName }}</strong>
     </div>
+    <div v-if="atajoTheme === 'true'" class="mb-4 text-center">
+      <b-button
+        variant="outline-light"
+        :pressed="themPreferencesSys"
+        @click="setThemePreferences('system')"
+      >
+        <b-icon-tv-fill></b-icon-tv-fill>
+      </b-button>
+      <b-button
+        variant="outline-light"
+        :pressed="themPreferencesDar"
+        @click="setThemePreferences('dark')"
+      >
+        <b-icon-moon></b-icon-moon>
+      </b-button>
+      <b-button
+        variant="outline-light"
+        :pressed="themPreferencesLig"
+        @click="setThemePreferences('light')"
+      >
+        <b-icon-brightness-high-fill></b-icon-brightness-high-fill>
+      </b-button>
+      <b-button
+        variant="outline-light"
+        :pressed="themPreferencesSep"
+        @click="setThemePreferences('sepia')"
+      >
+        <b-icon-cup-fill></b-icon-cup-fill>
+      </b-button>
+    </div>
     <div class="container-item-list">
       <b-list-group-item
         v-for="(tab, indexTab) in tabsAccess"
@@ -41,13 +71,14 @@
         ></b-icon-box-seam>
         <b-icon-asterisk v-else class="mr-1"></b-icon-asterisk>
         {{ tab.nickname }}
-        <b-icon-caret-left-fill
-          v-if="isActive(tab.nickname)"
-          :class="themeThis"
-        ></b-icon-caret-left-fill>
       </b-list-group-item>
     </div>
-    <b-button class="btnCloseSesion" variant="outline-info" @click="logout()">
+    <div class="background-btn-close"></div>
+    <b-button
+      class="btnCloseSesion"
+      variant="outline-info"
+      @click="logout([$store, $router])"
+    >
       <b-icon-power></b-icon-power>
       Cerrar sesion
     </b-button>
@@ -55,9 +86,8 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapActions, mapMutations } from 'vuex'
 import {
-  BIconCaretLeftFill,
   BIconHouseDoorFill,
   BIconPercent,
   BIconShop,
@@ -67,11 +97,14 @@ import {
   BIconAsterisk,
   BIconBoxSeam,
   BIconPower,
+  BIconMoon,
+  BIconBrightnessHighFill,
+  BIconCupFill,
+  BIconTvFill,
 } from 'bootstrap-vue'
 
 export default {
   components: {
-    BIconCaretLeftFill,
     BIconHouseDoorFill,
     BIconPercent,
     BIconShop,
@@ -81,6 +114,10 @@ export default {
     BIconAsterisk,
     BIconBoxSeam,
     BIconPower,
+    BIconMoon,
+    BIconBrightnessHighFill,
+    BIconCupFill,
+    BIconTvFill,
   },
   data() {
     return {
@@ -89,6 +126,21 @@ export default {
     }
   },
   computed: {
+    themPreferencesSys() {
+      return this.$store.state.general.themePreferences === 'system'
+    },
+    themPreferencesDar() {
+      return this.$store.state.general.themePreferences === 'dark'
+    },
+    themPreferencesLig() {
+      return this.$store.state.general.themePreferences === 'light'
+    },
+    themPreferencesSep() {
+      return this.$store.state.general.themePreferences === 'sepia'
+    },
+    atajoTheme() {
+      return this.$store.state.general.atajoTheme
+    },
     themeThis() {
       if (this.$store.state.general.themePreferences === 'system') {
         const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
@@ -114,6 +166,9 @@ export default {
     },
   },
   methods: {
+    ...mapMutations({
+      setThemePreferences: 'general/setThemePreferences',
+    }),
     ...mapActions({
       logout: 'user/logout',
     }),
@@ -142,7 +197,9 @@ export default {
 }
 
 .container-item-list {
-  height: 80%;
+  padding-bottom: 80px;
+  overflow: auto;
+  height: 71%;
 }
 
 .item-tab {
@@ -154,16 +211,6 @@ export default {
   background: rgba(0, 183, 255, 0.705);
   color: #fff;
 }
-
-.this {
-  position: absolute;
-  right: -21px;
-  top: 0px;
-  width: 50px;
-  height: 50px;
-  color: #f3f5f4;
-}
-
 .thisThemeDark {
   color: #161616;
 }
@@ -172,10 +219,23 @@ export default {
   color: #f1e7d0;
 }
 
+.background-btn-close {
+  position: absolute;
+  width: 100%;
+  height: 60px;
+  background: rgb(61, 61, 61);
+  z-index: 3;
+  bottom: 0px;
+  left: 0px;
+  border-top: 1px solid rgb(82, 82, 82);
+  box-shadow: 0px -3px 5px rgb(41, 41, 41);
+}
+
 .btnCloseSesion {
   position: absolute;
   width: 220px;
   bottom: 10px;
   left: 15px;
+  z-index: 4;
 }
 </style>

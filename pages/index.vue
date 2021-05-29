@@ -92,16 +92,23 @@
             <b-icon-cup-fill></b-icon-cup-fill>
             Sepia
           </b-button>
-          <div>
-            <b-form-checkbox v-model="atajoTheme" class="mt-3">
+          <div class="mt-4">
+            <div @click="addAtajo">
+              <b-icon-square-fill
+                v-if="atajoTheme === 'false'"
+              ></b-icon-square-fill>
+              <b-icon-check-square-fill
+                v-else
+                variant="info"
+              ></b-icon-check-square-fill>
               Agregar a menu lateral
-            </b-form-checkbox>
+            </div>
           </div>
         </div>
 
         <div v-if="typeUSer === 'manager'" class="DivitionOption">
           <div class="font-weight-bold">Cambio de contraseña:</div>
-          <hr class="m-0 mb-2" />
+          <hr class="m-0 mb-2 bg-white" />
           <div class="titleConf">
             Puede cambiar su contraseña en el momento que crea conveniente
           </div>
@@ -182,6 +189,7 @@ import {
   BIconBrightnessHighFill,
   BIconCupFill,
   BIconTvFill,
+  BIconSquareFill,
 } from 'bootstrap-vue'
 import { mapMutations, mapActions } from 'vuex'
 import AlertOption from '../components/AlertOption'
@@ -198,6 +206,7 @@ export default {
     BIconBrightnessHighFill,
     BIconCupFill,
     BIconTvFill,
+    BIconSquareFill,
   },
   data() {
     return {
@@ -220,10 +229,12 @@ export default {
         statePassword: false,
         statePasswordRepeat: false,
       },
-      atajoTheme: false,
     }
   },
   computed: {
+    atajoTheme() {
+      return this.$store.state.general.atajoTheme
+    },
     backgroundInputTheme() {
       if (this.$store.state.general.themePreferences === 'system') {
         const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
@@ -322,6 +333,10 @@ export default {
     })
   },
   methods: {
+    addAtajo() {
+      const atajoRefactor = this.atajoTheme === 'true' ? 'false' : 'true'
+      this.setAtajoTheme(atajoRefactor)
+    },
     showAlertDialogOpt(message = '', title = '', clickAccept = () => {}) {
       this.dataAlertOptions.show = true
       this.dataAlertOptions.message = message
@@ -339,6 +354,7 @@ export default {
       showAlertDialog: 'general/showAlertDialog',
       setUser: 'user/setUser',
       setThemePreferences: 'general/setThemePreferences',
+      setAtajoTheme: 'general/setAtajoTheme',
     }),
     changeTheme(theme) {
       this.setThemePreferences(theme)

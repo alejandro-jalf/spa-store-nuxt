@@ -36,6 +36,25 @@ export default {
   },
   computed: {
     login() {
+      const app = document.querySelector('#app')
+      const containerAll = document.querySelector('.container-all')
+      if (app && containerAll) {
+        const widthWindow = window.innerWidth
+        let paddingLeft = 0
+
+        if (widthWindow <= 1390 && this.$store.state.user.login)
+          app.style.marginTop = '80px'
+        else app.style.marginTop = '0px'
+
+        if (widthWindow <= 1390 || !this.$store.state.user.login) {
+          containerAll.style.width = '100%'
+          containerAll.style.marginLeft = 'auto'
+        } else {
+          paddingLeft = 250 + parseInt((widthWindow - 1390) / 2)
+          containerAll.style.width = 'calc(100% - 250px)'
+          containerAll.style.marginLeft = paddingLeft + 'px'
+        }
+      }
       return this.$store.state.user.login
     },
     loading() {
@@ -56,12 +75,16 @@ export default {
   },
   mounted() {
     const containerAll = document.querySelector('.container-all')
+    const app = document.querySelector('#app')
 
     let widthWindow = window.innerWidth
     let paddingLeft = 0
 
+    if (widthWindow <= 1390 && this.login) app.style.marginTop = '80px'
+    else app.style.marginTop = '0px'
+
     this.width = window.innerWidth
-    if (this.width <= 1390) {
+    if (this.width <= 1390 || !this.login) {
       containerAll.style.width = '100%'
       containerAll.style.marginLeft = 'auto'
     } else {
@@ -73,8 +96,11 @@ export default {
     window.addEventListener('resize', () => {
       widthWindow = window.innerWidth
 
+      if (widthWindow <= 1390 && this.login) app.style.marginTop = '80px'
+      else app.style.marginTop = '0px'
+
       this.width = window.innerWidth
-      if (this.width <= 1390) {
+      if (this.width <= 1390 || !this.login) {
         containerAll.style.width = '100%'
         containerAll.style.marginLeft = 'auto'
       } else {
@@ -100,7 +126,7 @@ export default {
 </script>
 
 <style scoped>
-#app {
+.settingApp {
   margin-top: 80px;
 }
 .darkThemeOverlay {

@@ -16,7 +16,37 @@
             <strong>{{ userName }}</strong>
           </div>
         </div>
-        <b-list-group class="mt-2 mb-4">
+        <div v-if="atajoTheme === 'true'" class="mt-2 text-center">
+          <b-button
+            :variant="variantTheme"
+            :pressed="themPreferencesSys"
+            @click="setThemePreferences('system')"
+          >
+            <b-icon-tv-fill></b-icon-tv-fill>
+          </b-button>
+          <b-button
+            :variant="variantTheme"
+            :pressed="themPreferencesDar"
+            @click="setThemePreferences('dark')"
+          >
+            <b-icon-moon></b-icon-moon>
+          </b-button>
+          <b-button
+            :variant="variantTheme"
+            :pressed="themPreferencesLig"
+            @click="setThemePreferences('light')"
+          >
+            <b-icon-brightness-high-fill></b-icon-brightness-high-fill>
+          </b-button>
+          <b-button
+            :variant="variantTheme"
+            :pressed="themPreferencesSep"
+            @click="setThemePreferences('sepia')"
+          >
+            <b-icon-cup-fill></b-icon-cup-fill>
+          </b-button>
+        </div>
+        <b-list-group class="mt-3 mb-4">
           <b-list-group-item
             v-for="(tab, indexTab) in tabsAccess"
             :key="indexTab"
@@ -62,39 +92,10 @@
             </div>
           </b-list-group-item>
         </b-list-group>
-        <div class="mb-4 text-center">
-          <b-button
-            :variant="variantTheme"
-            :pressed="themPreferencesSys"
-            @click="setThemePreferences('system')"
-          >
-            <b-icon-tv-fill></b-icon-tv-fill>
-          </b-button>
-          <b-button
-            :variant="variantTheme"
-            :pressed="themPreferencesDar"
-            @click="setThemePreferences('dark')"
-          >
-            <b-icon-moon></b-icon-moon>
-          </b-button>
-          <b-button
-            :variant="variantTheme"
-            :pressed="themPreferencesLig"
-            @click="setThemePreferences('light')"
-          >
-            <b-icon-brightness-high-fill></b-icon-brightness-high-fill>
-          </b-button>
-          <b-button
-            :variant="variantTheme"
-            :pressed="themPreferencesSep"
-            @click="setThemePreferences('sepia')"
-          >
-            <b-icon-cup-fill></b-icon-cup-fill>
-          </b-button>
-        </div>
         <b-button
           block
           :variant="variantCloseSesion"
+          class="mt-3"
           @click="logout([$store, $router])"
         >
           <b-icon-power></b-icon-power>
@@ -152,6 +153,9 @@ export default {
     }
   },
   computed: {
+    atajoTheme() {
+      return this.$store.state.general.atajoTheme
+    },
     themPreferencesSys() {
       return this.$store.state.general.themePreferences === 'system'
     },

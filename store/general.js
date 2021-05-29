@@ -1,6 +1,9 @@
 if (!localStorage.getItem('spastore_theme_color'))
   localStorage.setItem('spastore_theme_color', 'light')
 
+if (!localStorage.getItem('spastore_atajo_theme'))
+  localStorage.setItem('spastore_atajo_theme', 'false')
+
 export const state = () => ({
   alert: {
     show: false,
@@ -56,6 +59,7 @@ export const state = () => ({
   ],
   tabActual: 'Inicio',
   themePreferences: localStorage.getItem('spastore_theme_color'),
+  atajoTheme: localStorage.getItem('spastore_atajo_theme'),
 })
 
 export const mutations = {
@@ -106,5 +110,9 @@ export const mutations = {
       if (theme === 'system' && systemDark)
         document.documentElement.classList.add('dark-mode')
     }
+  },
+  setAtajoTheme(state, atajo) {
+    state.atajoTheme = atajo
+    localStorage.setItem('spastore_atajo_theme', atajo)
   },
 }
