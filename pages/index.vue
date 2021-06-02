@@ -92,7 +92,7 @@
             <b-icon-cup-fill></b-icon-cup-fill>
             Sepia
           </b-button>
-          <div class="mt-4">
+          <div v-if="width < 992 || width > 1390" class="mt-4">
             <div @click="addAtajo">
               <b-icon-square-fill
                 v-if="atajoTheme === 'false'"
