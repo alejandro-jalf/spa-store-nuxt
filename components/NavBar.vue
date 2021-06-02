@@ -1,6 +1,11 @@
 <template>
   <div>
-    <b-navbar toggleable="lg" :type="typeNav" :variant="variantNav" fixed="top">
+    <b-navbar
+      toggleable="lg"
+      :type="typeNav"
+      :variant="variantNav"
+      class="nbar"
+    >
       <b-navbar-brand>
         <img src="../assets/cesta.png" width="30px" height="30px" />
         SPA
@@ -128,5 +133,13 @@ export default {
   position: absolute;
   top: 35px;
   left: 50px;
+}
+
+.nbar {
+  position: fixed;
+  z-index: 5;
+  width: 100%;
+  top: 0px;
+  left: 0px;
 }
 </style>
