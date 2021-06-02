@@ -8,12 +8,14 @@
       opacity="0.5"
       no-wrap
       fixed
+      z-index="10"
     ></b-overlay>
     <NavBarLeft v-if="width > 1390 && login" />
     <nav-bar v-else-if="login" />
     <div class="container container-all">
       <Nuxt />
     </div>
+    <nav-bar-bottom></nav-bar-bottom>
     <alert></alert>
   </div>
 </template>
@@ -22,12 +24,14 @@
 import NavBar from '../components/NavBar.vue'
 import Alert from '../components/Alert'
 import NavBarLeft from '../components/NavBarLeft'
+import NavBarBottom from '../components/NavBarBottom'
 
 export default {
   components: {
     NavBar,
     Alert,
     NavBarLeft,
+    NavBarBottom,
   },
   data() {
     return {
