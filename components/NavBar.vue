@@ -96,7 +96,7 @@
                 </b-button>
               </div>
               <div class="text-right mt-5">
-                <b-button variant="link" @click="logout">
+                <b-button variant="link" @click="logout([$store, $router])">
                   <b-icon-power></b-icon-power>
                   Cerrar sesion
                 </b-button>

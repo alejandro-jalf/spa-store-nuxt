@@ -11,7 +11,7 @@
       z-index="10"
     ></b-overlay>
     <NavBarLeft v-if="width > 1390 && login" />
-    <nav-bar v-else-if="(login && !barraInferior) || width > 991" />
+    <nav-bar v-else-if="(login && !barraInferior) || (login && width > 991)" />
     <div class="container container-all">
       <Nuxt />
     </div>

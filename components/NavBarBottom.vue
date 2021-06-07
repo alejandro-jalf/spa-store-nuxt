@@ -81,7 +81,7 @@
           </b-button>
         </div>
         <div class="text-right mt-5">
-          <b-button variant="link">
+          <b-button variant="link" @click="logout([$store, $router])">
             <b-icon-power></b-icon-power>
             Cerrar sesion
           </b-button>
@@ -92,7 +92,7 @@
 </template>
 
 <script>
-import { mapMutations } from 'vuex'
+import { mapActions, mapMutations } from 'vuex'
 import {
   BIconHouseDoorFill,
   BIconPercent,
@@ -236,6 +236,9 @@ export default {
     })
   },
   methods: {
+    ...mapActions({
+      logout: 'user/logout',
+    }),
     ...mapMutations({
       setThemePreferences: 'general/setThemePreferences',
     }),
