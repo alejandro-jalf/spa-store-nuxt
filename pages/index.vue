@@ -106,6 +106,27 @@
           </div>
         </div>
 
+        <div v-if="width < 992" class="DivitionOption">
+          <div class="font-weight-bold">Barra inferior:</div>
+          <hr class="m-0 mb-2 bg-white" />
+          <div class="titleConf">
+            Puede colocar las pestañas en una ventana inferior
+          </div>
+
+          <div class="mt-4">
+            <div @click="changeBarraInferior">
+              <b-icon-square-fill
+                v-if="barraInferior === 'false'"
+              ></b-icon-square-fill>
+              <b-icon-check-square-fill
+                v-else
+                variant="info"
+              ></b-icon-check-square-fill>
+              Barra inferior
+            </div>
+          </div>
+        </div>
+
         <div v-if="typeUSer === 'manager'" class="DivitionOption">
           <div class="font-weight-bold">Cambio de contraseña:</div>
           <hr class="m-0 mb-2 bg-white" />
@@ -235,6 +256,9 @@ export default {
     atajoTheme() {
       return this.$store.state.general.atajoTheme
     },
+    barraInferior() {
+      return this.$store.state.general.barraInferior
+    },
     backgroundInputTheme() {
       if (this.$store.state.general.themePreferences === 'system') {
         const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
@@ -337,6 +361,10 @@ export default {
       const atajoRefactor = this.atajoTheme === 'true' ? 'false' : 'true'
       this.setAtajoTheme(atajoRefactor)
     },
+    changeBarraInferior() {
+      const barraRefactor = this.barraInferior === 'true' ? 'false' : 'true'
+      this.setBarraInferior(barraRefactor)
+    },
     showAlertDialogOpt(message = '', title = '', clickAccept = () => {}) {
       this.dataAlertOptions.show = true
       this.dataAlertOptions.message = message
@@ -355,6 +383,7 @@ export default {
       setUser: 'user/setUser',
       setThemePreferences: 'general/setThemePreferences',
       setAtajoTheme: 'general/setAtajoTheme',
+      setBarraInferior: 'general/setBarraInferior',
     }),
     changeTheme(theme) {
       this.setThemePreferences(theme)

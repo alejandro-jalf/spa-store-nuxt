@@ -11,11 +11,13 @@
       z-index="10"
     ></b-overlay>
     <NavBarLeft v-if="width > 1390 && login" />
-    <nav-bar v-else-if="login" />
+    <nav-bar v-else-if="(login && !barraInferior) || width > 991" />
     <div class="container container-all">
       <Nuxt />
     </div>
-    <nav-bar-bottom v-if="login"></nav-bar-bottom>
+    <nav-bar-bottom
+      v-if="login && barraInferior && width < 992"
+    ></nav-bar-bottom>
     <alert></alert>
   </div>
 </template>
@@ -39,6 +41,9 @@ export default {
     }
   },
   computed: {
+    barraInferior() {
+      return this.$store.state.general.barraInferior === 'true'
+    },
     login() {
       const app = document.querySelector('#app')
       const containerAll = document.querySelector('.container-all')

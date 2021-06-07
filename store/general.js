@@ -4,6 +4,9 @@ if (!localStorage.getItem('spastore_theme_color'))
 if (!localStorage.getItem('spastore_atajo_theme'))
   localStorage.setItem('spastore_atajo_theme', 'false')
 
+if (!localStorage.getItem('spastore_barra_inferior'))
+  localStorage.setItem('spastore_barra_inferior', 'false')
+
 export const state = () => ({
   alert: {
     show: false,
@@ -60,6 +63,7 @@ export const state = () => ({
   tabActual: 'Inicio',
   themePreferences: localStorage.getItem('spastore_theme_color'),
   atajoTheme: localStorage.getItem('spastore_atajo_theme'),
+  barraInferior: localStorage.getItem('spastore_barra_inferior'),
 })
 
 export const mutations = {
@@ -114,5 +118,9 @@ export const mutations = {
   setAtajoTheme(state, atajo) {
     state.atajoTheme = atajo
     localStorage.setItem('spastore_atajo_theme', atajo)
+  },
+  setBarraInferior(state, visible) {
+    state.barraInferior = visible
+    localStorage.setItem('spastore_barra_inferior', visible)
   },
 }
