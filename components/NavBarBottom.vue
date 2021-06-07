@@ -37,38 +37,51 @@
           {{ userName }}
         </div>
         <hr class="mt-2" />
-        <div class="text-center">
+        <div>
+          <div>Color</div>
           <b-button
             variant="outline-dark"
+            block
             :pressed="themPreferencesSys"
+            class="text-left"
             @click="setThemePreferences('system')"
           >
             <b-icon-tv-fill></b-icon-tv-fill>
+            Sistema
           </b-button>
           <b-button
             variant="outline-dark"
+            block
             :pressed="themPreferencesDar"
+            class="text-left"
             @click="setThemePreferences('dark')"
           >
             <b-icon-moon></b-icon-moon>
+            Oscuro
           </b-button>
           <b-button
             variant="outline-dark"
+            block
             :pressed="themPreferencesLig"
+            class="text-left"
             @click="setThemePreferences('light')"
           >
             <b-icon-brightness-high-fill></b-icon-brightness-high-fill>
+            Claro
           </b-button>
           <b-button
             variant="outline-dark"
+            block
             :pressed="themPreferencesSep"
+            class="text-left"
             @click="setThemePreferences('sepia')"
           >
             <b-icon-cup-fill></b-icon-cup-fill>
+            Sepia
           </b-button>
         </div>
         <div class="text-right mt-5">
-          <b-button variant="outline-danger">
+          <b-button variant="link">
             <b-icon-power></b-icon-power>
             Cerrar sesion
           </b-button>
@@ -173,7 +186,7 @@ export default {
       else itemsTab[x].style.width = widthItemTab + 'px'
       if (widthItemTab >= 106) {
         this.visibleNickname = true
-        itemsTab[x].style.paddingTop = '1px'
+        itemsTab[x].style.paddingTop = '2px'
         itemsTab[x].style.paddingBottom = '0px'
       } else {
         this.visibleNickname = false
@@ -197,7 +210,7 @@ export default {
         else itemsTab[x].style.width = widthItemTab + 'px'
         if (widthItemTab >= 106) {
           this.visibleNickname = true
-          itemsTab[x].style.paddingTop = '1px'
+          itemsTab[x].style.paddingTop = '2px'
           itemsTab[x].style.paddingBottom = '0px'
         } else {
           this.visibleNickname = false
@@ -242,7 +255,6 @@ export default {
 
 .container-items-overflow {
   width: calc(100% - 50px);
-  text-align: center;
   overflow: auto;
 }
 
@@ -273,10 +285,11 @@ export default {
   position: fixed;
   z-index: 3;
   right: 0px;
-  bottom: 0px;
+  bottom: 5px;
   width: 50px;
-  height: 52px;
+  height: 42px;
   font-size: 25px;
+  padding-top: 0px;
 }
 
 .container-menu {

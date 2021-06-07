@@ -15,7 +15,7 @@
     <div class="container container-all">
       <Nuxt />
     </div>
-    <nav-bar-bottom></nav-bar-bottom>
+    <nav-bar-bottom v-if="login"></nav-bar-bottom>
     <alert></alert>
   </div>
 </template>
