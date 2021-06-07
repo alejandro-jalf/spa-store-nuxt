@@ -1,5 +1,5 @@
 <template>
-  <div class="container-tabs bg-dark">
+  <div class="container-tabs" :class="backgroundMenu">
     <div class="container-items-overflow">
       <div class="container-items">
         <b-link
@@ -137,6 +137,16 @@ export default {
     }
   },
   computed: {
+    backgroundMenu() {
+      if (this.$store.state.general.themePreferences === 'system') {
+        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
+          .matches
+        if (systemDark) return 'bg-dark'
+        return 'bg-info'
+      } else if (this.$store.state.general.themePreferences === 'dark')
+        return 'bg-dark'
+      else return 'bg-info'
+    },
     variantTheme() {
       if (this.$store.state.general.themePreferences === 'system') {
         const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
@@ -269,11 +279,11 @@ export default {
   width: 106px;
   height: 100%;
   padding-top: 1px;
-  color: rgb(129, 129, 129);
+  color: rgb(212, 212, 212);
 }
 
 .item-tab-active {
-  color: rgb(248, 248, 248);
+  color: rgb(255, 255, 255);
   border-bottom: 2px solid rgb(255, 255, 255);
 }
 
