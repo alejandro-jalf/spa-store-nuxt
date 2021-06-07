@@ -40,16 +40,68 @@
         </b-navbar-nav>
 
         <b-navbar-nav class="ml-auto">
-          <b-nav-item-dropdown right>
+          <b-nav-item-dropdown right menu-class="p-0">
             <template #button-content>
               <em>
                 <b-avatar></b-avatar>
-                {{ userName }}
               </em>
             </template>
-            <b-dropdown-item @click="logout([$store, $router])">
-              Cerrar sesion
-            </b-dropdown-item>
+            <div class="container-menu" :class="variantTheme">
+              <div>
+                <b-icon-person-circle class="mr-3"></b-icon-person-circle>
+                {{ userName }}
+              </div>
+              <hr class="mt-2" />
+              <div>
+                <div>Color</div>
+                <b-button
+                  variant="outline-dark"
+                  block
+                  :pressed="themPreferencesSys"
+                  class="text-left"
+                  @click="setThemePreferences('system')"
+                >
+                  <b-icon-tv-fill></b-icon-tv-fill>
+                  Sistema
+                </b-button>
+                <b-button
+                  variant="outline-dark"
+                  block
+                  :pressed="themPreferencesDar"
+                  class="text-left"
+                  @click="setThemePreferences('dark')"
+                >
+                  <b-icon-moon></b-icon-moon>
+                  Oscuro
+                </b-button>
+                <b-button
+                  variant="outline-dark"
+                  block
+                  :pressed="themPreferencesLig"
+                  class="text-left"
+                  @click="setThemePreferences('light')"
+                >
+                  <b-icon-brightness-high-fill></b-icon-brightness-high-fill>
+                  Claro
+                </b-button>
+                <b-button
+                  variant="outline-dark"
+                  block
+                  :pressed="themPreferencesSep"
+                  class="text-left"
+                  @click="setThemePreferences('sepia')"
+                >
+                  <b-icon-cup-fill></b-icon-cup-fill>
+                  Sepia
+                </b-button>
+              </div>
+              <div class="text-right mt-5">
+                <b-button variant="link" @click="logout">
+                  <b-icon-power></b-icon-power>
+                  Cerrar sesion
+                </b-button>
+              </div>
+            </div>
           </b-nav-item-dropdown>
         </b-navbar-nav>
       </b-collapse>
@@ -59,14 +111,28 @@
 </template>
 
 <script>
-import { BIconGeoFill } from 'bootstrap-vue'
-import { mapActions } from 'vuex'
+import {
+  BIconGeoFill,
+  BIconPower,
+  BIconMoon,
+  BIconBrightnessHighFill,
+  BIconCupFill,
+  BIconTvFill,
+  BIconPersonCircle,
+} from 'bootstrap-vue'
+import { mapActions, mapMutations } from 'vuex'
 import NavBarSlider from './NavBarSlider'
 
 export default {
   components: {
     NavBarSlider,
     BIconGeoFill,
+    BIconPower,
+    BIconMoon,
+    BIconBrightnessHighFill,
+    BIconCupFill,
+    BIconTvFill,
+    BIconPersonCircle,
   },
   data() {
     return {
@@ -77,6 +143,30 @@ export default {
     }
   },
   computed: {
+    variantTheme() {
+      if (this.$store.state.general.themePreferences === 'system') {
+        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
+          .matches
+        if (systemDark) return 'menuDark'
+        return ''
+      } else if (this.$store.state.general.themePreferences === 'dark')
+        return 'menuDark'
+      else if (this.$store.state.general.themePreferences === 'sepia')
+        return 'sepiaBodyCard'
+      else return ''
+    },
+    themPreferencesSys() {
+      return this.$store.state.general.themePreferences === 'system'
+    },
+    themPreferencesDar() {
+      return this.$store.state.general.themePreferences === 'dark'
+    },
+    themPreferencesLig() {
+      return this.$store.state.general.themePreferences === 'light'
+    },
+    themPreferencesSep() {
+      return this.$store.state.general.themePreferences === 'sepia'
+    },
     typeNav() {
       return this.$store.state.general.themePreferences === 'sepia'
         ? 'light'
@@ -124,6 +214,9 @@ export default {
     ...mapActions({
       logout: 'user/logout',
     }),
+    ...mapMutations({
+      setThemePreferences: 'general/setThemePreferences',
+    }),
   },
 }
 </script>
@@ -141,5 +234,15 @@ export default {
   width: 100%;
   top: 0px;
   left: 0px;
+}
+
+.container-menu {
+  width: 300px;
+  padding: 10px;
+  border-radius: 3px;
+}
+
+.menuDark {
+  background: rgb(211, 211, 211);
 }
 </style>
