@@ -122,11 +122,13 @@ export default {
       },
       login: this.$store.state.user.login,
       listTabs: this.$store.state.general.listTabs,
-      width: 0,
       recoveryPassword: false,
     }
   },
   computed: {
+    width() {
+      return this.$store.state.general.widthWindow
+    },
     blockButton() {
       return this.width <= 500
     },
@@ -135,14 +137,6 @@ export default {
         ? 'Recuperando contraseña'
         : 'Iniciando sesion'
     },
-  },
-  mounted() {
-    this.width = window.innerWidth
-    const that = this
-
-    window.addEventListener('resize', () => {
-      that.width = window.innerWidth
-    })
   },
   methods: {
     focusPassword() {

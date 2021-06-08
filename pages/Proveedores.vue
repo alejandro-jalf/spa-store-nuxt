@@ -1,7 +1,6 @@
 <template>
   <div class="pt-5">
     <b-table
-      v-if="width > 767"
       hover
       head-variant="dark"
       outlined
@@ -47,7 +46,6 @@ export default {
           Email: '',
         },
       ],
-      width: 1000,
       h: {
         num: 0,
         title: '',
@@ -56,6 +54,10 @@ export default {
     }
   },
   computed: {
+    width() {
+      // 767
+      return this.$store.state.general.widthWindow
+    },
     variantItem() {
       if (this.$store.state.general.themePreferences === 'system') {
         const systemDark = window.matchMedia('(prefers-color-scheme: dark)')

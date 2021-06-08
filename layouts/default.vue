@@ -23,6 +23,7 @@
 </template>
 
 <script>
+import { mapMutations } from 'vuex'
 import NavBar from '../components/NavBar.vue'
 import Alert from '../components/Alert'
 import NavBarLeft from '../components/NavBarLeft'
@@ -35,12 +36,10 @@ export default {
     NavBarLeft,
     NavBarBottom,
   },
-  data() {
-    return {
-      width: 0,
-    }
-  },
   computed: {
+    width() {
+      return this.$store.state.general.widthWindow
+    },
     barraInferior() {
       return this.$store.state.general.barraInferior === 'true'
     },
@@ -92,7 +91,7 @@ export default {
     if (widthWindow <= 1390 && this.login) app.style.marginTop = '80px'
     else app.style.marginTop = '0px'
 
-    this.width = window.innerWidth
+    this.setWidthWindow(window.innerWidth)
     if (this.width <= 1390 || !this.login) {
       containerAll.style.width = '100%'
       containerAll.style.marginLeft = 'auto'
@@ -108,7 +107,7 @@ export default {
       if (widthWindow <= 1390 && this.login) app.style.marginTop = '80px'
       else app.style.marginTop = '0px'
 
-      this.width = window.innerWidth
+      this.setWidthWindow(window.innerWidth)
       if (this.width <= 1390 || !this.login) {
         containerAll.style.width = '100%'
         containerAll.style.marginLeft = 'auto'
@@ -130,6 +129,11 @@ export default {
     if (this.$store.state.general.themePreferences === 'sepia') {
       document.documentElement.classList.add('sepia-mode')
     }
+  },
+  methods: {
+    ...mapMutations({
+      setWidthWindow: 'general/setWidthWindow',
+    }),
   },
 }
 </script>

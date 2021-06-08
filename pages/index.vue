@@ -233,7 +233,6 @@ export default {
     return {
       user: this.$store.state.user.user.correo_user,
       principal: 'ventav',
-      width: 0,
       dataAlertOptions: {
         show: false,
         title: 'Modificando la pantalla principal',
@@ -253,6 +252,9 @@ export default {
     }
   },
   computed: {
+    width() {
+      return this.$store.state.general.widthWindow
+    },
     atajoTheme() {
       return this.$store.state.general.atajoTheme
     },
@@ -346,15 +348,9 @@ export default {
     },
   },
   mounted() {
-    this.width = window.innerWidth
     const that = this
-
     const user = { ...that.$store.state.user.user }
     this.principal = user.principal
-
-    window.addEventListener('resize', () => {
-      that.width = window.innerWidth
-    })
   },
   methods: {
     addAtajo() {

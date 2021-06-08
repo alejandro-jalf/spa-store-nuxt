@@ -192,12 +192,14 @@ export default {
         title: 'Cambiando status del usuario',
         message: '¿Quiere cambiar el estatus del usuario _ a _',
       },
-      width: 0,
       showOptions: false,
       messageListUsers: 'Lista de usuarios no ha sido cargada',
     }
   },
   computed: {
+    width() {
+      return this.$store.state.general.widthWindow
+    },
     variantThemeLine() {
       if (this.$store.state.general.themePreferences === 'system') {
         const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
@@ -261,11 +263,6 @@ export default {
       const jsonData = JSON.parse(sessionStorage.getItem('spastore_users_list'))
       this.listUsers = jsonData.a
     }
-
-    this.width = window.innerWidth
-    window.addEventListener('resize', () => {
-      this.width = window.innerWidth
-    })
   },
   methods: {
     blurButton() {

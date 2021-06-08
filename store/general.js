@@ -64,6 +64,7 @@ export const state = () => ({
   themePreferences: localStorage.getItem('spastore_theme_color'),
   atajoTheme: localStorage.getItem('spastore_atajo_theme'),
   barraInferior: localStorage.getItem('spastore_barra_inferior'),
+  widthWindow: 0,
 })
 
 export const mutations = {
@@ -122,5 +123,8 @@ export const mutations = {
   setBarraInferior(state, visible) {
     state.barraInferior = visible
     localStorage.setItem('spastore_barra_inferior', visible)
+  },
+  setWidthWindow(state, width) {
+    state.widthWindow = width
   },
 }
