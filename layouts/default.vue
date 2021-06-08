@@ -41,6 +41,37 @@ export default {
       return this.$store.state.general.widthWindow
     },
     barraInferior() {
+      const app = document.querySelector('#app')
+      const widthWindow = window.innerWidth
+      if (app) {
+        if (widthWindow > 1390) {
+          app.style.marginTop = '0px'
+          app.style.marginBottom = '0px'
+        } else if (widthWindow >= 992) {
+          if (this.login) {
+            app.style.marginTop = '80px'
+            app.style.marginBottom = '0px'
+          } else {
+            app.style.marginTop = '0px'
+            app.style.marginBottom = '0px'
+          }
+        } else if (
+          this.$store.state.general.barraInferior === 'true' &&
+          this.login
+        ) {
+          app.style.marginTop = '0px'
+          app.style.marginBottom = '70px'
+        } else if (
+          this.$store.state.general.barraInferior !== 'true' &&
+          this.login
+        ) {
+          app.style.marginTop = '80px'
+          app.style.marginBottom = '0px'
+        } else {
+          app.style.marginTop = '0px'
+          app.style.marginBottom = '0px'
+        }
+      }
       return this.$store.state.general.barraInferior === 'true'
     },
     login() {
@@ -88,12 +119,23 @@ export default {
     let widthWindow = window.innerWidth
     let paddingLeft = 0
 
-    if (widthWindow <= 1390 && widthWindow >= 992 && this.login) {
-      app.style.marginTop = '80px'
+    if (widthWindow > 1390) {
+      app.style.marginTop = '0px'
       app.style.marginBottom = '0px'
+    } else if (widthWindow >= 992) {
+      if (this.login) {
+        app.style.marginTop = '80px'
+        app.style.marginBottom = '0px'
+      } else {
+        app.style.marginTop = '0px'
+        app.style.marginBottom = '0px'
+      }
     } else if (this.barraInferior && this.login) {
       app.style.marginTop = '0px'
       app.style.marginBottom = '70px'
+    } else if (!this.barraInferior && this.login) {
+      app.style.marginTop = '80px'
+      app.style.marginBottom = '0px'
     } else {
       app.style.marginTop = '0px'
       app.style.marginBottom = '0px'
@@ -112,12 +154,23 @@ export default {
     window.addEventListener('resize', () => {
       widthWindow = window.innerWidth
 
-      if (widthWindow <= 1390 && widthWindow >= 992 && this.login) {
-        app.style.marginTop = '80px'
+      if (widthWindow > 1390) {
+        app.style.marginTop = '0px'
         app.style.marginBottom = '0px'
+      } else if (widthWindow >= 992) {
+        if (this.login) {
+          app.style.marginTop = '80px'
+          app.style.marginBottom = '0px'
+        } else {
+          app.style.marginTop = '0px'
+          app.style.marginBottom = '0px'
+        }
       } else if (this.barraInferior && this.login) {
         app.style.marginTop = '0px'
         app.style.marginBottom = '70px'
+      } else if (!this.barraInferior && this.login) {
+        app.style.marginTop = '80px'
+        app.style.marginBottom = '0px'
       } else {
         app.style.marginTop = '0px'
         app.style.marginBottom = '0px'
