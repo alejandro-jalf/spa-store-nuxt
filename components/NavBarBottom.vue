@@ -27,7 +27,13 @@
         </b-link>
       </div>
     </div>
-    <b-dropdown class="more-tabs" no-caret variant="link" menu-class="p-0">
+    <b-dropdown
+      class="more-tabs"
+      no-caret
+      variant="link"
+      menu-class="p-0"
+      toggle-class="text-white"
+    >
       <template #button-content>
         <b-icon-three-dots-vertical></b-icon-three-dots-vertical>
       </template>
@@ -206,7 +212,7 @@ export default {
     }
 
     if (widthWindow - 50 < countTabsAccess * itemsTab[0].clientWidth)
-      moreActions.style.boxShadow = '0px 5px 3px 3px rgba(90, 90, 90, 1)'
+      moreActions.style.boxShadow = '0px 5px 3px 3px rgba(90, 90, 90, 0.5)'
     else moreActions.style.boxShadow = '0px 5px 3px 3px rgba(90, 90, 90, 0)'
 
     window.addEventListener('resize', () => {
@@ -298,9 +304,9 @@ export default {
   position: fixed;
   z-index: 3;
   right: 0px;
-  bottom: 5px;
+  bottom: 0px;
   width: 50px;
-  height: 42px;
+  height: 52px;
   font-size: 25px;
   padding-top: 0px;
 }
@@ -309,6 +315,7 @@ export default {
   width: 300px;
   padding: 10px;
   border-radius: 3px;
+  box-shadow: 1px 3px 5px 1px rgb(131, 131, 131);
 }
 
 .menuDark {
