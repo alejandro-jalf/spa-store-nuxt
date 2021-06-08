@@ -4,7 +4,6 @@
     :variant="variantFloat"
     :size="sizeFloat"
     :button="true"
-    :style="styleFloat"
     @click="clickFloat"
   >
     <b-icon-arrow-clockwise
@@ -83,14 +82,23 @@ export default {
       default: () => {},
     },
   },
-  computed: {
-    styleFloat() {
-      const vertical =
-        this.alignVertical === 'bottom' ? 'bottom: 15px;' : 'top: 15px;'
-      const horizontal =
-        this.alignHorizontal === 'right' ? 'right: 15px;' : 'left: 15px;'
-      return `${vertical} ${horizontal}`
-    },
+  mounted() {
+    const floatButtons = document.querySelectorAll('.Floatbtn')
+
+    for (let x = 0; x < floatButtons.length; x++) {
+      if (
+        this.$store.state.general.barraInferior === 'true' &&
+        this.$store.state.general.widthWindow < 992 &&
+        this.alignVertical === 'bottom'
+      )
+        floatButtons[x].style.bottom = '65px'
+      else if (this.alignVertical === 'bottom')
+        floatButtons[x].style.bottom = '15px'
+      else floatButtons[x].style.top = '15px'
+
+      if (this.alignHorizontal === 'right') floatButtons[x].style.right = '15px'
+      else floatButtons[x].style.left = '15px'
+    }
   },
 }
 </script>
@@ -99,7 +107,27 @@ export default {
 .Floatbtn {
   position: fixed;
   cursor: pointer;
-  z-index: 5;
+  z-index: 1;
   box-shadow: 1px 2px 5px 1px rgb(114, 114, 114);
+}
+
+.align-left {
+  left: 15px;
+  right: none;
+}
+
+.align-right {
+  left: none;
+  right: 15px;
+}
+
+.align-top {
+  top: 15px;
+  bottom: none;
+}
+
+.align-bottom {
+  top: none;
+  bottom: 65px;
 }
 </style>
