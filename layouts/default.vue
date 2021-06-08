@@ -88,8 +88,16 @@ export default {
     let widthWindow = window.innerWidth
     let paddingLeft = 0
 
-    if (widthWindow <= 1390 && this.login) app.style.marginTop = '80px'
-    else app.style.marginTop = '0px'
+    if (widthWindow <= 1390 && widthWindow >= 992 && this.login) {
+      app.style.marginTop = '80px'
+      app.style.marginBottom = '0px'
+    } else if (this.barraInferior && this.login) {
+      app.style.marginTop = '0px'
+      app.style.marginBottom = '70px'
+    } else {
+      app.style.marginTop = '0px'
+      app.style.marginBottom = '0px'
+    }
 
     this.setWidthWindow(window.innerWidth)
     if (this.width <= 1390 || !this.login) {
@@ -104,8 +112,16 @@ export default {
     window.addEventListener('resize', () => {
       widthWindow = window.innerWidth
 
-      if (widthWindow <= 1390 && this.login) app.style.marginTop = '80px'
-      else app.style.marginTop = '0px'
+      if (widthWindow <= 1390 && widthWindow >= 992 && this.login) {
+        app.style.marginTop = '80px'
+        app.style.marginBottom = '0px'
+      } else if (this.barraInferior && this.login) {
+        app.style.marginTop = '0px'
+        app.style.marginBottom = '70px'
+      } else {
+        app.style.marginTop = '0px'
+        app.style.marginBottom = '0px'
+      }
 
       this.setWidthWindow(window.innerWidth)
       if (this.width <= 1390 || !this.login) {
