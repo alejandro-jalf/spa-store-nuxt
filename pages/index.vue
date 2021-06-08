@@ -110,7 +110,7 @@
           <div class="font-weight-bold">Barra inferior:</div>
           <hr class="m-0 mb-2 bg-white" />
           <div class="titleConf">
-            Puede colocar las pestañas en una ventana inferior
+            Puede colocar las pestañas en una barra inferior
           </div>
 
           <div class="mt-4">
