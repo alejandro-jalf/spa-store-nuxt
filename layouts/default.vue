@@ -10,6 +10,7 @@
       fixed
       z-index="10"
     ></b-overlay>
+    <div class="slider"></div>
     <NavBarLeft v-if="width > 1390 && login" />
     <nav-bar v-else-if="(login && !barraInferior) || (login && width > 991)" />
     <div class="container container-all">
@@ -274,6 +275,9 @@ export default {
       this.moveTouch = null
       this.xDown = null
       this.yDown = null
+      document.querySelector('.slider').style.right = 'none'
+      document.querySelector('.slider').style.left =
+        window.innerWidth + 30 + 'px'
     },
 
     handleTouchStart(evt) {
@@ -284,6 +288,7 @@ export default {
 
     handleTouchMove(evt) {
       if (!this.xDown || !this.yDown) return
+      const slider = document.querySelector('.slider')
 
       const xUp = evt.touches[0].clientX
       const yUp = evt.touches[0].clientY
@@ -292,9 +297,12 @@ export default {
       const yDiff = this.yDown - yUp
 
       if (Math.abs(xDiff) > Math.abs(yDiff)) {
+        slider.style.right = 'none'
         if (xDiff > 0) {
+          slider.style.left = window.innerWidth - xDiff + 'px'
           this.moveTouch = 'left'
         } else {
+          slider.style.left = -(window.innerWidth + xDiff) + 'px'
           this.moveTouch = 'right'
         }
       } else if (yDiff > 0) {
@@ -308,6 +316,16 @@ export default {
 </script>
 
 <style scoped>
+.slider {
+  position: fixed;
+  z-index: 2;
+  top: 0px;
+  right: 110%;
+  width: 100%;
+  height: calc(100% - 52px);
+  background: #161616b2;
+  box-shadow: -1px 2px 10px 5px rgb(95, 95, 95);
+}
 .settingApp {
   margin-top: 80px;
 }
