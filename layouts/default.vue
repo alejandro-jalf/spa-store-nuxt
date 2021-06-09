@@ -36,6 +36,13 @@ export default {
     NavBarLeft,
     NavBarBottom,
   },
+  data() {
+    return {
+      xDown: null,
+      yDown: null,
+      moveTouch: null,
+    }
+  },
   computed: {
     width() {
       return this.$store.state.general.widthWindow
@@ -151,6 +158,10 @@ export default {
       containerAll.style.marginLeft = paddingLeft + 'px'
     }
 
+    document.addEventListener('touchstart', this.handleTouchStart, false)
+    document.addEventListener('touchmove', this.handleTouchMove, false)
+    document.addEventListener('touchend', this.handleEnd, false)
+
     window.addEventListener('resize', () => {
       widthWindow = window.innerWidth
 
@@ -203,6 +214,92 @@ export default {
     ...mapMutations({
       setWidthWindow: 'general/setWidthWindow',
     }),
+
+    tabsAccess() {
+      const user = this.$store.state.user.user
+      const tabs = this.$store.state.general.listTabs
+
+      const tabsPermission = tabs.filter((tab) => {
+        const arrayTabs = user.access_to_user.trim().split(',')
+        const findTab = arrayTabs.find(
+          (ftab) => tab.name.trim().toLowerCase() === ftab.trim().toLowerCase()
+        )
+        if (tab.name.trim().toLowerCase() === 'index') return true
+        return !!findTab
+      })
+      return tabsPermission
+    },
+
+    getTouches(evt) {
+      return evt.touches || evt.originalEvent.touches
+    },
+
+    handleEnd(evt) {
+      const posX = evt.changedTouches[0].clientX
+      const diffAbsolute = Math.abs(this.xDown - posX)
+      const widthWindow = this.$store.state.general.widthWindow
+      const barraInferior = this.$store.state.general.barraInferior
+      if (
+        this.moveTouch !== null &&
+        barraInferior === 'true' &&
+        widthWindow < 992 &&
+        (this.moveTouch === 'left' || this.moveTouch === 'right')
+      ) {
+        const tabs = this.tabsAccess()
+        const tabActual = this.$store.state.general.tabActual
+        const countTabs = tabs.length
+
+        const positionActual = tabs.findIndex(
+          (tab) => tab.nickname === tabActual
+        )
+        let newPosition = 0
+
+        if (this.moveTouch === 'right') {
+          newPosition = positionActual - 1
+          if (newPosition >= 0 && diffAbsolute > 150 && tabs[newPosition])
+            this.$router.replace({ path: tabs[newPosition].path })
+        } else {
+          newPosition = positionActual + 1
+          if (
+            newPosition <= countTabs &&
+            diffAbsolute > 150 &&
+            tabs[newPosition]
+          )
+            this.$router.replace({ path: tabs[newPosition].path })
+        }
+      }
+      this.moveTouch = null
+      this.xDown = null
+      this.yDown = null
+    },
+
+    handleTouchStart(evt) {
+      const firstTouch = this.getTouches(evt)[0]
+      this.xDown = firstTouch.clientX
+      this.yDown = firstTouch.clientY
+    },
+
+    handleTouchMove(evt) {
+      if (!this.xDown || !this.yDown) return
+
+      const xUp = evt.touches[0].clientX
+      const yUp = evt.touches[0].clientY
+
+      const xDiff = this.xDown - xUp
+      const yDiff = this.yDown - yUp
+
+      if (Math.abs(xDiff) > Math.abs(yDiff)) {
+        if (xDiff > 0) {
+          this.moveTouch = 'left'
+        } else {
+          this.moveTouch = 'right'
+        }
+      } else if (yDiff > 0) {
+        this.moveTouch = 'up'
+      } else {
+        this.moveTouch = 'down'
+      }
+    },
   },
 }
 </script>
