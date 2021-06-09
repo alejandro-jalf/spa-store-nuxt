@@ -235,14 +235,17 @@ export default {
     },
 
     handleEnd(evt) {
+      const posYMove = window.innerHeight - this.yDown
       const posX = evt.changedTouches[0].clientX
       const diffAbsolute = Math.abs(this.xDown - posX)
       const widthWindow = this.$store.state.general.widthWindow
       const barraInferior = this.$store.state.general.barraInferior
+
       if (
         this.moveTouch !== null &&
         barraInferior === 'true' &&
         widthWindow < 992 &&
+        posYMove > 55 &&
         (this.moveTouch === 'left' || this.moveTouch === 'right')
       ) {
         const tabs = this.tabsAccess()
