@@ -256,13 +256,13 @@ export default {
 
         if (this.moveTouch === 'right') {
           newPosition = positionActual - 1
-          if (newPosition >= 0 && diffAbsolute > 150 && tabs[newPosition])
+          if (newPosition >= 0 && diffAbsolute > 200 && tabs[newPosition])
             this.$router.replace({ path: tabs[newPosition].path })
         } else {
           newPosition = positionActual + 1
           if (
             newPosition <= countTabs &&
-            diffAbsolute > 150 &&
+            diffAbsolute > 200 &&
             tabs[newPosition]
           )
             this.$router.replace({ path: tabs[newPosition].path })
