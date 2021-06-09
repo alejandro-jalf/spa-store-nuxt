@@ -10,19 +10,21 @@
     <transition name="fade">
       <div v-if="showOptions">
         <b-avatar
-          class="floatAdd"
           variant="success"
           size="45px"
           :button="true"
+          class="floatAdd"
+          :class="positionUpAdd"
           @click="newUser()"
         >
           <b-icon-plus font-scale="2"></b-icon-plus>
         </b-avatar>
         <b-avatar
-          class="floatRefresh"
           variant="info"
           size="45px"
           :button="true"
+          class="floatRefresh"
+          :class="positionUpRefresh"
           @click="loadUsers()"
         >
           <b-icon-arrow-clockwise font-scale="2"></b-icon-arrow-clockwise>
@@ -32,7 +34,7 @@
 
     <div v-if="userViewed === 0" @click="blurButton()">
       <b-table
-        v-if="width > 767"
+        v-if="width > 992"
         hover
         head-variant="dark"
         outlined
@@ -75,11 +77,11 @@
         </template>
       </b-table>
 
-      <div v-else class="mt-3">
+      <div v-else>
         <b-alert
           v-if="Object.values(usersList).length === 0"
           show
-          variant="warning"
+          :variant="variantAlert"
         >
           {{ messageListUsers }}
         </b-alert>
@@ -197,6 +199,34 @@ export default {
     }
   },
   computed: {
+    positionUpAdd() {
+      const barraVisible = this.$store.state.general.barraInferior
+      if (this.$store.state.general.widthWindow < 992) {
+        if (barraVisible === 'true') return 'floatAddUp'
+        return ''
+      }
+      return ''
+    },
+    positionUpRefresh() {
+      const barraVisible = this.$store.state.general.barraInferior
+      if (this.$store.state.general.widthWindow < 992) {
+        if (barraVisible === 'true') return 'floatRefreshUp'
+        return ''
+      }
+      return ''
+    },
+    variantAlert() {
+      if (this.$store.state.general.themePreferences === 'system') {
+        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
+          .matches
+        if (systemDark) return 'warning'
+        return 'info'
+      } else if (this.$store.state.general.themePreferences === 'dark')
+        return 'warning'
+      else if (this.$store.state.general.themePreferences === 'sepia')
+        return 'dark'
+      else return 'info'
+    },
     width() {
       return this.$store.state.general.widthWindow
     },
@@ -471,8 +501,15 @@ export default {
   box-shadow: 1px 2px 5px 1px rgb(114, 114, 114);
 }
 
+.floatAddUp {
+  bottom: 135px;
+}
+
 .floatRefresh {
   bottom: 150px;
+}
+.floatRefreshUp {
+  bottom: 190px;
 }
 
 .fade-enter-active,
