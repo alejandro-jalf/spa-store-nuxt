@@ -1,9 +1,9 @@
 <template>
   <b-avatar
-    class="Floatbtn"
     :variant="variantFloat"
     :size="sizeFloat"
     :button="true"
+    class="Floatbtn"
     @click="clickFloat"
   >
     <b-icon-arrow-clockwise
@@ -83,22 +83,31 @@ export default {
     },
   },
   mounted() {
-    const floatButtons = document.querySelectorAll('.Floatbtn')
+    const floatButton = document.querySelector('.Floatbtn')
 
-    for (let x = 0; x < floatButtons.length; x++) {
-      if (
-        this.$store.state.general.barraInferior === 'true' &&
-        this.$store.state.general.widthWindow < 992 &&
-        this.alignVertical === 'bottom'
-      )
-        floatButtons[x].style.bottom = '65px'
-      else if (this.alignVertical === 'bottom')
-        floatButtons[x].style.bottom = '15px'
-      else floatButtons[x].style.top = '15px'
+    if (
+      this.$store.state.general.barraInferior === 'true' &&
+      this.$store.state.general.widthWindow < 992 &&
+      this.alignVertical === 'bottom'
+    )
+      floatButton.style.bottom = '65px'
+    else if (this.alignVertical === 'bottom') floatButton.style.bottom = '15px'
+    else floatButton.style.top = '15px'
 
-      if (this.alignHorizontal === 'right') floatButtons[x].style.right = '15px'
-      else floatButtons[x].style.left = '15px'
-    }
+    if (this.alignHorizontal === 'right') floatButton.style.right = '15px'
+    else floatButton.style.left = '15px'
+
+    window.addEventListener('resize', () => {
+      if (this.alignVertical === 'bottom') {
+        if (window.innerWidth < 992) {
+          if (this.$store.state.general.barraInferior === 'true')
+            floatButton.style.bottom = '65px'
+          else floatButton.style.bottom = '15px'
+        } else {
+          floatButton.style.bottom = '15px'
+        }
+      }
+    })
   },
 }
 </script>
