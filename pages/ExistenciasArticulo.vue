@@ -57,7 +57,7 @@
       </b-form-text>
     </b-form-group>
 
-    <b-button-group size="md mt-5">
+    <b-button-group size="md mt-4">
       <b-button
         :pressed="stateList"
         variant="outline-info"
@@ -76,7 +76,18 @@
     <div class="line-buttons bg-info"></div>
 
     <div v-if="stateList">
-      <b-alert show>Articulos encontrados: {{ finded }}</b-alert>
+      <b-button
+        v-if="finded > 0"
+        :variant="variantClean"
+        class="mb-1"
+        @click="cleanListArticles()"
+      >
+        <b-icon-archive></b-icon-archive>
+        Limpiar lista de articulos encontrados
+      </b-button>
+      <b-alert :variant="variantAlert" show>
+        Articulos encontrados: {{ finded }}
+      </b-alert>
       <existencias-articulo-card
         v-if="isMovil"
         :articulos="listArt"
@@ -90,19 +101,24 @@
       ></existencias-articulo-table>
     </div>
 
-    <existencias-articulo-details
-      v-else-if="!isEmptyDetails"
-      :details="detailsArticulo"
-    ></existencias-articulo-details>
+    <div v-else-if="!isEmptyDetails">
+      <b-button :variant="variantClean" class="mb-1" @click="cleanDetails()">
+        <b-icon-archive></b-icon-archive>
+        Limpiar detalles del articulo
+      </b-button>
+      <existencias-articulo-details
+        :details="detailsArticulo"
+      ></existencias-articulo-details>
+    </div>
 
-    <b-alert v-else show variant="warning">
+    <b-alert v-else show :variant="variantAlert">
       No se ha solicitado el detalle de ningun producto
     </b-alert>
   </div>
 </template>
 
 <script>
-import { BIconSquare, BIconCheckSquareFill } from 'bootstrap-vue'
+import { BIconSquare, BIconCheckSquareFill, BIconArchive } from 'bootstrap-vue'
 import { mapMutations, mapActions } from 'vuex'
 import ExistenciasArticuloTable from '../components/ExistenciasArticuloTable'
 import ExistenciasArticuloCard from '../components/ExistenciasArticuloCard'
@@ -117,6 +133,7 @@ export default {
     FloatButton,
     BIconSquare,
     BIconCheckSquareFill,
+    BIconArchive,
   },
   data() {
     return {
@@ -134,6 +151,28 @@ export default {
     }
   },
   computed: {
+    variantAlert() {
+      if (this.$store.state.general.themePreferences === 'system') {
+        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
+          .matches
+        if (systemDark) return 'info'
+        return 'info'
+      } else if (this.$store.state.general.themePreferences === 'dark')
+        return 'info'
+      else if (this.$store.state.general.themePreferences === 'sepia')
+        return 'dark'
+      else return 'info'
+    },
+    variantClean() {
+      if (this.$store.state.general.themePreferences === 'system') {
+        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
+          .matches
+        if (systemDark) return 'outline-warning'
+        return 'warning'
+      } else if (this.$store.state.general.themePreferences === 'dark')
+        return 'outline-warning'
+      else return 'warning'
+    },
     backgroundInputTheme() {
       if (this.$store.state.general.themePreferences === 'system') {
         const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
@@ -194,7 +233,20 @@ export default {
     ...mapMutations({
       setLoading: 'general/setLoading',
       showAlertDialog: 'general/showAlertDialog',
+      setListArticulos: 'existenciasarticulo/setListArticulos',
+      setArticulosFinded: 'existenciasarticulo/setArticulosFinded',
+      setArticuloDetails: 'existenciasarticulo/setArticuloDetails',
     }),
+    cleanListArticles() {
+      this.setListArticulos({ data: [] })
+      this.setArticulosFinded(0)
+      this.listArt = []
+      this.finded = 0
+    },
+    cleanDetails() {
+      this.setArticuloDetails({})
+      this.detailsArticulo = {}
+    },
     async loadAriculos() {
       const search = this.inputSearch.search
       if (search.trim() === '') {
@@ -221,7 +273,7 @@ export default {
       this.setLoading(false)
     },
     isDiplayMovil() {
-      return screen.width <= 800
+      return screen.width < 992
     },
     async showDetails(articulo) {
       this.setLoading(true)
