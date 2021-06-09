@@ -80,6 +80,7 @@
         v-if="finded > 0"
         :variant="variantClean"
         class="mb-1"
+        :block="blockButton"
         @click="cleanListArticles()"
       >
         <b-icon-archive></b-icon-archive>
@@ -102,7 +103,12 @@
     </div>
 
     <div v-else-if="!isEmptyDetails">
-      <b-button :variant="variantClean" class="mb-1" @click="cleanDetails()">
+      <b-button
+        :variant="variantClean"
+        :block="blockButton"
+        class="mb-1"
+        @click="cleanDetails()"
+      >
         <b-icon-archive></b-icon-archive>
         Limpiar detalles del articulo
       </b-button>
@@ -151,6 +157,9 @@ export default {
     }
   },
   computed: {
+    blockButton() {
+      return this.$store.state.general.widthWindow <= 500
+    },
     variantAlert() {
       if (this.$store.state.general.themePreferences === 'system') {
         const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
