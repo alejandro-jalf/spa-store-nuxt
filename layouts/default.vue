@@ -290,6 +290,7 @@ export default {
       if (!this.xDown || !this.yDown) return
       const slider = document.querySelector('.slider')
       const posYMove = window.innerHeight - this.yDown
+      const barraInferior = this.$store.state.general.barraInferior
 
       const xUp = evt.touches[0].clientX
       const yUp = evt.touches[0].clientY
@@ -300,11 +301,11 @@ export default {
       if (Math.abs(xDiff) > Math.abs(yDiff)) {
         slider.style.right = 'none'
         if (xDiff > 0) {
-          if (posYMove > 55)
+          if (posYMove > 55 && barraInferior === 'true')
             slider.style.left = window.innerWidth - xDiff + 'px'
           this.moveTouch = 'left'
         } else {
-          if (posYMove > 55)
+          if (posYMove > 55 && barraInferior === 'true')
             slider.style.left = -(window.innerWidth + xDiff) + 'px'
           this.moveTouch = 'right'
         }
