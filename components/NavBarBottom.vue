@@ -28,6 +28,7 @@
       </div>
     </div>
     <b-dropdown
+      ref="submenu"
       class="more-tabs"
       no-caret
       variant="link"
@@ -86,10 +87,17 @@
             Sepia
           </b-button>
         </div>
-        <div class="text-right mt-5">
-          <b-button variant="link" @click="logout([$store, $router])">
+        <div class="mt-5">
+          <b-button
+            variant="link"
+            class="text-danger"
+            @click="logout([$store, $router])"
+          >
             <b-icon-power></b-icon-power>
             Cerrar sesion
+          </b-button>
+          <b-button variant="link" class="float-right" @click="closeMenu">
+            Cerrar
           </b-button>
         </div>
       </div>
@@ -242,6 +250,9 @@ export default {
     })
   },
   methods: {
+    closeMenu() {
+      this.$refs.submenu.hide(true)
+    },
     ...mapActions({
       logout: 'user/logout',
     }),

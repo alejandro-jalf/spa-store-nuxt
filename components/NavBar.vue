@@ -40,7 +40,7 @@
         </b-navbar-nav>
 
         <b-navbar-nav class="ml-auto">
-          <b-nav-item-dropdown right menu-class="p-0">
+          <b-nav-item-dropdown ref="submenu" right menu-class="p-0">
             <template #button-content>
               <em>
                 <b-avatar></b-avatar>
@@ -95,10 +95,17 @@
                   Sepia
                 </b-button>
               </div>
-              <div class="text-right mt-5">
-                <b-button variant="link" @click="logout([$store, $router])">
+              <div class="mt-5">
+                <b-button
+                  variant="link"
+                  class="text-danger"
+                  @click="logout([$store, $router])"
+                >
                   <b-icon-power></b-icon-power>
                   Cerrar sesion
+                </b-button>
+                <b-button variant="link" class="float-right" @click="closeMenu">
+                  Cerrar
                 </b-button>
               </div>
             </div>
@@ -208,6 +215,9 @@ export default {
     })
   },
   methods: {
+    closeMenu() {
+      this.$refs.submenu.hide(true)
+    },
     isActive(nickname) {
       return this.$store.state.general.tabActual.trim() === nickname.trim()
     },
