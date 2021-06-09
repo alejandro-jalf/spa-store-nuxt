@@ -1,5 +1,5 @@
 <template>
-  <div id="containerUsuarios" class="pt-5">
+  <div id="containerUsuarios" class="pt-3">
     <float-button
       v-if="userViewed === 0"
       :click-float="toggleShowOptions"
@@ -93,7 +93,11 @@
           :class="variantTheme"
         >
           <b-card-body class="bodyCardUser">
-            <div :class="variantThemeLine"></div>
+            <div
+              v-if="user.Status === 'Activo'"
+              :class="variantThemeLine"
+            ></div>
+            <div v-else class="lineBorder lineBorderInactivo"></div>
             <div>
               <div class="leftCard">
                 <b-avatar
@@ -460,6 +464,10 @@ export default {
 
 .lineBorderDark {
   background: rgb(0, 159, 233);
+}
+
+.lineBorderInactivo {
+  background: rgb(255, 0, 0);
 }
 
 .leftCard {
