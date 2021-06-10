@@ -249,6 +249,16 @@ export default {
         posYMove > 55 &&
         (this.moveTouch === 'left' || this.moveTouch === 'right')
       ) {
+        const containerScroll = window.document.querySelector(
+          '.container-items-overflow'
+        )
+        const containerTabs = window.document.querySelector('.container-items')
+        const dimensionContainer = containerTabs.getBoundingClientRect()
+        const itemTab = window.document
+          .querySelector('.item-tab')
+          .getBoundingClientRect()
+        const faltante = dimensionContainer.width - (window.innerWidth - 50)
+
         const tabs = this.tabsAccess()
         const tabActual = this.$store.state.general.tabActual
         const countTabs = tabs.length
@@ -260,17 +270,54 @@ export default {
 
         if (this.moveTouch === 'right') {
           newPosition = positionActual - 1
-          if (newPosition >= 0 && diffAbsolute > 50 && tabs[newPosition])
+          if (newPosition >= 0 && diffAbsolute > 50 && tabs[newPosition]) {
             this.$router.replace({ path: tabs[newPosition].path })
+            if ((newPosition - 1) * itemTab.width > window.innerWidth - 50) {
+              const resultPosition =
+                (newPosition + 1) * itemTab.width - (window.innerWidth - 50)
+              containerScroll.scrollLeft = resultPosition
+              // eslint-disable-next-line no-console
+              console.log(
+                resultPosition,
+                containerScroll.scrollLeft,
+                containerTabs.scrollLeft
+              )
+            }
+          }
         } else {
           newPosition = positionActual + 1
           if (
             newPosition <= countTabs &&
             diffAbsolute > 50 &&
             tabs[newPosition]
-          )
+          ) {
             this.$router.replace({ path: tabs[newPosition].path })
+            if ((newPosition + 1) * itemTab.width > window.innerWidth - 50) {
+              const resultPosition =
+                (newPosition + 1) * itemTab.width - (window.innerWidth - 50)
+              containerScroll.scroll({
+                top: 0,
+                left: resultPosition,
+                behavior: 'smooth',
+              })
+              // eslint-disable-next-line no-console
+              console.log(
+                resultPosition,
+                containerScroll.scrollLeft,
+                containerTabs.scrollLeft
+              )
+            }
+          }
         }
+
+        // eslint-disable-next-line no-console
+        console.log(
+          itemTab.width,
+          dimensionContainer.left,
+          faltante,
+          window.innerWidth - 50,
+          newPosition * itemTab.width
+        )
       }
       this.moveTouch = null
       this.xDown = null
@@ -301,11 +348,19 @@ export default {
       if (Math.abs(xDiff) > Math.abs(yDiff)) {
         slider.style.right = 'none'
         if (xDiff > 0) {
-          if (posYMove > 55 && barraInferior === 'true')
+          if (
+            posYMove > 55 &&
+            barraInferior === 'true' &&
+            window.innerHeight < 992
+          )
             slider.style.left = window.innerWidth - xDiff + 'px'
           this.moveTouch = 'left'
         } else {
-          if (posYMove > 55 && barraInferior === 'true')
+          if (
+            posYMove > 55 &&
+            barraInferior === 'true' &&
+            window.innerHeight < 992
+          )
             slider.style.left = -(window.innerWidth + xDiff) + 'px'
           this.moveTouch = 'right'
         }
