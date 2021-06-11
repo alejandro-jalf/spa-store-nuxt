@@ -133,7 +133,10 @@ export default {
       document.documentElement.classList.add('sepia-mode')
     }
 
-    if (this.$store.state.user.sesionInit === 'null') {
+    if (
+      this.$store.state.user.sesionInit === 'null' &&
+      this.$store.state.user.login
+    ) {
       this.setLoading(true)
       await this.refreshDataUser(this.$store)
       this.setLoading(false)
