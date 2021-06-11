@@ -193,12 +193,12 @@ export default {
         const tabFinded = this.listTabs.find(
           (tab) => tab.nickname === user.principal
         )
-        if (tabFinded) this.$router.push({ path: tabFinded.path })
+        if (tabFinded) this.$router.replace({ path: tabFinded.path })
         else {
           this.showAlertDialog([
             'La ruta establecida como principal, ya no esta disponible, esta siendo redireccionado a Inicio',
           ])
-          this.$router.push({ path: '/' })
+          this.$router.replace({ path: '/' })
         }
       }
       this.setLoading(false)
