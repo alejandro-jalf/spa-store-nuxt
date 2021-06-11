@@ -159,6 +159,20 @@ export default {
       containerAll.style.marginLeft = paddingLeft + 'px'
     }
 
+    const tabs = this.tabsAccess()
+    const tabActual = this.$store.state.general.tabActual
+    const itemTab = window.document
+      .querySelector('.item-tab')
+      .getBoundingClientRect()
+    const containerScroll = window.document.querySelector(
+      '.container-items-overflow'
+    )
+
+    const positionActual = tabs.findIndex((tab) => tab.nickname === tabActual)
+
+    if (positionActual * itemTab.width > containerScroll.scrollLeft)
+      containerScroll.scrollLeft = tabs.length * itemTab.width
+
     document.addEventListener('touchstart', this.handleTouchStart, false)
     document.addEventListener('touchmove', this.handleTouchMove, false)
     document.addEventListener('touchend', this.handleEnd, false)
@@ -298,15 +312,6 @@ export default {
             }
           }
         }
-
-        // eslint-disable-next-line no-console
-        // console.log(
-        //   itemTab.width,
-        //   dimensionContainer.left,
-        //   faltante,
-        //   window.innerWidth - 50,
-        //   newPosition * itemTab.width
-        // )
       }
       this.moveTouch = null
       this.xDown = null
