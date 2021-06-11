@@ -160,6 +160,7 @@ export default {
         const findTab = arrayTabs.find(
           (ftab) => tab.name.trim().toLowerCase() === ftab.trim().toLowerCase()
         )
+        if (tab.name.trim().toLowerCase() === 'index') return true
         return !!findTab
       })
       return tabsPermission
