@@ -159,19 +159,24 @@ export default {
       containerAll.style.marginLeft = paddingLeft + 'px'
     }
 
-    const tabs = this.tabsAccess()
-    const tabActual = this.$store.state.general.tabActual
-    const itemTab = window.document
-      .querySelector('.item-tab')
-      .getBoundingClientRect()
-    const containerScroll = window.document.querySelector(
-      '.container-items-overflow'
-    )
+    if (
+      window.innerWidth < 992 &&
+      this.$store.state.general.barraInferior === 'true'
+    ) {
+      const tabs = this.tabsAccess()
+      const tabActual = this.$store.state.general.tabActual
+      const itemTab = window.document
+        .querySelector('.item-tab')
+        .getBoundingClientRect()
+      const containerScroll = window.document.querySelector(
+        '.container-items-overflow'
+      )
 
-    const positionActual = tabs.findIndex((tab) => tab.nickname === tabActual)
+      const positionActual = tabs.findIndex((tab) => tab.nickname === tabActual)
 
-    if (positionActual * itemTab.width > containerScroll.scrollLeft)
-      containerScroll.scrollLeft = tabs.length * itemTab.width
+      if (positionActual * itemTab.width > containerScroll.scrollLeft)
+        containerScroll.scrollLeft = tabs.length * itemTab.width
+    }
 
     document.addEventListener('touchstart', this.handleTouchStart, false)
     document.addEventListener('touchmove', this.handleTouchMove, false)
@@ -353,7 +358,7 @@ export default {
             barraInferior === 'true' &&
             this.loading <= 0 &&
             !this.$store.state.general.alert.show &&
-            window.innerHeight < 992
+            window.innerWidth < 992
           ) {
             slider.style.left = window.innerWidth - xDiff + 'px'
             if (this.$store.state.general.themePreferences === 'system') {
@@ -383,7 +388,7 @@ export default {
             barraInferior === 'true' &&
             this.loading <= 0 &&
             !this.$store.state.general.alert.show &&
-            window.innerHeight < 992
+            window.innerWidth < 992
           ) {
             slider.style.left = -(window.innerWidth + xDiff) + 'px'
             if (this.$store.state.general.themePreferences === 'system') {

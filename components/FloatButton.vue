@@ -87,7 +87,7 @@ export default {
 
     if (
       this.$store.state.general.barraInferior === 'true' &&
-      this.$store.state.general.widthWindow < 992 &&
+      window.innerWidth < 992 &&
       this.alignVertical === 'bottom'
     )
       floatButton.style.bottom = '65px'
@@ -118,25 +118,5 @@ export default {
   cursor: pointer;
   z-index: 1;
   box-shadow: 1px 2px 5px 1px rgb(114, 114, 114);
-}
-
-.align-left {
-  left: 15px;
-  right: none;
-}
-
-.align-right {
-  left: none;
-  right: 15px;
-}
-
-.align-top {
-  top: 15px;
-  bottom: none;
-}
-
-.align-bottom {
-  top: none;
-  bottom: 65px;
 }
 </style>
