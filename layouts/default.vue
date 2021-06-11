@@ -211,6 +211,10 @@ export default {
         containerAll.style.width = 'calc(100% - 250px)'
         containerAll.style.marginLeft = paddingLeft + 'px'
       }
+
+      document.querySelector('.slider').style.right = 'none'
+      document.querySelector('.slider').style.left =
+        window.innerWidth + 30 + 'px'
     })
 
     if (this.$store.state.general.themePreferences === 'system') {
@@ -346,16 +350,56 @@ export default {
             posYMove > 55 &&
             barraInferior === 'true' &&
             window.innerHeight < 992
-          )
+          ) {
             slider.style.left = window.innerWidth - xDiff + 'px'
+            if (this.$store.state.general.themePreferences === 'system') {
+              if (window.matchMedia('(prefers-color-scheme: dark)').matches)
+                if (xDiff <= 50)
+                  slider.style.background = 'rgba(22, 22, 22, 0.698)'
+                else slider.style.background = 'rgba(1, 1, 1, 0.698)'
+              else if (xDiff <= 50)
+                slider.style.background = 'rgba(179, 179, 179, 0.698)'
+              else slider.style.background = 'rgba(155, 155, 155, 0.698)'
+            } else if (this.$store.state.general.themePreferences === 'dark') {
+              if (xDiff <= 50)
+                slider.style.background = 'rgba(22, 22, 22, 0.698)'
+              else slider.style.background = 'rgba(1, 1, 1, 0.698)'
+            } else if (this.$store.state.general.themePreferences === 'sepia') {
+              if (xDiff <= 50)
+                slider.style.background = 'rgba(235, 238, 221, 0.698)'
+              else slider.style.background = 'rgba(204, 206, 195, 0.698)'
+            } else if (xDiff <= 50)
+              slider.style.background = 'rgba(179, 179, 179, 0.698)'
+            else slider.style.background = 'rgba(155, 155, 155, 0.698)'
+          }
           this.moveTouch = 'left'
         } else {
           if (
             posYMove > 55 &&
             barraInferior === 'true' &&
             window.innerHeight < 992
-          )
+          ) {
             slider.style.left = -(window.innerWidth + xDiff) + 'px'
+            if (this.$store.state.general.themePreferences === 'system') {
+              if (window.matchMedia('(prefers-color-scheme: dark)').matches)
+                if (xDiff > -50)
+                  slider.style.background = 'rgba(22, 22, 22, 0.698)'
+                else slider.style.background = 'rgba(1, 1, 1, 0.698)'
+              else if (xDiff > -50)
+                slider.style.background = 'rgba(179, 179, 179, 0.698)'
+              else slider.style.background = 'rgba(155, 155, 155, 0.698)'
+            } else if (this.$store.state.general.themePreferences === 'dark') {
+              if (xDiff > -50)
+                slider.style.background = 'rgba(22, 22, 22, 0.698)'
+              else slider.style.background = 'rgba(1, 1, 1, 0.698)'
+            } else if (this.$store.state.general.themePreferences === 'sepia') {
+              if (xDiff > -50)
+                slider.style.background = 'rgba(235, 238, 221, 0.698)'
+              else slider.style.background = 'rgba(204, 206, 195, 0.698)'
+            } else if (xDiff > -50)
+              slider.style.background = 'rgba(179, 179, 179, 0.698)'
+            else slider.style.background = 'rgba(155, 155, 155, 0.698)'
+          }
           this.moveTouch = 'right'
         }
       } else if (yDiff > 0) {
@@ -376,7 +420,7 @@ export default {
   right: 110%;
   width: 100%;
   height: calc(100% - 52px);
-  background: #161616b2;
+  background: rgba(22, 22, 22, 0.698);
   box-shadow: -1px 2px 10px 5px rgb(95, 95, 95);
 }
 .settingApp {
