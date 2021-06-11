@@ -265,6 +265,8 @@ export default {
         barraInferior === 'true' &&
         widthWindow < 992 &&
         posYMove > 55 &&
+        this.loading <= 0 &&
+        !this.$store.state.general.alert.show &&
         (this.moveTouch === 'left' || this.moveTouch === 'right')
       ) {
         const containerScroll = window.document.querySelector(
@@ -349,6 +351,8 @@ export default {
           if (
             posYMove > 55 &&
             barraInferior === 'true' &&
+            this.loading <= 0 &&
+            !this.$store.state.general.alert.show &&
             window.innerHeight < 992
           ) {
             slider.style.left = window.innerWidth - xDiff + 'px'
@@ -377,6 +381,8 @@ export default {
           if (
             posYMove > 55 &&
             barraInferior === 'true' &&
+            this.loading <= 0 &&
+            !this.$store.state.general.alert.show &&
             window.innerHeight < 992
           ) {
             slider.style.left = -(window.innerWidth + xDiff) + 'px'
