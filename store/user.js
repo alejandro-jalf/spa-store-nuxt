@@ -1,6 +1,9 @@
 if (!sessionStorage.getItem('spastore_sesion_instancia'))
   sessionStorage.setItem('spastore_sesion_instancia', 'null')
 
+if (!sessionStorage.getItem('spastore_sesion_init'))
+  sessionStorage.setItem('spastore_sesion_init', 'null')
+
 if (!localStorage.getItem('spastore_login'))
   localStorage.setItem('spastore_login', 'false')
 
@@ -20,6 +23,7 @@ export const state = () => ({
   userActualView: JSON.parse(localStorage.getItem('spastore_user_actual_view')),
   userViewed: 0, // 0 || 1 || 2
   sesionInstancia: sessionStorage.getItem('spastore_sesion_instancia'),
+  sesionInit: sessionStorage.getItem('spastore_sesion_init'),
 })
 
 export const mutations = {
@@ -45,6 +49,10 @@ export const mutations = {
   setSesionInstancia(state, instancia) {
     state.sesionInstancia = instancia
     sessionStorage.setItem('spastore_sesion_instancia', instancia)
+  },
+  setSesionInit(state, sesionInit) {
+    state.sesionInit = sesionInit
+    sessionStorage.setItem('spastore_sesion_init', sesionInit)
   },
 }
 
@@ -95,6 +103,42 @@ export const actions = {
     store.commit('existenciasarticulo/setListArticulos', { data: [] })
     store.commit('existenciasarticulo/setArticulosFinded', 0)
     store.commit('existenciasarticulo/setArticuloDetails', {})
-    route.push({ name: 'Login' })
+    route.replace({ name: 'Login' })
+  },
+  async refreshDataUser({ commit }, store) {
+    try {
+      const response = await this.$axios({
+        url: `${process.env.spastore_base_url}api/v1/usuarios/${store.state.user.user.correo_user}`,
+        method: 'get',
+        headers: {
+          'access-token': process.env.spastore_token,
+        },
+      })
+
+      if (response.data.success) {
+        const user = { ...response.data.data[0] }
+        delete user.recovery_code_user
+        delete user.password_user
+        commit('setUser', user)
+        const arrayName = user.nombre_user.trim().split(' ')
+        const firstName = arrayName.length > 1 ? arrayName[1] : user.nombre_user
+        const nameUser = firstName + ' ' + user.apellido_p_user
+        commit('setNameUser', nameUser)
+      }
+
+      return response.data
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.log(error)
+      if (error.response) {
+        // eslint-disable-next-line no-console
+        console.log(error.response)
+        return error.response.data
+      }
+      return {
+        case: 'Error fatal',
+        error,
+      }
+    }
   },
 }

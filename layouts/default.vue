@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import { mapMutations } from 'vuex'
+import { mapMutations, mapActions } from 'vuex'
 import NavBar from '../components/NavBar.vue'
 import Alert from '../components/Alert'
 import NavBarLeft from '../components/NavBarLeft'
@@ -120,7 +120,25 @@ export default {
       else return ''
     },
   },
-  mounted() {
+  async mounted() {
+    if (this.$store.state.general.themePreferences === 'system') {
+      const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
+        .matches
+      if (systemDark) document.documentElement.classList.add('dark-mode')
+    }
+    if (this.$store.state.general.themePreferences === 'dark') {
+      document.documentElement.classList.add('dark-mode')
+    }
+    if (this.$store.state.general.themePreferences === 'sepia') {
+      document.documentElement.classList.add('sepia-mode')
+    }
+
+    if (this.$store.state.user.sesionInit === 'null') {
+      this.setLoading(true)
+      await this.refreshDataUser(this.$store)
+      this.setLoading(false)
+      this.setSesionInit('Iniciada')
+    }
     const containerAll = document.querySelector('.container-all')
     const app = document.querySelector('#app')
 
@@ -221,22 +239,16 @@ export default {
       document.querySelector('.slider').style.left =
         window.innerWidth + 30 + 'px'
     })
-
-    if (this.$store.state.general.themePreferences === 'system') {
-      const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
-        .matches
-      if (systemDark) document.documentElement.classList.add('dark-mode')
-    }
-    if (this.$store.state.general.themePreferences === 'dark') {
-      document.documentElement.classList.add('dark-mode')
-    }
-    if (this.$store.state.general.themePreferences === 'sepia') {
-      document.documentElement.classList.add('sepia-mode')
-    }
   },
   methods: {
     ...mapMutations({
       setWidthWindow: 'general/setWidthWindow',
+      setLoading: 'general/setLoading',
+      setSesionInit: 'user/setSesionInit',
+    }),
+
+    ...mapActions({
+      refreshDataUser: 'user/refreshDataUser',
     }),
 
     tabsAccess() {
