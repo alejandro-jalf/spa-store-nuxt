@@ -127,7 +127,7 @@
           </div>
         </div>
 
-        <div v-if="typeUSer === 'manager'" class="DivitionOption">
+        <div class="DivitionOption">
           <div class="font-weight-bold">Cambio de contraseña:</div>
           <hr class="m-0 mb-2 bg-white" />
           <div class="titleConf">
