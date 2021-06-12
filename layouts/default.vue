@@ -120,92 +120,35 @@ export default {
       else return ''
     },
   },
-  async mounted() {
-    if (this.$store.state.general.themePreferences === 'system') {
-      const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
-        .matches
-      if (systemDark) document.documentElement.classList.add('dark-mode')
-    }
-    if (this.$store.state.general.themePreferences === 'dark') {
-      document.documentElement.classList.add('dark-mode')
-    }
-    if (this.$store.state.general.themePreferences === 'sepia') {
-      document.documentElement.classList.add('sepia-mode')
-    }
-
-    if (
-      this.$store.state.user.sesionInit === 'null' &&
-      this.$store.state.user.login
-    ) {
-      this.setLoading(true)
-      await this.refreshDataUser(this.$store)
-      this.setLoading(false)
-      this.setSesionInit('Iniciada')
-    }
+  mounted() {
     const containerAll = document.querySelector('.container-all')
     const app = document.querySelector('#app')
-
-    let widthWindow = window.innerWidth
     let paddingLeft = 0
 
-    if (widthWindow > 1390) {
-      app.style.marginTop = '0px'
-      app.style.marginBottom = '0px'
-    } else if (widthWindow >= 992) {
-      if (this.login) {
-        app.style.marginTop = '80px'
-        app.style.marginBottom = '0px'
-      } else {
-        app.style.marginTop = '0px'
-        app.style.marginBottom = '0px'
+    const setTheme = () => {
+      if (this.$store.state.general.themePreferences === 'system') {
+        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
+          .matches
+        if (systemDark) document.documentElement.classList.add('dark-mode')
+      } else if (this.$store.state.general.themePreferences === 'dark')
+        document.documentElement.classList.add('dark-mode')
+      else if (this.$store.state.general.themePreferences === 'sepia')
+        document.documentElement.classList.add('sepia-mode')
+    }
+
+    const updateDataUser = async () => {
+      if (
+        this.$store.state.user.sesionInit === 'null' &&
+        this.$store.state.user.login
+      ) {
+        this.setLoading(true)
+        await this.refreshDataUser(this.$store)
+        this.setLoading(false)
+        this.setSesionInit('Iniciada')
       }
-    } else if (this.barraInferior && this.login) {
-      app.style.marginTop = '0px'
-      app.style.marginBottom = '70px'
-    } else if (!this.barraInferior && this.login) {
-      app.style.marginTop = '80px'
-      app.style.marginBottom = '0px'
-    } else {
-      app.style.marginTop = '0px'
-      app.style.marginBottom = '0px'
     }
 
-    this.setWidthWindow(window.innerWidth)
-    if (this.width <= 1390 || !this.login) {
-      containerAll.style.width = '100%'
-      containerAll.style.marginLeft = 'auto'
-    } else {
-      paddingLeft = 250 + parseInt((widthWindow - 1390) / 2)
-      containerAll.style.width = 'calc(100% - 250px)'
-      containerAll.style.marginLeft = paddingLeft + 'px'
-    }
-
-    if (
-      window.innerWidth < 992 &&
-      this.$store.state.general.barraInferior === 'true'
-    ) {
-      const tabs = this.tabsAccess()
-      const tabActual = this.$store.state.general.tabActual
-      const itemTab = window.document
-        .querySelector('.item-tab')
-        .getBoundingClientRect()
-      const containerScroll = window.document.querySelector(
-        '.container-items-overflow'
-      )
-
-      const positionActual = tabs.findIndex((tab) => tab.nickname === tabActual)
-
-      if (positionActual * itemTab.width > containerScroll.scrollLeft)
-        containerScroll.scrollLeft = tabs.length * itemTab.width
-    }
-
-    document.addEventListener('touchstart', this.handleTouchStart, false)
-    document.addEventListener('touchmove', this.handleTouchMove, false)
-    document.addEventListener('touchend', this.handleEnd, false)
-
-    window.addEventListener('resize', () => {
-      widthWindow = window.innerWidth
-
+    const setMarginPrincipal = (widthWindow) => {
       if (widthWindow > 1390) {
         app.style.marginTop = '0px'
         app.style.marginBottom = '0px'
@@ -227,8 +170,9 @@ export default {
         app.style.marginTop = '0px'
         app.style.marginBottom = '0px'
       }
+    }
 
-      this.setWidthWindow(window.innerWidth)
+    const setWidthContainerAll = (widthWindow) => {
       if (this.width <= 1390 || !this.login) {
         containerAll.style.width = '100%'
         containerAll.style.marginLeft = 'auto'
@@ -237,10 +181,51 @@ export default {
         containerAll.style.width = 'calc(100% - 250px)'
         containerAll.style.marginLeft = paddingLeft + 'px'
       }
+    }
 
+    const setScrollNavBarBottom = () => {
+      if (
+        window.innerWidth < 992 &&
+        this.$store.state.general.barraInferior === 'true'
+      ) {
+        const tabs = this.tabsAccess()
+        const tabActual = this.$store.state.general.tabActual
+        const itemTab = window.document
+          .querySelector('.item-tab')
+          .getBoundingClientRect()
+        const containerScroll = window.document.querySelector(
+          '.container-items-overflow'
+        )
+
+        const positionActual = tabs.findIndex(
+          (tab) => tab.nickname === tabActual
+        )
+
+        if (positionActual * itemTab.width > containerScroll.scrollLeft)
+          containerScroll.scrollLeft = tabs.length * itemTab.width
+      }
+    }
+
+    const setSizeSliderAnimation = (widthWindow) => {
       document.querySelector('.slider').style.right = 'none'
-      document.querySelector('.slider').style.left =
-        window.innerWidth + 30 + 'px'
+      document.querySelector('.slider').style.left = widthWindow + 30 + 'px'
+    }
+
+    setTheme()
+    updateDataUser()
+    setScrollNavBarBottom()
+    setMarginPrincipal(window.innerWidth)
+    setWidthContainerAll(window.innerWidth)
+    this.setWidthWindow(window.innerWidth)
+
+    document.addEventListener('touchstart', this.handleTouchStart, false)
+    document.addEventListener('touchmove', this.handleTouchMove, false)
+    document.addEventListener('touchend', this.handleEnd, false)
+    window.addEventListener('resize', () => {
+      setMarginPrincipal(window.innerWidth)
+      setWidthContainerAll(window.innerWidth)
+      this.setWidthWindow(window.innerWidth)
+      setSizeSliderAnimation(window.innerWidth)
     })
   },
   methods: {
@@ -365,66 +350,44 @@ export default {
       const xDiff = this.xDown - xUp
       const yDiff = this.yDown - yUp
 
+      const aplyTheme = (validation) => {
+        if (this.$store.state.general.themePreferences === 'system') {
+          if (window.matchMedia('(prefers-color-scheme: dark)').matches)
+            if (validation) slider.style.background = 'rgba(22, 22, 22, 0.698)'
+            else slider.style.background = 'rgba(1, 1, 1, 0.698)'
+          else if (validation)
+            slider.style.background = 'rgba(179, 179, 179, 0.698)'
+          else slider.style.background = 'rgba(155, 155, 155, 0.698)'
+        } else if (this.$store.state.general.themePreferences === 'dark') {
+          if (validation) slider.style.background = 'rgba(22, 22, 22, 0.698)'
+          else slider.style.background = 'rgba(1, 1, 1, 0.698)'
+        } else if (this.$store.state.general.themePreferences === 'sepia') {
+          if (validation) slider.style.background = 'rgba(235, 238, 221, 0.698)'
+          else slider.style.background = 'rgba(204, 206, 195, 0.698)'
+        } else if (validation)
+          slider.style.background = 'rgba(179, 179, 179, 0.698)'
+        else slider.style.background = 'rgba(155, 155, 155, 0.698)'
+      }
+
       if (Math.abs(xDiff) > Math.abs(yDiff)) {
         slider.style.right = 'none'
+        const validation = !!(
+          posYMove > 55 &&
+          barraInferior === 'true' &&
+          this.loading <= 0 &&
+          !this.$store.state.general.alert.show &&
+          window.innerWidth < 992
+        )
         if (xDiff > 0) {
-          if (
-            posYMove > 55 &&
-            barraInferior === 'true' &&
-            this.loading <= 0 &&
-            !this.$store.state.general.alert.show &&
-            window.innerWidth < 992
-          ) {
+          if (validation) {
             slider.style.left = window.innerWidth - xDiff + 'px'
-            if (this.$store.state.general.themePreferences === 'system') {
-              if (window.matchMedia('(prefers-color-scheme: dark)').matches)
-                if (xDiff <= 50)
-                  slider.style.background = 'rgba(22, 22, 22, 0.698)'
-                else slider.style.background = 'rgba(1, 1, 1, 0.698)'
-              else if (xDiff <= 50)
-                slider.style.background = 'rgba(179, 179, 179, 0.698)'
-              else slider.style.background = 'rgba(155, 155, 155, 0.698)'
-            } else if (this.$store.state.general.themePreferences === 'dark') {
-              if (xDiff <= 50)
-                slider.style.background = 'rgba(22, 22, 22, 0.698)'
-              else slider.style.background = 'rgba(1, 1, 1, 0.698)'
-            } else if (this.$store.state.general.themePreferences === 'sepia') {
-              if (xDiff <= 50)
-                slider.style.background = 'rgba(235, 238, 221, 0.698)'
-              else slider.style.background = 'rgba(204, 206, 195, 0.698)'
-            } else if (xDiff <= 50)
-              slider.style.background = 'rgba(179, 179, 179, 0.698)'
-            else slider.style.background = 'rgba(155, 155, 155, 0.698)'
+            aplyTheme(xDiff <= 50)
           }
           this.moveTouch = 'left'
         } else {
-          if (
-            posYMove > 55 &&
-            barraInferior === 'true' &&
-            this.loading <= 0 &&
-            !this.$store.state.general.alert.show &&
-            window.innerWidth < 992
-          ) {
+          if (validation) {
             slider.style.left = -(window.innerWidth + xDiff) + 'px'
-            if (this.$store.state.general.themePreferences === 'system') {
-              if (window.matchMedia('(prefers-color-scheme: dark)').matches)
-                if (xDiff > -50)
-                  slider.style.background = 'rgba(22, 22, 22, 0.698)'
-                else slider.style.background = 'rgba(1, 1, 1, 0.698)'
-              else if (xDiff > -50)
-                slider.style.background = 'rgba(179, 179, 179, 0.698)'
-              else slider.style.background = 'rgba(155, 155, 155, 0.698)'
-            } else if (this.$store.state.general.themePreferences === 'dark') {
-              if (xDiff > -50)
-                slider.style.background = 'rgba(22, 22, 22, 0.698)'
-              else slider.style.background = 'rgba(1, 1, 1, 0.698)'
-            } else if (this.$store.state.general.themePreferences === 'sepia') {
-              if (xDiff > -50)
-                slider.style.background = 'rgba(235, 238, 221, 0.698)'
-              else slider.style.background = 'rgba(204, 206, 195, 0.698)'
-            } else if (xDiff > -50)
-              slider.style.background = 'rgba(179, 179, 179, 0.698)'
-            else slider.style.background = 'rgba(155, 155, 155, 0.698)'
+            aplyTheme(xDiff > -50)
           }
           this.moveTouch = 'right'
         }
