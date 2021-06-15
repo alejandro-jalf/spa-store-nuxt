@@ -15,6 +15,15 @@ export const state = () => ({
     headerBackground: 'warning',
     headerTexColor: 'light',
   },
+  alertOption: {
+    show: false,
+    title: 'Realizando Accion',
+    message: '¿Realizar esta accion?',
+    headerBg: 'primary',
+    headerText: 'light',
+    clickCancel: () => {},
+    clickAcept: () => {},
+  },
   loading: 0,
   listTabs: [
     {
@@ -68,6 +77,36 @@ export const state = () => ({
 })
 
 export const mutations = {
+  showAlertDialogOption: (
+    state,
+    [
+      message = null,
+      title = 'Realizando Accion',
+      clickAcept = () => {},
+      clickCancel = () => {
+        state.alertOption.show = false
+      },
+      background = 'primary',
+      textColor = 'light',
+    ]
+  ) => {
+    if (message === null) return true
+    state.alertOption.show = true
+    state.alertOption.message = message
+    state.alertOption.title = title
+    state.alertOption.headerBg = background
+    state.alertOption.headerTexColor = textColor
+    state.alertOption.clickAcept = clickAcept
+    // if (clickCancel === null) {
+    //   clickCancel = () => {
+    //     state.alertOption.show = false
+    //   }
+    // } else
+    state.alertOption.clickCancel = clickCancel
+  },
+  hideAlertDialogOption(state) {
+    state.alertOption.show = false
+  },
   showAlertDialog: (
     state,
     [

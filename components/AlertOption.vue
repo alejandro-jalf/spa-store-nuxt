@@ -1,13 +1,13 @@
 <template>
   <b-modal
-    :visible="alertShow"
-    :title="alertTitle"
-    :header-bg-variant="alertHeaderBg"
-    :header-text-variant="alertHeaderText"
+    :visible="alertOptionShow"
+    :title="alertOptionTitle"
+    :header-bg-variant="alertOptionHeaderBg"
+    :header-text-variant="alertOptionHeaderText"
     :centered="true"
   >
     <b-container fluid>
-      {{ alertMessage }}
+      {{ alertOptionMessage }}
     </b-container>
 
     <template #modal-footer>
@@ -16,7 +16,7 @@
           variant="primary"
           size="sm"
           class="float-right"
-          @click="clickAcept"
+          @click="alertOptionClickAcept"
         >
           Aceptar
         </b-button>
@@ -24,7 +24,7 @@
           variant="secondary"
           size="sm"
           class="float-right mr-3"
-          @click="clickCancel"
+          @click="alertOptionClickCancel"
         >
           Cancelar
         </b-button>
@@ -35,39 +35,27 @@
 
 <script>
 export default {
-  props: {
-    alertShow: {
-      type: Boolean,
-      required: false,
-      default: false,
+  computed: {
+    alertOptionShow() {
+      return this.$store.state.general.alertOption.show
     },
-    alertTitle: {
-      type: String,
-      required: false,
-      default: 'Realizando accion',
+    alertOptionTitle() {
+      return this.$store.state.general.alertOption.title
     },
-    alertMessage: {
-      type: String,
-      required: false,
-      default: '¿Realizar esta accion?',
+    alertOptionMessage() {
+      return this.$store.state.general.alertOption.message
     },
-    alertHeaderBg: {
-      type: String,
-      required: false,
-      default: 'primary',
+    alertOptionHeaderBg() {
+      return this.$store.state.general.alertOption.headerBg
     },
-    alertHeaderText: {
-      type: String,
-      required: false,
-      default: 'light',
+    alertOptionHeaderText() {
+      return this.$store.state.general.alertOption.headerTexColor
     },
-    clickCancel: {
-      type: Function,
-      required: true,
+    alertOptionClickAcept() {
+      return this.$store.state.general.alertOption.clickAcept
     },
-    clickAcept: {
-      type: Function,
-      required: true,
+    alertOptionClickCancel() {
+      return this.$store.state.general.alertOption.clickCancel
     },
   },
 }

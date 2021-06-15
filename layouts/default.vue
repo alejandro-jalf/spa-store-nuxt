@@ -20,6 +20,7 @@
       v-if="login && barraInferior && width < 992"
     ></nav-bar-bottom>
     <alert></alert>
+    <alert-option></alert-option>
   </div>
 </template>
 
@@ -27,6 +28,7 @@
 import { mapMutations, mapActions } from 'vuex'
 import NavBar from '../components/NavBar.vue'
 import Alert from '../components/Alert'
+import AlertOption from '../components/AlertOption'
 import NavBarLeft from '../components/NavBarLeft'
 import NavBarBottom from '../components/NavBarBottom'
 
@@ -34,6 +36,7 @@ export default {
   components: {
     NavBar,
     Alert,
+    AlertOption,
     NavBarLeft,
     NavBarBottom,
   },

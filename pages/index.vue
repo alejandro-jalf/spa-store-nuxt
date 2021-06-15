@@ -376,6 +376,7 @@ export default {
     ...mapMutations({
       setLoading: 'general/setLoading',
       showAlertDialog: 'general/showAlertDialog',
+      showAlertDialogOption: 'general/showAlertDialogOption',
       setUser: 'user/setUser',
       setThemePreferences: 'general/setThemePreferences',
       setAtajoTheme: 'general/setAtajoTheme',
@@ -394,7 +395,7 @@ export default {
       this.principal = tab
     },
     questionSaveMain() {
-      this.showAlertDialogOpt(
+      this.showAlertDialogOption(
         `¿Quieres establecer a "${this.principal}" como pantalla principal al iniciar la aplicacion web?`,
         'Cambiando la pantalla principal',
         this.savePrincipal
