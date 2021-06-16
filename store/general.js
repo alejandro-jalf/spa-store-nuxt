@@ -68,6 +68,12 @@ export const state = () => ({
       nickname: 'Proveedores',
       icon: 'box-seam',
     },
+    {
+      path: '/menucocina',
+      name: 'menucocina',
+      nickname: 'Menu Cocina',
+      icon: 'layout-text-sidebar-reverse',
+    },
   ],
   tabActual: 'Inicio',
   themePreferences: localStorage.getItem('spastore_theme_color'),

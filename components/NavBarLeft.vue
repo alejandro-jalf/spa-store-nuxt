@@ -69,6 +69,9 @@
           v-else-if="tab.icon === 'box-seam'"
           class="mr-1"
         ></b-icon-box-seam>
+        <b-icon-layout-text-sidebar-reverse
+          v-else-if="tab.icon === 'layout-text-sidebar-reverse'"
+        ></b-icon-layout-text-sidebar-reverse>
         <b-icon-asterisk v-else class="mr-1"></b-icon-asterisk>
         {{ tab.nickname }}
       </b-list-group-item>
@@ -101,6 +104,7 @@ import {
   BIconBrightnessHighFill,
   BIconCupFill,
   BIconTvFill,
+  BIconLayoutTextSidebarReverse,
 } from 'bootstrap-vue'
 
 export default {
@@ -118,6 +122,7 @@ export default {
     BIconBrightnessHighFill,
     BIconCupFill,
     BIconTvFill,
+    BIconLayoutTextSidebarReverse,
   },
   data() {
     return {
