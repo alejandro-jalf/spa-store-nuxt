@@ -1,34 +1,36 @@
 <template>
   <div>
     <h1>Menu de la cocina</h1>
-    <b-form-group id="grLt" label="Tamaño de fuente" label-for="inpLetra">
+    <div class="mt-2 mb-1">Antojitos:</div>
+    <b-form inline>
       <b-form-input
-        id="inpLetra"
-        v-model="publicidad.sizeLetter"
-        type="number"
+        id="inputSizeAnt"
+        v-model="publicidad.sizeAntojitos"
+        placeholder="Tamaño fuente"
+        class="inputFirt inputsPar"
+        :class="backgroundInputTheme"
       ></b-form-input>
-    </b-form-group>
-    <b-form-group id="grIn" label="Interlineado" label-for="inpInt">
       <b-form-input
-        id="inpInt"
-        v-model="publicidad.interlineado"
-        type="number"
+        id="inputInterAnt"
+        v-model="publicidad.interlineadoAnto"
+        placeholder="Interlineado"
+        class="inputsPar"
+        :class="backgroundInputTheme"
       ></b-form-input>
-    </b-form-group>
-    <b-form-group id="grLA" label="Antojitos" label-for="inpAnt">
-      <b-input-group class="mt-3">
-        <template #append>
-          <b-button variant="success" @click="addAntojito">Agregar</b-button>
-        </template>
-        <b-form-input
-          id="inpAnt"
-          v-model="publicidad.antijito"
-          type="text"
-          trim
-          @keyup.enter="addAntojito"
-        ></b-form-input>
-      </b-input-group>
-    </b-form-group>
+    </b-form>
+    <b-input-group class="mt-3" prepend="Antojito">
+      <template #append>
+        <b-button variant="success" @click="addAntojito">Agregar</b-button>
+      </template>
+      <b-form-input
+        id="inpAnt"
+        v-model="publicidad.antojito"
+        type="text"
+        trim
+        :class="backgroundInputTheme"
+        @keyup.enter="addAntojito"
+      ></b-form-input>
+    </b-input-group>
     <div class="container-products">
       <b-badge
         v-for="(product, indexProAnt) in listAntojitos"
@@ -44,17 +46,73 @@
         ></b-icon-x-circle-fill>
       </b-badge>
     </div>
-    <b-button class="mb-3" variant="outline-info" @click="drawFondo">
+
+    <div class="mt-2 mb-1">Menu del dia:</div>
+    <b-form inline>
+      <b-form-input
+        id="inputSizeMenu"
+        v-model="publicidad.sizeMenu"
+        placeholder="Tamaño fuente"
+        class="inputFirt inputsPar"
+        :class="backgroundInputTheme"
+      ></b-form-input>
+      <b-form-input
+        id="inputInterMenu"
+        v-model="publicidad.interlineadoMenu"
+        placeholder="Interlineado"
+        class="inputsPar"
+        :class="backgroundInputTheme"
+      ></b-form-input>
+    </b-form>
+    <b-input-group class="mt-3" prepend="Comida">
+      <template #append>
+        <b-button variant="success" @click="addAntojito">Agregar</b-button>
+      </template>
+      <b-form-input
+        id="inMenu"
+        v-model="publicidad.menu"
+        type="text"
+        trim
+        :class="backgroundInputTheme"
+        @keyup.enter="addMenu"
+      ></b-form-input>
+    </b-input-group>
+    <div class="container-products">
+      <b-badge
+        v-for="(comida, indexProCom) in listComidas"
+        :key="indexProCom"
+        pill
+        class="chipProduct"
+        variant="info"
+      >
+        {{ comida }}
+        <b-icon-x-circle-fill
+          class="close-chip"
+          @click="removeMenu(comida)"
+        ></b-icon-x-circle-fill>
+      </b-badge>
+    </div>
+    <b-button
+      class="mb-3"
+      variant="outline-info"
+      :block="blockButton"
+      @click="drawFondo"
+    >
       Visualizar
     </b-button>
-    <b-button class="mb-3" variant="outline-danger" @click="createImage">
-      Crear imagen
-    </b-button>
-    <a id="descarga" href="http://" download="Menu del dia.jpg">
+    <br v-if="!blockButton" />
+    <a
+      v-if="publicidad.imagePainted"
+      id="descarga"
+      class="btn btn-outline-success mt-0 mb-2"
+      :class="{ 'btn-block': blockButton }"
+      :href="publicidad.href"
+      download="Menu del dia.jpg"
+    >
       Descargar imagen
     </a>
     <br />
-    <canvas id="canvas" width="540" height="960"></canvas>
+    <canvas id="canvas" width="1080" height="1920"></canvas>
     <img
       id="fondoCanvas"
       src="../assets/menu.jpg"
@@ -62,11 +120,14 @@
       height="30"
       alt=""
     />
+    <img id="imgVi" :src="publicidad.href" alt="Datos" />
   </div>
 </template>
 
 <script>
+import { mapMutations } from 'vuex'
 import { BIconXCircleFill } from 'bootstrap-vue'
+import utils from '../modules/utils'
 
 export default {
   components: {
@@ -75,9 +136,15 @@ export default {
   data() {
     return {
       publicidad: {
-        sizeLetter: 28,
-        interlineado: 40,
-        antijito: '',
+        sizeAntojitos: 56,
+        interlineadoAnto: 110,
+        antojito: '',
+        sizeDate: 72,
+        sizeMenu: 50,
+        interlineadoMenu: 110,
+        menu: '',
+        imagePainted: false,
+        href: '',
       },
       listAntojitos: [
         'Empanadas',
@@ -98,24 +165,57 @@ export default {
       ],
     }
   },
+  computed: {
+    blockButton() {
+      return this.$store.state.general.widthWindow <= 500
+    },
+    backgroundInputTheme() {
+      if (this.$store.state.general.themePreferences === 'system') {
+        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
+          .matches
+        if (systemDark) return 'backgroundInputDark'
+        return 'backgroundInput'
+      } else if (this.$store.state.general.themePreferences === 'dark')
+        return 'backgroundInputDark'
+      else return 'backgroundInput'
+    },
+  },
   mounted() {
     const canvas = document.getElementById('canvas')
     const context = canvas.getContext('2d')
     const imageObj = document.getElementById('fondoCanvas')
     const imageObj2 = new Image()
 
+    const date = new Date()
+    const fecha =
+      date.getDate() +
+      '/' +
+      utils._arrayMonths[date.getMonth()] +
+      '/' +
+      date.getFullYear()
+
     imageObj2.src = imageObj.src
-    context.drawImage(imageObj2, 0, 0, 540, 960)
+    context.drawImage(imageObj2, 0, 0, 1080, 1920)
+    context.font = 'bold ' + this.publicidad.sizeDate + 'px arial'
+    context.fillText(fecha, 550, 340)
+
+    document.getElementById('imgVi').addEventListener('load', () => {
+      this.setLoading(false)
+      // eslint-disable-next-line no-console
+      console.log('Ejecuta recarga de imagen')
+    })
   },
   methods: {
+    ...mapMutations({
+      setLoading: 'general/setLoading',
+    }),
     createImage() {
-      const descarga = document.getElementById('descarga')
+      // const descarga = document.getElementById('descarga')
       const canvas = document.getElementById('canvas')
       let dato = canvas.toDataURL('image/jpg')
       dato = dato.replace('image/jpeg', 'image/octet-stream')
-      descarga.setAttribute('href', dato)
-      // document.location.href = dato
-      // window.open(dato, 'Menu del dia', 'width=300, height=200')
+      this.publicidad.href = dato
+      // descarga.setAttribute('href', dato)
     },
     removeAntojito(antojitoRecived) {
       const listRefactor = this.listAntojitos.filter(
@@ -124,46 +224,102 @@ export default {
       this.listAntojitos = listRefactor
     },
     addAntojito() {
-      if (this.publicidad.antijito === '') return true
-      const antojito = this.publicidad.antijito
+      if (this.publicidad.antojito === '') return true
+      const antojito = this.publicidad.antojito
       const antojitoFinded = this.listAntojitos.find(
         (ant) => ant.trim().toLowerCase() === antojito.toLowerCase()
       )
       if (antojitoFinded) return true
       this.listAntojitos.push(antojito)
-      this.publicidad.antijito = ''
+      this.publicidad.antojito = ''
+    },
+    removeMenu(menuRecived) {
+      const listRefactor = this.listComidas.filter((com) => com !== menuRecived)
+      this.listComidas = listRefactor
+    },
+    addMenu() {
+      if (this.publicidad.menu === '') return true
+      const menu = this.publicidad.menu
+      const menuFinded = this.listComidas.find(
+        (comida) => comida.trim().toLowerCase() === menu.toLowerCase()
+      )
+      if (menuFinded) return true
+      this.listComidas.push(menu)
+      this.publicidad.menu = ''
     },
     drawFondo() {
+      // eslint-disable-next-line no-console
+      console.log('Empieza proceso')
+      this.setLoading(true)
       const canvas = document.getElementById('canvas')
       const context = canvas.getContext('2d')
       context.clearRect(0, 0, canvas.width, canvas.height)
       const imageObj = document.getElementById('fondoCanvas')
       const imageObj2 = new Image()
 
+      const date = new Date()
+      const fecha =
+        date.getDate() +
+        '/' +
+        utils._arrayMonths[date.getMonth()] +
+        '/' +
+        date.getFullYear()
+
       imageObj2.src = imageObj.src
-      context.drawImage(imageObj2, 0, 0, 540, 960)
+      context.drawImage(imageObj2, 0, 0, 1080, 1920)
+      context.fillStyle = 'black'
+      context.font = 'bold ' + this.publicidad.sizeDate + 'px arial'
+      context.fillText(fecha, 550, 340)
       this.drawAntojitos(context)
+      this.drawComidas(context)
+      this.publicidad.imagePainted = true
+      this.createImage()
     },
     drawAntojitos(context) {
       let contadorVueltas = 0
       const lengthList = this.listAntojitos.length
       if (lengthList > 1) {
-        const posYCircle = parseInt(this.publicidad.sizeLetter / 3)
+        const posYCircle = parseInt(this.publicidad.sizeAntojitos / 3)
         this.listAntojitos.forEach((antojito, index) => {
           context.beginPath()
-          context.font = this.publicidad.sizeLetter + 'px arial'
+          context.font = this.publicidad.sizeAntojitos + 'px arial'
           if (index > 0 && index % 2 === 0) contadorVueltas++
-          const posY = 320 + contadorVueltas * this.publicidad.interlineado
+          const posY = 640 + contadorVueltas * this.publicidad.interlineadoAnto
           if (index % 2 === 0) {
             context.fillStyle = 'black'
-            context.fillText(antojito, 50, posY)
+            context.fillText(antojito, 100, posY)
             context.fillStyle = 'orange'
-            context.arc(40, posY - posYCircle, 5, 0, 2 * Math.PI)
+            context.arc(80, posY - posYCircle, 12, 0, 2 * Math.PI)
           } else {
             context.fillStyle = 'black'
-            context.fillText(antojito, 310, posY)
+            context.fillText(antojito, 620, posY)
             context.fillStyle = 'orange'
-            context.arc(300, posY - posYCircle, 5, 0, 2 * Math.PI)
+            context.arc(600, posY - posYCircle, 12, 0, 2 * Math.PI)
+          }
+          context.fill()
+        })
+      }
+    },
+    drawComidas(context) {
+      let contadorVueltas = 0
+      const lengthList = this.listComidas.length
+      if (lengthList > 1) {
+        const posYCircle = parseInt(this.publicidad.sizeMenu / 3)
+        this.listComidas.forEach((antojito, index) => {
+          context.beginPath()
+          context.font = this.publicidad.sizeMenu + 'px arial'
+          if (index > 0 && index % 2 === 0) contadorVueltas++
+          const posY = 1300 + contadorVueltas * this.publicidad.interlineadoMenu
+          if (index % 2 === 0) {
+            context.fillStyle = 'black'
+            context.fillText(antojito, 100, posY)
+            context.fillStyle = '#dfb600'
+            context.arc(80, posY - posYCircle, 12, 0, 2 * Math.PI)
+          } else {
+            context.fillStyle = 'black'
+            context.fillText(antojito, 620, posY)
+            context.fillStyle = '#dfb600'
+            context.arc(600, posY - posYCircle, 12, 0, 2 * Math.PI)
           }
           context.fill()
         })
@@ -175,7 +331,21 @@ export default {
 
 <style scoped>
 #canvas {
+  position: fixed;
+  left: 100%;
   background: #fff;
+}
+
+#imgVi {
+  background: #fff;
+  max-width: 1080px; /*540px;*/
+  max-height: 1920px; /*960px;*/
+  width: 98%;
+}
+
+#fondoCanvas {
+  position: fixed;
+  left: 100%;
 }
 
 .chipProduct {
@@ -183,6 +353,16 @@ export default {
   margin-top: 5px;
   padding: 7px;
   font-size: 15px;
+}
+
+.inputsPar {
+  width: 49%;
+  margin-left: 1%;
+}
+
+.inputFirt {
+  margin-left: 0px;
+  width: 50%;
 }
 
 .close-chip {
@@ -194,6 +374,7 @@ export default {
 }
 
 .container-products {
+  margin-top: 10px;
   padding: 10px 15px 15px 10px;
   width: 100%;
   min-height: 50px;
