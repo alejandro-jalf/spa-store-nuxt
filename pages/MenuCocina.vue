@@ -1,6 +1,15 @@
 <template>
   <div>
     <h1>Menu de la cocina</h1>
+
+    <label for="fecha">Fecha:</label>
+    <b-form-datepicker
+      id="fecha"
+      v-model="publicidad.date"
+      class="mb-2"
+      :class="backgroundInputTheme"
+    ></b-form-datepicker>
+
     <div class="mt-2 mb-1">Antojitos:</div>
     <b-form inline>
       <b-form-input
@@ -64,6 +73,7 @@
         :class="backgroundInputTheme"
       ></b-form-input>
     </b-form>
+
     <b-input-group class="mt-3" prepend="Comida">
       <template #append>
         <b-button variant="success" @click="addAntojito">Agregar</b-button>
@@ -145,6 +155,7 @@ export default {
         menu: '',
         imagePainted: false,
         href: '',
+        date: '',
       },
       listAntojitos: [
         'Empanadas',
@@ -187,18 +198,17 @@ export default {
     const imageObj2 = new Image()
 
     const date = new Date()
-    const fecha =
-      date.getDate() +
-      '/' +
-      utils._arrayMonths[date.getMonth()] +
-      '/' +
-      date.getFullYear()
+    this.publicidad.date = `${date.getFullYear()}-${
+      date.getMonth() + 1
+    }-${date.getDate()}`
 
     imageObj2.src = imageObj.src
     context.drawImage(imageObj2, 0, 0, 1080, 1920)
-    context.font = 'bold ' + this.publicidad.sizeDate + 'px arial'
-    context.fillText(fecha, 550, 340)
 
+    canvas.addEventListener('change', () => {
+      // eslint-disable-next-line no-console
+      console.log('Ejecuta recarga de canvas')
+    })
     document.getElementById('imgVi').addEventListener('load', () => {
       this.setLoading(false)
       // eslint-disable-next-line no-console
@@ -257,13 +267,10 @@ export default {
       const imageObj = document.getElementById('fondoCanvas')
       const imageObj2 = new Image()
 
-      const date = new Date()
-      const fecha =
-        date.getDate() +
-        '/' +
-        utils._arrayMonths[date.getMonth()] +
-        '/' +
-        date.getFullYear()
+      const date = this.publicidad.date.split('-')
+      const fecha = `${date[2]}/${utils._arrayMonths[parseInt(date[1])]}/${
+        date[0]
+      }`
 
       imageObj2.src = imageObj.src
       context.drawImage(imageObj2, 0, 0, 1080, 1920)
