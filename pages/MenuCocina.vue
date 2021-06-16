@@ -106,7 +106,7 @@
       class="mb-3"
       variant="outline-info"
       :block="blockButton"
-      @click="drawFondo"
+      @click="drawFondo()"
     >
       Visualizar
     </b-button>
@@ -130,7 +130,8 @@
       height="30"
       alt=""
     />
-    <img id="imgVi" :src="publicidad.href" alt="Datos" />
+    <img v-if="publicidad.href == ''" class="imgVi" src="../assets/menu.jpg" />
+    <img v-else id="imgVi" :src="publicidad.href" alt="Datos" />
   </div>
 </template>
 
@@ -204,16 +205,6 @@ export default {
 
     imageObj2.src = imageObj.src
     context.drawImage(imageObj2, 0, 0, 1080, 1920)
-
-    canvas.addEventListener('change', () => {
-      // eslint-disable-next-line no-console
-      console.log('Ejecuta recarga de canvas')
-    })
-    document.getElementById('imgVi').addEventListener('load', () => {
-      this.setLoading(false)
-      // eslint-disable-next-line no-console
-      console.log('Ejecuta recarga de imagen')
-    })
   },
   methods: {
     ...mapMutations({
@@ -258,9 +249,10 @@ export default {
       this.publicidad.menu = ''
     },
     drawFondo() {
-      // eslint-disable-next-line no-console
-      console.log('Empieza proceso')
       this.setLoading(true)
+      setTimeout(() => {
+        this.setLoading(false)
+      }, 3000)
       const canvas = document.getElementById('canvas')
       const context = canvas.getContext('2d')
       context.clearRect(0, 0, canvas.width, canvas.height)
@@ -343,7 +335,8 @@ export default {
   background: #fff;
 }
 
-#imgVi {
+#imgVi,
+.imgVi {
   background: #fff;
   max-width: 1080px; /*540px;*/
   max-height: 1920px; /*960px;*/
