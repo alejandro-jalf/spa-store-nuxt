@@ -158,26 +158,15 @@ export default {
         href: '',
         date: '',
       },
-      listAntojitos: [
-        'Empanadas',
-        'Tostadas',
-        'Entomatadas',
-        'Tacos dorados',
-        'Garnachas',
-        'Platanos fritos',
-      ],
-      listComidas: [
-        'Pollo en barbacoa',
-        'Milanesa pollo emp.',
-        'Chiles rellenos',
-        'Calabacitas c/elote',
-        'Arroz',
-        'Salchicha enchip',
-        'Menudencia',
-      ],
     }
   },
   computed: {
+    listAntojitos() {
+      return this.$store.state.menucocina.listAntojitos
+    },
+    listComidas() {
+      return this.$store.state.menucocina.listComidas
+    },
     blockButton() {
       return this.$store.state.general.widthWindow <= 500
     },
@@ -209,6 +198,10 @@ export default {
   methods: {
     ...mapMutations({
       setLoading: 'general/setLoading',
+      setAntojito: 'menucocina/setAntojito',
+      setMenu: 'menucocina/setMenu',
+      removeAntojito: 'menucocina/removeAntojito',
+      removeMenu: 'menucocina/removeMenu',
     }),
     createImage() {
       // const descarga = document.getElementById('descarga')
@@ -218,12 +211,6 @@ export default {
       this.publicidad.href = dato
       // descarga.setAttribute('href', dato)
     },
-    removeAntojito(antojitoRecived) {
-      const listRefactor = this.listAntojitos.filter(
-        (ant) => ant !== antojitoRecived
-      )
-      this.listAntojitos = listRefactor
-    },
     addAntojito() {
       if (this.publicidad.antojito === '') return true
       const antojito = this.publicidad.antojito
@@ -231,12 +218,8 @@ export default {
         (ant) => ant.trim().toLowerCase() === antojito.toLowerCase()
       )
       if (antojitoFinded) return true
-      this.listAntojitos.push(antojito)
+      this.setAntojito(antojito)
       this.publicidad.antojito = ''
-    },
-    removeMenu(menuRecived) {
-      const listRefactor = this.listComidas.filter((com) => com !== menuRecived)
-      this.listComidas = listRefactor
     },
     addMenu() {
       if (this.publicidad.menu === '') return true
@@ -245,7 +228,7 @@ export default {
         (comida) => comida.trim().toLowerCase() === menu.toLowerCase()
       )
       if (menuFinded) return true
-      this.listComidas.push(menu)
+      this.setMenu(menu)
       this.publicidad.menu = ''
     },
     drawFondo() {
