@@ -122,15 +122,19 @@
       Descargar imagen
     </a>
     <br />
-    <canvas id="canvas" width="1080" height="1920"></canvas>
+    <canvas id="canvas" width="1080" height="1330"></canvas>
     <img
       id="fondoCanvas"
-      src="../assets/menu.jpg"
+      src="../assets/Menu1080x1330.jpg"
       width="30"
       height="30"
       alt=""
     />
-    <img v-if="publicidad.href == ''" class="imgVi" src="../assets/menu.jpg" />
+    <img
+      v-if="publicidad.href === ''"
+      class="imgVi"
+      src="../assets/Menu1080x1330.jpg"
+    />
     <img v-else id="imgVi" :src="publicidad.href" alt="Datos" />
   </div>
 </template>
@@ -147,12 +151,12 @@ export default {
   data() {
     return {
       publicidad: {
-        sizeAntojitos: 56,
-        interlineadoAnto: 110,
+        sizeAntojitos: 48,
+        interlineadoAnto: 80,
         antojito: '',
-        sizeDate: 72,
-        sizeMenu: 50,
-        interlineadoMenu: 110,
+        sizeDate: 52,
+        sizeMenu: 42,
+        interlineadoMenu: 80,
         menu: '',
         imagePainted: false,
         href: '',
@@ -193,7 +197,7 @@ export default {
     }-${date.getDate()}`
 
     imageObj2.src = imageObj.src
-    context.drawImage(imageObj2, 0, 0, 1080, 1920)
+    context.drawImage(imageObj2, 0, 0, 1080, 1330)
   },
   methods: {
     ...mapMutations({
@@ -204,12 +208,10 @@ export default {
       removeMenu: 'menucocina/removeMenu',
     }),
     createImage() {
-      // const descarga = document.getElementById('descarga')
       const canvas = document.getElementById('canvas')
       let dato = canvas.toDataURL('image/jpg')
       dato = dato.replace('image/jpeg', 'image/octet-stream')
       this.publicidad.href = dato
-      // descarga.setAttribute('href', dato)
     },
     addAntojito() {
       if (this.publicidad.antojito === '') return true
@@ -235,7 +237,7 @@ export default {
       this.setLoading(true)
       setTimeout(() => {
         this.setLoading(false)
-      }, 3000)
+      }, 1000)
       const canvas = document.getElementById('canvas')
       const context = canvas.getContext('2d')
       context.clearRect(0, 0, canvas.width, canvas.height)
@@ -248,10 +250,10 @@ export default {
       }`
 
       imageObj2.src = imageObj.src
-      context.drawImage(imageObj2, 0, 0, 1080, 1920)
+      context.drawImage(imageObj2, 0, 0, 1080, 1330)
       context.fillStyle = 'black'
       context.font = 'bold ' + this.publicidad.sizeDate + 'px arial'
-      context.fillText(fecha, 550, 340)
+      context.fillText(fecha, 550, 190)
       this.drawAntojitos(context)
       this.drawComidas(context)
       this.publicidad.imagePainted = true
@@ -266,7 +268,7 @@ export default {
           context.beginPath()
           context.font = this.publicidad.sizeAntojitos + 'px arial'
           if (index > 0 && index % 2 === 0) contadorVueltas++
-          const posY = 640 + contadorVueltas * this.publicidad.interlineadoAnto
+          const posY = 410 + contadorVueltas * this.publicidad.interlineadoAnto
           if (index % 2 === 0) {
             context.fillStyle = 'black'
             context.fillText(antojito, 100, posY)
@@ -291,7 +293,7 @@ export default {
           context.beginPath()
           context.font = this.publicidad.sizeMenu + 'px arial'
           if (index > 0 && index % 2 === 0) contadorVueltas++
-          const posY = 1300 + contadorVueltas * this.publicidad.interlineadoMenu
+          const posY = 870 + contadorVueltas * this.publicidad.interlineadoMenu
           if (index % 2 === 0) {
             context.fillStyle = 'black'
             context.fillText(antojito, 100, posY)
@@ -322,8 +324,9 @@ export default {
 .imgVi {
   background: #fff;
   max-width: 1080px; /*540px;*/
-  max-height: 1920px; /*960px;*/
+  max-height: 1330px; /*960px;*/
   width: 98%;
+  margin-bottom: 20px;
 }
 
 #fondoCanvas {
