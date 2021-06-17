@@ -14,17 +14,21 @@
     <b-form inline>
       <b-form-input
         id="inputSizeAnt"
-        v-model="publicidad.sizeAntojitos"
         placeholder="Tamaño fuente"
         class="inputFirt inputsPar"
+        type="number"
+        :value="publicidad.sizeAntojitos"
         :class="backgroundInputTheme"
+        @change="typedSizeAnto"
       ></b-form-input>
       <b-form-input
         id="inputInterAnt"
-        v-model="publicidad.interlineadoAnto"
+        type="number"
+        :value="publicidad.interlineadoAnto"
         placeholder="Interlineado"
         class="inputsPar"
         :class="backgroundInputTheme"
+        @change="typedInterAnto"
       ></b-form-input>
     </b-form>
     <b-input-group class="mt-3" prepend="Antojito">
@@ -60,17 +64,21 @@
     <b-form inline>
       <b-form-input
         id="inputSizeMenu"
-        v-model="publicidad.sizeMenu"
+        type="number"
+        :value="publicidad.sizeMenu"
         placeholder="Tamaño fuente"
         class="inputFirt inputsPar"
         :class="backgroundInputTheme"
+        @change="typedSizeMenu"
       ></b-form-input>
       <b-form-input
         id="inputInterMenu"
-        v-model="publicidad.interlineadoMenu"
+        type="number"
+        :value="publicidad.interlineadoMenu"
         placeholder="Interlineado"
         class="inputsPar"
         :class="backgroundInputTheme"
+        @change="typedInterMenu"
       ></b-form-input>
     </b-form>
 
@@ -151,12 +159,12 @@ export default {
   data() {
     return {
       publicidad: {
-        sizeAntojitos: 48,
-        interlineadoAnto: 80,
+        sizeAntojitos: this.$store.state.menucocina.sizeLetterAntojitos,
+        interlineadoAnto: this.$store.state.menucocina.interlineadoAntojitos,
         antojito: '',
-        sizeDate: 52,
-        sizeMenu: 42,
-        interlineadoMenu: 80,
+        sizeDate: 54,
+        sizeMenu: this.$store.state.menucocina.sizeLetterMenu,
+        interlineadoMenu: this.$store.state.menucocina.interlineadoMenu,
         menu: '',
         imagePainted: false,
         href: '',
@@ -206,7 +214,23 @@ export default {
       setMenu: 'menucocina/setMenu',
       removeAntojito: 'menucocina/removeAntojito',
       removeMenu: 'menucocina/removeMenu',
+      setSizeLetterAntojitos: 'menucocina/setSizeLetterAntojitos',
+      setInterlineadoAntojitos: 'menucocina/setInterlineadoAntojitos',
+      setSizeLetterMenu: 'menucocina/setSizeLetterMenu',
+      setInterlineadoMenu: 'menucocina/setInterlineadoMenu',
     }),
+    typedSizeAnto(value) {
+      if (value !== '') this.setSizeLetterAntojitos(value)
+    },
+    typedInterAnto(value) {
+      if (value !== '') this.setInterlineadoAntojitos(value)
+    },
+    typedSizeMenu(value) {
+      if (value !== '') this.setSizeLetterMenu(value)
+    },
+    typedInterMenu(value) {
+      if (value !== '') this.setInterlineadoMenu(value)
+    },
     createImage() {
       const canvas = document.getElementById('canvas')
       let dato = canvas.toDataURL('image/jpg')
@@ -253,7 +277,7 @@ export default {
       context.drawImage(imageObj2, 0, 0, 1080, 1330)
       context.fillStyle = 'black'
       context.font = 'bold ' + this.publicidad.sizeDate + 'px arial'
-      context.fillText(fecha, 550, 190)
+      context.fillText(fecha, 670, 190)
       this.drawAntojitos(context)
       this.drawComidas(context)
       this.publicidad.imagePainted = true
@@ -263,12 +287,17 @@ export default {
       let contadorVueltas = 0
       const lengthList = this.listAntojitos.length
       if (lengthList > 1) {
-        const posYCircle = parseInt(this.publicidad.sizeAntojitos / 3)
+        const posYCircle = parseInt(
+          document.getElementById('inputSizeAnt').value / 3
+        )
         this.listAntojitos.forEach((antojito, index) => {
           context.beginPath()
-          context.font = this.publicidad.sizeAntojitos + 'px arial'
+          context.font =
+            document.getElementById('inputSizeAnt').value + 'px arial'
           if (index > 0 && index % 2 === 0) contadorVueltas++
-          const posY = 410 + contadorVueltas * this.publicidad.interlineadoAnto
+          const posY =
+            410 +
+            contadorVueltas * document.getElementById('inputInterAnt').value
           if (index % 2 === 0) {
             context.fillStyle = 'black'
             context.fillText(antojito, 100, posY)
@@ -288,12 +317,17 @@ export default {
       let contadorVueltas = 0
       const lengthList = this.listComidas.length
       if (lengthList > 1) {
-        const posYCircle = parseInt(this.publicidad.sizeMenu / 3)
+        const posYCircle = parseInt(
+          document.getElementById('inputSizeMenu').value / 3
+        )
         this.listComidas.forEach((antojito, index) => {
           context.beginPath()
-          context.font = this.publicidad.sizeMenu + 'px arial'
+          context.font =
+            document.getElementById('inputSizeMenu').value + 'px arial'
           if (index > 0 && index % 2 === 0) contadorVueltas++
-          const posY = 870 + contadorVueltas * this.publicidad.interlineadoMenu
+          const posY =
+            870 +
+            contadorVueltas * document.getElementById('inputInterMenu').value
           if (index % 2 === 0) {
             context.fillStyle = 'black'
             context.fillText(antojito, 100, posY)
