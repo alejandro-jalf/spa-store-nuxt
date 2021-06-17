@@ -3,12 +3,22 @@
     <h1>Menu de la cocina</h1>
 
     <label for="fecha">Fecha:</label>
-    <b-form-datepicker
-      id="fecha"
-      v-model="publicidad.date"
-      class="mb-2"
-      :class="backgroundInputTheme"
-    ></b-form-datepicker>
+    <b-form inline>
+      <b-form-datepicker
+        id="fecha"
+        v-model="publicidad.date"
+        class="fechaDate"
+        :class="backgroundInputTheme"
+      ></b-form-datepicker>
+      <b-form-input
+        id="fuenteFecha"
+        :value="publicidad.sizeDate"
+        placeholder="Tamaño fuente"
+        type="number"
+        :class="backgroundInputTheme"
+        @change="typedSizeDate"
+      ></b-form-input>
+    </b-form>
 
     <div class="mt-2 mb-1">Antojitos:</div>
     <b-form inline>
@@ -31,9 +41,18 @@
         @change="typedInterAnto"
       ></b-form-input>
     </b-form>
-    <b-input-group class="mt-3" prepend="Antojito">
+    <b-input-group class="mt-3">
       <template #append>
-        <b-button variant="success" @click="addAntojito">Agregar</b-button>
+        <b-button variant="success" @click="addAntojito">
+          <span v-if="width > 400">Agregar</span>
+          <b-icon-plus-circle-fill v-else></b-icon-plus-circle-fill>
+        </b-button>
+      </template>
+      <template #prepend>
+        <b-input-group-text>
+          <span v-if="width > 400">Antojito</span>
+          <b-icon-card-list v-else></b-icon-card-list>
+        </b-input-group-text>
       </template>
       <b-form-input
         id="inpAnt"
@@ -82,9 +101,18 @@
       ></b-form-input>
     </b-form>
 
-    <b-input-group class="mt-3" prepend="Comida">
+    <b-input-group class="mt-3">
       <template #append>
-        <b-button variant="success" @click="addAntojito">Agregar</b-button>
+        <b-button variant="success" @click="addMenu">
+          <span v-if="width > 400">Agregar</span>
+          <b-icon-plus-circle-fill v-else></b-icon-plus-circle-fill>
+        </b-button>
+      </template>
+      <template #prepend>
+        <b-input-group-text>
+          <span v-if="width > 400">Comida</span>
+          <b-icon-journal-medical v-else></b-icon-journal-medical>
+        </b-input-group-text>
       </template>
       <b-form-input
         id="inMenu"
@@ -112,25 +140,42 @@
     </div>
     <b-button
       class="mb-3"
-      variant="outline-info"
+      :variant="isDarkTheme"
       :block="blockButton"
       @click="drawFondo()"
     >
+      <b-icon-image-fill></b-icon-image-fill>
       Visualizar
     </b-button>
+    <b-form-input
+      v-if="width > 767"
+      id="inputSizeImg"
+      v-model="publicidad.sizeImage"
+      type="range"
+      :max="publicidad.maxInputRangeImage"
+      @change="changeSizeImage"
+    ></b-form-input>
     <br v-if="!blockButton" />
-    <a
-      v-if="publicidad.imagePainted"
-      id="descarga"
-      class="btn btn-outline-success mt-0 mb-2"
-      :class="{ 'btn-block': blockButton }"
-      :href="publicidad.href"
-      download="Menu del dia.jpg"
-    >
-      Descargar imagen
-    </a>
-    <br />
     <canvas id="canvas" width="1080" height="1330"></canvas>
+    <div class="container-img">
+      <a
+        v-if="publicidad.imagePainted"
+        id="descarga"
+        class="btn btn-dark"
+        :href="publicidad.href"
+        download="Menu del dia.jpg"
+      >
+        <b-icon-download></b-icon-download>
+        Descargar
+      </a>
+      <img
+        v-if="publicidad.href === ''"
+        id="imageDefault"
+        class="imgVi"
+        src="../assets/Menu1080x1330.jpg"
+      />
+      <img v-else id="imgVi" :src="publicidad.href" alt="Datos" />
+    </div>
     <img
       id="fondoCanvas"
       src="../assets/Menu1080x1330.jpg"
@@ -138,23 +183,29 @@
       height="30"
       alt=""
     />
-    <img
-      v-if="publicidad.href === ''"
-      class="imgVi"
-      src="../assets/Menu1080x1330.jpg"
-    />
-    <img v-else id="imgVi" :src="publicidad.href" alt="Datos" />
   </div>
 </template>
 
 <script>
 import { mapMutations } from 'vuex'
-import { BIconXCircleFill } from 'bootstrap-vue'
+import {
+  BIconXCircleFill,
+  BIconDownload,
+  BIconImageFill,
+  BIconPlusCircleFill,
+  BIconJournalMedical,
+  BIconCardList,
+} from 'bootstrap-vue'
 import utils from '../modules/utils'
 
 export default {
   components: {
     BIconXCircleFill,
+    BIconDownload,
+    BIconImageFill,
+    BIconPlusCircleFill,
+    BIconJournalMedical,
+    BIconCardList,
   },
   data() {
     return {
@@ -162,17 +213,22 @@ export default {
         sizeAntojitos: this.$store.state.menucocina.sizeLetterAntojitos,
         interlineadoAnto: this.$store.state.menucocina.interlineadoAntojitos,
         antojito: '',
-        sizeDate: 54,
+        sizeDate: this.$store.state.menucocina.sizeLetterDate,
         sizeMenu: this.$store.state.menucocina.sizeLetterMenu,
         interlineadoMenu: this.$store.state.menucocina.interlineadoMenu,
         menu: '',
         imagePainted: false,
         href: '',
         date: '',
+        sizeImage: 1080,
+        maxInputRangeImage: 1080,
       },
     }
   },
   computed: {
+    width() {
+      return this.$store.state.general.widthWindow
+    },
     listAntojitos() {
       return this.$store.state.menucocina.listAntojitos
     },
@@ -192,8 +248,21 @@ export default {
         return 'backgroundInputDark'
       else return 'backgroundInput'
     },
+    isDarkTheme() {
+      if (this.$store.state.general.themePreferences === 'system') {
+        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
+          .matches
+        if (systemDark) return 'outline-info'
+        return 'info'
+      } else if (this.$store.state.general.themePreferences === 'dark')
+        return 'outline-info'
+      else return 'info'
+    },
   },
   mounted() {
+    const imageDefault = document.querySelector('#imageDefault')
+    const imageRender = document.querySelector('#imgVi')
+    const containerMain = window.document.querySelector('.container')
     const canvas = document.getElementById('canvas')
     const context = canvas.getContext('2d')
     const imageObj = document.getElementById('fondoCanvas')
@@ -206,6 +275,36 @@ export default {
 
     imageObj2.src = imageObj.src
     context.drawImage(imageObj2, 0, 0, 1080, 1330)
+
+    const setMaxResize = () => {
+      if (containerMain.clientWidth - 30 <= 1080)
+        this.publicidad.maxInputRangeImage = containerMain.clientWidth - 30
+      else this.publicidad.maxInputRangeImage = 1080
+      if (imageDefault || imageRender) {
+        const sizeImage = imageDefault
+          ? imageDefault.clientWidth
+          : imageRender.clientWidth
+        this.publicidad.sizeImage = sizeImage
+      }
+    }
+
+    setMaxResize()
+
+    window.addEventListener('resize', () => {
+      if (imageDefault || imageRender) {
+        setMaxResize()
+        const sizeContainer = containerMain.clientWidth - 30
+        if (window.innerWidth < 768) {
+          if (imageDefault) imageDefault.style.width = '100%'
+          if (imageRender) imageRender.style.width = '100%'
+        } else {
+          if (imageDefault && imageDefault.clientWidth > sizeContainer)
+            imageDefault.style.width = sizeContainer + 'px'
+          if (imageRender && imageRender.clientWidth > sizeContainer)
+            imageRender.style.width = sizeContainer + 'px'
+        }
+      }
+    })
   },
   methods: {
     ...mapMutations({
@@ -218,7 +317,14 @@ export default {
       setInterlineadoAntojitos: 'menucocina/setInterlineadoAntojitos',
       setSizeLetterMenu: 'menucocina/setSizeLetterMenu',
       setInterlineadoMenu: 'menucocina/setInterlineadoMenu',
+      setSizeLetterDate: 'menucocina/setSizeLetterDate',
     }),
+    changeSizeImage(value) {
+      if (document.getElementById('imageDefault'))
+        document.getElementById('imageDefault').style.width = value + 'px'
+      if (document.getElementById('imgVi'))
+        document.getElementById('imgVi').style.width = value + 'px'
+    },
     typedSizeAnto(value) {
       if (value !== '') this.setSizeLetterAntojitos(value)
     },
@@ -230,6 +336,9 @@ export default {
     },
     typedInterMenu(value) {
       if (value !== '') this.setInterlineadoMenu(value)
+    },
+    typedSizeDate(value) {
+      if (value !== '') this.setSizeLetterDate(value)
     },
     createImage() {
       const canvas = document.getElementById('canvas')
@@ -348,6 +457,12 @@ export default {
 </script>
 
 <style scoped>
+.fechaDate,
+#fuenteFecha {
+  width: 49%;
+  margin-left: 1%;
+}
+
 #canvas {
   position: fixed;
   left: 100%;
@@ -357,10 +472,7 @@ export default {
 #imgVi,
 .imgVi {
   background: #fff;
-  max-width: 1080px; /*540px;*/
-  max-height: 1330px; /*960px;*/
-  width: 98%;
-  margin-bottom: 20px;
+  width: 100%;
 }
 
 #fondoCanvas {
@@ -402,5 +514,30 @@ export default {
   border-radius: 5px;
   border: 1px solid rgb(163, 163, 163);
   margin-bottom: 20px;
+}
+
+.container-img {
+  position: relative;
+  max-width: 1080px; /*540px;*/
+  max-height: 1330px; /*960px;*/
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+#descarga {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+}
+
+@media screen and (max-width: 767px) {
+  .fechaDate,
+  #fuenteFecha {
+    width: 100%;
+    margin-left: 0px;
+  }
+  #fuenteFecha {
+    margin-top: 10px;
+  }
 }
 </style>

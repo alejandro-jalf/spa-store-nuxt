@@ -10,6 +10,8 @@ if (!localStorage.getItem('spastore_menucocina_sizeLetterMenu'))
   localStorage.setItem('spastore_menucocina_sizeLetterMenu', '42')
 if (!localStorage.getItem('spastore_menucocina_interMenu'))
   localStorage.setItem('spastore_menucocina_interMenu', '80')
+if (!localStorage.getItem('spastore_menucocina_sizeLetterDate'))
+  localStorage.setItem('spastore_menucocina_sizeLetterDate', '54')
 
 export const state = () => ({
   listAntojitos: localStorage.getItem('spastore_menucocina_listAnt').split(','),
@@ -22,6 +24,7 @@ export const state = () => ({
   ),
   sizeLetterMenu: localStorage.getItem('spastore_menucocina_sizeLetterMenu'),
   interlineadoMenu: localStorage.getItem('spastore_menucocina_interMenu'),
+  sizeLetterDate: localStorage.getItem('spastore_menucocina_sizeLetterDate'),
 })
 
 export const mutations = {
@@ -40,6 +43,10 @@ export const mutations = {
   setInterlineadoMenu(state, inter) {
     state.interlineadoMenu = inter
     localStorage.setItem('spastore_menucocina_interMenu', inter)
+  },
+  setSizeLetterDate(state, size) {
+    state.sizeLetterDate = size
+    localStorage.setItem('spastore_menucocina_sizeLetterDate', size)
   },
   setAntojito(state, antojito) {
     state.listAntojitos.push(antojito)
