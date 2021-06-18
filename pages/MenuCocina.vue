@@ -20,124 +20,142 @@
       ></b-form-input>
     </b-form>
 
-    <div class="mt-2 mb-1">Antojitos:</div>
-    <b-form inline>
-      <b-form-input
-        id="inputSizeAnt"
-        placeholder="Tamaño fuente"
-        class="inputFirt inputsPar"
-        type="number"
-        :value="publicidad.sizeAntojitos"
-        :class="backgroundInputTheme"
-        @change="typedSizeAnto"
-      ></b-form-input>
-      <b-form-input
-        id="inputInterAnt"
-        type="number"
-        :value="publicidad.interlineadoAnto"
-        placeholder="Interlineado"
-        class="inputsPar"
-        :class="backgroundInputTheme"
-        @change="typedInterAnto"
-      ></b-form-input>
-    </b-form>
-    <b-input-group class="mt-3">
-      <template #append>
-        <b-button variant="success" @click="addAntojito">
-          <span v-if="width > 400">Agregar</span>
-          <b-icon-plus-circle-fill v-else></b-icon-plus-circle-fill>
-        </b-button>
-      </template>
-      <template #prepend>
-        <b-input-group-text>
-          <span v-if="width > 400">Antojito</span>
-          <b-icon-card-list v-else></b-icon-card-list>
-        </b-input-group-text>
-      </template>
-      <b-form-input
-        id="inpAnt"
-        v-model="publicidad.antojito"
-        type="text"
-        trim
-        :class="backgroundInputTheme"
-        @keyup.enter="addAntojito"
-      ></b-form-input>
-    </b-input-group>
-    <div class="container-products">
-      <b-badge
-        v-for="(product, indexProAnt) in listAntojitos"
-        :key="indexProAnt"
-        pill
-        class="chipProduct"
-        variant="info"
-      >
-        {{ product }}
-        <b-icon-x-circle-fill
-          class="close-chip"
-          @click="removeAntojito(product)"
-        ></b-icon-x-circle-fill>
-      </b-badge>
+    <div v-b-toggle.dataCollapseAntojitos class="extras mt-2">
+      <b-icon-arrow-down-circle-fill
+        v-if="iconCollapseAntojitos"
+      ></b-icon-arrow-down-circle-fill>
+      <b-icon-arrow-up-circle-fill v-else></b-icon-arrow-up-circle-fill>
+      Antojitos
     </div>
 
-    <div class="mt-2 mb-1">Menu del dia:</div>
-    <b-form inline>
-      <b-form-input
-        id="inputSizeMenu"
-        type="number"
-        :value="publicidad.sizeMenu"
-        placeholder="Tamaño fuente"
-        class="inputFirt inputsPar"
-        :class="backgroundInputTheme"
-        @change="typedSizeMenu"
-      ></b-form-input>
-      <b-form-input
-        id="inputInterMenu"
-        type="number"
-        :value="publicidad.interlineadoMenu"
-        placeholder="Interlineado"
-        class="inputsPar"
-        :class="backgroundInputTheme"
-        @change="typedInterMenu"
-      ></b-form-input>
-    </b-form>
+    <b-collapse id="dataCollapseAntojitos" visible>
+      <b-form inline>
+        <b-form-input
+          id="inputSizeAnt"
+          placeholder="Tamaño fuente"
+          class="inputFirt inputsPar"
+          type="number"
+          :value="publicidad.sizeAntojitos"
+          :class="backgroundInputTheme"
+          @change="typedSizeAnto"
+        ></b-form-input>
+        <b-form-input
+          id="inputInterAnt"
+          type="number"
+          :value="publicidad.interlineadoAnto"
+          placeholder="Interlineado"
+          class="inputsPar"
+          :class="backgroundInputTheme"
+          @change="typedInterAnto"
+        ></b-form-input>
+      </b-form>
+      <b-input-group class="mt-3">
+        <template #append>
+          <b-button variant="success" @click="addAntojito">
+            <span v-if="width > 400">Agregar</span>
+            <b-icon-plus-circle-fill v-else></b-icon-plus-circle-fill>
+          </b-button>
+        </template>
+        <template #prepend>
+          <b-input-group-text>
+            <span v-if="width > 400">Antojito</span>
+            <b-icon-card-list v-else></b-icon-card-list>
+          </b-input-group-text>
+        </template>
+        <b-form-input
+          id="inpAnt"
+          v-model="publicidad.antojito"
+          type="text"
+          trim
+          :class="backgroundInputTheme"
+          @keyup.enter="addAntojito"
+        ></b-form-input>
+      </b-input-group>
+      <div class="container-products">
+        <b-badge
+          v-for="(product, indexProAnt) in listAntojitos"
+          :key="indexProAnt"
+          pill
+          class="chipProduct"
+          variant="info"
+        >
+          {{ product }}
+          <b-icon-x-circle-fill
+            class="close-chip"
+            @click="removeAntojito(product)"
+          ></b-icon-x-circle-fill>
+        </b-badge>
+      </div>
+    </b-collapse>
 
-    <b-input-group class="mt-3">
-      <template #append>
-        <b-button variant="success" @click="addMenu">
-          <span v-if="width > 400">Agregar</span>
-          <b-icon-plus-circle-fill v-else></b-icon-plus-circle-fill>
-        </b-button>
-      </template>
-      <template #prepend>
-        <b-input-group-text>
-          <span v-if="width > 400">Comida</span>
-          <b-icon-journal-medical v-else></b-icon-journal-medical>
-        </b-input-group-text>
-      </template>
-      <b-form-input
-        id="inMenu"
-        v-model="publicidad.menu"
-        type="text"
-        trim
-        :class="backgroundInputTheme"
-        @keyup.enter="addMenu"
-      ></b-form-input>
-    </b-input-group>
-    <div class="container-products">
-      <b-badge
-        v-for="(comida, indexProCom) in listComidas"
-        :key="indexProCom"
-        pill
-        class="chipProduct"
-        variant="info"
-      >
-        {{ comida }}
-        <b-icon-x-circle-fill
-          class="close-chip"
-          @click="removeMenu(comida)"
-        ></b-icon-x-circle-fill>
-      </b-badge>
+    <div v-b-toggle.dataCollapseMenu class="extras mt-2">
+      <b-icon-arrow-down-circle-fill
+        v-if="iconCollapseMenu"
+      ></b-icon-arrow-down-circle-fill>
+      <b-icon-arrow-up-circle-fill v-else></b-icon-arrow-up-circle-fill>
+      Menu del dia
     </div>
+
+    <b-collapse id="dataCollapseMenu" visible>
+      <b-form inline>
+        <b-form-input
+          id="inputSizeMenu"
+          type="number"
+          :value="publicidad.sizeMenu"
+          placeholder="Tamaño fuente"
+          class="inputFirt inputsPar"
+          :class="backgroundInputTheme"
+          @change="typedSizeMenu"
+        ></b-form-input>
+        <b-form-input
+          id="inputInterMenu"
+          type="number"
+          :value="publicidad.interlineadoMenu"
+          placeholder="Interlineado"
+          class="inputsPar"
+          :class="backgroundInputTheme"
+          @change="typedInterMenu"
+        ></b-form-input>
+      </b-form>
+
+      <b-input-group class="mt-3">
+        <template #append>
+          <b-button variant="success" @click="addMenu">
+            <span v-if="width > 400">Agregar</span>
+            <b-icon-plus-circle-fill v-else></b-icon-plus-circle-fill>
+          </b-button>
+        </template>
+        <template #prepend>
+          <b-input-group-text>
+            <span v-if="width > 400">Comida</span>
+            <b-icon-journal-medical v-else></b-icon-journal-medical>
+          </b-input-group-text>
+        </template>
+        <b-form-input
+          id="inMenu"
+          v-model="publicidad.menu"
+          type="text"
+          trim
+          :class="backgroundInputTheme"
+          @keyup.enter="addMenu"
+        ></b-form-input>
+      </b-input-group>
+      <div class="container-products">
+        <b-badge
+          v-for="(comida, indexProCom) in listComidas"
+          :key="indexProCom"
+          pill
+          class="chipProduct"
+          variant="info"
+        >
+          {{ comida }}
+          <b-icon-x-circle-fill
+            class="close-chip"
+            @click="removeMenu(comida)"
+          ></b-icon-x-circle-fill>
+        </b-badge>
+      </div>
+    </b-collapse>
     <b-button
       class="mb-3"
       :variant="isDarkTheme"
@@ -172,13 +190,13 @@
         v-if="publicidad.href === ''"
         id="imageDefault"
         class="imgVi"
-        src="../assets/Menu1080x1330.jpg"
+        src="../assets/Menu1080x1320Horario.jpg"
       />
       <img v-else id="imgVi" :src="publicidad.href" alt="Datos" />
     </div>
     <img
       id="fondoCanvas"
-      src="../assets/Menu1080x1330.jpg"
+      src="../assets/Menu1080x1320Horario.jpg"
       width="30"
       height="30"
       alt=""
@@ -195,6 +213,8 @@ import {
   BIconPlusCircleFill,
   BIconJournalMedical,
   BIconCardList,
+  BIconArrowDownCircleFill,
+  BIconArrowUpCircleFill,
 } from 'bootstrap-vue'
 import utils from '../modules/utils'
 
@@ -206,6 +226,8 @@ export default {
     BIconPlusCircleFill,
     BIconJournalMedical,
     BIconCardList,
+    BIconArrowDownCircleFill,
+    BIconArrowUpCircleFill,
   },
   data() {
     return {
@@ -222,7 +244,10 @@ export default {
         date: '',
         sizeImage: 1080,
         maxInputRangeImage: 1080,
+        horario: false,
       },
+      iconCollapseAntojitos: true,
+      iconCollapseMenu: true,
     }
   },
   computed: {
@@ -289,6 +314,17 @@ export default {
     }
 
     setMaxResize()
+
+    this.$root.$on('bv::collapse::state', (collapseId, isJustShown) => {
+      if (collapseId === 'dataCollapseAntojitos') {
+        if (!isJustShown) this.iconCollapseAntojitos = true
+        else this.iconCollapseAntojitos = false
+      }
+      if (collapseId === 'dataCollapseMenu') {
+        if (!isJustShown) this.iconCollapseMenu = true
+        else this.iconCollapseMenu = false
+      }
+    })
 
     window.addEventListener('resize', () => {
       if (imageDefault || imageRender) {
@@ -461,6 +497,12 @@ export default {
 #fuenteFecha {
   width: 49%;
   margin-left: 1%;
+}
+
+.extras {
+  border-bottom: 1px solid rgb(138, 138, 138);
+  padding-bottom: 5px;
+  margin-bottom: 10px;
 }
 
 #canvas {
