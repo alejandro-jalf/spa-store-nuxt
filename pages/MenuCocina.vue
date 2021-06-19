@@ -20,7 +20,11 @@
       ></b-form-input>
     </b-form>
 
-    <div v-b-toggle.dataCollapseAntojitos class="extras mt-2">
+    <div
+      v-b-toggle.dataCollapseAntojitos
+      class="extras mt-2"
+      @click="changeCollapseAnto"
+    >
       <b-icon-arrow-down-circle-fill
         v-if="iconCollapseAntojitos"
       ></b-icon-arrow-down-circle-fill>
@@ -28,7 +32,7 @@
       Antojitos
     </div>
 
-    <b-collapse id="dataCollapseAntojitos" visible>
+    <b-collapse id="dataCollapseAntojitos" :visible="visibleAnto">
       <b-form inline>
         <b-form-input
           id="inputSizeAnt"
@@ -86,9 +90,46 @@
           ></b-icon-x-circle-fill>
         </b-badge>
       </div>
+      <b-form-checkbox
+        id="checkHorarioAnto"
+        switch
+        :checked="publicidad.horarioAnto"
+        name="checkHorarioAnto"
+        @change="changeHorarioAnto"
+      >
+        Establecer horario
+      </b-form-checkbox>
+      <b-form inline class="mt-2">
+        <b-form-timepicker
+          id="hourStartAnto"
+          :value="publicidad.hourStartAnto"
+          locale="en"
+          label-close-button="Aceptar"
+          label-no-time-selected="Hora inicio"
+          :disabled="!horarioAnto"
+          class="inputFirt inputsPar"
+          :class="backgroundInputTheme"
+          @context="chageHourStartAnto"
+        ></b-form-timepicker>
+        <b-form-timepicker
+          id="hourEndAnto"
+          :value="publicidad.hourEndAnto"
+          locale="en"
+          label-close-button="Aceptar"
+          label-no-time-selected="Hora termino"
+          :disabled="!horarioAnto"
+          class="inputsPar"
+          :class="backgroundInputTheme"
+          @context="chageHourEndAnto"
+        ></b-form-timepicker>
+      </b-form>
     </b-collapse>
 
-    <div v-b-toggle.dataCollapseMenu class="extras mt-2">
+    <div
+      v-b-toggle.dataCollapseMenu
+      class="extras mt-2"
+      @click="changeCollapseMenu"
+    >
       <b-icon-arrow-down-circle-fill
         v-if="iconCollapseMenu"
       ></b-icon-arrow-down-circle-fill>
@@ -96,7 +137,7 @@
       Menu del dia
     </div>
 
-    <b-collapse id="dataCollapseMenu" visible>
+    <b-collapse id="dataCollapseMenu" :visible="visibleMenu">
       <b-form inline>
         <b-form-input
           id="inputSizeMenu"
@@ -155,9 +196,43 @@
           ></b-icon-x-circle-fill>
         </b-badge>
       </div>
+
+      <b-form-checkbox
+        id="checkHorarioMenu"
+        switch
+        name="checkHorarioMenu"
+        :checked="publicidad.horarioMenu"
+        @change="changeHorarioMenu"
+      >
+        Establecer horario
+      </b-form-checkbox>
+      <b-form inline class="mt-2">
+        <b-form-timepicker
+          id="hourStartMenu"
+          v-model="publicidad.hourStartMenu"
+          locale="en"
+          label-close-button="Aceptar"
+          label-no-time-selected="Hora inicio"
+          :disabled="!horarioMenu"
+          class="inputFirt inputsPar"
+          :class="backgroundInputTheme"
+          @context="chageHourStartMenu"
+        ></b-form-timepicker>
+        <b-form-timepicker
+          id="hourEndMenu"
+          v-model="publicidad.hourEndMenu"
+          locale="en"
+          label-close-button="Aceptar"
+          label-no-time-selected="Hora termino"
+          :disabled="!horarioMenu"
+          class="inputsPar"
+          :class="backgroundInputTheme"
+          @context="chageHourEndMenu"
+        ></b-form-timepicker>
+      </b-form>
     </b-collapse>
     <b-button
-      class="mb-3"
+      class="mb-3 mt-3"
       :variant="isDarkTheme"
       :block="blockButton"
       @click="drawFondo()"
@@ -190,13 +265,13 @@
         v-if="publicidad.href === ''"
         id="imageDefault"
         class="imgVi"
-        src="../assets/Menu1080x1320Horario.jpg"
+        src="../assets/Menu1080x1330.jpg"
       />
       <img v-else id="imgVi" :src="publicidad.href" alt="Datos" />
     </div>
     <img
       id="fondoCanvas"
-      src="../assets/Menu1080x1320Horario.jpg"
+      src="../assets/Menu1080x1330.jpg"
       width="30"
       height="30"
       alt=""
@@ -244,13 +319,42 @@ export default {
         date: '',
         sizeImage: 1080,
         maxInputRangeImage: 1080,
-        horario: false,
+        horarioAnto:
+          typeof this.$store.state.menucocina.horarioAnto === 'string'
+            ? this.$store.state.menucocina.horarioAnto === 'true'
+            : this.$store.state.menucocina.horarioAnto,
+        horarioMenu:
+          typeof this.$store.state.menucocina.horarioMenu === 'string'
+            ? this.$store.state.menucocina.horarioMenu === 'true'
+            : this.$store.state.menucocina.horarioMenu,
+        hourStartAnto: this.$store.state.menucocina.hourStartAnto,
+        hourEndAnto: this.$store.state.menucocina.hourEndAnto,
+        hourStartMenu: this.$store.state.menucocina.hourStartMenu,
+        hourEndMenu: this.$store.state.menucocina.hourEndMenu,
       },
       iconCollapseAntojitos: true,
       iconCollapseMenu: true,
+      visibleAnto:
+        typeof this.$store.state.menucocina.collapseAnto === 'string'
+          ? this.$store.state.menucocina.collapseAnto === 'true'
+          : this.$store.state.menucocina.collapseAnto,
+      visibleMenu:
+        typeof this.$store.state.menucocina.collapseMenu === 'string'
+          ? this.$store.state.menucocina.collapseMenu === 'true'
+          : this.$store.state.menucocina.collapseMenu,
     }
   },
   computed: {
+    horarioAnto() {
+      return typeof this.$store.state.menucocina.horarioAnto === 'string'
+        ? this.$store.state.menucocina.horarioAnto === 'true'
+        : this.$store.state.menucocina.horarioAnto
+    },
+    horarioMenu() {
+      return typeof this.$store.state.menucocina.horarioMenu === 'string'
+        ? this.$store.state.menucocina.horarioMenu === 'true'
+        : this.$store.state.menucocina.horarioMenu
+    },
     width() {
       return this.$store.state.general.widthWindow
     },
@@ -288,18 +392,11 @@ export default {
     const imageDefault = document.querySelector('#imageDefault')
     const imageRender = document.querySelector('#imgVi')
     const containerMain = window.document.querySelector('.container')
-    const canvas = document.getElementById('canvas')
-    const context = canvas.getContext('2d')
-    const imageObj = document.getElementById('fondoCanvas')
-    const imageObj2 = new Image()
 
     const date = new Date()
     this.publicidad.date = `${date.getFullYear()}-${
       date.getMonth() + 1
     }-${date.getDate()}`
-
-    imageObj2.src = imageObj.src
-    context.drawImage(imageObj2, 0, 0, 1080, 1330)
 
     const setMaxResize = () => {
       if (containerMain.clientWidth - 30 <= 1080)
@@ -354,7 +451,60 @@ export default {
       setSizeLetterMenu: 'menucocina/setSizeLetterMenu',
       setInterlineadoMenu: 'menucocina/setInterlineadoMenu',
       setSizeLetterDate: 'menucocina/setSizeLetterDate',
+      setCollapseAnto: 'menucocina/setCollapseAnto',
+      setCollapseMenu: 'menucocina/setCollapseMenu',
+      setHorarioAnto: 'menucocina/setHorarioAnto',
+      setHorarioMenu: 'menucocina/setHorarioMenu',
+      setHourStartAnto: 'menucocina/setHourStartAnto',
+      setHourEndAnto: 'menucocina/setHourEndAnto',
+      setHourStartMenu: 'menucocina/setHourStartMenu',
+      setHourEndMenu: 'menucocina/setHourEndMenu',
     }),
+    changeCollapseAnto() {
+      this.setCollapseAnto(this.iconCollapseAntojitos)
+    },
+    changeCollapseMenu() {
+      this.setCollapseMenu(this.iconCollapseMenu)
+    },
+    changeHorarioMenu(status) {
+      this.setHorarioMenu(status)
+    },
+    changeHorarioAnto(status) {
+      this.setHorarioAnto(status)
+    },
+    chageHourStartAnto(evt) {
+      this.setHourStartAnto(evt.value)
+    },
+    chageHourEndAnto(evt) {
+      this.setHourEndAnto(evt.value)
+    },
+    chageHourStartMenu(evt) {
+      this.setHourStartMenu(evt.value)
+    },
+    chageHourEndMenu(evt) {
+      this.setHourEndMenu(evt.value)
+    },
+    drawRectRounded(ctx, x, y, width, height, radius, color) {
+      ctx.strokeStyle = color
+      ctx.fillStyle = color
+      ctx.beginPath()
+      ctx.moveTo(x, y + radius)
+      ctx.lineTo(x, y + height - radius)
+      ctx.quadraticCurveTo(x, y + height, x + radius, y + height)
+      ctx.lineTo(x + width - radius, y + height)
+      ctx.quadraticCurveTo(
+        x + width,
+        y + height,
+        x + width,
+        y + height - radius
+      )
+      ctx.lineTo(x + width, y + radius)
+      ctx.quadraticCurveTo(x + width, y, x + width - radius, y)
+      ctx.lineTo(x + radius, y)
+      ctx.quadraticCurveTo(x, y, x, y + radius)
+      ctx.stroke()
+      ctx.fill()
+    },
     changeSizeImage(value) {
       if (document.getElementById('imageDefault'))
         document.getElementById('imageDefault').style.width = value + 'px'
@@ -425,8 +575,56 @@ export default {
       context.fillText(fecha, 670, 190)
       this.drawAntojitos(context)
       this.drawComidas(context)
+      if (this.horarioAnto) this.drawHorarioAntojitos(context)
+      if (this.horarioMenu) this.drawHorarioMenu(context)
       this.publicidad.imagePainted = true
       this.createImage()
+    },
+    drawHorarioAntojitos(context) {
+      this.drawRectRounded(
+        context,
+        831,
+        270,
+        183,
+        65,
+        5,
+        'rgb(255, 255, 255, 0.9)'
+      )
+      context.fillStyle = 'black'
+      context.font = 'bold 28px arial'
+      context.fillText(
+        'De ' + utils.refactorHora(this.publicidad.hourStartAnto),
+        840,
+        298
+      )
+      context.fillText(
+        'A   ' + utils.refactorHora(this.publicidad.hourEndAnto),
+        840,
+        330
+      )
+    },
+    drawHorarioMenu(context) {
+      this.drawRectRounded(
+        context,
+        831,
+        728,
+        183,
+        65,
+        5,
+        'rgb(255, 255, 255, 0.9)'
+      )
+      context.fillStyle = 'black'
+      context.font = 'bold 28px arial'
+      context.fillText(
+        'De ' + utils.refactorHora(this.publicidad.hourStartMenu),
+        840,
+        756
+      )
+      context.fillText(
+        'A   ' + utils.refactorHora(this.publicidad.hourEndMenu),
+        840,
+        788
+      )
     },
     drawAntojitos(context) {
       let contadorVueltas = 0
@@ -505,10 +703,17 @@ export default {
   margin-bottom: 10px;
 }
 
+#dataCollapseMenu,
+#dataCollapseAntojitos {
+  width: 98%;
+  margin-left: 2%;
+}
+
 #canvas {
   position: fixed;
   left: 100%;
-  background: #fff;
+  top: 100px;
+  background: rgb(255, 255, 255);
 }
 
 #imgVi,

@@ -13,6 +13,13 @@ const _arrayMonths = [
   'Diciembre',
 ]
 
+const completeDateHour = (number) => {
+  if (!number) return number
+  const numberString = number.toString()
+  if (numberString.length < 2) return '0' + number
+  return number
+}
+
 const utils = {
   parseFecha: (stringFecha, withHour = false) => {
     if (typeof stringFecha === 'undefined') return '00/00/0000'
@@ -118,6 +125,25 @@ const utils = {
   },
 
   _arrayMonths,
+
+  completeDateHour,
+
+  refactorHora: (hour) => {
+    if (!hour) return hour
+    const arrayHour = hour.split(':')
+    const amPm = parseInt(arrayHour[0]) < 12 ? 'am' : 'pm'
+    if (parseInt(arrayHour[0]) === 0)
+      return `12:${completeDateHour(arrayHour[1])} ${amPm}`
+    if (parseInt(arrayHour[0]) > 12)
+      return (
+        completeDateHour(parseInt(arrayHour[0]) - 12) +
+        ':' +
+        arrayHour[1] +
+        ' ' +
+        amPm
+      )
+    return arrayHour[0] + ':' + arrayHour[1] + ' ' + amPm
+  },
 }
 
 export default utils
