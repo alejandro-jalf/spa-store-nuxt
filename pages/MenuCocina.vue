@@ -593,12 +593,12 @@ export default {
       context.fillStyle = 'black'
       context.font = 'bold 28px arial'
       context.fillText(
-        'De ' + utils.refactorHora(this.publicidad.hourStartAnto),
+        'De ' + utils.refactorHora(this.$store.state.menucocina.hourStartAnto),
         840,
         298
       )
       context.fillText(
-        'A   ' + utils.refactorHora(this.publicidad.hourEndAnto),
+        'A   ' + utils.refactorHora(this.$store.state.menucocina.hourEndAnto),
         840,
         330
       )
@@ -616,12 +616,12 @@ export default {
       context.fillStyle = 'black'
       context.font = 'bold 28px arial'
       context.fillText(
-        'De ' + utils.refactorHora(this.publicidad.hourStartMenu),
+        'De ' + utils.refactorHora(this.$store.state.menucocina.hourStartMenu),
         840,
         756
       )
       context.fillText(
-        'A   ' + utils.refactorHora(this.publicidad.hourEndMenu),
+        'A   ' + utils.refactorHora(this.$store.state.menucocina.hourEndMenu),
         840,
         788
       )
