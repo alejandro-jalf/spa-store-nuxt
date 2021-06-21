@@ -25,7 +25,7 @@
     <b-card
       v-for="(sucursal, indexSuc) in details.existencias"
       :key="indexSuc"
-      :header-bg-variant="colorHeader(sucursal.status)"
+      :header-bg-variant="colorHeader(sucursal.status, sucursal.Articulo)"
       header-text-variant="white"
       header="Sucursal Zaragoza"
       class="p-0 m-0"
@@ -397,8 +397,9 @@ export default {
         return 'secondary'
       return 'light'
     },
-    colorHeader(status) {
+    colorHeader(status, articulo) {
       if (status !== 'Online') return 'danger'
+      if (!articulo) return 'warning'
       else if (this.$store.state.general.themePreferences === 'system') {
         const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
           .matches
