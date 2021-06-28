@@ -49,6 +49,7 @@ export const state = () => ({
   hourEndAnto: localStorage.getItem('spastore_menucocina_hourEndAnto'),
   hourStartMenu: localStorage.getItem('spastore_menucocina_hourStartMenu'),
   hourEndMenu: localStorage.getItem('spastore_menucocina_hourEndMenu'),
+  dateSelected: '',
 })
 
 export const mutations = {
@@ -125,5 +126,8 @@ export const mutations = {
     state.listComidas = listRefactor
     const stringComidas = state.listComidas.toString()
     localStorage.setItem('spastore_menucocina_comidas', stringComidas)
+  },
+  setDateSelected(state, date) {
+    state.dateSelected = date
   },
 }

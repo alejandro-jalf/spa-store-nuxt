@@ -2,235 +2,13 @@
   <div>
     <h1>Menu de la cocina</h1>
 
-    <label for="fecha">Fecha:</label>
-    <b-form inline>
-      <b-form-datepicker
-        id="fecha"
-        v-model="publicidad.date"
-        class="fechaDate"
-        :class="backgroundInputTheme"
-      ></b-form-datepicker>
-      <b-form-input
-        id="fuenteFecha"
-        :value="publicidad.sizeDate"
-        placeholder="Tamaño fuente"
-        type="number"
-        :class="backgroundInputTheme"
-        @change="typedSizeDate"
-      ></b-form-input>
-    </b-form>
+    <menu-cocina-form
+      :list-antojitos="listAntojitos"
+      :list-comidas="listComidas"
+      :horario-anto="horarioAnto"
+      :horario-menu="horarioMenu"
+    ></menu-cocina-form>
 
-    <div
-      v-b-toggle.dataCollapseAntojitos
-      class="extras mt-2"
-      @click="changeCollapseAnto"
-    >
-      <b-icon-arrow-down-circle-fill
-        v-if="iconCollapseAntojitos"
-      ></b-icon-arrow-down-circle-fill>
-      <b-icon-arrow-up-circle-fill v-else></b-icon-arrow-up-circle-fill>
-      Antojitos
-    </div>
-
-    <b-collapse id="dataCollapseAntojitos" :visible="visibleAnto">
-      <b-form inline>
-        <b-form-input
-          id="inputSizeAnt"
-          placeholder="Tamaño fuente"
-          class="inputFirt inputsPar"
-          type="number"
-          :value="publicidad.sizeAntojitos"
-          :class="backgroundInputTheme"
-          @change="typedSizeAnto"
-        ></b-form-input>
-        <b-form-input
-          id="inputInterAnt"
-          type="number"
-          :value="publicidad.interlineadoAnto"
-          placeholder="Interlineado"
-          class="inputsPar"
-          :class="backgroundInputTheme"
-          @change="typedInterAnto"
-        ></b-form-input>
-      </b-form>
-      <b-input-group class="mt-3">
-        <template #append>
-          <b-button variant="success" @click="addAntojito">
-            <span v-if="width > 400">Agregar</span>
-            <b-icon-plus-circle-fill v-else></b-icon-plus-circle-fill>
-          </b-button>
-        </template>
-        <template #prepend>
-          <b-input-group-text>
-            <span v-if="width > 400">Antojito</span>
-            <b-icon-card-list v-else></b-icon-card-list>
-          </b-input-group-text>
-        </template>
-        <b-form-input
-          id="inpAnt"
-          v-model="publicidad.antojito"
-          type="text"
-          trim
-          :class="backgroundInputTheme"
-          @keyup.enter="addAntojito"
-        ></b-form-input>
-      </b-input-group>
-      <div class="container-products">
-        <b-badge
-          v-for="(product, indexProAnt) in listAntojitos"
-          :key="indexProAnt"
-          pill
-          class="chipProduct"
-          variant="info"
-        >
-          {{ product }}
-          <b-icon-x-circle-fill
-            class="close-chip"
-            @click="removeAntojito(product)"
-          ></b-icon-x-circle-fill>
-        </b-badge>
-      </div>
-      <b-form-checkbox
-        id="checkHorarioAnto"
-        switch
-        :checked="publicidad.horarioAnto"
-        name="checkHorarioAnto"
-        @change="changeHorarioAnto"
-      >
-        Establecer horario
-      </b-form-checkbox>
-      <b-form inline class="mt-2">
-        <b-form-timepicker
-          id="hourStartAnto"
-          :value="publicidad.hourStartAnto"
-          locale="en"
-          label-close-button="Aceptar"
-          label-no-time-selected="Hora inicio"
-          :disabled="!horarioAnto"
-          class="inputFirt inputsPar"
-          :class="backgroundInputTheme"
-          @context="chageHourStartAnto"
-        ></b-form-timepicker>
-        <b-form-timepicker
-          id="hourEndAnto"
-          :value="publicidad.hourEndAnto"
-          locale="en"
-          label-close-button="Aceptar"
-          label-no-time-selected="Hora termino"
-          :disabled="!horarioAnto"
-          class="inputsPar"
-          :class="backgroundInputTheme"
-          @context="chageHourEndAnto"
-        ></b-form-timepicker>
-      </b-form>
-    </b-collapse>
-
-    <div
-      v-b-toggle.dataCollapseMenu
-      class="extras mt-2"
-      @click="changeCollapseMenu"
-    >
-      <b-icon-arrow-down-circle-fill
-        v-if="iconCollapseMenu"
-      ></b-icon-arrow-down-circle-fill>
-      <b-icon-arrow-up-circle-fill v-else></b-icon-arrow-up-circle-fill>
-      Menu del dia
-    </div>
-
-    <b-collapse id="dataCollapseMenu" :visible="visibleMenu">
-      <b-form inline>
-        <b-form-input
-          id="inputSizeMenu"
-          type="number"
-          :value="publicidad.sizeMenu"
-          placeholder="Tamaño fuente"
-          class="inputFirt inputsPar"
-          :class="backgroundInputTheme"
-          @change="typedSizeMenu"
-        ></b-form-input>
-        <b-form-input
-          id="inputInterMenu"
-          type="number"
-          :value="publicidad.interlineadoMenu"
-          placeholder="Interlineado"
-          class="inputsPar"
-          :class="backgroundInputTheme"
-          @change="typedInterMenu"
-        ></b-form-input>
-      </b-form>
-
-      <b-input-group class="mt-3">
-        <template #append>
-          <b-button variant="success" @click="addMenu">
-            <span v-if="width > 400">Agregar</span>
-            <b-icon-plus-circle-fill v-else></b-icon-plus-circle-fill>
-          </b-button>
-        </template>
-        <template #prepend>
-          <b-input-group-text>
-            <span v-if="width > 400">Comida</span>
-            <b-icon-journal-medical v-else></b-icon-journal-medical>
-          </b-input-group-text>
-        </template>
-        <b-form-input
-          id="inMenu"
-          v-model="publicidad.menu"
-          type="text"
-          trim
-          :class="backgroundInputTheme"
-          @keyup.enter="addMenu"
-        ></b-form-input>
-      </b-input-group>
-      <div class="container-products">
-        <b-badge
-          v-for="(comida, indexProCom) in listComidas"
-          :key="indexProCom"
-          pill
-          class="chipProduct"
-          variant="info"
-        >
-          {{ comida }}
-          <b-icon-x-circle-fill
-            class="close-chip"
-            @click="removeMenu(comida)"
-          ></b-icon-x-circle-fill>
-        </b-badge>
-      </div>
-
-      <b-form-checkbox
-        id="checkHorarioMenu"
-        switch
-        name="checkHorarioMenu"
-        :checked="publicidad.horarioMenu"
-        @change="changeHorarioMenu"
-      >
-        Establecer horario
-      </b-form-checkbox>
-      <b-form inline class="mt-2">
-        <b-form-timepicker
-          id="hourStartMenu"
-          v-model="publicidad.hourStartMenu"
-          locale="en"
-          label-close-button="Aceptar"
-          label-no-time-selected="Hora inicio"
-          :disabled="!horarioMenu"
-          class="inputFirt inputsPar"
-          :class="backgroundInputTheme"
-          @context="chageHourStartMenu"
-        ></b-form-timepicker>
-        <b-form-timepicker
-          id="hourEndMenu"
-          v-model="publicidad.hourEndMenu"
-          locale="en"
-          label-close-button="Aceptar"
-          label-no-time-selected="Hora termino"
-          :disabled="!horarioMenu"
-          class="inputsPar"
-          :class="backgroundInputTheme"
-          @context="chageHourEndMenu"
-        ></b-form-timepicker>
-      </b-form>
-    </b-collapse>
     <b-button
       class="mb-3 mt-3"
       :variant="isDarkTheme"
@@ -281,70 +59,33 @@
 
 <script>
 import { mapMutations } from 'vuex'
-import {
-  BIconXCircleFill,
-  BIconDownload,
-  BIconImageFill,
-  BIconPlusCircleFill,
-  BIconJournalMedical,
-  BIconCardList,
-  BIconArrowDownCircleFill,
-  BIconArrowUpCircleFill,
-} from 'bootstrap-vue'
+import { BIconDownload, BIconImageFill } from 'bootstrap-vue'
+import MenuCocinaForm from '../components/MenuCocinaForm.vue'
 import utils from '../modules/utils'
 
 export default {
   components: {
-    BIconXCircleFill,
     BIconDownload,
     BIconImageFill,
-    BIconPlusCircleFill,
-    BIconJournalMedical,
-    BIconCardList,
-    BIconArrowDownCircleFill,
-    BIconArrowUpCircleFill,
+    MenuCocinaForm,
   },
   data() {
     return {
       publicidad: {
-        sizeAntojitos: this.$store.state.menucocina.sizeLetterAntojitos,
-        interlineadoAnto: this.$store.state.menucocina.interlineadoAntojitos,
-        antojito: '',
-        sizeDate: this.$store.state.menucocina.sizeLetterDate,
-        sizeMenu: this.$store.state.menucocina.sizeLetterMenu,
-        interlineadoMenu: this.$store.state.menucocina.interlineadoMenu,
-        menu: '',
         imagePainted: false,
         href: '',
-        date: '',
         sizeImage: 1080,
         maxInputRangeImage: 1080,
-        horarioAnto:
-          typeof this.$store.state.menucocina.horarioAnto === 'string'
-            ? this.$store.state.menucocina.horarioAnto === 'true'
-            : this.$store.state.menucocina.horarioAnto,
-        horarioMenu:
-          typeof this.$store.state.menucocina.horarioMenu === 'string'
-            ? this.$store.state.menucocina.horarioMenu === 'true'
-            : this.$store.state.menucocina.horarioMenu,
-        hourStartAnto: this.$store.state.menucocina.hourStartAnto,
-        hourEndAnto: this.$store.state.menucocina.hourEndAnto,
-        hourStartMenu: this.$store.state.menucocina.hourStartMenu,
-        hourEndMenu: this.$store.state.menucocina.hourEndMenu,
       },
-      iconCollapseAntojitos: true,
-      iconCollapseMenu: true,
-      visibleAnto:
-        typeof this.$store.state.menucocina.collapseAnto === 'string'
-          ? this.$store.state.menucocina.collapseAnto === 'true'
-          : this.$store.state.menucocina.collapseAnto,
-      visibleMenu:
-        typeof this.$store.state.menucocina.collapseMenu === 'string'
-          ? this.$store.state.menucocina.collapseMenu === 'true'
-          : this.$store.state.menucocina.collapseMenu,
     }
   },
   computed: {
+    sizeDate() {
+      return this.$store.state.menucocina.sizeLetterDate
+    },
+    date() {
+      return this.$store.state.menucocina.dateSelected
+    },
     horarioAnto() {
       return typeof this.$store.state.menucocina.horarioAnto === 'string'
         ? this.$store.state.menucocina.horarioAnto === 'true'
@@ -367,16 +108,6 @@ export default {
     blockButton() {
       return this.$store.state.general.widthWindow <= 500
     },
-    backgroundInputTheme() {
-      if (this.$store.state.general.themePreferences === 'system') {
-        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
-          .matches
-        if (systemDark) return 'backgroundInputDark'
-        return 'backgroundInput'
-      } else if (this.$store.state.general.themePreferences === 'dark')
-        return 'backgroundInputDark'
-      else return 'backgroundInput'
-    },
     isDarkTheme() {
       if (this.$store.state.general.themePreferences === 'system') {
         const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
@@ -392,12 +123,6 @@ export default {
     const imageDefault = document.querySelector('#imageDefault')
     const imageRender = document.querySelector('#imgVi')
     const containerMain = window.document.querySelector('.container')
-
-    const date = new Date()
-    this.publicidad.date = `${date.getFullYear()}-${
-      date.getMonth() + 1
-    }-${date.getDate()}`
-
     const setMaxResize = () => {
       if (containerMain.clientWidth - 30 <= 1080)
         this.publicidad.maxInputRangeImage = containerMain.clientWidth - 30
@@ -409,20 +134,7 @@ export default {
         this.publicidad.sizeImage = sizeImage
       }
     }
-
     setMaxResize()
-
-    this.$root.$on('bv::collapse::state', (collapseId, isJustShown) => {
-      if (collapseId === 'dataCollapseAntojitos') {
-        if (!isJustShown) this.iconCollapseAntojitos = true
-        else this.iconCollapseAntojitos = false
-      }
-      if (collapseId === 'dataCollapseMenu') {
-        if (!isJustShown) this.iconCollapseMenu = true
-        else this.iconCollapseMenu = false
-      }
-    })
-
     window.addEventListener('resize', () => {
       if (imageDefault || imageRender) {
         setMaxResize()
@@ -442,48 +154,7 @@ export default {
   methods: {
     ...mapMutations({
       setLoading: 'general/setLoading',
-      setAntojito: 'menucocina/setAntojito',
-      setMenu: 'menucocina/setMenu',
-      removeAntojito: 'menucocina/removeAntojito',
-      removeMenu: 'menucocina/removeMenu',
-      setSizeLetterAntojitos: 'menucocina/setSizeLetterAntojitos',
-      setInterlineadoAntojitos: 'menucocina/setInterlineadoAntojitos',
-      setSizeLetterMenu: 'menucocina/setSizeLetterMenu',
-      setInterlineadoMenu: 'menucocina/setInterlineadoMenu',
-      setSizeLetterDate: 'menucocina/setSizeLetterDate',
-      setCollapseAnto: 'menucocina/setCollapseAnto',
-      setCollapseMenu: 'menucocina/setCollapseMenu',
-      setHorarioAnto: 'menucocina/setHorarioAnto',
-      setHorarioMenu: 'menucocina/setHorarioMenu',
-      setHourStartAnto: 'menucocina/setHourStartAnto',
-      setHourEndAnto: 'menucocina/setHourEndAnto',
-      setHourStartMenu: 'menucocina/setHourStartMenu',
-      setHourEndMenu: 'menucocina/setHourEndMenu',
     }),
-    changeCollapseAnto() {
-      this.setCollapseAnto(this.iconCollapseAntojitos)
-    },
-    changeCollapseMenu() {
-      this.setCollapseMenu(this.iconCollapseMenu)
-    },
-    changeHorarioMenu(status) {
-      this.setHorarioMenu(status)
-    },
-    changeHorarioAnto(status) {
-      this.setHorarioAnto(status)
-    },
-    chageHourStartAnto(evt) {
-      this.setHourStartAnto(evt.value)
-    },
-    chageHourEndAnto(evt) {
-      this.setHourEndAnto(evt.value)
-    },
-    chageHourStartMenu(evt) {
-      this.setHourStartMenu(evt.value)
-    },
-    chageHourEndMenu(evt) {
-      this.setHourEndMenu(evt.value)
-    },
     drawRectRounded(ctx, x, y, width, height, radius, color) {
       ctx.strokeStyle = color
       ctx.fillStyle = color
@@ -511,46 +182,11 @@ export default {
       if (document.getElementById('imgVi'))
         document.getElementById('imgVi').style.width = value + 'px'
     },
-    typedSizeAnto(value) {
-      if (value !== '') this.setSizeLetterAntojitos(value)
-    },
-    typedInterAnto(value) {
-      if (value !== '') this.setInterlineadoAntojitos(value)
-    },
-    typedSizeMenu(value) {
-      if (value !== '') this.setSizeLetterMenu(value)
-    },
-    typedInterMenu(value) {
-      if (value !== '') this.setInterlineadoMenu(value)
-    },
-    typedSizeDate(value) {
-      if (value !== '') this.setSizeLetterDate(value)
-    },
     createImage() {
       const canvas = document.getElementById('canvas')
       let dato = canvas.toDataURL('image/jpg')
       dato = dato.replace('image/jpeg', 'image/octet-stream')
       this.publicidad.href = dato
-    },
-    addAntojito() {
-      if (this.publicidad.antojito === '') return true
-      const antojito = this.publicidad.antojito
-      const antojitoFinded = this.listAntojitos.find(
-        (ant) => ant.trim().toLowerCase() === antojito.toLowerCase()
-      )
-      if (antojitoFinded) return true
-      this.setAntojito(antojito)
-      this.publicidad.antojito = ''
-    },
-    addMenu() {
-      if (this.publicidad.menu === '') return true
-      const menu = this.publicidad.menu
-      const menuFinded = this.listComidas.find(
-        (comida) => comida.trim().toLowerCase() === menu.toLowerCase()
-      )
-      if (menuFinded) return true
-      this.setMenu(menu)
-      this.publicidad.menu = ''
     },
     drawFondo() {
       this.setLoading(true)
@@ -563,7 +199,7 @@ export default {
       const imageObj = document.getElementById('fondoCanvas')
       const imageObj2 = new Image()
 
-      const date = this.publicidad.date.split('-')
+      const date = this.date.split('-')
       const fecha = `${date[2]}/${utils._arrayMonths[parseInt(date[1])]}/${
         date[0]
       }`
@@ -571,7 +207,7 @@ export default {
       imageObj2.src = imageObj.src
       context.drawImage(imageObj2, 0, 0, 1080, 1330)
       context.fillStyle = 'black'
-      context.font = 'bold ' + this.publicidad.sizeDate + 'px arial'
+      context.font = 'bold ' + this.sizeDate + 'px arial'
       context.fillText(fecha, 670, 190)
       this.drawAntojitos(context)
       this.drawComidas(context)
@@ -691,24 +327,6 @@ export default {
 </script>
 
 <style scoped>
-.fechaDate,
-#fuenteFecha {
-  width: 49%;
-  margin-left: 1%;
-}
-
-.extras {
-  border-bottom: 1px solid rgb(138, 138, 138);
-  padding-bottom: 5px;
-  margin-bottom: 10px;
-}
-
-#dataCollapseMenu,
-#dataCollapseAntojitos {
-  width: 98%;
-  margin-left: 2%;
-}
-
 #canvas {
   position: fixed;
   left: 100%;
@@ -727,42 +345,6 @@ export default {
   left: 100%;
 }
 
-.chipProduct {
-  margin-left: 5px;
-  margin-top: 5px;
-  padding: 7px;
-  font-size: 15px;
-}
-
-.inputsPar {
-  width: 49%;
-  margin-left: 1%;
-}
-
-.inputFirt {
-  margin-left: 0px;
-  width: 50%;
-}
-
-.close-chip {
-  cursor: pointer;
-}
-
-.close-chip:hover {
-  color: rgb(119, 119, 119);
-}
-
-.container-products {
-  margin-top: 10px;
-  padding: 10px 15px 15px 10px;
-  width: 100%;
-  min-height: 50px;
-  height: min-content;
-  border-radius: 5px;
-  border: 1px solid rgb(163, 163, 163);
-  margin-bottom: 20px;
-}
-
 .container-img {
   position: relative;
   max-width: 1080px; /*540px;*/
@@ -775,16 +357,5 @@ export default {
   position: absolute;
   top: 10px;
   left: 10px;
-}
-
-@media screen and (max-width: 767px) {
-  .fechaDate,
-  #fuenteFecha {
-    width: 100%;
-    margin-left: 0px;
-  }
-  #fuenteFecha {
-    margin-top: 10px;
-  }
 }
 </style>
