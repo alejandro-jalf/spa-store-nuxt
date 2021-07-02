@@ -200,7 +200,7 @@ export default {
       const imageObj2 = new Image()
 
       const date = this.date.split('-')
-      const fecha = `${date[2]}/${utils._arrayMonths[parseInt(date[1])]}/${
+      const fecha = `${date[2]}/${utils._arrayMonths[parseInt(date[1]) - 1]}/${
         date[0]
       }`
 
