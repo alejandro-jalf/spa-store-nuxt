@@ -176,6 +176,8 @@ export default {
     }
 
     const setWidthContainerAll = (widthWindow) => {
+      // eslint-disable-next-line no-console
+      console.log(this.width, widthWindow, this.login)
       if (this.width <= 1390 || !this.login) {
         containerAll.style.width = '100%'
         containerAll.style.marginLeft = 'auto'
@@ -214,12 +216,12 @@ export default {
       document.querySelector('.slider').style.left = widthWindow + 30 + 'px'
     }
 
+    this.setWidthWindow(window.innerWidth)
     setTheme()
     updateDataUser()
     setScrollNavBarBottom()
     setMarginPrincipal(window.innerWidth)
     setWidthContainerAll(window.innerWidth)
-    this.setWidthWindow(window.innerWidth)
 
     document.addEventListener('touchstart', this.handleTouchStart, false)
     document.addEventListener('touchmove', this.handleTouchMove, false)
