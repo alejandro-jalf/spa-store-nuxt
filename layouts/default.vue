@@ -176,8 +176,6 @@ export default {
     }
 
     const setWidthContainerAll = (widthWindow) => {
-      // eslint-disable-next-line no-console
-      console.log(this.width, widthWindow, this.login)
       if (this.width <= 1390 || !this.login) {
         containerAll.style.width = '100%'
         containerAll.style.marginLeft = 'auto'
