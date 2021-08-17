@@ -74,6 +74,12 @@ export const state = () => ({
       nickname: 'Menu Cocina',
       icon: 'layout-text-sidebar-reverse',
     },
+    {
+      path: '/cocina',
+      name: 'cocina',
+      nickname: 'Cocina',
+      icon: 'file-earmark-easel-fill',
+    },
   ],
   tabActual: 'Inicio',
   themePreferences: localStorage.getItem('spastore_theme_color'),

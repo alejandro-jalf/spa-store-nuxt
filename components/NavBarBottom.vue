@@ -25,6 +25,9 @@
           <b-icon-layout-text-sidebar-reverse
             v-else-if="tab.icon === 'layout-text-sidebar-reverse'"
           ></b-icon-layout-text-sidebar-reverse>
+          <b-icon-file-earmark-easel-fill
+            v-else-if="tab.icon === 'file-earmark-easel-fill'"
+          />
           <b-icon-asterisk v-else></b-icon-asterisk>
           <div v-if="visibleNickname" class="nickname">{{ tab.nickname }}</div>
         </b-link>
@@ -127,6 +130,7 @@ import {
   BIconCupFill,
   BIconTvFill,
   BIconLayoutTextSidebarReverse,
+  BIconFileEarmarkEaselFill,
 } from 'bootstrap-vue'
 
 export default {
@@ -147,6 +151,7 @@ export default {
     BIconCupFill,
     BIconTvFill,
     BIconLayoutTextSidebarReverse,
+    BIconFileEarmarkEaselFill,
   },
   data() {
     return {

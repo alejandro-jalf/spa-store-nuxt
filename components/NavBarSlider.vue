@@ -89,6 +89,9 @@
               <b-icon-layout-text-sidebar-reverse
                 v-else-if="tab.icon === 'layout-text-sidebar-reverse'"
               ></b-icon-layout-text-sidebar-reverse>
+              <b-icon-file-earmark-easel-fill
+                v-else-if="tab.icon === 'file-earmark-easel-fill'"
+              />
               <b-icon-asterisk v-else class="mr-1"></b-icon-asterisk>
 
               {{ tab.nickname }}
@@ -126,6 +129,7 @@ import {
   BIconCupFill,
   BIconTvFill,
   BIconLayoutTextSidebarReverse,
+  BIconFileEarmarkEaselFill,
 } from 'bootstrap-vue'
 
 export default {
@@ -144,6 +148,7 @@ export default {
     BIconCupFill,
     BIconTvFill,
     BIconLayoutTextSidebarReverse,
+    BIconFileEarmarkEaselFill,
   },
   props: {
     logout: {
