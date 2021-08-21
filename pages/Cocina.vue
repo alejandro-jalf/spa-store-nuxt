@@ -6,7 +6,7 @@
         <cocina-totales />
       </b-tab>
       <b-tab title="Crecimiento">
-        <p>Tabla con grafico</p>
+        <cocina-crecimiento />
       </b-tab>
       <b-tab title="Detalles">
         <p>I'm a disabled tab!</p>
@@ -17,10 +17,12 @@
 
 <script>
 import CocinaTotales from '../components/CocinaTotales'
+import CocinaCrecimiento from '../components/CocinaCrecimiento'
 
 export default {
   components: {
     CocinaTotales,
+    CocinaCrecimiento,
   },
 }
 </script>
