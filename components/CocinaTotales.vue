@@ -32,6 +32,7 @@
       :items="itemsRafactor"
       :class="variantThemeTableBody"
       class="mt-2"
+      :tbody-tr-class="rowClass"
     >
       <template #cell(Total)="row">
         {{ getTotal(row.item) }}
@@ -884,8 +885,11 @@ export default {
     },
     itemsRafactor() {
       const sucursal = this.sucursalSelected
+      let sumaMes1 = 0
+      let sumaMes2 = 0
+      let datos
       if (sucursal !== 'ALL') {
-        const datos = this.data.reduce((acumItems, item) => {
+        datos = this.data.reduce((acumItems, item) => {
           if (item.Suc === sucursal) {
             const mesFinded = acumItems.findIndex(
               (acumItem) => acumItem.Dia === item.Dia
@@ -905,16 +909,17 @@ export default {
                 item.Venta
               acumItems[mesFinded].Mes.push(item.Mes)
             }
+            if (item.MesMovimientoLetra === this.fields[1])
+              sumaMes1 += item.Venta
+            if (item.MesMovimientoLetra === this.fields[2])
+              sumaMes2 += item.Venta
           }
           return acumItems
         }, [])
-        return datos.sort((a, b) => a.Dia - b.Dia)
       } else {
-        const newDatos = []
+        datos = []
         this.data.forEach((sucursal) => {
-          const diaFinded = newDatos.findIndex(
-            (suc) => suc.Dia === sucursal.Dia
-          )
+          const diaFinded = datos.findIndex((suc) => suc.Dia === sucursal.Dia)
           if (diaFinded === -1) {
             const newSuc = {
               Dia: sucursal.Dia,
@@ -923,32 +928,50 @@ export default {
               `${sucursal.MesMovimientoLetra}`
             ] = this.utils.aplyFormatNumeric(this.utils.roundTo(sucursal.Venta))
             newSuc[`Venta${sucursal.MesMovimientoLetra}`] = sucursal.Venta
-            newDatos.push(newSuc)
+            datos.push(newSuc)
           } else {
             const mesFinded =
-              newDatos[diaFinded][`Venta${sucursal.MesMovimientoLetra}`]
+              datos[diaFinded][`Venta${sucursal.MesMovimientoLetra}`]
             if (!mesFinded) {
-              newDatos[diaFinded][
+              datos[diaFinded][
                 `${sucursal.MesMovimientoLetra}`
               ] = this.utils.aplyFormatNumeric(
                 this.utils.roundTo(sucursal.Venta)
               )
-              newDatos[diaFinded][`Venta${sucursal.MesMovimientoLetra}`] =
+              datos[diaFinded][`Venta${sucursal.MesMovimientoLetra}`] =
                 sucursal.Venta
             } else {
               const suma = parseFloat(
-                newDatos[diaFinded][`Venta${sucursal.MesMovimientoLetra}`] +
+                datos[diaFinded][`Venta${sucursal.MesMovimientoLetra}`] +
                   sucursal.Venta
               )
-              newDatos[diaFinded][`Venta${sucursal.MesMovimientoLetra}`] = suma
-              newDatos[diaFinded][
+              datos[diaFinded][`Venta${sucursal.MesMovimientoLetra}`] = suma
+              datos[diaFinded][
                 `${sucursal.MesMovimientoLetra}`
               ] = this.utils.aplyFormatNumeric(this.utils.roundTo(suma))
             }
           }
+          if (sucursal.MesMovimientoLetra === this.fields[1])
+            sumaMes1 += sucursal.Venta
+          if (sucursal.MesMovimientoLetra === this.fields[2])
+            sumaMes2 += sucursal.Venta
         })
-        return newDatos.sort((a, b) => a.Dia - b.Dia)
       }
+      const foot = {
+        Dia: 'Total',
+        status: 'end',
+      }
+      foot[`${this.fields[1]}`] = this.utils.aplyFormatNumeric(
+        this.utils.roundTo(sumaMes1)
+      )
+      foot[`Venta${this.fields[1]}`] = sumaMes1
+      foot[`${this.fields[2]}`] = this.utils.aplyFormatNumeric(
+        this.utils.roundTo(sumaMes2)
+      )
+      foot[`Venta${this.fields[2]}`] = sumaMes2
+      const datosSort = datos.sort((a, b) => a.Dia - b.Dia)
+      datosSort.push(foot)
+      return datosSort
     },
   },
   mounted() {
@@ -956,6 +979,10 @@ export default {
     // console.log(this.data)
   },
   methods: {
+    rowClass(item, type) {
+      if (!item || type !== 'row') return
+      if (item.status === 'end') return 'table-primary'
+    },
     changeSucursal(sucursal) {
       this.sucursalSelected = sucursal
     },
