@@ -60,7 +60,7 @@ export default {
           Mes: 7,
           MesMovimientoLetra: 'Julio',
           Dia: 1,
-          Venta: 1344.2,
+          Venta: 1391.6,
           PrimeraVenta: '1900-01-01T08:31:36',
           UltimaVenta: '1900-01-01T17:54:57',
         },
@@ -69,7 +69,7 @@ export default {
           Mes: 7,
           MesMovimientoLetra: 'Julio',
           Dia: 2,
-          Venta: 1594.6,
+          Venta: 1673.2,
           PrimeraVenta: '1900-01-01T08:31:30',
           UltimaVenta: '1900-01-01T17:39:40',
         },
@@ -78,7 +78,7 @@ export default {
           Mes: 7,
           MesMovimientoLetra: 'Julio',
           Dia: 3,
-          Venta: 869.8,
+          Venta: 951.4,
           PrimeraVenta: '1900-01-01T08:06:37',
           UltimaVenta: '1900-01-01T20:05:36',
         },
@@ -96,7 +96,7 @@ export default {
           Mes: 7,
           MesMovimientoLetra: 'Julio',
           Dia: 5,
-          Venta: 1307.3,
+          Venta: 1362.2,
           PrimeraVenta: '1900-01-01T07:54:56',
           UltimaVenta: '1900-01-01T17:14:48',
         },
@@ -105,7 +105,7 @@ export default {
           Mes: 7,
           MesMovimientoLetra: 'Julio',
           Dia: 6,
-          Venta: 1051.45,
+          Venta: 1101.25,
           PrimeraVenta: '1900-01-01T08:41:26',
           UltimaVenta: '1900-01-01T19:37:01',
         },
@@ -123,7 +123,7 @@ export default {
           Mes: 7,
           MesMovimientoLetra: 'Julio',
           Dia: 8,
-          Venta: 1530.18,
+          Venta: 1594.38,
           PrimeraVenta: '1900-01-01T08:21:26',
           UltimaVenta: '1900-01-01T20:27:29',
         },
@@ -132,7 +132,7 @@ export default {
           Mes: 7,
           MesMovimientoLetra: 'Julio',
           Dia: 9,
-          Venta: 1407.15,
+          Venta: 1492.95,
           PrimeraVenta: '1900-01-01T08:01:16',
           UltimaVenta: '1900-01-01T16:34:12',
         },
@@ -141,7 +141,7 @@ export default {
           Mes: 7,
           MesMovimientoLetra: 'Julio',
           Dia: 10,
-          Venta: 952.7,
+          Venta: 983.6,
           PrimeraVenta: '1900-01-01T08:10:46',
           UltimaVenta: '1900-01-01T17:07:15',
         },
@@ -159,7 +159,7 @@ export default {
           Mes: 7,
           MesMovimientoLetra: 'Julio',
           Dia: 12,
-          Venta: 833.1,
+          Venta: 867.6,
           PrimeraVenta: '1900-01-01T08:27:55',
           UltimaVenta: '1900-01-01T18:52:27',
         },
@@ -168,7 +168,7 @@ export default {
           Mes: 7,
           MesMovimientoLetra: 'Julio',
           Dia: 13,
-          Venta: 1127.15,
+          Venta: 1145.15,
           PrimeraVenta: '1900-01-01T08:38:19',
           UltimaVenta: '1900-01-01T15:02:13',
         },
@@ -177,7 +177,7 @@ export default {
           Mes: 7,
           MesMovimientoLetra: 'Julio',
           Dia: 14,
-          Venta: 771.63,
+          Venta: 825.63,
           PrimeraVenta: '1900-01-01T08:29:59',
           UltimaVenta: '1900-01-01T18:07:06',
         },
@@ -186,7 +186,7 @@ export default {
           Mes: 7,
           MesMovimientoLetra: 'Julio',
           Dia: 15,
-          Venta: 1163.62,
+          Venta: 1266.82,
           PrimeraVenta: '1900-01-01T08:49:42',
           UltimaVenta: '1900-01-01T18:29:55',
         },
@@ -195,7 +195,7 @@ export default {
           Mes: 7,
           MesMovimientoLetra: 'Julio',
           Dia: 16,
-          Venta: 722.2,
+          Venta: 747.1,
           PrimeraVenta: '1900-01-01T08:43:11',
           UltimaVenta: '1900-01-01T19:04:18',
         },
@@ -204,7 +204,7 @@ export default {
           Mes: 7,
           MesMovimientoLetra: 'Julio',
           Dia: 17,
-          Venta: 863.52,
+          Venta: 903.42,
           PrimeraVenta: '1900-01-01T08:05:44',
           UltimaVenta: '1900-01-01T16:01:42',
         },
@@ -222,7 +222,7 @@ export default {
           Mes: 7,
           MesMovimientoLetra: 'Julio',
           Dia: 19,
-          Venta: 1302.43,
+          Venta: 1345.03,
           PrimeraVenta: '1900-01-01T08:34:57',
           UltimaVenta: '1900-01-01T16:49:25',
         },
@@ -231,7 +231,7 @@ export default {
           Mes: 7,
           MesMovimientoLetra: 'Julio',
           Dia: 20,
-          Venta: 1101.1,
+          Venta: 1165.9,
           PrimeraVenta: '1900-01-01T08:23:04',
           UltimaVenta: '1900-01-01T17:30:28',
         },
@@ -240,7 +240,7 @@ export default {
           Mes: 7,
           MesMovimientoLetra: 'Julio',
           Dia: 21,
-          Venta: 951.0,
+          Venta: 1003.8,
           PrimeraVenta: '1900-01-01T08:21:28',
           UltimaVenta: '1900-01-01T16:54:56',
         },
@@ -249,7 +249,7 @@ export default {
           Mes: 7,
           MesMovimientoLetra: 'Julio',
           Dia: 22,
-          Venta: 1457.7,
+          Venta: 1492.8,
           PrimeraVenta: '1900-01-01T08:00:01',
           UltimaVenta: '1900-01-01T19:02:15',
         },
@@ -258,7 +258,7 @@ export default {
           Mes: 7,
           MesMovimientoLetra: 'Julio',
           Dia: 23,
-          Venta: 879.95,
+          Venta: 919.25,
           PrimeraVenta: '1900-01-01T08:16:03',
           UltimaVenta: '1900-01-01T17:52:17',
         },
@@ -267,7 +267,7 @@ export default {
           Mes: 7,
           MesMovimientoLetra: 'Julio',
           Dia: 24,
-          Venta: 980.3,
+          Venta: 1018.1,
           PrimeraVenta: '1900-01-01T08:23:42',
           UltimaVenta: '1900-01-01T20:45:03',
         },
@@ -285,7 +285,7 @@ export default {
           Mes: 7,
           MesMovimientoLetra: 'Julio',
           Dia: 26,
-          Venta: 1278.28,
+          Venta: 1340.08,
           PrimeraVenta: '1900-01-01T07:47:08',
           UltimaVenta: '1900-01-01T15:48:44',
         },
@@ -294,7 +294,7 @@ export default {
           Mes: 7,
           MesMovimientoLetra: 'Julio',
           Dia: 27,
-          Venta: 1170.55,
+          Venta: 1202.95,
           PrimeraVenta: '1900-01-01T08:43:24',
           UltimaVenta: '1900-01-01T19:16:19',
         },
@@ -303,7 +303,7 @@ export default {
           Mes: 7,
           MesMovimientoLetra: 'Julio',
           Dia: 28,
-          Venta: 918.05,
+          Venta: 936.35,
           PrimeraVenta: '1900-01-01T08:05:02',
           UltimaVenta: '1900-01-01T17:01:02',
         },
@@ -312,7 +312,7 @@ export default {
           Mes: 7,
           MesMovimientoLetra: 'Julio',
           Dia: 29,
-          Venta: 789.3,
+          Venta: 814.5,
           PrimeraVenta: '1900-01-01T08:31:07',
           UltimaVenta: '1900-01-01T18:55:38',
         },
@@ -321,7 +321,7 @@ export default {
           Mes: 7,
           MesMovimientoLetra: 'Julio',
           Dia: 30,
-          Venta: 972.5,
+          Venta: 1003.7,
           PrimeraVenta: '1900-01-01T09:02:53',
           UltimaVenta: '1900-01-01T16:33:45',
         },
@@ -330,7 +330,7 @@ export default {
           Mes: 7,
           MesMovimientoLetra: 'Julio',
           Dia: 31,
-          Venta: 1016.45,
+          Venta: 1076.84,
           PrimeraVenta: '1900-01-01T08:26:10',
           UltimaVenta: '1900-01-01T18:28:07',
         },
@@ -348,7 +348,7 @@ export default {
           Mes: 8,
           MesMovimientoLetra: 'Agosto',
           Dia: 2,
-          Venta: 834.06,
+          Venta: 955.86,
           PrimeraVenta: '1900-01-01T08:03:00',
           UltimaVenta: '1900-01-01T19:21:58',
         },
@@ -357,7 +357,7 @@ export default {
           Mes: 8,
           MesMovimientoLetra: 'Agosto',
           Dia: 3,
-          Venta: 926.36,
+          Venta: 951.26,
           PrimeraVenta: '1900-01-01T09:07:14',
           UltimaVenta: '1900-01-01T19:14:49',
         },
@@ -366,7 +366,7 @@ export default {
           Mes: 8,
           MesMovimientoLetra: 'Agosto',
           Dia: 4,
-          Venta: 1226.1,
+          Venta: 1285.92,
           PrimeraVenta: '1900-01-01T08:14:33',
           UltimaVenta: '1900-01-01T20:03:04',
         },
@@ -375,7 +375,7 @@ export default {
           Mes: 8,
           MesMovimientoLetra: 'Agosto',
           Dia: 5,
-          Venta: 1645.26,
+          Venta: 1683.36,
           PrimeraVenta: '1900-01-01T08:44:26',
           UltimaVenta: '1900-01-01T16:21:00',
         },
@@ -384,7 +384,7 @@ export default {
           Mes: 8,
           MesMovimientoLetra: 'Agosto',
           Dia: 6,
-          Venta: 805.84,
+          Venta: 820.84,
           PrimeraVenta: '1900-01-01T07:42:15',
           UltimaVenta: '1900-01-01T17:30:36',
         },
@@ -393,7 +393,7 @@ export default {
           Mes: 8,
           MesMovimientoLetra: 'Agosto',
           Dia: 7,
-          Venta: 1007.15,
+          Venta: 1062.35,
           PrimeraVenta: '1900-01-01T08:09:11',
           UltimaVenta: '1900-01-01T20:29:18',
         },
@@ -411,7 +411,7 @@ export default {
           Mes: 8,
           MesMovimientoLetra: 'Agosto',
           Dia: 9,
-          Venta: 925.4,
+          Venta: 963.2,
           PrimeraVenta: '1900-01-01T08:16:36',
           UltimaVenta: '1900-01-01T15:43:54',
         },
@@ -420,7 +420,7 @@ export default {
           Mes: 8,
           MesMovimientoLetra: 'Agosto',
           Dia: 10,
-          Venta: 797.26,
+          Venta: 861.34,
           PrimeraVenta: '1900-01-01T09:02:20',
           UltimaVenta: '1900-01-01T18:49:58',
         },
@@ -429,7 +429,7 @@ export default {
           Mes: 8,
           MesMovimientoLetra: 'Agosto',
           Dia: 11,
-          Venta: 1247.5,
+          Venta: 1307.5,
           PrimeraVenta: '1900-01-01T08:16:43',
           UltimaVenta: '1900-01-01T15:17:10',
         },
@@ -438,7 +438,7 @@ export default {
           Mes: 8,
           MesMovimientoLetra: 'Agosto',
           Dia: 12,
-          Venta: 783.35,
+          Venta: 810.95,
           PrimeraVenta: '1900-01-01T09:03:16',
           UltimaVenta: '1900-01-01T17:14:45',
         },
@@ -447,7 +447,7 @@ export default {
           Mes: 8,
           MesMovimientoLetra: 'Agosto',
           Dia: 13,
-          Venta: 703.05,
+          Venta: 740.85,
           PrimeraVenta: '1900-01-01T08:45:16',
           UltimaVenta: '1900-01-01T14:52:42',
         },
@@ -456,7 +456,7 @@ export default {
           Mes: 8,
           MesMovimientoLetra: 'Agosto',
           Dia: 14,
-          Venta: 693.21,
+          Venta: 704.61,
           PrimeraVenta: '1900-01-01T09:14:11',
           UltimaVenta: '1900-01-01T17:46:31',
         },
@@ -474,9 +474,27 @@ export default {
           Mes: 8,
           MesMovimientoLetra: 'Agosto',
           Dia: 16,
-          Venta: 491.0,
+          Venta: 992.6,
           PrimeraVenta: '1900-01-01T07:51:23',
-          UltimaVenta: '1900-01-01T10:57:06',
+          UltimaVenta: '1900-01-01T17:15:36',
+        },
+        {
+          Suc: 'ZR',
+          Mes: 8,
+          MesMovimientoLetra: 'Agosto',
+          Dia: 17,
+          Venta: 1292.2,
+          PrimeraVenta: '1900-01-01T07:54:36',
+          UltimaVenta: '1900-01-01T20:41:00',
+        },
+        {
+          Suc: 'ZR',
+          Mes: 8,
+          MesMovimientoLetra: 'Agosto',
+          Dia: 18,
+          Venta: 1525.38,
+          PrimeraVenta: '1900-01-01T08:07:04',
+          UltimaVenta: '1900-01-01T17:15:56',
         },
         {
           Suc: 'VC',
@@ -825,9 +843,27 @@ export default {
           Mes: 8,
           MesMovimientoLetra: 'Agosto',
           Dia: 16,
-          Venta: 100.0,
+          Venta: 120.0,
           PrimeraVenta: '1900-01-01T08:44:20',
-          UltimaVenta: '1900-01-01T10:44:15',
+          UltimaVenta: '1900-01-01T12:08:14',
+        },
+        {
+          Suc: 'VC',
+          Mes: 8,
+          MesMovimientoLetra: 'Agosto',
+          Dia: 17,
+          Venta: 100.0,
+          PrimeraVenta: '1900-01-01T08:39:32',
+          UltimaVenta: '1900-01-01T11:05:09',
+        },
+        {
+          Suc: 'VC',
+          Mes: 8,
+          MesMovimientoLetra: 'Agosto',
+          Dia: 18,
+          Venta: 100.0,
+          PrimeraVenta: '1900-01-01T09:23:08',
+          UltimaVenta: '1900-01-01T11:51:13',
         },
       ],
       fields: ['Dia', 'Agosto', 'Julio', 'Total'],
@@ -848,100 +884,76 @@ export default {
     },
     itemsRafactor() {
       const sucursal = this.sucursalSelected
-      const datos = this.data.reduce((acumItems, item) => {
-        if (item.Suc === sucursal) {
-          const mesFinded = acumItems.findIndex(
-            (acumItem) => acumItem.Dia === item.Dia
-          )
-          if (mesFinded === -1) {
-            item[`${item.MesMovimientoLetra}`] = this.utils.aplyFormatNumeric(
-              this.utils.roundTo(item.Venta)
-            )
-            item[`Venta${item.MesMovimientoLetra}`] = item.Venta
-            acumItems.push(item)
-          } else {
-            acumItems[mesFinded][
-              `${item.MesMovimientoLetra}`
-            ] = this.utils.aplyFormatNumeric(this.utils.roundTo(item.Venta))
-            acumItems[mesFinded][`Venta${item.MesMovimientoLetra}`] = item.Venta
-          }
-        } else if (sucursal === 'ALL') {
-          const diaFinded = acumItems.findIndex(
-            (acumItem) => acumItem.Dia === item.Dia
-          )
-          // eslint-disable-next-line no-console
-          console.log(
-            'ADD ' + item.Suc,
-            item.MesMovimientoLetra,
-            item.Dia,
-            item.Venta,
-            diaFinded
-          )
-          if (diaFinded === -1) {
-            item[`${item.MesMovimientoLetra}`] = this.utils.aplyFormatNumeric(
-              this.utils.roundTo(item.Venta)
-            )
-            item[`Venta${item.MesMovimientoLetra}`] = item.Venta
-            acumItems.push(item)
-          } else {
+      if (sucursal !== 'ALL') {
+        const datos = this.data.reduce((acumItems, item) => {
+          if (item.Suc === sucursal) {
             const mesFinded = acumItems.findIndex(
-              (acumItem) => acumItem.Mes === item.Mes
+              (acumItem) => acumItem.Dia === item.Dia
             )
-            // eslint-disable-next-line no-console
-            console.log(item.MesMovimientoLetra, mesFinded, diaFinded)
             if (mesFinded === -1) {
-              acumItems[diaFinded][
+              item[`${item.MesMovimientoLetra}`] = this.utils.aplyFormatNumeric(
+                this.utils.roundTo(item.Venta)
+              )
+              item.Mes = [item.Mes]
+              item[`Venta${item.MesMovimientoLetra}`] = item.Venta
+              acumItems.push(item)
+            } else {
+              acumItems[mesFinded][
                 `${item.MesMovimientoLetra}`
               ] = this.utils.aplyFormatNumeric(this.utils.roundTo(item.Venta))
-              acumItems[diaFinded][`Venta${item.MesMovimientoLetra}`] =
+              acumItems[mesFinded][`Venta${item.MesMovimientoLetra}`] =
                 item.Venta
-              // eslint-disable-next-line no-console
-              console.log(
-                'ADD ' + item.Suc,
-                item.MesMovimientoLetra,
-                item.Dia,
-                acumItems[diaFinded][`${item.MesMovimientoLetra}`]
-              )
-            } else {
-              // eslint-disable-next-line no-console
-              console.log(
-                acumItems[diaFinded][`Venta${item.MesMovimientoLetra}`]
-              )
-              acumItems[diaFinded][`Venta${item.MesMovimientoLetra}`] +=
-                item.Venta
-              // eslint-disable-next-line no-console
-              console.log(
-                acumItems[diaFinded][`Venta${item.MesMovimientoLetra}`],
-                item.Venta
-              )
-              acumItems[diaFinded][
-                `${item.MesMovimientoLetra}`
-              ] = this.utils.aplyFormatNumeric(
-                this.utils.roundTo(
-                  acumItems[diaFinded][`Venta${item.MesMovimientoLetra}`]
-                )
-              )
-              // acumItems[diaFinded][`Venta${item.MesMovimientoLetra}`] = suma
-              delete acumItems[diaFinded].PrimeraVenta
-              delete acumItems[diaFinded].UltimaVenta
-              // eslint-disable-next-line no-console
-              console.log(
-                'SUM ' + item.Suc,
-                item.MesMovimientoLetra,
-                item.Dia,
-                acumItems[diaFinded][`Venta${item.MesMovimientoLetra}`],
-                item.Venta,
-                acumItems[diaFinded][`${item.MesMovimientoLetra}`],
-                acumItems[diaFinded][`Venta${item.MesMovimientoLetra}`] +
-                  item.Venta
-              )
+              acumItems[mesFinded].Mes.push(item.Mes)
             }
           }
-        }
-        return acumItems
-      }, [])
-      return datos.sort((a, b) => a.Dia - b.Dia)
+          return acumItems
+        }, [])
+        return datos.sort((a, b) => a.Dia - b.Dia)
+      } else {
+        const newDatos = []
+        this.data.forEach((sucursal) => {
+          const diaFinded = newDatos.findIndex(
+            (suc) => suc.Dia === sucursal.Dia
+          )
+          if (diaFinded === -1) {
+            const newSuc = {
+              Dia: sucursal.Dia,
+            }
+            newSuc[
+              `${sucursal.MesMovimientoLetra}`
+            ] = this.utils.aplyFormatNumeric(this.utils.roundTo(sucursal.Venta))
+            newSuc[`Venta${sucursal.MesMovimientoLetra}`] = sucursal.Venta
+            newDatos.push(newSuc)
+          } else {
+            const mesFinded =
+              newDatos[diaFinded][`Venta${sucursal.MesMovimientoLetra}`]
+            if (!mesFinded) {
+              newDatos[diaFinded][
+                `${sucursal.MesMovimientoLetra}`
+              ] = this.utils.aplyFormatNumeric(
+                this.utils.roundTo(sucursal.Venta)
+              )
+              newDatos[diaFinded][`Venta${sucursal.MesMovimientoLetra}`] =
+                sucursal.Venta
+            } else {
+              const suma = parseFloat(
+                newDatos[diaFinded][`Venta${sucursal.MesMovimientoLetra}`] +
+                  sucursal.Venta
+              )
+              newDatos[diaFinded][`Venta${sucursal.MesMovimientoLetra}`] = suma
+              newDatos[diaFinded][
+                `${sucursal.MesMovimientoLetra}`
+              ] = this.utils.aplyFormatNumeric(this.utils.roundTo(suma))
+            }
+          }
+        })
+        return newDatos.sort((a, b) => a.Dia - b.Dia)
+      }
     },
+  },
+  mounted() {
+    // eslint-disable-next-line no-console
+    // console.log(this.data)
   },
   methods: {
     changeSucursal(sucursal) {
