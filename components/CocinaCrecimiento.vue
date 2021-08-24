@@ -1,5 +1,27 @@
 <template>
   <div>
+    <div class="container-result">
+      <span class="font-weight-bold">Dias {{ fields[1] }}:</span>
+      {{ diasMes1 }}
+    </div>
+    <div class="container-result">
+      <span class="font-weight-bold">Dias {{ fields[2] }}:</span>
+      {{ diasMes2 }}
+    </div>
+    <br />
+    <div class="container-result">
+      <span class="font-weight-bold">Promedio {{ fields[1] }}:</span>
+      {{ promedio1 }}
+    </div>
+    <div class="container-result">
+      <span class="font-weight-bold">Promedio {{ fields[2] }}:</span>
+      {{ promedio2 }}
+    </div>
+    <br />
+    <div class="container-result">
+      <span class="font-weight-bold">Tendencia {{ fields[2] }}:</span>
+      {{ tendencia }}
+    </div>
     <b-table
       striped
       hover
@@ -10,13 +32,7 @@
       :class="variantThemeTableBody"
       class="mt-2"
       :tbody-tr-class="rowClass"
-    >
-      <!-- <template #cell(CrecimientoDiario)="row">
-        <div :class="colorPorcentaje(row.item)">
-          {{ porcentaje(row.item) }}
-        </div>
-      </template> -->
-    </b-table>
+    ></b-table>
   </div>
 </template>
 
@@ -33,10 +49,13 @@ export default {
         'CrecimientoDiario',
         'AcumuladoJulio',
         'AcumuladoAgosto',
-        'Crecimiento Acumulado',
+        'CrecimientoAcumulado',
       ],
-      suma1: 0,
-      suma2: 0,
+      diasMes1: 0,
+      diasMes2: 0,
+      promedio1: 0,
+      promedio2: 0,
+      tendencia: 0,
     }
   },
   computed: {
@@ -55,6 +74,7 @@ export default {
     itemsRafactor() {
       let sumaMes1 = 0
       let sumaMes2 = 0
+      let porcentaje = 0
       const datos = []
       this.$store.state.cocina.dataMes.data.forEach((sucursal) => {
         if (sucursal.MesMovimientoLetra === this.fields[1])
@@ -92,7 +112,7 @@ export default {
               `${sucursal.MesMovimientoLetra}`
             ] = this.utils.aplyFormatNumeric(this.utils.roundTo(suma))
           }
-          const porcentaje = this.porcentaje(
+          porcentaje = this.porcentaje(
             datos[diaFinded][`Venta${this.fields[1]}`],
             datos[diaFinded][`Venta${this.fields[2]}`]
           )
@@ -102,7 +122,7 @@ export default {
           }
         }
       })
-      const porcentaje = this.porcentaje(sumaMes1, sumaMes2)
+      porcentaje = this.porcentaje(sumaMes1, sumaMes2)
       const foot = {
         Dia: 'Total',
         status: 'end',
@@ -122,18 +142,43 @@ export default {
       const datosSort = datos.sort((a, b) => a.Dia - b.Dia)
       let ventaAnterior1 = 0
       let ventaAnterior2 = 0
-      datos.map((dia) => {
+      datos.map((dia, index) => {
+        if (dia.Dia === 0) {
+          this.diasMes1 = 0
+          this.diasMes2 = 0
+        }
+
         if (!dia[`Venta${this.fields[1]}`]) dia[`Venta${this.fields[1]}`] = 0
+        else this.diasMes1++
         if (!dia[`Venta${this.fields[2]}`]) dia[`Venta${this.fields[2]}`] = 0
+        else this.diasMes2++
+
+        ventaAnterior1 += dia[`Venta${this.fields[1]}`]
+        ventaAnterior2 += dia[`Venta${this.fields[2]}`]
 
         dia[`Acumulado${this.fields[1]}`] = this.utils.aplyFormatNumeric(
-          this.utils.roundTo(dia[`Venta${this.fields[1]}`] + ventaAnterior1)
+          this.utils.roundTo(ventaAnterior1)
         )
         dia[`Acumulado${this.fields[2]}`] = this.utils.aplyFormatNumeric(
-          this.utils.roundTo(dia[`Venta${this.fields[2]}`] + ventaAnterior2)
+          this.utils.roundTo(ventaAnterior2)
         )
-        ventaAnterior1 = dia[`Venta${this.fields[1]}`] + ventaAnterior1
-        ventaAnterior2 = dia[`Venta${this.fields[2]}`] + ventaAnterior2
+
+        porcentaje = this.porcentaje(ventaAnterior1, ventaAnterior2)
+        dia.CrecimientoAcumulado = porcentaje + ' %'
+        dia._cellVariants.CrecimientoAcumulado =
+          porcentaje < 0 ? 'danger' : 'success'
+
+        if (index === datos.length - 1) {
+          this.promedio1 = this.utils.aplyFormatNumeric(
+            this.utils.roundTo(sumaMes1 / this.diasMes1)
+          )
+          this.promedio2 = this.utils.aplyFormatNumeric(
+            this.utils.roundTo(sumaMes2 / this.diasMes2)
+          )
+          this.tendencia = this.utils.aplyFormatNumeric(
+            this.utils.roundTo((sumaMes2 / this.diasMes2) * this.diasMes1)
+          )
+        }
         return dia
       })
       datosSort.push(foot)
@@ -151,11 +196,18 @@ export default {
       const porcentaje = (100 / mes1) * mes2 - 100
       return utils.roundTo(porcentaje)
     },
-    sumaAcum1(valor) {
-      this.suma1 += valor
-      const sum = this.suma1
-      return sum
-    },
   },
 }
 </script>
+
+<style scoped>
+.container-result {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 10px;
+  background: rgba(251, 251, 251, 0.274);
+  border-radius: 10px;
+  margin-right: 5px;
+  border: 1px solid rgb(175, 175, 175);
+}
+</style>
