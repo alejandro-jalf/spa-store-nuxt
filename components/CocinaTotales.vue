@@ -42,6 +42,7 @@
 </template>
 
 <script>
+import { mapMutations } from 'vuex'
 import { BIconCircle, BIconCheckCircleFill } from 'bootstrap-vue'
 import utils from '../modules/utils'
 
@@ -52,13 +53,15 @@ export default {
   },
   data() {
     return {
-      sucursalSelected: 'ZR',
       sucursales: ['ZR', 'VC'],
       utils,
       fields: ['Dia', 'Agosto', 'Julio', 'Total'],
     }
   },
   computed: {
+    sucursalSelected() {
+      return this.$store.state.cocina.sucursalSelected
+    },
     variantThemeTableBody() {
       if (this.$store.state.general.themePreferences === 'system') {
         const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
@@ -165,12 +168,15 @@ export default {
     // console.log(this.data)
   },
   methods: {
+    ...mapMutations({
+      setSucursalSelected: 'cocina/setSucursalSelected',
+    }),
     rowClass(item, type) {
       if (!item || type !== 'row') return
       if (item.status === 'end') return 'table-primary'
     },
     changeSucursal(sucursal) {
-      this.sucursalSelected = sucursal
+      this.setSucursalSelected(sucursal)
     },
     getTotal(item) {
       if (!item[`Venta${this.fields[1]}`]) item[`Venta${this.fields[1]}`] = 0
