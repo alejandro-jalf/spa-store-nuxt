@@ -33,12 +33,44 @@
       class="mt-2"
       :tbody-tr-class="rowClass"
     ></b-table>
+    <h2>Grafico</h2>
+    <div class="mb-5">
+      <b-button variant="info" @click="changeGrafico('bar')">
+        <b-icon-check-circle-fill v-if="tipoGrafico === 'bar'" />
+        <b-icon-circle v-else />
+        Barra
+      </b-button>
+      <b-button variant="info" @click="changeGrafico('line')">
+        <b-icon-check-circle-fill v-if="tipoGrafico === 'line'" />
+        <b-icon-circle v-else />
+        Linea
+      </b-button>
+    </div>
+    <cocina-chart
+      v-if="showGraph"
+      :datos-reactor="itemsRafactor"
+      :fields="fields"
+      :utils="utils"
+      :tipo="tipoGrafico"
+    />
+    <div v-else class="spin">
+      <b-spinner variant="primary" label="Spinning"></b-spinner>
+    </div>
   </div>
 </template>
 
 <script>
+import { mapMutations } from 'vuex'
+import { BIconCircle, BIconCheckCircleFill } from 'bootstrap-vue'
+import CocinaChart from '../components/CocinaChart'
 import utils from '../modules/utils'
+
 export default {
+  components: {
+    CocinaChart,
+    BIconCircle,
+    BIconCheckCircleFill,
+  },
   data() {
     return {
       utils,
@@ -56,9 +88,13 @@ export default {
       promedio1: 0,
       promedio2: 0,
       tendencia: 0,
+      showGraph: true,
     }
   },
   computed: {
+    tipoGrafico() {
+      return this.$store.state.cocina.tipo
+    },
     variantThemeTableBody() {
       if (this.$store.state.general.themePreferences === 'system') {
         const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
@@ -185,6 +221,7 @@ export default {
       return datosSort
     },
   },
+  mounted() {},
   methods: {
     rowClass(item, type) {
       if (!item || type !== 'row') return
@@ -196,6 +233,17 @@ export default {
       const porcentaje = (100 / mes1) * mes2 - 100
       return utils.roundTo(porcentaje)
     },
+    changeGrafico(tipo) {
+      const that = this
+      this.showGraph = false
+      setTimeout(() => {
+        that.setTipoGrafico(tipo)
+        that.showGraph = true
+      }, 10)
+    },
+    ...mapMutations({
+      setTipoGrafico: 'cocina/setTipoGrafico',
+    }),
   },
 }
 </script>
@@ -209,5 +257,14 @@ export default {
   border-radius: 10px;
   margin-right: 5px;
   border: 1px solid rgb(175, 175, 175);
+}
+
+.spin {
+  text-align: center;
+  display: block;
+  width: 100%;
+  height: 550px;
+  padding-top: 150px;
+  background: rgba(255, 255, 255, 0.342);
 }
 </style>
