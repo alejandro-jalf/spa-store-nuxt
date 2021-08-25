@@ -9,7 +9,7 @@
         <cocina-crecimiento />
       </b-tab>
       <b-tab title="Detalles">
-        <p>I'm a disabled tab!</p>
+        <cocina-detalles />
       </b-tab>
     </b-tabs>
   </div>
@@ -18,11 +18,13 @@
 <script>
 import CocinaTotales from '../components/CocinaTotales'
 import CocinaCrecimiento from '../components/CocinaCrecimiento'
+import CocinaDetalles from '../components/CocinaDetalles.vue'
 
 export default {
   components: {
     CocinaTotales,
     CocinaCrecimiento,
+    CocinaDetalles,
   },
 }
 </script>

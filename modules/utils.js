@@ -20,7 +20,34 @@ const completeDateHour = (number) => {
   return number
 }
 
+const refactorHora = (hour) => {
+  if (!hour) return hour
+  const arrayHour = hour.split(':')
+  const amPm = parseInt(arrayHour[0]) < 12 ? 'am' : 'pm'
+  if (parseInt(arrayHour[0]) === 0)
+    return `12:${completeDateHour(arrayHour[1])} ${amPm}`
+  if (parseInt(arrayHour[0]) > 12)
+    return (
+      completeDateHour(parseInt(arrayHour[0]) - 12) +
+      ':' +
+      arrayHour[1] +
+      ' ' +
+      amPm
+    )
+  return arrayHour[0] + ':' + arrayHour[1] + ' ' + amPm
+}
+
 const utils = {
+  toDate: (stringDate = '2021-08-24T00:00:00') => {
+    const splitDate = stringDate.split('-')
+    return `${splitDate[2].slice(0, 2)}/${splitDate[1]}/${splitDate[0]}`
+  },
+
+  toHour: (stringDate = '1900-01-01T09:15:45') => {
+    const splitDate = stringDate.split('T')
+    return refactorHora(splitDate[1])
+  },
+
   parseFecha: (stringFecha, withHour = false) => {
     if (typeof stringFecha === 'undefined') return '00/00/0000'
     const fecha = new Date(stringFecha)
@@ -128,22 +155,7 @@ const utils = {
 
   completeDateHour,
 
-  refactorHora: (hour) => {
-    if (!hour) return hour
-    const arrayHour = hour.split(':')
-    const amPm = parseInt(arrayHour[0]) < 12 ? 'am' : 'pm'
-    if (parseInt(arrayHour[0]) === 0)
-      return `12:${completeDateHour(arrayHour[1])} ${amPm}`
-    if (parseInt(arrayHour[0]) > 12)
-      return (
-        completeDateHour(parseInt(arrayHour[0]) - 12) +
-        ':' +
-        arrayHour[1] +
-        ' ' +
-        amPm
-      )
-    return arrayHour[0] + ':' + arrayHour[1] + ' ' + amPm
-  },
+  refactorHora,
 }
 
 export default utils

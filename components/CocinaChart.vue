@@ -26,19 +26,11 @@ export default {
       type: String,
     },
   },
-  // data() {},
-  // computed: {},
   mounted() {
-    // eslint-disable-next-line no-console
-    console.log('Montado')
     const ctx = document.getElementById('planet-chart')
     const that = this
     // eslint-disable-next-line no-new
     new Chart(ctx, that.dataConvert(that.datosReactor))
-  },
-  updated() {
-    // eslint-disable-next-line no-console
-    console.log('Actualizado')
   },
   methods: {
     dataConvert(datos) {
@@ -99,12 +91,3 @@ export default {
   },
 }
 </script>
-
-<style scoped>
-.graph {
-  /* background: rgba(251, 92, 0, 0.5); */
-  background: rgba(0, 81, 255, 0.5);
-  color: #dd3603;
-  /* color: #2c4ee6; */
-}
-</style>
