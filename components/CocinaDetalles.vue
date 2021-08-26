@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div>
+    <div class="mt-4">
       <div style="display: inline-block">
         <b-form inline>
           <span class="font-weight-bold mr-2">Del</span>
@@ -22,6 +22,61 @@
         </b-form>
       </div>
     </div>
+    <div v-b-toggle.dataFiltros class="extras mt-3">Filtros</div>
+    <b-collapse id="dataFiltros" class="mt-2">
+      <div class="container-filter">
+        <b-list-group>
+          <b-list-group-item
+            button
+            :active="allArticulos"
+            class="d-flex justify-content-between align-items-center ml-1"
+            @click="selectArticle('All')"
+          >
+            Todos
+            <b-icon-check-square-fill v-if="allArticulos" />
+            <b-icon-square v-else />
+          </b-list-group-item>
+          <b-list-group-item
+            v-for="(articulo, keyArticulo) in listArticulos"
+            :key="keyArticulo"
+            button
+            :active="isSelected(articulo)"
+            class="d-flex justify-content-between align-items-center ml-1"
+            @click="selectArticle(articulo.Articulo)"
+          >
+            {{ `${articulo.Articulo} - ${articulo.Nombre}` }}
+            <b-icon-check-square-fill v-if="isSelected(articulo)" />
+            <b-icon-square v-else />
+          </b-list-group-item>
+        </b-list-group>
+      </div>
+      <div class="container-filter">
+        <b-list-group>
+          <b-list-group-item
+            button
+            :active="allFechas"
+            class="d-flex justify-content-between align-items-center ml-1"
+            @click="selectFecha('All')"
+          >
+            Todas
+            <b-icon-check-square-fill v-if="allFechas" />
+            <b-icon-square v-else />
+          </b-list-group-item>
+          <b-list-group-item
+            v-for="(fecha, keyFecha) in listFechas"
+            :key="keyFecha"
+            button
+            :active="isSelectedFecha(fecha)"
+            class="d-flex justify-content-between align-items-center ml-1"
+            @click="selectFecha(fecha)"
+          >
+            {{ toDate(fecha) }}
+            <b-icon-check-square-fill v-if="isSelectedFecha(fecha)" />
+            <b-icon-square v-else />
+          </b-list-group-item>
+        </b-list-group>
+      </div>
+    </b-collapse>
     <b-table
       striped
       hover
@@ -50,14 +105,23 @@
 </template>
 
 <script>
+import { BIconSquare, BIconCheckSquareFill } from 'bootstrap-vue'
 import utils from '../modules/utils'
 
 export default {
+  components: {
+    BIconSquare,
+    BIconCheckSquareFill,
+  },
   data() {
     return {
       utils,
       date1: '',
       date2: '',
+      allArticulos: true,
+      articulosSelected: [],
+      allFechas: true,
+      datesSelected: [],
     }
   },
   computed: {
@@ -69,10 +133,35 @@ export default {
       let sumaCantidad = 0
       let sumaVenta = 0
 
-      this.$store.state.cocina.detalles.data.forEach((detalle) => {
+      const addDetalle = (detalle) => {
         datos.push(detalle)
         sumaCantidad += detalle.CantidadRegular
         sumaVenta += detalle.VentaValorNeta
+      }
+
+      this.$store.state.cocina.detalles.data.forEach((detalle) => {
+        if (this.allArticulos) {
+          if (this.allFechas) addDetalle(detalle)
+          else {
+            const dateFinded = this.datesSelected.find(
+              (date) => date === detalle.Fecha
+            )
+            if (dateFinded) addDetalle(detalle)
+          }
+        } else if (this.allFechas) {
+          const articleFinded = this.articulosSelected.find(
+            (art) => art === detalle.Articulo
+          )
+          if (articleFinded) addDetalle(detalle)
+        } else {
+          const dateFinded = this.datesSelected.find(
+            (date) => date === detalle.Fecha
+          )
+          const articleFinded = this.articulosSelected.find(
+            (art) => art === detalle.Articulo
+          )
+          if (dateFinded && articleFinded) addDetalle(detalle)
+        }
       })
 
       datos.push({
@@ -82,6 +171,39 @@ export default {
         VentaValorNeta: sumaVenta,
       })
       return datos
+    },
+    listArticulos() {
+      const articulos = []
+
+      this.$store.state.cocina.detalles.data.forEach((detalle, index) => {
+        const articuloFinded = articulos.find(
+          (articulo) => articulo.Articulo === detalle.Articulo
+        )
+        if (!articuloFinded) {
+          articulos.push({
+            Articulo: detalle.Articulo,
+            Nombre: detalle.Nombre,
+          })
+        }
+
+        if (index === this.$store.state.cocina.detalles.data.length - 1)
+          this.articulosSelected = articulos.reduce((acum, art) => {
+            acum.push(art.Articulo)
+            return acum
+          }, [])
+      })
+      return articulos
+    },
+    listFechas() {
+      const fechas = []
+
+      this.$store.state.cocina.detalles.data.forEach((detalle, index) => {
+        const fechaFinded = fechas.find((fecha) => fecha === detalle.Fecha)
+        if (!fechaFinded) fechas.push(detalle.Fecha)
+        if (index === this.$store.state.cocina.detalles.data.length - 1)
+          this.datesSelected = fechas
+      })
+      return fechas
     },
     variantThemeTableBody() {
       if (this.$store.state.general.themePreferences === 'system') {
@@ -97,6 +219,56 @@ export default {
     },
   },
   methods: {
+    selectArticle(articulo) {
+      if (articulo === 'All') {
+        this.allArticulos = !this.allArticulos
+        if (!this.allArticulos) this.articulosSelected = []
+        else
+          this.articulosSelected = this.listArticulos.reduce((acum, art) => {
+            acum.push(art.Articulo)
+            return acum
+          }, [])
+      } else {
+        const findedArticulo = this.articulosSelected.find(
+          (art) => art === articulo
+        )
+        if (!findedArticulo) this.articulosSelected.push(articulo)
+        else {
+          this.articulosSelected = this.articulosSelected.filter(
+            (art) => art !== articulo
+          )
+        }
+        this.allArticulos =
+          this.listArticulos.length === this.articulosSelected.length
+      }
+    },
+    selectFecha(fecha) {
+      if (fecha === 'All') {
+        this.allFechas = !this.allFechas
+        if (!this.allFechas) this.datesSelected = []
+        else
+          this.datesSelected = this.listFechas.reduce((acum, date) => {
+            acum.push(date)
+            return acum
+          }, [])
+      } else {
+        const findedFecha = this.datesSelected.find((art) => art === fecha)
+        if (!findedFecha) this.datesSelected.push(fecha)
+        else
+          this.datesSelected = this.datesSelected.filter((art) => art !== fecha)
+        this.allFechas = this.listFechas.length === this.datesSelected.length
+      }
+    },
+    isSelected(articulo) {
+      const findedArticulo = this.articulosSelected.find(
+        (art) => art === articulo.Articulo
+      )
+      return !!findedArticulo
+    },
+    isSelectedFecha(fecha) {
+      const findedFecha = this.datesSelected.find((date) => date === fecha)
+      return !!findedFecha
+    },
     rowClass(item, type) {
       if (!item || type !== 'row') return
       if (item.status === 'end') return 'table-primary'
@@ -115,3 +287,16 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+.container-filter {
+  width: max-content;
+  display: inline-block;
+}
+
+.extras {
+  border-bottom: 1px solid rgb(138, 138, 138);
+  padding-bottom: 5px;
+  margin-bottom: 10px;
+}
+</style>
