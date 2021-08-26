@@ -1,25 +1,23 @@
 <template>
   <div>
     <div class="mt-4">
-      <div style="display: inline-block">
+      <div class="mt-2" style="display: inline-block">
         <b-form inline>
           <span class="font-weight-bold mr-2">Del</span>
-          <b-form-datepicker
-            id="example-datepicker"
-            v-model="date1"
-            class="dateForm"
-          ></b-form-datepicker>
+          <b-form-datepicker id="dateInit" v-model="date1"></b-form-datepicker>
         </b-form>
       </div>
-      <div style="display: inline-block">
+      <div class="mt-2" style="display: inline-block">
         <b-form inline>
           <span class="font-weight-bold mr-2 ml-4">Al</span>
-          <b-form-datepicker
-            id="example-datepicker2"
-            v-model="date2"
-            class="dateForm"
-          ></b-form-datepicker>
+          <b-form-datepicker id="dateEnd" v-model="date2"></b-form-datepicker>
         </b-form>
+      </div>
+      <div class="ml-3 mt-2" style="display: inline-block">
+        <b-form-select v-model="selected" :options="options"></b-form-select>
+      </div>
+      <div class="ml-3 mt-2" style="display: inline-block">
+        <b-button variant="outline-success">Buscar</b-button>
       </div>
     </div>
     <div v-b-toggle.dataFiltros class="extras mt-3">Filtros</div>
@@ -122,6 +120,12 @@ export default {
       articulosSelected: [],
       allFechas: true,
       datesSelected: [],
+      selected: null,
+      options: [
+        { value: null, text: 'Seleccione una sucursal' },
+        { value: 'ZR', text: 'Zaragoza' },
+        { value: 'VC', text: 'Victoria' },
+      ],
     }
   },
   computed: {
