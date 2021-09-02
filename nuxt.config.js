@@ -58,5 +58,6 @@ export default {
       process.env.SPASTORE_URL_EXISTENCIA_ARTICULOS,
     spastore_url_existencia_detalle:
       process.env.SPASTORE_URL_EXISTENCIA_DETALLE,
+    spastore_url_backend: process.env.SPASTORE_URL_BACKEND,
   },
 }
