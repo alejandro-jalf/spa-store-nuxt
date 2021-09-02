@@ -17,10 +17,8 @@ export const state = () => ({
       'CrecimientoAcumulado',
     ],
   },
-  // detalles: JSON.parse(localStorage.getItem('spastore_cocina_detalles')) || {
-  //   data: [],
-  // },
-  detalles: {
+  detalles: JSON.parse(localStorage.getItem('spastore_cocina_detalles')) || {
+    data: [],
     fields: [
       'Suc',
       'Articulo',
@@ -31,7 +29,6 @@ export const state = () => ({
       'Fecha',
       'Hora',
     ],
-    data: [],
   },
   showGraph: true,
   tipo: localStorage.getItem('spastore_cocina_tipo'),
@@ -96,10 +93,52 @@ export const actions = {
       }
       return response.data.response
     } catch (error) {
-      // eslint-disable-next-line no-console
-      console.log(error)
       if (error.response) {
         return error.response.data
+      }
+      return {
+        case: 'Error fatal',
+        error,
+      }
+    }
+  },
+  async loadDetails({ commit }, { sucursal, dateStart, dateEnd }) {
+    try {
+      const url =
+        process.env.spastore_url_backend +
+        'api/v1/cocina/ventas/' +
+        sucursal +
+        '/detalles' +
+        '?fechaIni=' +
+        dateStart +
+        '&fechaFin=' +
+        dateEnd
+      const response = await this.$axios({
+        headers: { 'access-token': 'dfa94a69ee28ebdade02657328f187b74db98dd0' },
+        url,
+        method: 'get',
+      })
+
+      if (response.data.response.success) {
+        const data = {
+          data: response.data.response.data,
+          fields: [
+            'Suc',
+            'Articulo',
+            'Nombre',
+            'CantidadRegular',
+            'Relacion',
+            'VentaValorNeta',
+            'Fecha',
+            'Hora',
+          ],
+        }
+        commit('setDetalles', data)
+      }
+      return response.data.response
+    } catch (error) {
+      if (error.response) {
+        return error.response.data.response
       }
       return {
         case: 'Error fatal',

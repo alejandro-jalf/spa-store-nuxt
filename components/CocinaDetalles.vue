@@ -17,7 +17,9 @@
         <b-form-select v-model="selected" :options="options"></b-form-select>
       </div>
       <div class="ml-3 mt-2" style="display: inline-block">
-        <b-button variant="outline-success">Buscar</b-button>
+        <b-button variant="outline-success" @click="setDetails()">
+          Buscar
+        </b-button>
       </div>
     </div>
     <div v-b-toggle.dataFiltros class="extras mt-3">Filtros</div>
@@ -103,6 +105,7 @@
 </template>
 
 <script>
+import { mapActions, mapMutations } from 'vuex'
 import { BIconSquare, BIconCheckSquareFill } from 'bootstrap-vue'
 import utils from '../modules/utils'
 
@@ -222,7 +225,25 @@ export default {
       else return ''
     },
   },
+  mounted() {
+    this.loadFechas()
+  },
   methods: {
+    ...mapActions({
+      loadDetails: 'cocina/loadDetails',
+    }),
+    ...mapMutations({
+      showAlertDialog: 'general/showAlertDialog',
+      setLoading: 'general/setLoading',
+    }),
+    loadFechas() {
+      const dateActual = new Date()
+      const diaActual = `${dateActual.getFullYear()}-${utils.completeDateHour(
+        dateActual.getMonth()
+      )}-${utils.completeDateHour(dateActual.getDate())}`
+      this.date1 = diaActual
+      this.date2 = diaActual
+    },
     selectArticle(articulo) {
       if (articulo === 'All') {
         this.allArticulos = !this.allArticulos
@@ -287,6 +308,40 @@ export default {
     toHour(hour, status) {
       if (status === 'end') return ''
       return utils.toHour(hour)
+    },
+    verifyMeses() {
+      if (this.date1.trim() === '') {
+        this.showAlertDialog(['Debe elejir la fecha de inicio"'])
+        return false
+      }
+      if (this.date1.trim() === '') {
+        this.showAlertDialog(['Debe elejir la fecha de termino'])
+        return false
+      }
+      if (this.selected === null) {
+        this.showAlertDialog(['Debe seleccionar una sucursal'])
+        return false
+      }
+      return true
+    },
+    async setDetails() {
+      if (!this.verifyMeses()) return false
+      this.setLoading(true)
+      const response = await this.loadDetails({
+        sucursal: this.selected,
+        dateStart: this.date1.replace(/-/g, ''),
+        dateEnd: this.date2.replace(/-/g, ''),
+      })
+      if (response.case)
+        this.showAlertDialog([
+          'Erro con el servidor intentelo as tarde',
+          'Error al consultar',
+          'danger',
+        ])
+      else if (!response.success)
+        this.showAlertDialog([response.message, 'Error al consultar'])
+
+      this.setLoading(false)
     },
   },
 }
