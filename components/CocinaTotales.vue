@@ -55,7 +55,6 @@ export default {
     return {
       sucursales: ['ZR', 'VC'],
       utils,
-      fields: ['Dia', 'Agosto', 'Julio', 'Total'],
     }
   },
   computed: {
@@ -73,6 +72,9 @@ export default {
       else if (this.$store.state.general.themePreferences === 'sepia')
         return 'sepiaThemeItemList'
       else return ''
+    },
+    fields() {
+      return this.$store.state.cocina.dataMes.fieldsTotales
     },
     itemsRafactor() {
       const sucursal = this.sucursalSelected

@@ -74,24 +74,17 @@ export default {
   data() {
     return {
       utils,
-      fields: [
-        'Dia',
-        'Julio',
-        'Agosto',
-        'CrecimientoDiario',
-        'AcumuladoJulio',
-        'AcumuladoAgosto',
-        'CrecimientoAcumulado',
-      ],
       diasMes1: 0,
       diasMes2: 0,
       promedio1: 0,
       promedio2: 0,
       tendencia: 0,
-      showGraph: true,
     }
   },
   computed: {
+    showGraph() {
+      return this.$store.state.cocina.showGraph
+    },
     tipoGrafico() {
       return this.$store.state.cocina.tipo
     },
@@ -106,6 +99,9 @@ export default {
       else if (this.$store.state.general.themePreferences === 'sepia')
         return 'sepiaThemeItemList'
       else return ''
+    },
+    fields() {
+      return this.$store.state.cocina.dataMes.fieldsCrecimiento
     },
     itemsRafactor() {
       let sumaMes1 = 0
@@ -179,7 +175,7 @@ export default {
       let ventaAnterior1 = 0
       let ventaAnterior2 = 0
       datos.map((dia, index) => {
-        if (dia.Dia === 0) {
+        if (index === 0) {
           this.diasMes1 = 0
           this.diasMes2 = 0
         }
@@ -223,6 +219,10 @@ export default {
   },
   mounted() {},
   methods: {
+    ...mapMutations({
+      setTipoGrafico: 'cocina/setTipoGrafico',
+      setShowGraph: 'cocina/setShowGraph',
+    }),
     rowClass(item, type) {
       if (!item || type !== 'row') return
       if (item.status === 'end') return 'table-primary'
@@ -235,15 +235,12 @@ export default {
     },
     changeGrafico(tipo) {
       const that = this
-      this.showGraph = false
+      this.setShowGraph(false)
       setTimeout(() => {
         that.setTipoGrafico(tipo)
-        that.showGraph = true
+        this.setShowGraph(true)
       }, 10)
     },
-    ...mapMutations({
-      setTipoGrafico: 'cocina/setTipoGrafico',
-    }),
   },
 }
 </script>
