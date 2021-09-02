@@ -80,11 +80,11 @@ export const actions = {
       if (response.data.response.success) {
         const fieldsCrecimiento = [
           'Dia',
-          response.data.response.data.fields[2],
           response.data.response.data.fields[1],
+          response.data.response.data.fields[2],
           'CrecimientoDiario',
-          `Acumulado${response.data.response.data.fields[2]}`,
           `Acumulado${response.data.response.data.fields[1]}`,
+          `Acumulado${response.data.response.data.fields[2]}`,
           'CrecimientoAcumulado',
         ]
         const data = {
