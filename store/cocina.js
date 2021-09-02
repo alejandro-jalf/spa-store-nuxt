@@ -69,7 +69,6 @@ export const actions = {
         '&fechaFin=' +
         dateEnd
       const response = await this.$axios({
-        headers: { 'access-token': 'dfa94a69ee28ebdade02657328f187b74db98dd0' },
         url,
         method: 'get',
       })
@@ -114,7 +113,6 @@ export const actions = {
         '&fechaFin=' +
         dateEnd
       const response = await this.$axios({
-        headers: { 'access-token': 'dfa94a69ee28ebdade02657328f187b74db98dd0' },
         url,
         method: 'get',
       })
