@@ -136,7 +136,7 @@ export const actions = {
       return response.data.response
     } catch (error) {
       if (error.response) {
-        return error.response.data.response
+        return error.response.data
       }
       return {
         case: 'Error fatal',

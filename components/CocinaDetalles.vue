@@ -239,7 +239,7 @@ export default {
     loadFechas() {
       const dateActual = new Date()
       const diaActual = `${dateActual.getFullYear()}-${utils.completeDateHour(
-        dateActual.getMonth()
+        dateActual.getMonth() + 1
       )}-${utils.completeDateHour(dateActual.getDate())}`
       this.date1 = diaActual
       this.date2 = diaActual
