@@ -1,29 +1,41 @@
 <template>
   <div>
     <div class="mt-4">
-      <div class="mt-2" style="display: inline-block">
-        <b-form inline>
-          <span class="font-weight-bold mr-2">Del</span>
+      <div class="containerInp">
+        <b-input-group prepend="Del">
           <b-form-datepicker id="dateInit" v-model="date1"></b-form-datepicker>
-        </b-form>
+        </b-input-group>
       </div>
-      <div class="mt-2" style="display: inline-block">
-        <b-form inline>
-          <span class="font-weight-bold mr-2 ml-4">Al</span>
+      <div class="containerInp">
+        <b-input-group prepend="Al">
           <b-form-datepicker id="dateEnd" v-model="date2"></b-form-datepicker>
-        </b-form>
+        </b-input-group>
       </div>
-      <div class="ml-3 mt-2" style="display: inline-block">
-        <b-form-select v-model="selected" :options="options"></b-form-select>
-      </div>
-      <div class="ml-3 mt-2" style="display: inline-block">
-        <b-button variant="outline-success" @click="setDetails()">
-          Buscar
-        </b-button>
+      <div class="containerInp">
+        <b-input-group>
+          <b-form-select v-model="selected" :options="options"></b-form-select>
+          <b-input-group-append>
+            <b-button variant="outline-success" @click="setDetails()">
+              Buscar
+            </b-button>
+          </b-input-group-append>
+        </b-input-group>
       </div>
     </div>
-    <div v-b-toggle.dataFiltros class="extras mt-3">Filtros</div>
-    <b-collapse id="dataFiltros" class="mt-2">
+    <div
+      v-b-toggle.dataFiltros
+      class="extras mt-3"
+      :class="{ openFilter: iconFilter }"
+    >
+      Filtros
+      <b-icon-plus-circle
+        v-if="iconFilter"
+        font-scale="1.6"
+        class="float-right"
+      />
+      <b-icon-dash-circle v-else font-scale="1.6" class="float-right" />
+    </div>
+    <b-collapse id="dataFiltros" class="p-1">
       <div class="container-filter">
         <b-list-group>
           <b-list-group-item
@@ -78,6 +90,7 @@
       </div>
     </b-collapse>
     <b-table
+      v-if="width > 992"
       striped
       hover
       head-variant="dark"
@@ -101,21 +114,63 @@
         {{ toHour(row.item.Hora, row.item.status) }}
       </template>
     </b-table>
+    <div v-else>
+      <b-card
+        v-for="(dia, indexDia) in itemsRafactor"
+        :key="indexDia"
+        no-body
+        class="containerCard"
+        :class="variantTheme"
+      >
+        <div :class="{ bgEnd: dia.status === 'end' }">
+          <div v-if="dia.status !== 'end'">
+            <div class="card-name">{{ dia.Articulo }} -</div>
+            <div class="card-name">{{ dia.Nombre }}</div>
+          </div>
+          <div>
+            <div>{{ dia.Relacion }}</div>
+            <div>
+              <span class="font-weight-bold">Cantidad: </span>
+              {{ dia.CantidadRegular }}
+            </div>
+            <div>
+              <span class="font-weight-bold">Valor Venta: </span>
+              ${{ dia.VentaValorNeta }}
+            </div>
+          </div>
+          <div>
+            <div class="float-left">{{ dia.Suc }}</div>
+            <div class="float-right">
+              {{ toDate(dia.Fecha, dia.status) }}
+              {{ toHour(dia.Hora, dia.status) }}
+            </div>
+          </div>
+        </div>
+      </b-card>
+    </div>
   </div>
 </template>
 
 <script>
 import { mapActions, mapMutations } from 'vuex'
-import { BIconSquare, BIconCheckSquareFill } from 'bootstrap-vue'
+import {
+  BIconSquare,
+  BIconCheckSquareFill,
+  BIconDashCircle,
+  BIconPlusCircle,
+} from 'bootstrap-vue'
 import utils from '../modules/utils'
 
 export default {
   components: {
     BIconSquare,
     BIconCheckSquareFill,
+    BIconDashCircle,
+    BIconPlusCircle,
   },
   data() {
     return {
+      iconFilter: true,
       utils,
       date1: '',
       date2: '',
@@ -132,6 +187,9 @@ export default {
     }
   },
   computed: {
+    width() {
+      return this.$store.state.general.widthWindow
+    },
     fields() {
       return this.$store.state.cocina.detalles.fields
     },
@@ -224,9 +282,27 @@ export default {
         return 'sepiaThemeItemList'
       else return ''
     },
+    variantTheme() {
+      if (this.$store.state.general.themePreferences === 'system') {
+        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
+          .matches
+        if (systemDark) return 'darkBodyCard containerCarDark'
+        return 'containerCard'
+      } else if (this.$store.state.general.themePreferences === 'dark')
+        return 'darkBodyCard containerCarDark'
+      else if (this.$store.state.general.themePreferences === 'sepia')
+        return 'sepiaBodyCard containerCard'
+      else return 'containerCard'
+    },
   },
   mounted() {
     this.loadFechas()
+    this.$root.$on('bv::collapse::state', (collapseId, isJustShown) => {
+      if (collapseId === 'dataFiltros') {
+        if (!isJustShown) this.iconFilter = true
+        else this.iconFilter = false
+      }
+    })
   },
   methods: {
     ...mapActions({
@@ -348,14 +424,57 @@ export default {
 </script>
 
 <style scoped>
-.container-filter {
-  width: max-content;
+.containerCard {
+  padding: 10px;
+  margin-bottom: 10px;
+  box-shadow: 2px 2px 2px #e6e6e6;
+}
+.containerCarDark {
+  box-shadow: 2px 2px 2px #5d5d5d;
+}
+
+.card-name {
+  font-weight: bold;
   display: inline-block;
 }
 
+.bgEnd {
+  background: #03ff2d5d;
+  border-radius: 5px;
+  padding: 10px;
+}
+
+.container-filter {
+  display: inline-block;
+  margin-bottom: 15px;
+}
+
 .extras {
-  border-bottom: 1px solid rgb(138, 138, 138);
   padding-bottom: 5px;
+  background: rgb(1, 149, 168);
+  padding: 10px;
+  border-radius: 5px 5px 0px 0px;
+  color: #fff;
+  margin-bottom: 0px;
+}
+
+.openFilter {
+  border-radius: 5px;
   margin-bottom: 10px;
+}
+
+.containerInp {
+  display: inline-block;
+  margin-top: 7px;
+}
+
+#dataFiltros {
+  background: rgba(255, 255, 255, 0.616);
+}
+
+@media screen and (max-width: 1200px) {
+  .containerInp {
+    display: block;
+  }
 }
 </style>
