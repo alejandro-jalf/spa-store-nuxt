@@ -1,29 +1,32 @@
 <template>
   <div>
-    Sucursal:
-    <b-badge
-      v-for="(sucursal, indexSuc) in sucursales"
-      :key="indexSuc"
-      pill
-      variant="info"
-      class="sucursal"
-      @click="changeSucursal(sucursal)"
-    >
-      <b-icon-check-circle-fill v-if="sucursalSelected === sucursal" />
-      <b-icon-circle v-else />
-      {{ sucursal }}
-    </b-badge>
-    <b-badge
-      pill
-      variant="info"
-      class="sucursal"
-      @click="changeSucursal('ALL')"
-    >
-      <b-icon-check-circle-fill v-if="sucursalSelected === 'ALL'" />
-      <b-icon-circle v-else />
-      TODO
-    </b-badge>
+    <div class="mb-2">
+      <span v-if="width > 334">Sucursal:</span>
+      <b-badge
+        v-for="(sucursal, indexSuc) in sucursales"
+        :key="indexSuc"
+        pill
+        variant="info"
+        class="sucursal"
+        @click="changeSucursal(sucursal)"
+      >
+        <b-icon-check-circle-fill v-if="sucursalSelected === sucursal" />
+        <b-icon-circle v-else />
+        {{ sucursal }}
+      </b-badge>
+      <b-badge
+        pill
+        variant="info"
+        class="sucursal"
+        @click="changeSucursal('ALL')"
+      >
+        <b-icon-check-circle-fill v-if="sucursalSelected === 'ALL'" />
+        <b-icon-circle v-else />
+        TODO
+      </b-badge>
+    </div>
     <b-table
+      v-if="width > 575"
       striped
       hover
       head-variant="dark"
@@ -31,13 +34,34 @@
       :fields="fields"
       :items="itemsRafactor"
       :class="variantThemeTableBody"
-      class="mt-2"
       :tbody-tr-class="rowClass"
     >
       <template #cell(Total)="row">
         {{ getTotal(row.item) }}
       </template>
     </b-table>
+    <div v-else>
+      <b-card
+        v-for="(dia, indexDia) in itemsRafactor"
+        :key="indexDia"
+        no-body
+        class="containerCard"
+        :class="variantTheme"
+      >
+        <div class="dayTotal">Dia: {{ dia.Dia }}</div>
+        <div class="totalAcum">Total: {{ getTotal(dia) }}</div>
+        <div>
+          <div class="d-inline-block">
+            <span class="font-weight-bold">{{ fields[1] }}: </span>
+            {{ dia[`${fields[1]}`] }},
+          </div>
+          <div class="d-inline-block">
+            <span class="font-weight-bold">{{ fields[2] }}: </span>
+            {{ dia[`${fields[2]}`] }}
+          </div>
+        </div>
+      </b-card>
+    </div>
   </div>
 </template>
 
@@ -58,6 +82,9 @@ export default {
     }
   },
   computed: {
+    width() {
+      return this.$store.state.general.widthWindow
+    },
     sucursalSelected() {
       return this.$store.state.cocina.sucursalSelected
     },
@@ -75,6 +102,18 @@ export default {
     },
     fields() {
       return this.$store.state.cocina.dataMes.fieldsTotales
+    },
+    variantTheme() {
+      if (this.$store.state.general.themePreferences === 'system') {
+        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
+          .matches
+        if (systemDark) return 'darkBodyCard containerCarDark'
+        return 'containerCard'
+      } else if (this.$store.state.general.themePreferences === 'dark')
+        return 'darkBodyCard containerCarDark'
+      else if (this.$store.state.general.themePreferences === 'sepia')
+        return 'sepiaBodyCard containerCard'
+      else return 'containerCard'
     },
     itemsRafactor() {
       const sucursal = this.sucursalSelected
@@ -194,6 +233,39 @@ export default {
 </script>
 
 <style scoped>
+.dayTotal {
+  font-weight: bold;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  background: #018299;
+  color: #fff;
+  border-radius: 3px 0px 5px 0px;
+  width: 58px;
+  text-align: center;
+}
+
+.totalAcum {
+  font-weight: bold;
+  position: absolute;
+  bottom: 0px;
+  right: 0px;
+  background: #018299;
+  color: #fff;
+  border-radius: 5px 0px 3px 0px;
+  padding: 0px 10px;
+  text-align: center;
+}
+
+.containerCard {
+  padding: 27px 15px;
+  margin-bottom: 10px;
+  box-shadow: 2px 2px 2px #e6e6e6;
+}
+.containerCarDark {
+  box-shadow: 2px 2px 2px #5d5d5d;
+}
+
 .sucursal {
   padding: 5px 10px 5px 5px;
   font-size: 19px;

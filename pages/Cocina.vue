@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1 class="mb-5 mt-5">Analitica de cocina</h1>
+    <h1 class="mb-5 mt-5 text-center">Analitica de cocina</h1>
     <div class="mb-4">
       <div class="continerMonth">
         <b-input-group prepend="Mes 1">
