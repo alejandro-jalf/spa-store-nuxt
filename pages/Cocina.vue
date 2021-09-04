@@ -2,15 +2,19 @@
   <div>
     <h1 class="mb-5 mt-5">Analitica de cocina</h1>
     <div class="mb-4">
-      <b-form inline>
-        <b-input-group prepend="Mes 1" class="mr-2">
+      <div class="continerMonth">
+        <b-input-group prepend="Mes 1">
           <b-form-select v-model="mes1" :options="options"></b-form-select>
         </b-input-group>
-        <b-input-group prepend="Mes 2" class="mr-2">
+      </div>
+      <div class="continerMonth">
+        <b-input-group prepend="Mes 2">
           <b-form-select v-model="mes2" :options="options"></b-form-select>
         </b-input-group>
-        <b-button variant="info" @click="setDataMonth()">Buscar</b-button>
-      </b-form>
+      </div>
+      <b-button variant="info" :block="width <= 767" @click="setDataMonth()">
+        Buscar
+      </b-button>
     </div>
     <b-tabs content-class="mt-2">
       <b-tab title="Totales" active>
@@ -45,6 +49,11 @@ export default {
       mes2: null,
       options: [],
     }
+  },
+  computed: {
+    width() {
+      return this.$store.state.general.widthWindow
+    },
   },
   mounted() {
     this.loadMeses()
@@ -130,3 +139,16 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+.continerMonth {
+  display: inline-block;
+}
+
+@media screen and (max-width: 767px) {
+  .continerMonth {
+    margin-bottom: 10px;
+    display: block;
+  }
+}
+</style>
