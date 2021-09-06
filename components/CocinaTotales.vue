@@ -48,14 +48,16 @@
         class="containerCard"
         :class="variantTheme"
       >
-        <div class="dayTotal">Dia: {{ dia.Dia }}</div>
+        <div class="dayTotal">
+          <span v-if="dia.status !== 'end'">Dia: </span>{{ dia.Dia }}
+        </div>
         <div class="totalAcum">Total: {{ getTotal(dia) }}</div>
-        <div>
-          <div class="d-inline-block">
+        <div :class="isNow(dia)">
+          <div>
             <span class="font-weight-bold">{{ fields[1] }}: </span>
             {{ dia[`${fields[1]}`] }},
           </div>
-          <div class="d-inline-block">
+          <div>
             <span class="font-weight-bold">{{ fields[2] }}: </span>
             {{ dia[`${fields[2]}`] }}
           </div>
@@ -129,6 +131,8 @@ export default {
             if (mesFinded === -1) {
               const newSuc = {
                 Dia: item.Dia,
+                Mes: [item.Mes],
+                Year: item.Year,
               }
               newSuc[
                 `${item.MesMovimientoLetra}`
@@ -140,6 +144,10 @@ export default {
                 `${item.MesMovimientoLetra}`
               ] = this.utils.aplyFormatNumeric(this.utils.roundTo(item.Venta))
               datos[mesFinded][`Venta${item.MesMovimientoLetra}`] = item.Venta
+              const monthFinded = datos[mesFinded].Mes.find(
+                (mes) => mes === item.Mes
+              )
+              if (!monthFinded) datos[mesFinded].Mes.push(item.Mes)
             }
             if (item.MesMovimientoLetra === this.fields[1])
               sumaMes1 += item.Venta
@@ -153,6 +161,8 @@ export default {
           if (diaFinded === -1) {
             const newSuc = {
               Dia: sucursal.Dia,
+              Mes: [sucursal.Mes],
+              Year: sucursal.Year,
             }
             newSuc[
               `${sucursal.MesMovimientoLetra}`
@@ -180,6 +190,10 @@ export default {
                 `${sucursal.MesMovimientoLetra}`
               ] = this.utils.aplyFormatNumeric(this.utils.roundTo(suma))
             }
+            const monthFinded = datos[diaFinded].Mes.find(
+              (mes) => mes === sucursal.Mes
+            )
+            if (!monthFinded) datos[diaFinded].Mes.push(sucursal.Mes)
           }
           if (sucursal.MesMovimientoLetra === this.fields[1])
             sumaMes1 += sucursal.Venta
@@ -212,6 +226,18 @@ export default {
     ...mapMutations({
       setSucursalSelected: 'cocina/setSucursalSelected',
     }),
+    isNow(diaVenta) {
+      const now = new Date()
+      if (diaVenta.Mes) {
+        const month = diaVenta.Mes.find((mes) => now.getMonth() + 1)
+        return diaVenta.Dia === now.getDate() &&
+          diaVenta.Year === now.getFullYear() &&
+          month
+          ? 'centerCard'
+          : ''
+      }
+      return ''
+    },
     rowClass(item, type) {
       if (!item || type !== 'row') return
       if (item.status === 'end') return 'table-primary'
@@ -264,6 +290,13 @@ export default {
 }
 .containerCarDark {
   box-shadow: 2px 2px 2px #5d5d5d;
+}
+
+.centerCard {
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid rgb(226, 226, 226);
+  background: rgba(11, 255, 3, 0.472);
 }
 
 .sucursal {
