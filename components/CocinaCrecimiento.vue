@@ -322,12 +322,14 @@ export default {
   padding: 5px 5px 5px 2px;
   border-radius: 3px;
   background: rgb(255, 172, 172);
+  color: #000;
 }
 
 .success {
   padding: 5px 5px 5px 2px;
   border-radius: 3px;
   background: rgb(172, 255, 172);
+  color: #000;
 }
 
 .dayTotal {
