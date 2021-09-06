@@ -123,24 +123,27 @@
         :class="variantTheme"
       >
         <div :class="{ bgEnd: dia.status === 'end' }">
-          <div v-if="dia.status !== 'end'">
+          <div v-if="dia.status !== 'end'" class="headerCard">
             <div class="card-name">{{ dia.Articulo }} -</div>
             <div class="card-name">{{ dia.Nombre }}</div>
           </div>
-          <div>
-            <div>{{ dia.Relacion }}</div>
+          <div style="padding: 10px">
+            <div>
+              <span class="font-weight-bold">Relacion: </span>
+              {{ dia.Relacion }}
+            </div>
             <div>
               <span class="font-weight-bold">Cantidad: </span>
               {{ dia.CantidadRegular }}
             </div>
             <div>
               <span class="font-weight-bold">Valor Venta: </span>
-              ${{ dia.VentaValorNeta }}
+              ${{ formatNumeric(dia.VentaValorNeta) }}
             </div>
           </div>
-          <div>
+          <div style="padding: 0px 10px 10px 10px">
             <div class="float-left">{{ dia.Suc }}</div>
-            <div class="float-right">
+            <div class="float-right font-style-italic">
               {{ toDate(dia.Fecha, dia.status) }}
               {{ toHour(dia.Hora, dia.status) }}
             </div>
@@ -425,12 +428,20 @@ export default {
 
 <style scoped>
 .containerCard {
-  padding: 10px;
-  margin-bottom: 10px;
+  padding-bottom: 10px;
+  margin-bottom: 5px;
   box-shadow: 2px 2px 2px #e6e6e6;
 }
 .containerCarDark {
   box-shadow: 2px 2px 2px #5d5d5d;
+}
+
+.headerCard {
+  text-align: center;
+  border-radius: 3px 3px 0px 0px;
+  background: #018299;
+  color: #fff;
+  padding: 5px;
 }
 
 .card-name {
