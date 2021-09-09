@@ -2,6 +2,10 @@ if (!localStorage.getItem('spastore_cocina_tipo'))
   localStorage.setItem('spastore_cocina_tipo', 'line')
 if (!localStorage.getItem('spastore_cocina_sucursal'))
   localStorage.setItem('spastore_cocina_sucursal', 'ZR')
+if (!localStorage.getItem('spastore_cocina_mes1'))
+  localStorage.setItem('spastore_cocina_mes1', 'null')
+if (!localStorage.getItem('spastore_cocina_mes2'))
+  localStorage.setItem('spastore_cocina_mes2', 'null')
 
 export const state = () => ({
   dataMes: JSON.parse(localStorage.getItem('spastore_cocina_mes')) || {
@@ -33,6 +37,14 @@ export const state = () => ({
   showGraph: true,
   tipo: localStorage.getItem('spastore_cocina_tipo'),
   sucursalSelected: localStorage.getItem('spastore_cocina_sucursal'),
+  mes1:
+    localStorage.getItem('spastore_cocina_mes1') !== 'null'
+      ? localStorage.getItem('spastore_cocina_mes1')
+      : null,
+  mes2:
+    localStorage.getItem('spastore_cocina_mes2') !== 'null'
+      ? localStorage.getItem('spastore_cocina_mes2')
+      : null,
 })
 
 export const mutations = {
@@ -54,6 +66,14 @@ export const mutations = {
   },
   setShowGraph(state, showGraph) {
     state.showGraph = showGraph
+  },
+  setMes1(state, mes1) {
+    state.mes1 = mes1
+    localStorage.setItem('spastore_cocina_mes1', mes1)
+  },
+  setMes2(state, mes2) {
+    state.mes2 = mes2
+    localStorage.setItem('spastore_cocina_mes2', mes2)
   },
 }
 

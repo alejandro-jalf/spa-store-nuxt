@@ -1,6 +1,7 @@
 <template>
   <div>
     <div class="mb-2">
+      <h3 class="text-center mb-2">{{ refactorMeses }}</h3>
       <span v-if="width > 334">Sucursal:</span>
       <b-badge
         v-for="(sucursal, indexSuc) in sucursales"
@@ -116,6 +117,20 @@ export default {
       else if (this.$store.state.general.themePreferences === 'sepia')
         return 'sepiaBodyCard containerCard'
       else return 'containerCard'
+    },
+    refactorMeses() {
+      const arrayMes = []
+      let mesYear = ''
+      this.$store.state.cocina.dataMes.data.forEach((sucursal) => {
+        if (sucursal.MesMovimientoLetra.split('/').length <= 1)
+          mesYear = sucursal.MesMovimientoLetra + '/' + sucursal.Year
+        else mesYear = sucursal.MesMovimientoLetra
+        const mesFinded = arrayMes.find((mes) => mes === mesYear)
+        if (!mesFinded) arrayMes.push(mesYear)
+      })
+
+      if (arrayMes.length > 1) return arrayMes[0] + ' vs ' + arrayMes[1]
+      return ''
     },
     itemsRafactor() {
       const sucursal = this.sucursalSelected

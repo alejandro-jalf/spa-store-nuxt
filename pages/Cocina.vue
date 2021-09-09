@@ -4,12 +4,20 @@
     <div class="mb-4">
       <div class="continerMonth">
         <b-input-group prepend="Mes 1">
-          <b-form-select v-model="mes1" :options="options"></b-form-select>
+          <b-form-select
+            :value="mes1"
+            :options="options"
+            @change="changeMes1"
+          ></b-form-select>
         </b-input-group>
       </div>
       <div class="continerMonth">
         <b-input-group prepend="Mes 2">
-          <b-form-select v-model="mes2" :options="options"></b-form-select>
+          <b-form-select
+            :value="mes2"
+            :options="options"
+            @change="changeMes2"
+          ></b-form-select>
         </b-input-group>
       </div>
       <b-button variant="info" :block="width <= 767" @click="setDataMonth()">
@@ -45,12 +53,16 @@ export default {
   },
   data() {
     return {
-      mes1: null,
-      mes2: null,
       options: [],
     }
   },
   computed: {
+    mes1() {
+      return this.$store.state.cocina.mes1
+    },
+    mes2() {
+      return this.$store.state.cocina.mes2
+    },
     width() {
       return this.$store.state.general.widthWindow
     },
@@ -66,7 +78,15 @@ export default {
       setLoading: 'general/setLoading',
       showAlertDialog: 'general/showAlertDialog',
       setShowGraph: 'cocina/setShowGraph',
+      setMes1: 'cocina/setMes1',
+      setMes2: 'cocina/setMes2',
     }),
+    changeMes1(mes1) {
+      this.setMes1(mes1)
+    },
+    changeMes2(mes2) {
+      this.setMes2(mes2)
+    },
     loadMeses() {
       const dateActual = new Date()
       this.options.push({

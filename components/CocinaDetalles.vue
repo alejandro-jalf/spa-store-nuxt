@@ -22,6 +22,7 @@
         </b-input-group>
       </div>
     </div>
+    <h3 class="text-center mb-2 mt-2">{{ dateDetails }}</h3>
     <div
       v-b-toggle.dataFiltros
       class="extras mt-3"
@@ -195,6 +196,29 @@ export default {
     },
     fields() {
       return this.$store.state.cocina.detalles.fields
+    },
+    dateDetails() {
+      if (this.$store.state.cocina.detalles.data.length <= 1) return ''
+      const fechas = []
+      this.$store.state.cocina.detalles.data.forEach((detail) => {
+        const fecha = detail.Fecha.split('T')
+        fechas.push(new Date(fecha[0] + 'T05' + fecha[1].slice(2)))
+      })
+      const minDate = new Date(Math.min.apply(null, fechas))
+      const maxDate = new Date(Math.max.apply(null, fechas))
+      return (
+        utils.completeDateHour(minDate.getDate()) +
+        '/' +
+        utils.completeDateHour(minDate.getMonth() + 1) +
+        '/' +
+        minDate.getFullYear() +
+        ' - ' +
+        utils.completeDateHour(maxDate.getDate()) +
+        '/' +
+        utils.completeDateHour(maxDate.getMonth() + 1) +
+        '/' +
+        maxDate.getFullYear()
+      )
     },
     itemsRafactor() {
       const datos = []
