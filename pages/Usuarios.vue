@@ -145,16 +145,6 @@
     </div>
 
     <usuarios-view v-else class="mt-5" :load-users="loadUsers"></usuarios-view>
-
-    <div style="margin-top: 90px"></div>
-
-    <alert-option
-      :alert-title="dataAlertOptions.title"
-      :alert-message="dataAlertOptions.message"
-      :alert-show="dataAlertOptions.show"
-      :click-cancel="hideAlertDialogOpt"
-      :click-acept="aceptOption"
-    ></alert-option>
   </div>
 </template>
 
@@ -169,16 +159,14 @@ import {
 } from 'bootstrap-vue'
 import FloatButton from '../components/FloatButton'
 import UsuariosView from '../components/UsuariosView'
-import AlertOption from '../components/AlertOption'
 
 export default {
   components: {
     FloatButton,
+    UsuariosView,
     BIconPencilSquare,
     BIconToggleOn,
     BIconToggleOff,
-    UsuariosView,
-    AlertOption,
     BIconArrowClockwise,
     BIconPlus,
   },
@@ -193,13 +181,9 @@ export default {
         'Acciones',
       ],
       listUsers: [],
-      dataAlertOptions: {
-        show: false,
-        title: 'Cambiando status del usuario',
-        message: '¿Quiere cambiar el estatus del usuario _ a _',
-      },
       showOptions: false,
       messageListUsers: 'Lista de usuarios no ha sido cargada',
+      userSelected: null,
     }
   },
   computed: {
@@ -309,6 +293,8 @@ export default {
       this.showOptions = !this.showOptions
     },
     ...mapMutations({
+      hideAlertDialogOption: 'general/hideAlertDialogOption',
+      showAlertDialogOption: 'general/showAlertDialogOption',
       showAlertDialog: 'general/showAlertDialog',
       setLoading: 'general/setLoading',
       changeUSer: 'user/changeUSer',
@@ -376,8 +362,6 @@ export default {
         // eslint-disable-next-line no-console
         console.log(error)
         if (error.response) {
-          // eslint-disable-next-line no-console
-          console.log(error.response)
           this.showAlertDialog([error.response.data.error])
         }
       }
@@ -414,24 +398,24 @@ export default {
         // eslint-disable-next-line no-console
         console.log(error)
         if (error.response) {
-          // eslint-disable-next-line no-console
-          console.log(error.response)
           this.showAlertDialog([error.response.data.error])
         }
       }
     },
     showAlertDialogOpt(user) {
-      this.dataAlertOptions.show = true
+      this.userSelected = user
       const newStatus = user.Status === 'Activo' ? 'Inactivo' : 'Activo'
-      this.dataAlertOptions.user = user
-      this.dataAlertOptions.message = `¿Quiere cambiar el estatus del usuario "${user.Correo}" a ${newStatus}`
-    },
-    hideAlertDialogOpt() {
-      this.dataAlertOptions.show = false
+      this.showAlertDialogOption([
+        `¿Quiere cambiar el estatus del usuario "${user.Correo}" a ${newStatus}`,
+        'Cambiando estatus del usuario',
+        this.aceptOption,
+        this.hideAlertDialogOption,
+        'warning',
+      ])
     },
     aceptOption() {
-      this.changeActivoUser(this.dataAlertOptions.user)
-      this.dataAlertOptions.show = false
+      this.changeActivoUser(this.userSelected)
+      this.hideAlertDialogOption()
     },
   },
 }

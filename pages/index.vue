@@ -189,13 +189,6 @@
         </div>
       </b-card>
     </div>
-    <alert-option
-      :alert-title="dataAlertOptions.title"
-      :alert-message="dataAlertOptions.message"
-      :alert-show="dataAlertOptions.show"
-      :click-cancel="hideAlertDialogOpt"
-      :click-acept="dataAlertOptions.clickAccept"
-    ></alert-option>
   </div>
 </template>
 
@@ -213,11 +206,9 @@ import {
   BIconSquareFill,
 } from 'bootstrap-vue'
 import { mapMutations, mapActions } from 'vuex'
-import AlertOption from '../components/AlertOption'
 
 export default {
   components: {
-    AlertOption,
     BIconGearFill,
     BIconSquare,
     BIconCheckSquareFill,
@@ -361,15 +352,6 @@ export default {
       const barraRefactor = this.barraInferior === 'true' ? 'false' : 'true'
       this.setBarraInferior(barraRefactor)
     },
-    showAlertDialogOpt(message = '', title = '', clickAccept = () => {}) {
-      this.dataAlertOptions.show = true
-      this.dataAlertOptions.message = message
-      this.dataAlertOptions.title = title
-      this.dataAlertOptions.clickAccept = clickAccept
-    },
-    hideAlertDialogOpt() {
-      this.dataAlertOptions.show = false
-    },
     ...mapActions({
       logout: 'user/logout',
     }),
@@ -377,6 +359,7 @@ export default {
       setLoading: 'general/setLoading',
       showAlertDialog: 'general/showAlertDialog',
       showAlertDialogOption: 'general/showAlertDialogOption',
+      hideAlertDialogOption: 'general/hideAlertDialogOption',
       setUser: 'user/setUser',
       setThemePreferences: 'general/setThemePreferences',
       setAtajoTheme: 'general/setAtajoTheme',
@@ -395,15 +378,17 @@ export default {
       this.principal = tab
     },
     questionSaveMain() {
-      this.showAlertDialogOption(
+      this.showAlertDialogOption([
         `¿Quieres establecer a "${this.principal}" como pantalla principal al iniciar la aplicacion web?`,
         'Cambiando la pantalla principal',
-        this.savePrincipal
-      )
+        this.savePrincipal,
+        this.hideAlertDialogOption,
+        'warning',
+      ])
     },
     async savePrincipal() {
       try {
-        this.hideAlertDialogOpt()
+        this.hideAlertDialogOption()
         this.setLoading(true)
         const response = await this.$axios({
           url:
@@ -546,15 +531,17 @@ export default {
         return
       }
 
-      this.showAlertDialogOpt(
+      this.showAlertDialogOption([
         '¿Quiere cambiar su contraseña?',
         'Cambiando su contraseña',
-        this.changePassword
-      )
+        this.changePassword,
+        this.hideAlertDialogOption,
+        'warning',
+      ])
     },
     async changePassword() {
       try {
-        this.hideAlertDialogOpt()
+        this.hideAlertDialogOption()
         this.setLoading(true)
         const response = await this.$axios({
           url:
@@ -591,16 +578,13 @@ export default {
       } catch (error) {
         this.setLoading(false)
         if (error.response) {
-          // eslint-disable-next-line no-console
-          console.log(error.response)
           this.showAlertDialog([
-            error.response.data.error,
+            error.response.data.message,
             'Error al intentar cambiar la contraseña',
-            'danger',
+            'warning',
+            'dark',
           ])
         } else {
-          // eslint-disable-next-line no-console
-          console.log(error)
           this.showAlertDialog([
             'Error inesperado con la api',
             'Error al intentar cambiar la contraseña',

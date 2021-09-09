@@ -109,11 +109,6 @@ export const mutations = {
     state.alertOption.headerBg = background
     state.alertOption.headerTexColor = textColor
     state.alertOption.clickAcept = clickAcept
-    // if (clickCancel === null) {
-    //   clickCancel = () => {
-    //     state.alertOption.show = false
-    //   }
-    // } else
     state.alertOption.clickCancel = clickCancel
   },
   hideAlertDialogOption(state) {

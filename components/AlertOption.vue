@@ -1,5 +1,6 @@
 <template>
   <b-modal
+    id="alertOption"
     :visible="alertOptionShow"
     :title="alertOptionTitle"
     :header-bg-variant="alertOptionHeaderBg"
@@ -34,6 +35,8 @@
 </template>
 
 <script>
+import { mapMutations } from 'vuex'
+
 export default {
   computed: {
     alertOptionShow() {
@@ -57,6 +60,18 @@ export default {
     alertOptionClickCancel() {
       return this.$store.state.general.alertOption.clickCancel
     },
+  },
+  mounted() {
+    this.$root.$on('bv::modal::hidden', (evt) => {
+      if (evt.componentId === 'alertOption') {
+        this.hideAlertDialogOption()
+      }
+    })
+  },
+  methods: {
+    ...mapMutations({
+      hideAlertDialogOption: 'general/hideAlertDialogOption',
+    }),
   },
 }
 </script>
