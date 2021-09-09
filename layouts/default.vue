@@ -262,6 +262,7 @@ export default {
     },
 
     handleEnd(evt) {
+      if (!this.$store.state.general.moveTouch) return false
       const posYMove = window.innerHeight - this.yDown
       const posX = evt.changedTouches[0].clientX
       const diffAbsolute = Math.abs(this.xDown - posX)
@@ -336,13 +337,16 @@ export default {
     },
 
     handleTouchStart(evt) {
-      const firstTouch = this.getTouches(evt)[0]
-      this.xDown = firstTouch.clientX
-      this.yDown = firstTouch.clientY
+      if (this.$store.state.general.moveTouch) {
+        const firstTouch = this.getTouches(evt)[0]
+        this.xDown = firstTouch.clientX
+        this.yDown = firstTouch.clientY
+      }
     },
 
     handleTouchMove(evt) {
       if (!this.xDown || !this.yDown) return
+      if (!this.$store.state.general.moveTouch) return false
       const slider = document.querySelector('.slider')
       const posYMove = window.innerHeight - this.yDown
       const barraInferior = this.$store.state.general.barraInferior

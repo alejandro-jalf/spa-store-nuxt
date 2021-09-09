@@ -24,7 +24,8 @@
       {{ tendencia }}
     </div>
     <b-table
-      v-if="width > 991"
+      v-if="width > 191"
+      id="tableCrecimiento"
       striped
       hover
       head-variant="dark"
@@ -292,11 +293,23 @@ export default {
       return datosSort
     },
   },
-  mounted() {},
+  mounted() {
+    const tableCrecimiento = document.getElementById('tableCrecimiento')
+
+    if (tableCrecimiento) {
+      tableCrecimiento.addEventListener('touchstart', (evt) => {
+        this.setMoveTouch(false)
+      })
+      tableCrecimiento.addEventListener('touchend', (evt) => {
+        this.setMoveTouch(true)
+      })
+    }
+  },
   methods: {
     ...mapMutations({
       setTipoGrafico: 'cocina/setTipoGrafico',
       setShowGraph: 'cocina/setShowGraph',
+      setMoveTouch: 'general/setMoveTouch',
     }),
     isNow(diaVenta) {
       const now = new Date()

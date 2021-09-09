@@ -7,6 +7,9 @@ if (!localStorage.getItem('spastore_atajo_theme'))
 if (!localStorage.getItem('spastore_barra_inferior'))
   localStorage.setItem('spastore_barra_inferior', 'false')
 
+if (!localStorage.getItem('spastore_barra_move_touch'))
+  localStorage.setItem('spastore_barra_move_touch', 'true')
+
 export const state = () => ({
   alert: {
     show: false,
@@ -85,6 +88,10 @@ export const state = () => ({
   themePreferences: localStorage.getItem('spastore_theme_color'),
   atajoTheme: localStorage.getItem('spastore_atajo_theme'),
   barraInferior: localStorage.getItem('spastore_barra_inferior'),
+  moveTouch:
+    typeof localStorage.getItem('spastore_barra_move_touch') === 'boolean'
+      ? localStorage.getItem('spastore_barra_move_touch')
+      : localStorage.getItem('spastore_barra_move_touch') === 'true',
   widthWindow: 0,
 })
 
@@ -169,6 +176,10 @@ export const mutations = {
   setBarraInferior(state, visible) {
     state.barraInferior = visible
     localStorage.setItem('spastore_barra_inferior', visible)
+  },
+  setMoveTouch(state, move) {
+    state.moveTouch = move
+    localStorage.setItem('spastore_barra_move_touch', move)
   },
   setWidthWindow(state, width) {
     state.widthWindow = width
