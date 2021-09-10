@@ -24,7 +24,7 @@
       {{ tendencia }}
     </div>
     <b-table
-      v-if="width > 191"
+      v-if="viewTable"
       id="tableCrecimiento"
       striped
       hover
@@ -127,6 +127,11 @@ export default {
     }
   },
   computed: {
+    viewTable() {
+      const width = this.$store.state.general.widthWindow
+      if (width > 991) return true
+      return this.$store.state.cocina.vistaTable
+    },
     width() {
       return this.$store.state.general.widthWindow
     },

@@ -91,7 +91,8 @@
       </div>
     </b-collapse>
     <b-table
-      v-if="width > 992"
+      v-if="viewTable"
+      id="tableDetalles"
       striped
       hover
       head-variant="dark"
@@ -191,6 +192,11 @@ export default {
     }
   },
   computed: {
+    viewTable() {
+      const width = this.$store.state.general.widthWindow
+      if (width > 992) return true
+      return this.$store.state.cocina.vistaTable
+    },
     width() {
       return this.$store.state.general.widthWindow
     },
@@ -324,12 +330,23 @@ export default {
   },
   mounted() {
     this.loadFechas()
+    const tableDetalles = document.getElementById('tableDetalles')
+
     this.$root.$on('bv::collapse::state', (collapseId, isJustShown) => {
       if (collapseId === 'dataFiltros') {
         if (!isJustShown) this.iconFilter = true
         else this.iconFilter = false
       }
     })
+
+    if (tableDetalles) {
+      tableDetalles.addEventListener('touchstart', (evt) => {
+        this.setMoveTouch(false)
+      })
+      tableDetalles.addEventListener('touchend', (evt) => {
+        this.setMoveTouch(true)
+      })
+    }
   },
   methods: {
     ...mapActions({
@@ -338,6 +355,7 @@ export default {
     ...mapMutations({
       showAlertDialog: 'general/showAlertDialog',
       setLoading: 'general/setLoading',
+      setMoveTouch: 'general/setMoveTouch',
     }),
     loadFechas() {
       const dateActual = new Date()

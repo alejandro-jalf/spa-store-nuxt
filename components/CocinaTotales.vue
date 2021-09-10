@@ -27,7 +27,8 @@
       </b-badge>
     </div>
     <b-table
-      v-if="width > 575"
+      v-if="viewTable"
+      id="tableTotales"
       striped
       hover
       head-variant="dark"
@@ -85,6 +86,11 @@ export default {
     }
   },
   computed: {
+    viewTable() {
+      const width = this.$store.state.general.widthWindow
+      if (width > 575) return true
+      return this.$store.state.cocina.vistaTable
+    },
     width() {
       return this.$store.state.general.widthWindow
     },
@@ -234,12 +240,21 @@ export default {
     },
   },
   mounted() {
-    // eslint-disable-next-line no-console
-    // console.log(this.data)
+    const tableTotales = document.getElementById('tableTotales')
+
+    if (tableTotales) {
+      tableTotales.addEventListener('touchstart', (evt) => {
+        this.setMoveTouch(false)
+      })
+      tableTotales.addEventListener('touchend', (evt) => {
+        this.setMoveTouch(true)
+      })
+    }
   },
   methods: {
     ...mapMutations({
       setSucursalSelected: 'cocina/setSucursalSelected',
+      setMoveTouch: 'general/setMoveTouch',
     }),
     isNow(diaVenta) {
       const now = new Date()

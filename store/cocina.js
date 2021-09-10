@@ -6,6 +6,8 @@ if (!localStorage.getItem('spastore_cocina_mes1'))
   localStorage.setItem('spastore_cocina_mes1', 'null')
 if (!localStorage.getItem('spastore_cocina_mes2'))
   localStorage.setItem('spastore_cocina_mes2', 'null')
+if (!localStorage.getItem('spastore_cocina_view_table'))
+  localStorage.setItem('spastore_cocina_view_table', 'false')
 
 export const state = () => ({
   dataMes: JSON.parse(localStorage.getItem('spastore_cocina_mes')) || {
@@ -45,6 +47,10 @@ export const state = () => ({
     localStorage.getItem('spastore_cocina_mes2') !== 'null'
       ? localStorage.getItem('spastore_cocina_mes2')
       : null,
+  vistaTable:
+    typeof localStorage.getItem('spastore_cocina_view_table') === 'boolean'
+      ? localStorage.getItem('spastore_cocina_view_table')
+      : localStorage.getItem('spastore_cocina_view_table') === 'true',
 })
 
 export const mutations = {
@@ -74,6 +80,10 @@ export const mutations = {
   setMes2(state, mes2) {
     state.mes2 = mes2
     localStorage.setItem('spastore_cocina_mes2', mes2)
+  },
+  setVistaTable(state, vistaTable) {
+    state.vistaTable = vistaTable
+    localStorage.setItem('spastore_cocina_view_table', vistaTable)
   },
 }
 
