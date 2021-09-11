@@ -105,7 +105,7 @@ export const actions = {
     store.commit('existenciasarticulo/setArticuloDetails', {})
     route.replace({ name: 'Login' })
   },
-  async refreshDataUser({ commit }, store) {
+  async refreshDataUser({ commit, dispatch }, [store, route]) {
     try {
       const response = await this.$axios({
         url: `${process.env.spastore_base_url}api/v1/usuarios/${store.state.user.user.correo_user}`,
@@ -119,11 +119,14 @@ export const actions = {
         const user = { ...response.data.data[0] }
         delete user.recovery_code_user
         delete user.password_user
-        commit('setUser', user)
-        const arrayName = user.nombre_user.trim().split(' ')
-        const firstName = arrayName.length > 1 ? arrayName[1] : user.nombre_user
-        const nameUser = firstName + ' ' + user.apellido_p_user
-        commit('setNameUser', nameUser)
+        if (user.activo_user) {
+          commit('setUser', user)
+          const arrayName = user.nombre_user.trim().split(' ')
+          const firstName =
+            arrayName.length > 1 ? arrayName[1] : user.nombre_user
+          const nameUser = firstName + ' ' + user.apellido_p_user
+          commit('setNameUser', nameUser)
+        } else dispatch('logout', [store, route])
       }
 
       return response.data

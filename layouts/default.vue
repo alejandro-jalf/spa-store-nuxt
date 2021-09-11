@@ -145,7 +145,7 @@ export default {
         this.$store.state.user.login
       ) {
         this.setLoading(true)
-        await this.refreshDataUser(this.$store)
+        await this.refreshDataUser([this.$store, this.$router])
         this.setLoading(false)
         this.setSesionInit('Iniciada')
       }
