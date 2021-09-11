@@ -29,12 +29,7 @@
       :class="{ openFilter: iconFilter }"
     >
       Filtros
-      <b-icon-plus-circle
-        v-if="iconFilter"
-        font-scale="1.6"
-        class="float-right"
-      />
-      <b-icon-dash-circle v-else font-scale="1.6" class="float-right" />
+      <b-icon :icon="iconFilterActive" font-scale="1.6" class="float-right" />
     </div>
     <b-collapse id="dataFiltros" class="p-1">
       <div class="container-filter">
@@ -46,8 +41,7 @@
             @click="selectArticle('All')"
           >
             Todos
-            <b-icon-check-square-fill v-if="allArticulos" />
-            <b-icon-square v-else />
+            <b-icon :icon="allArticulosSelected" />
           </b-list-group-item>
           <b-list-group-item
             v-for="(articulo, keyArticulo) in listArticulos"
@@ -58,8 +52,7 @@
             @click="selectArticle(articulo.Articulo)"
           >
             {{ `${articulo.Articulo} - ${articulo.Nombre}` }}
-            <b-icon-check-square-fill v-if="isSelected(articulo)" />
-            <b-icon-square v-else />
+            <b-icon :icon="isSelectedIcon(articulo)" />
           </b-list-group-item>
         </b-list-group>
       </div>
@@ -72,8 +65,7 @@
             @click="selectFecha('All')"
           >
             Todas
-            <b-icon-check-square-fill v-if="allFechas" />
-            <b-icon-square v-else />
+            <b-icon :icon="allFechasSelected" />
           </b-list-group-item>
           <b-list-group-item
             v-for="(fecha, keyFecha) in listFechas"
@@ -84,8 +76,7 @@
             @click="selectFecha(fecha)"
           >
             {{ toDate(fecha) }}
-            <b-icon-check-square-fill v-if="isSelectedFecha(fecha)" />
-            <b-icon-square v-else />
+            <b-icon :icon="isSelectedFechaIcon(fecha)" />
           </b-list-group-item>
         </b-list-group>
       </div>
@@ -158,21 +149,9 @@
 
 <script>
 import { mapActions, mapMutations } from 'vuex'
-import {
-  BIconSquare,
-  BIconCheckSquareFill,
-  BIconDashCircle,
-  BIconPlusCircle,
-} from 'bootstrap-vue'
 import utils from '../modules/utils'
 
 export default {
-  components: {
-    BIconSquare,
-    BIconCheckSquareFill,
-    BIconDashCircle,
-    BIconPlusCircle,
-  },
   data() {
     return {
       iconFilter: true,
@@ -192,6 +171,15 @@ export default {
     }
   },
   computed: {
+    allArticulosSelected() {
+      return this.allArticulos ? 'check-square-fill' : 'square'
+    },
+    allFechasSelected() {
+      return this.allFechas ? 'check-square-fill' : 'square'
+    },
+    iconFilterActive() {
+      return this.iconFilter ? 'plus-circle' : 'dash-circle'
+    },
     viewTable() {
       const width = this.$store.state.general.widthWindow
       if (width > 992) return true
@@ -414,6 +402,16 @@ export default {
     isSelectedFecha(fecha) {
       const findedFecha = this.datesSelected.find((date) => date === fecha)
       return !!findedFecha
+    },
+    isSelectedIcon(articulo) {
+      const findedArticulo = this.articulosSelected.find(
+        (art) => art === articulo.Articulo
+      )
+      return findedArticulo ? 'check-square-fill' : 'square'
+    },
+    isSelectedFechaIcon(fecha) {
+      const findedFecha = this.datesSelected.find((date) => date === fecha)
+      return findedFecha ? 'check-square-fill' : 'square'
     },
     rowClass(item, type) {
       if (!item || type !== 'row') return

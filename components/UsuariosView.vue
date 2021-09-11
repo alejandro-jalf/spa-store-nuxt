@@ -105,10 +105,7 @@
     </div>
 
     <div v-b-toggle.dataExtra class="extras">
-      <b-icon-arrow-down-circle-fill
-        v-if="iconCollapse"
-      ></b-icon-arrow-down-circle-fill>
-      <b-icon-arrow-up-circle-fill v-else></b-icon-arrow-up-circle-fill>
+      <b-icon :icon="collapseIcon" />
       Datos extras
     </div>
 
@@ -159,7 +156,7 @@
 
     <div class="containerButtons">
       <b-button variant="secondary" :block="blockButton" @click="back()">
-        <b-icon-arrow-90deg-left></b-icon-arrow-90deg-left>
+        <b-icon icon="arrow-90deg-left" />
         Regresar
       </b-button>
       <b-button
@@ -168,7 +165,7 @@
         :block="blockButton"
         @click="createUser()"
       >
-        <b-icon-person-plus-fill></b-icon-person-plus-fill>
+        <b-icon icon="person-plus-fill" />
         Registrar
       </b-button>
       <b-button
@@ -177,7 +174,7 @@
         :block="blockButton"
         @click="saveChanges()"
       >
-        <b-icon-card-checklist></b-icon-card-checklist>
+        <b-icon icon="card-checklist" />
         Guardar Cambios
       </b-button>
     </div>
@@ -185,23 +182,9 @@
 </template>
 
 <script>
-import {
-  BIconArrowDownCircleFill,
-  BIconArrowUpCircleFill,
-  BIconArrow90degLeft,
-  BIconPersonPlusFill,
-  BIconCardChecklist,
-} from 'bootstrap-vue'
 import { mapMutations } from 'vuex'
 
 export default {
-  components: {
-    BIconArrowDownCircleFill,
-    BIconArrowUpCircleFill,
-    BIconArrow90degLeft,
-    BIconPersonPlusFill,
-    BIconCardChecklist,
-  },
   props: {
     loadUsers: {
       type: Function,
@@ -271,6 +254,11 @@ export default {
     },
     blockButton() {
       return this.width <= 575
+    },
+    collapseIcon() {
+      return this.iconCollapse
+        ? 'arrow-down-circle-fill'
+        : 'arrow-up-circle-fill'
     },
     userViewed() {
       return this.$store.state.user.userViewed

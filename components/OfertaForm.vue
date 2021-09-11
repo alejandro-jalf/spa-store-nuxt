@@ -71,7 +71,7 @@
               no-caret
             >
               <template #button-content>
-                <b-icon-calendar-2-date></b-icon-calendar-2-date>
+                <b-icon icon="calendar-2-date" />
               </template>
               <b-dropdown-form class="text-center">
                 <b-calendar
@@ -127,7 +127,7 @@
               variant="primary"
             >
               <template #button-content>
-                <b-icon-calendar-2-date></b-icon-calendar-2-date>
+                <b-icon icon="calendar-2-date" />
               </template>
               <b-dropdown-form class="text-center">
                 <b-calendar
@@ -169,7 +169,7 @@
         ></message-text>
       </b-form-group>
       <b-button v-if="!editandoOferta" variant="success" @click="generarOFerta">
-        <b-icon-file-earmark-plus-fill></b-icon-file-earmark-plus-fill>
+        <b-icon icon="file-earmark-plus-fill" />
         Generar lista de ofertas
       </b-button>
       <b-button
@@ -178,10 +178,10 @@
         @click="setDataUpdateForm()"
       >
         Lista de articulos
-        <b-icon-arrow-right-circle-fill></b-icon-arrow-right-circle-fill>
+        <b-icon icon="arrow-right-circle-fill" />
       </b-button>
       <b-button variant="warning" @click="setProgramandoOferta(false)">
-        <b-icon-file-earmark-excel-fill></b-icon-file-earmark-excel-fill>
+        <b-icon icon="file-earmark-excel-fill" />
         Cancelar
       </b-button>
     </b-card>
@@ -190,21 +190,11 @@
 
 <script>
 import { mapMutations } from 'vuex'
-import {
-  BIconCalendar2Date,
-  BIconFileEarmarkPlusFill,
-  BIconFileEarmarkExcelFill,
-  BIconArrowRightCircleFill,
-} from 'bootstrap-vue'
 import MessageText from './MessageText'
 
 export default {
   components: {
-    BIconCalendar2Date,
     MessageText,
-    BIconFileEarmarkPlusFill,
-    BIconFileEarmarkExcelFill,
-    BIconArrowRightCircleFill,
   },
   data() {
     return {

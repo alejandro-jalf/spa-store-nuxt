@@ -1,17 +1,11 @@
 <template>
   <b-list-group-item class="d-flex align-items-center" :class="variantItem">
-    <b-icon-toggle-on
-      v-if="sucursal.success"
+    <b-icon
+      :icon="iconStatus(sucursal.success)"
       variant="primary"
       class="mr-3"
       font-scale="2"
-    ></b-icon-toggle-on>
-    <b-icon-toggle-off
-      v-else
-      variant="danger"
-      class="mr-3"
-      font-scale="2"
-    ></b-icon-toggle-off>
+    />
 
     <span class="mr-auto">
       <strong>{{ refactorName(sucursal.conexion) }}</strong>
@@ -21,14 +15,8 @@
 </template>
 
 <script>
-import { BIconToggleOff, BIconToggleOn } from 'bootstrap-vue'
-
 export default {
   name: 'ConexionesItem',
-  components: {
-    BIconToggleOn,
-    BIconToggleOff,
-  },
   props: {
     sucursal: {
       type: Object,
@@ -48,6 +36,9 @@ export default {
     },
   },
   methods: {
+    iconStatus(status) {
+      return status ? 'toggle-on' : 'toggle-off'
+    },
     refactorName(sucursal) {
       const arraySucursal = sucursal.split('.')
       const name = arraySucursal[0].slice(3)

@@ -6,40 +6,12 @@
     class="Floatbtn"
     @click="clickFloat"
   >
-    <b-icon-arrow-clockwise
-      v-if="iconFloat === 'arrow-clockwise'"
-      :font-scale="fontScale"
-    ></b-icon-arrow-clockwise>
-    <b-icon-arrow-up-circle
-      v-else-if="iconFloat === 'arrow-up-circle'"
-      :font-scale="fontScale"
-    ></b-icon-arrow-up-circle>
-    <b-icon-person-lines-fill
-      v-else-if="iconFloat === 'person-lines-fill'"
-      :font-scale="fontScale"
-    ></b-icon-person-lines-fill>
-    <b-icon-x v-else-if="iconFloat === 'x'" :font-scale="fontScale"></b-icon-x>
-    <b-icon-arrow-repeat v-else :font-scale="fontScale"></b-icon-arrow-repeat>
+    <b-icon :icon="iconFloat" :font-scale="fontScale" />
   </b-avatar>
 </template>
 
 <script>
-import {
-  BIconArrowClockwise,
-  BIconArrowUpCircle,
-  BIconArrowRepeat,
-  BIconPersonLinesFill,
-  BIconX,
-} from 'bootstrap-vue'
-
 export default {
-  components: {
-    BIconArrowClockwise,
-    BIconArrowUpCircle,
-    BIconArrowRepeat,
-    BIconPersonLinesFill,
-    BIconX,
-  },
   props: {
     fontScale: {
       type: String,

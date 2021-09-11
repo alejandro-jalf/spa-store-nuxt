@@ -11,8 +11,7 @@
         class="sucursal"
         @click="changeSucursal(sucursal)"
       >
-        <b-icon-check-circle-fill v-if="sucursalSelected === sucursal" />
-        <b-icon-circle v-else />
+        <b-icon :icon="sucursalSelectedIcon(sucursal)" />
         {{ sucursal }}
       </b-badge>
       <b-badge
@@ -21,8 +20,7 @@
         class="sucursal"
         @click="changeSucursal('ALL')"
       >
-        <b-icon-check-circle-fill v-if="sucursalSelected === 'ALL'" />
-        <b-icon-circle v-else />
+        <b-icon :icon="selectAll" />
         TODO
       </b-badge>
     </div>
@@ -71,14 +69,9 @@
 
 <script>
 import { mapMutations } from 'vuex'
-import { BIconCircle, BIconCheckCircleFill } from 'bootstrap-vue'
 import utils from '../modules/utils'
 
 export default {
-  components: {
-    BIconCircle,
-    BIconCheckCircleFill,
-  },
   data() {
     return {
       sucursales: ['ZR', 'VC'],
@@ -96,6 +89,11 @@ export default {
     },
     sucursalSelected() {
       return this.$store.state.cocina.sucursalSelected
+    },
+    selectAll() {
+      return this.$store.state.cocina.sucursalSelected === 'ALL'
+        ? 'check-circle-fill'
+        : 'circle'
     },
     variantThemeTableBody() {
       if (this.$store.state.general.themePreferences === 'system') {
@@ -267,6 +265,11 @@ export default {
           : ''
       }
       return ''
+    },
+    sucursalSelectedIcon(sucursal) {
+      return this.$store.state.cocina.sucursalSelected === sucursal
+        ? 'check-circle-fill'
+        : 'circle'
     },
     rowClass(item, type) {
       if (!item || type !== 'row') return

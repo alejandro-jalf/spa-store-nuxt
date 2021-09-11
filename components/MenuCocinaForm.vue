@@ -29,10 +29,7 @@
       class="extras mt-2"
       @click="changeCollapseAnto"
     >
-      <b-icon-arrow-down-circle-fill
-        v-if="iconCollapseAntojitos"
-      ></b-icon-arrow-down-circle-fill>
-      <b-icon-arrow-up-circle-fill v-else></b-icon-arrow-up-circle-fill>
+      <b-icon :icon="collapseIconAntojitos" />
       Antojitos
     </div>
 
@@ -61,13 +58,13 @@
         <template #append>
           <b-button variant="success" @click="addAntojito">
             <span v-if="width > 400">Agregar</span>
-            <b-icon-plus-circle-fill v-else></b-icon-plus-circle-fill>
+            <b-icon v-else icon="plus-circle-fill" />
           </b-button>
         </template>
         <template #prepend>
           <b-input-group-text>
             <span v-if="width > 400">Antojito</span>
-            <b-icon-card-list v-else></b-icon-card-list>
+            <b-icon v-else icon="card-list" />
           </b-input-group-text>
         </template>
         <b-form-input
@@ -88,10 +85,11 @@
           variant="info"
         >
           {{ product }}
-          <b-icon-x-circle-fill
+          <b-icon
+            icon="x-circle-fill"
             class="close-chip"
             @click="removeAntojito(product)"
-          ></b-icon-x-circle-fill>
+          />
         </b-badge>
       </div>
       <b-form-checkbox
@@ -134,10 +132,7 @@
       class="extras mt-2"
       @click="changeCollapseMenu"
     >
-      <b-icon-arrow-down-circle-fill
-        v-if="iconCollapseMenu"
-      ></b-icon-arrow-down-circle-fill>
-      <b-icon-arrow-up-circle-fill v-else></b-icon-arrow-up-circle-fill>
+      <b-icon :icon="collapseIconMenu" />
       Menu del dia
     </div>
 
@@ -167,13 +162,13 @@
         <template #append>
           <b-button variant="success" @click="addMenu">
             <span v-if="width > 400">Agregar</span>
-            <b-icon-plus-circle-fill v-else></b-icon-plus-circle-fill>
+            <b-icon v-else icon="plus-circle-fill" />
           </b-button>
         </template>
         <template #prepend>
           <b-input-group-text>
             <span v-if="width > 400">Comida</span>
-            <b-icon-journal-medical v-else></b-icon-journal-medical>
+            <b-icon v-else icon="journal-medical" />
           </b-input-group-text>
         </template>
         <b-form-input
@@ -194,10 +189,11 @@
           variant="info"
         >
           {{ comida }}
-          <b-icon-x-circle-fill
+          <b-icon
+            icon="x-circle-fill"
             class="close-chip"
             @click="removeMenu(comida)"
-          ></b-icon-x-circle-fill>
+          />
         </b-badge>
       </div>
 
@@ -240,24 +236,8 @@
 
 <script>
 import { mapMutations } from 'vuex'
-import {
-  BIconXCircleFill,
-  BIconPlusCircleFill,
-  BIconJournalMedical,
-  BIconCardList,
-  BIconArrowDownCircleFill,
-  BIconArrowUpCircleFill,
-} from 'bootstrap-vue'
 
 export default {
-  components: {
-    BIconXCircleFill,
-    BIconPlusCircleFill,
-    BIconJournalMedical,
-    BIconCardList,
-    BIconArrowDownCircleFill,
-    BIconArrowUpCircleFill,
-  },
   props: {
     listAntojitos: {
       type: Array,
@@ -318,6 +298,16 @@ export default {
   computed: {
     date() {
       return this.$store.state.menucocina.dateSelected
+    },
+    collapseIconAntojitos() {
+      return this.iconCollapseAntojitos
+        ? 'arrow-down-circle-fill'
+        : 'arrow-up-circle-fill'
+    },
+    collapseIconMenu() {
+      return this.iconCollapseMenu
+        ? 'arrow-down-circle-fill'
+        : 'arrow-up-circle-fill'
     },
     width() {
       return this.$store.state.general.widthWindow

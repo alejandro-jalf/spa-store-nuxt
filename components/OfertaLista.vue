@@ -93,11 +93,11 @@
           ></b-form-input>
         </b-form>
         <b-button variant="success" class="mb-3" @click="agregarArticulo">
-          <b-icon-plus-circle-fill></b-icon-plus-circle-fill>
+          <b-icon icon="plus-circle-fill" />
           Agregar a la lista
         </b-button>
         <b-button variant="warning" class="mb-3" @click="clearFormArticulo">
-          <b-icon-backspace-fill></b-icon-backspace-fill>
+          <b-icon icon="backspace-fill" />
           Limpiar campos
         </b-button>
       </div>
@@ -123,7 +123,7 @@
               class="mb-1"
               @click="editArticle(row)"
             >
-              <b-icon-pencil-square></b-icon-pencil-square>
+              <b-icon icon="pencil-square" />
             </b-button>
             <b-button
               variant="danger"
@@ -131,22 +131,22 @@
               class="mb-1"
               @click="deleteArticulo(row.item.articulo)"
             >
-              <b-icon-trash></b-icon-trash>
+              <b-icon icon="trash" />
             </b-button>
           </template>
         </b-table>
       </div>
       <div v-if="ofertaEditable" class="text-right mt-3 buttons-end">
         <b-button variant="secondary" class="mb-2" @click="editarDatosOferta">
-          <b-icon-arrow-left-circle-fill></b-icon-arrow-left-circle-fill>
+          <b-icon icon="arrow-left-circle-fill" />
           Datos de oferta
         </b-button>
         <b-button variant="danger" class="mb-2" @click="cancelarOferta">
-          <b-icon-trash-fill></b-icon-trash-fill>
+          <b-icon icon="trash-fill" />
           Cancelar oferta
         </b-button>
         <b-button variant="primary" class="mb-2" @click="saveAndSend">
-          <b-icon-cloud-upload-fill></b-icon-cloud-upload-fill>
+          <b-icon icon="upload-fill" />
           Guardar y enviar
         </b-button>
         <b-button
@@ -154,7 +154,7 @@
           class="mb-2"
           @click="$bvToast.show('toast-create-ofer')"
         >
-          <b-icon-question-circle-fill></b-icon-question-circle-fill>
+          <b-icon icon="question-circle-fill" />
         </b-button>
         <b-toast
           id="toast-create-ofer"
@@ -184,7 +184,7 @@
             class="mb-2"
             @click="setProgramandoLista(false)"
           >
-            <b-icon-file-earmark-excel-fill></b-icon-file-earmark-excel-fill>
+            <b-icon icon="file-earmark-excel-fill" />
             Cerrar
           </b-button>
         </div>
@@ -194,11 +194,11 @@
             class="mb-2"
             @click="setProgramandoLista(false)"
           >
-            <b-icon-file-earmark-excel-fill></b-icon-file-earmark-excel-fill>
+            <b-icon icon="file-earmark-excel-fill" />
             Cerrar
           </b-button>
           <b-button variant="primary" class="mb-2">
-            <b-icon-folder-symlink-fill></b-icon-folder-symlink-fill>
+            <b-icon icon="folder-symlink-fill" />
             Guardar cambios
           </b-button>
           <b-button
@@ -206,7 +206,7 @@
             class="mb-2"
             @click="$bvToast.show('toast-view-ofert')"
           >
-            <b-icon-question-circle-fill></b-icon-question-circle-fill>
+            <b-icon icon="question-circle-fill" />
           </b-button>
           <b-toast
             id="toast-view-ofert"
@@ -248,18 +248,6 @@
 
 <script>
 import { mapMutations } from 'vuex'
-import {
-  BIconPencilSquare,
-  BIconTrash,
-  BIconPlusCircleFill,
-  BIconTrashFill,
-  BIconCloudUploadFill,
-  BIconQuestionCircleFill,
-  BIconFileEarmarkExcelFill,
-  BIconFolderSymlinkFill,
-  BIconBackspaceFill,
-  BIconArrowLeftCircleFill,
-} from 'bootstrap-vue'
 import utils from '../modules/utils'
 import Divider from './Divider'
 import MessageText from './MessageText'
@@ -268,18 +256,8 @@ import OfertaListProducts from './OfertaListaProducts'
 
 export default {
   components: {
-    BIconPencilSquare,
-    BIconTrash,
     Divider,
-    BIconPlusCircleFill,
-    BIconTrashFill,
-    BIconCloudUploadFill,
-    BIconQuestionCircleFill,
-    BIconFileEarmarkExcelFill,
-    BIconFolderSymlinkFill,
     MessageText,
-    BIconBackspaceFill,
-    BIconArrowLeftCircleFill,
     AlertOption,
     OfertaListProducts,
   },
