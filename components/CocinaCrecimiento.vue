@@ -81,13 +81,11 @@
     <h2>Grafico</h2>
     <div class="mb-5">
       <b-button variant="info" @click="changeGrafico('bar')">
-        <b-icon-check-circle-fill v-if="tipoGrafico === 'bar'" />
-        <b-icon-circle v-else />
+        <b-icon :icon="graficoBar" />
         Barra
       </b-button>
       <b-button variant="info" @click="changeGrafico('line')">
-        <b-icon-check-circle-fill v-if="tipoGrafico === 'line'" />
-        <b-icon-circle v-else />
+        <b-icon :icon="graficoLine" />
         Linea
       </b-button>
     </div>
@@ -106,15 +104,12 @@
 
 <script>
 import { mapMutations } from 'vuex'
-import { BIconCircle, BIconCheckCircleFill } from 'bootstrap-vue'
 import CocinaChart from '../components/CocinaChart'
 import utils from '../modules/utils'
 
 export default {
   components: {
     CocinaChart,
-    BIconCircle,
-    BIconCheckCircleFill,
   },
   data() {
     return {
@@ -166,6 +161,16 @@ export default {
     },
     tipoGrafico() {
       return this.$store.state.cocina.tipo
+    },
+    graficoBar() {
+      return this.$store.state.cocina.tipo === 'bar'
+        ? 'check-circle-fill'
+        : 'circle'
+    },
+    graficoLine() {
+      return this.$store.state.cocina.tipo !== 'bar'
+        ? 'check-circle-fill'
+        : 'circle'
     },
     variantThemeTableBody() {
       if (this.$store.state.general.themePreferences === 'system') {

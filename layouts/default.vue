@@ -26,11 +26,15 @@
 
 <script>
 import { mapMutations, mapActions } from 'vuex'
+import Vue from 'vue'
+import { BootstrapVueIcons } from 'bootstrap-vue'
 import NavBar from '../components/NavBar.vue'
 import Alert from '../components/Alert'
 import AlertOption from '../components/AlertOption'
 import NavBarLeft from '../components/NavBarLeft'
 import NavBarBottom from '../components/NavBarBottom'
+
+Vue.use(BootstrapVueIcons)
 
 export default {
   components: {

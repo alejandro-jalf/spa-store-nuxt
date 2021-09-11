@@ -9,26 +9,7 @@
           replace
           :class="isActiveItem(tab.nickname)"
         >
-          <b-icon-house-door-fill v-if="tab.icon === 'house-door-fill'">
-          </b-icon-house-door-fill>
-          <b-icon-percent v-else-if="tab.icon === 'percent'"></b-icon-percent>
-          <b-icon-shop v-else-if="tab.icon === 'shop'"></b-icon-shop>
-          <b-icon-people-fill v-else-if="tab.icon === 'people-fill'">
-          </b-icon-people-fill>
-          <b-icon-cloud-check-fill v-else-if="tab.icon === 'cloud-check-fill'">
-          </b-icon-cloud-check-fill>
-          <b-icon-collection v-else-if="tab.icon === 'collection'">
-          </b-icon-collection>
-          <b-icon-box-seam
-            v-else-if="tab.icon === 'box-seam'"
-          ></b-icon-box-seam>
-          <b-icon-layout-text-sidebar-reverse
-            v-else-if="tab.icon === 'layout-text-sidebar-reverse'"
-          ></b-icon-layout-text-sidebar-reverse>
-          <b-icon-file-earmark-easel-fill
-            v-else-if="tab.icon === 'file-earmark-easel-fill'"
-          />
-          <b-icon-asterisk v-else></b-icon-asterisk>
+          <b-icon :icon="tab.icon" />
           <div v-if="visibleNickname" class="nickname">{{ tab.nickname }}</div>
         </b-link>
       </div>
@@ -42,18 +23,18 @@
       toggle-class="text-white"
     >
       <template #button-content>
-        <b-icon-three-dots-vertical></b-icon-three-dots-vertical>
+        <b-icon icon="three-dots-vertical" />
       </template>
       <div class="container-menu" :class="variantTheme">
         <div>
-          <b-icon-person-circle class="mr-3"></b-icon-person-circle>
+          <b-icon icon="person-circle" />
           {{ userName }}
           <b-button
             variant="link"
             class="text-success p-0 float-right"
             @click="updateDataUser"
           >
-            <b-icon-arrow-counterclockwise />
+            <b-icon icon="arrow-counterclockwise" />
             Actualizar
           </b-button>
         </div>
@@ -67,7 +48,7 @@
             class="text-left"
             @click="setThemePreferences('system')"
           >
-            <b-icon-tv-fill></b-icon-tv-fill>
+            <b-icon icon="tv-fill" />
             Sistema
           </b-button>
           <b-button
@@ -77,7 +58,7 @@
             class="text-left"
             @click="setThemePreferences('dark')"
           >
-            <b-icon-moon></b-icon-moon>
+            <b-icon icon="moon" />
             Oscuro
           </b-button>
           <b-button
@@ -87,7 +68,7 @@
             class="text-left"
             @click="setThemePreferences('light')"
           >
-            <b-icon-brightness-high-fill></b-icon-brightness-high-fill>
+            <b-icon icon="brightness-high-fill" />
             Claro
           </b-button>
           <b-button
@@ -97,7 +78,7 @@
             class="text-left"
             @click="setThemePreferences('sepia')"
           >
-            <b-icon-cup-fill></b-icon-cup-fill>
+            <b-icon icon="cup-fill" />
             Sepia
           </b-button>
         </div>
@@ -107,7 +88,7 @@
             class="text-danger"
             @click="logout([$store, $router])"
           >
-            <b-icon-power></b-icon-power>
+            <b-icon icon="power" />
             Cerrar sesion
           </b-button>
           <b-button variant="link" class="float-right" @click="closeMenu">
@@ -121,48 +102,8 @@
 
 <script>
 import { mapActions, mapMutations } from 'vuex'
-import {
-  BIconHouseDoorFill,
-  BIconPercent,
-  BIconShop,
-  BIconPeopleFill,
-  BIconCloudCheckFill,
-  BIconCollection,
-  BIconAsterisk,
-  BIconBoxSeam,
-  BIconThreeDotsVertical,
-  BIconPersonCircle,
-  BIconPower,
-  BIconMoon,
-  BIconBrightnessHighFill,
-  BIconCupFill,
-  BIconTvFill,
-  BIconLayoutTextSidebarReverse,
-  BIconFileEarmarkEaselFill,
-  BIconArrowCounterclockwise,
-} from 'bootstrap-vue'
 
 export default {
-  components: {
-    BIconHouseDoorFill,
-    BIconPercent,
-    BIconShop,
-    BIconPeopleFill,
-    BIconCloudCheckFill,
-    BIconCollection,
-    BIconAsterisk,
-    BIconBoxSeam,
-    BIconThreeDotsVertical,
-    BIconPersonCircle,
-    BIconPower,
-    BIconMoon,
-    BIconBrightnessHighFill,
-    BIconCupFill,
-    BIconTvFill,
-    BIconLayoutTextSidebarReverse,
-    BIconFileEarmarkEaselFill,
-    BIconArrowCounterclockwise,
-  },
   data() {
     return {
       tabs: this.$store.state.general.listTabs,

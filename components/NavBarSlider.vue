@@ -18,7 +18,7 @@
         </div>
         <div class="text-center">
           <b-button variant="success" class="btnUpdate" @click="updateDataUser">
-            <b-icon-arrow-counterclockwise />
+            <b-icon icon="arrow-counterclockwise" />
             Actualizar informacion
           </b-button>
         </div>
@@ -28,28 +28,28 @@
             :pressed="themPreferencesSys"
             @click="setThemePreferences('system')"
           >
-            <b-icon-tv-fill></b-icon-tv-fill>
+            <b-icon icon="tv-fill" />
           </b-button>
           <b-button
             :variant="variantTheme"
             :pressed="themPreferencesDar"
             @click="setThemePreferences('dark')"
           >
-            <b-icon-moon></b-icon-moon>
+            <b-icon icon="moon" />
           </b-button>
           <b-button
             :variant="variantTheme"
             :pressed="themPreferencesLig"
             @click="setThemePreferences('light')"
           >
-            <b-icon-brightness-high-fill></b-icon-brightness-high-fill>
+            <b-icon icon="brightness-high-fill" />
           </b-button>
           <b-button
             :variant="variantTheme"
             :pressed="themPreferencesSep"
             @click="setThemePreferences('sepia')"
           >
-            <b-icon-cup-fill></b-icon-cup-fill>
+            <b-icon icon="cup-fill" />
           </b-button>
         </div>
         <b-list-group class="mt-3 mb-4">
@@ -64,42 +64,7 @@
             class="d-flex justify-content-between align-items-center"
           >
             <div class="any">
-              <b-icon-house-door-fill
-                v-if="tab.icon === 'house-door-fill'"
-                class="mr-1"
-              ></b-icon-house-door-fill>
-              <b-icon-percent
-                v-else-if="tab.icon === 'percent'"
-                class="mr-1"
-              ></b-icon-percent>
-              <b-icon-shop
-                v-else-if="tab.icon === 'shop'"
-                class="mr-1"
-              ></b-icon-shop>
-              <b-icon-people-fill
-                v-else-if="tab.icon === 'people-fill'"
-                class="mr-1"
-              ></b-icon-people-fill>
-              <b-icon-cloud-check-fill
-                v-else-if="tab.icon === 'cloud-check-fill'"
-                class="mr-1"
-              ></b-icon-cloud-check-fill>
-              <b-icon-collection
-                v-else-if="tab.icon === 'collection'"
-                class="mr-1"
-              ></b-icon-collection>
-              <b-icon-box-seam
-                v-else-if="tab.icon === 'box-seam'"
-                class="mr-1"
-              ></b-icon-box-seam>
-              <b-icon-layout-text-sidebar-reverse
-                v-else-if="tab.icon === 'layout-text-sidebar-reverse'"
-              ></b-icon-layout-text-sidebar-reverse>
-              <b-icon-file-earmark-easel-fill
-                v-else-if="tab.icon === 'file-earmark-easel-fill'"
-              />
-              <b-icon-asterisk v-else class="mr-1"></b-icon-asterisk>
-
+              <b-icon :icon="tab.icon" class="mr-1" />
               {{ tab.nickname }}
             </div>
           </b-list-group-item>
@@ -110,7 +75,7 @@
           class="mt-3"
           @click="logout([$store, $router])"
         >
-          <b-icon-power></b-icon-power>
+          <b-icon icon="power" />
           Cerrar sesion
         </b-button>
       </div>
@@ -120,44 +85,8 @@
 
 <script>
 import { mapMutations } from 'vuex'
-import {
-  BIconHouseDoorFill,
-  BIconPercent,
-  BIconShop,
-  BIconPeopleFill,
-  BIconCloudCheckFill,
-  BIconCollection,
-  BIconAsterisk,
-  BIconBoxSeam,
-  BIconPower,
-  BIconMoon,
-  BIconBrightnessHighFill,
-  BIconCupFill,
-  BIconTvFill,
-  BIconLayoutTextSidebarReverse,
-  BIconFileEarmarkEaselFill,
-  BIconArrowCounterclockwise,
-} from 'bootstrap-vue'
 
 export default {
-  components: {
-    BIconHouseDoorFill,
-    BIconPercent,
-    BIconShop,
-    BIconPeopleFill,
-    BIconCloudCheckFill,
-    BIconCollection,
-    BIconAsterisk,
-    BIconBoxSeam,
-    BIconPower,
-    BIconMoon,
-    BIconBrightnessHighFill,
-    BIconCupFill,
-    BIconTvFill,
-    BIconLayoutTextSidebarReverse,
-    BIconFileEarmarkEaselFill,
-    BIconArrowCounterclockwise,
-  },
   props: {
     logout: {
       type: Function,

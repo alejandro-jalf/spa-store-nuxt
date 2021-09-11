@@ -14,7 +14,7 @@
       <b-navbar-nav v-if="display > 0" class="mr-auto TabActual">
         <b-nav-item>
           <b-badge variant="light" class="p-2 text-uppercase mr-2">
-            <b-icon-geo-fill></b-icon-geo-fill>
+            <b-icon icon="geo-fill" />
             {{ tabActual }}
           </b-badge>
         </b-nav-item>
@@ -48,14 +48,14 @@
             </template>
             <div class="container-menu" :class="variantTheme">
               <div>
-                <b-icon-person-circle class="mr-3"></b-icon-person-circle>
+                <b-icon icon="person-circle" class="mr-3" />
                 {{ userName }}
                 <b-button
                   variant="link"
                   class="text-success p-0 float-right"
                   @click="updateDataUser"
                 >
-                  <b-icon-arrow-counterclockwise />
+                  <b-icon icon="arrow-counterclockwise" />
                   Actualizar
                 </b-button>
               </div>
@@ -69,7 +69,7 @@
                   class="text-left"
                   @click="setThemePreferences('system')"
                 >
-                  <b-icon-tv-fill></b-icon-tv-fill>
+                  <b-icon icon="tv-fill" />
                   Sistema
                 </b-button>
                 <b-button
@@ -79,7 +79,7 @@
                   class="text-left"
                   @click="setThemePreferences('dark')"
                 >
-                  <b-icon-moon></b-icon-moon>
+                  <b-icon icon="moon" />
                   Oscuro
                 </b-button>
                 <b-button
@@ -89,7 +89,7 @@
                   class="text-left"
                   @click="setThemePreferences('light')"
                 >
-                  <b-icon-brightness-high-fill></b-icon-brightness-high-fill>
+                  <b-icon icon="brightness-high-fill" />
                   Claro
                 </b-button>
                 <b-button
@@ -99,7 +99,7 @@
                   class="text-left"
                   @click="setThemePreferences('sepia')"
                 >
-                  <b-icon-cup-fill></b-icon-cup-fill>
+                  <b-icon icon="cup-fill" />
                   Sepia
                 </b-button>
               </div>
@@ -109,7 +109,7 @@
                   class="text-danger"
                   @click="logout([$store, $router])"
                 >
-                  <b-icon-power></b-icon-power>
+                  <b-icon icon="power" />
                   Cerrar sesion
                 </b-button>
                 <b-button variant="link" class="float-right" @click="closeMenu">
@@ -126,30 +126,12 @@
 </template>
 
 <script>
-import {
-  BIconGeoFill,
-  BIconPower,
-  BIconMoon,
-  BIconBrightnessHighFill,
-  BIconCupFill,
-  BIconTvFill,
-  BIconPersonCircle,
-  BIconArrowCounterclockwise,
-} from 'bootstrap-vue'
 import { mapActions, mapMutations } from 'vuex'
 import NavBarSlider from './NavBarSlider'
 
 export default {
   components: {
     NavBarSlider,
-    BIconGeoFill,
-    BIconPower,
-    BIconMoon,
-    BIconBrightnessHighFill,
-    BIconCupFill,
-    BIconTvFill,
-    BIconPersonCircle,
-    BIconArrowCounterclockwise,
   },
   data() {
     return {
