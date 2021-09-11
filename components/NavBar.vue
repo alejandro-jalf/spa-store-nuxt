@@ -50,6 +50,14 @@
               <div>
                 <b-icon-person-circle class="mr-3"></b-icon-person-circle>
                 {{ userName }}
+                <b-button
+                  variant="link"
+                  class="text-success p-0 float-right"
+                  @click="updateDataUser"
+                >
+                  <b-icon-arrow-counterclockwise />
+                  Actualizar
+                </b-button>
               </div>
               <hr class="mt-2" />
               <div>
@@ -113,7 +121,7 @@
         </b-navbar-nav>
       </b-collapse>
     </b-navbar>
-    <NavBarSlider :logout="logout" />
+    <NavBarSlider :logout="logout" :refresh-data-user="refreshDataUser" />
   </div>
 </template>
 
@@ -126,6 +134,7 @@ import {
   BIconCupFill,
   BIconTvFill,
   BIconPersonCircle,
+  BIconArrowCounterclockwise,
 } from 'bootstrap-vue'
 import { mapActions, mapMutations } from 'vuex'
 import NavBarSlider from './NavBarSlider'
@@ -140,6 +149,7 @@ export default {
     BIconCupFill,
     BIconTvFill,
     BIconPersonCircle,
+    BIconArrowCounterclockwise,
   },
   data() {
     return {
@@ -224,10 +234,17 @@ export default {
     },
     ...mapActions({
       logout: 'user/logout',
+      refreshDataUser: 'user/refreshDataUser',
     }),
     ...mapMutations({
       setThemePreferences: 'general/setThemePreferences',
+      setLoading: 'general/setLoading',
     }),
+    async updateDataUser() {
+      this.setLoading(true)
+      await this.refreshDataUser([this.$store, this.$router])
+      this.setLoading(false)
+    },
   },
 }
 </script>

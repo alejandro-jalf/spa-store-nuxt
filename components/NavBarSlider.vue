@@ -16,6 +16,12 @@
             <strong>{{ userName }}</strong>
           </div>
         </div>
+        <div class="text-center">
+          <b-button variant="success" class="btnUpdate" @click="updateDataUser">
+            <b-icon-arrow-counterclockwise />
+            Actualizar informacion
+          </b-button>
+        </div>
         <div v-if="atajoTheme === 'true'" class="mt-2 text-center">
           <b-button
             :variant="variantTheme"
@@ -130,6 +136,7 @@ import {
   BIconTvFill,
   BIconLayoutTextSidebarReverse,
   BIconFileEarmarkEaselFill,
+  BIconArrowCounterclockwise,
 } from 'bootstrap-vue'
 
 export default {
@@ -149,9 +156,14 @@ export default {
     BIconTvFill,
     BIconLayoutTextSidebarReverse,
     BIconFileEarmarkEaselFill,
+    BIconArrowCounterclockwise,
   },
   props: {
     logout: {
+      type: Function,
+      required: true,
+    },
+    refreshDataUser: {
       type: Function,
       required: true,
     },
@@ -251,12 +263,23 @@ export default {
     },
     ...mapMutations({
       setThemePreferences: 'general/setThemePreferences',
+      setLoading: 'general/setLoading',
     }),
+    async updateDataUser() {
+      this.setLoading(true)
+      await this.refreshDataUser([this.$store, this.$router])
+      this.setLoading(false)
+    },
   },
 }
 </script>
 
 <style scoped>
+.btnUpdate {
+  margin-top: 8px;
+  width: 220px;
+}
+
 .sepia-sliderbar {
   background: #fdf0d0;
   color: #271601;

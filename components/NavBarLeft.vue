@@ -5,6 +5,14 @@
       SPA
       <br />
       <strong>{{ userName }}</strong>
+      <b-button
+        variant="outline-success"
+        class="btnUpdate"
+        @click="updateDataUser"
+      >
+        <b-icon-arrow-counterclockwise />
+        Actualizar informacion
+      </b-button>
     </div>
     <div v-if="atajoTheme === 'true'" class="mb-4 text-center">
       <b-button
@@ -109,6 +117,7 @@ import {
   BIconTvFill,
   BIconLayoutTextSidebarReverse,
   BIconFileEarmarkEaselFill,
+  BIconArrowCounterclockwise,
 } from 'bootstrap-vue'
 
 export default {
@@ -128,6 +137,7 @@ export default {
     BIconTvFill,
     BIconLayoutTextSidebarReverse,
     BIconFileEarmarkEaselFill,
+    BIconArrowCounterclockwise,
   },
   data() {
     return {
@@ -179,10 +189,17 @@ export default {
   methods: {
     ...mapMutations({
       setThemePreferences: 'general/setThemePreferences',
+      setLoading: 'general/setLoading',
     }),
     ...mapActions({
       logout: 'user/logout',
+      refreshDataUser: 'user/refreshDataUser',
     }),
+    async updateDataUser() {
+      this.setLoading(true)
+      await this.refreshDataUser([this.$store, this.$router])
+      this.setLoading(false)
+    },
     isActive(nickname) {
       return this.$store.state.general.tabActual.trim() === nickname.trim()
     },
@@ -196,6 +213,10 @@ export default {
 </script>
 
 <style scoped>
+.btnUpdate {
+  margin-top: 8px;
+  width: 220px;
+}
 .NavBarLeft {
   color: #fff;
   background: rgb(61, 61, 61);

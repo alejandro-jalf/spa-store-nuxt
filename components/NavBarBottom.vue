@@ -48,6 +48,14 @@
         <div>
           <b-icon-person-circle class="mr-3"></b-icon-person-circle>
           {{ userName }}
+          <b-button
+            variant="link"
+            class="text-success p-0 float-right"
+            @click="updateDataUser"
+          >
+            <b-icon-arrow-counterclockwise />
+            Actualizar
+          </b-button>
         </div>
         <hr class="mt-2" />
         <div>
@@ -131,6 +139,7 @@ import {
   BIconTvFill,
   BIconLayoutTextSidebarReverse,
   BIconFileEarmarkEaselFill,
+  BIconArrowCounterclockwise,
 } from 'bootstrap-vue'
 
 export default {
@@ -152,6 +161,7 @@ export default {
     BIconTvFill,
     BIconLayoutTextSidebarReverse,
     BIconFileEarmarkEaselFill,
+    BIconArrowCounterclockwise,
   },
   data() {
     return {
@@ -266,10 +276,17 @@ export default {
     },
     ...mapActions({
       logout: 'user/logout',
+      refreshDataUser: 'user/refreshDataUser',
     }),
     ...mapMutations({
       setThemePreferences: 'general/setThemePreferences',
+      setLoading: 'general/setLoading',
     }),
+    async updateDataUser() {
+      this.setLoading(true)
+      await this.refreshDataUser([this.$store, this.$router])
+      this.setLoading(false)
+    },
     isActive(nickname) {
       return this.$store.state.general.tabActual.trim() === nickname.trim()
     },
