@@ -17,7 +17,7 @@
           :class="positionUpAdd"
           @click="newUser()"
         >
-          <b-icon-plus font-scale="2"></b-icon-plus>
+          <b-icon icon="plus" font-scale="2" />
         </b-avatar>
         <b-avatar
           variant="info"
@@ -50,7 +50,7 @@
             class="mb-1"
             @click="viewUser(row.item)"
           >
-            <b-icon-pencil-square></b-icon-pencil-square>
+            <b-icon icon="pencil" />
           </b-button>
           <b-button
             :variant="activo_user(row.item.Status)"
@@ -58,10 +58,7 @@
             class="mb-1"
             @click="showAlertDialogOpt(row.item)"
           >
-            <b-icon-toggle-on
-              v-if="row.item.Status === 'Activo'"
-            ></b-icon-toggle-on>
-            <b-icon-toggle-off v-else></b-icon-toggle-off>
+            <b-icon :icon="iconStatus(row.item.Status)" />
           </b-button>
         </template>
         <template #cell(Accesos)="row">
@@ -127,16 +124,13 @@
             </div>
             <div class="actionsUser">
               <b-button variant="warning" @click="viewUser(user)">
-                <b-icon-pencil-square></b-icon-pencil-square>
+                <b-icon icon="pencil-square" />
               </b-button>
               <b-button
                 :variant="activo_user(user.Status)"
                 @click="showAlertDialogOpt(user)"
               >
-                <b-icon-toggle-on
-                  v-if="user.Status === 'Activo'"
-                ></b-icon-toggle-on>
-                <b-icon-toggle-off v-else></b-icon-toggle-off>
+                <b-icon :icon="iconUserStatus(user.Status)" />
               </b-button>
             </div>
           </b-card-body>
@@ -150,13 +144,6 @@
 
 <script>
 import { mapMutations } from 'vuex'
-import {
-  BIconToggleOff,
-  BIconToggleOn,
-  BIconPencilSquare,
-  BIconArrowClockwise,
-  BIconPlus,
-} from 'bootstrap-vue'
 import FloatButton from '../components/FloatButton'
 import UsuariosView from '../components/UsuariosView'
 
@@ -164,11 +151,6 @@ export default {
   components: {
     FloatButton,
     UsuariosView,
-    BIconPencilSquare,
-    BIconToggleOn,
-    BIconToggleOff,
-    BIconArrowClockwise,
-    BIconPlus,
   },
   data() {
     return {
@@ -283,6 +265,12 @@ export default {
     }
   },
   methods: {
+    iconStatus(status) {
+      return status === 'Activo' ? 'toggle-on' : 'toggle-off'
+    },
+    iconUserStatus(status) {
+      return status === 'Activo' ? 'toggle-on' : 'toggle-off'
+    },
     blurButton() {
       this.showOptions = false
     },

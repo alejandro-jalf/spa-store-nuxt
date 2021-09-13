@@ -2,7 +2,7 @@
   <b-list-group-item class="d-flex align-items-center" :class="variantItem">
     <b-icon
       :icon="iconStatus(sucursal.success)"
-      variant="primary"
+      :variant="variantStatus(sucursal.success)"
       class="mr-3"
       font-scale="2"
     />
@@ -38,6 +38,9 @@ export default {
   methods: {
     iconStatus(status) {
       return status ? 'toggle-on' : 'toggle-off'
+    },
+    variantStatus(status) {
+      return status ? 'primary' : 'danger'
     },
     refactorName(sucursal) {
       const arraySucursal = sucursal.split('.')

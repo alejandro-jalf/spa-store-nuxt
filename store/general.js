@@ -93,6 +93,9 @@ export const state = () => ({
       ? localStorage.getItem('spastore_barra_move_touch')
       : localStorage.getItem('spastore_barra_move_touch') === 'true',
   widthWindow: 0,
+  themesComponents: localStorage.getItem('spastore_themes_components')
+    ? JSON.stringify(localStorage.getItem('spastore_themes_components'))
+    : { themeTableBody: '' },
 })
 
 export const mutations = {

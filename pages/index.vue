@@ -12,7 +12,7 @@
         :class="headerConfig"
       >
         <template #header>
-          <b-icon-gear-fill></b-icon-gear-fill>
+          <b-icon icon="gear-fill" />
           Configuraciones
         </template>
         <div class="font-weight-bold">Pagina inicial:</div>
@@ -30,11 +30,7 @@
             :block="blockButton"
             @click="setActivo(tab)"
           >
-            <b-icon-square v-if="iconActivo(tab)" scale="0.7"></b-icon-square>
-            <b-icon-check-square-fill
-              v-else
-              scale="0.7"
-            ></b-icon-check-square-fill>
+            <b-icon :icon="activoIcon(tab)" scale="0.7" />
             {{ tab }}
           </b-button>
         </div>
@@ -45,7 +41,7 @@
           :block="blockButton"
           @click="questionSaveMain()"
         >
-          <b-icon-shield-fill-check></b-icon-shield-fill-check>
+          <b-icon icon="shield-fill-check" />
           Guardar Cambios
         </b-button>
 
@@ -62,7 +58,7 @@
             :pressed="themPreferencesSys"
             @click="changeTheme('system')"
           >
-            <b-icon-tv-fill></b-icon-tv-fill>
+            <b-icon icon="tv-fill" />
             Sistema
           </b-button>
           <b-button
@@ -71,7 +67,7 @@
             :pressed="themPreferencesDar"
             @click="changeTheme('dark')"
           >
-            <b-icon-moon></b-icon-moon>
+            <b-icon icon="moon" />
             Oscuro
           </b-button>
           <b-button
@@ -80,7 +76,7 @@
             :pressed="themPreferencesLig"
             @click="changeTheme('light')"
           >
-            <b-icon-brightness-high-fill></b-icon-brightness-high-fill>
+            <b-icon icon="brightness-high-fill" />
             Claro
           </b-button>
           <b-button
@@ -89,18 +85,12 @@
             :pressed="themPreferencesSep"
             @click="changeTheme('sepia')"
           >
-            <b-icon-cup-fill></b-icon-cup-fill>
+            <b-icon icon="cup-fill" />
             Sepia
           </b-button>
           <div v-if="width < 992 || width > 1390" class="mt-4">
             <div @click="addAtajo">
-              <b-icon-square-fill
-                v-if="atajoTheme === 'false'"
-              ></b-icon-square-fill>
-              <b-icon-check-square-fill
-                v-else
-                variant="info"
-              ></b-icon-check-square-fill>
+              <b-icon :icon="atajoThemeIcon" :variant="atajoThemeVariant" />
               Agregar a menu lateral
             </div>
           </div>
@@ -115,13 +105,10 @@
 
           <div class="mt-4">
             <div @click="changeBarraInferior">
-              <b-icon-square-fill
-                v-if="barraInferior === 'false'"
-              ></b-icon-square-fill>
-              <b-icon-check-square-fill
-                v-else
-                variant="info"
-              ></b-icon-check-square-fill>
+              <b-icon
+                :icon="barraInferiorIcon"
+                :variant="barraInferiorVariant"
+              />
               Barra inferior
             </div>
           </div>
@@ -183,7 +170,7 @@
             :block="blockButton"
             @click="questionChangePassword()"
           >
-            <b-icon-key-fill></b-icon-key-fill>
+            <b-icon icon="key-fill" />
             Cambiar contraseña
           </b-button>
         </div>
@@ -193,33 +180,9 @@
 </template>
 
 <script>
-import {
-  BIconGearFill,
-  BIconSquare,
-  BIconCheckSquareFill,
-  BIconShieldFillCheck,
-  BIconKeyFill,
-  BIconMoon,
-  BIconBrightnessHighFill,
-  BIconCupFill,
-  BIconTvFill,
-  BIconSquareFill,
-} from 'bootstrap-vue'
 import { mapMutations, mapActions } from 'vuex'
 
 export default {
-  components: {
-    BIconGearFill,
-    BIconSquare,
-    BIconCheckSquareFill,
-    BIconShieldFillCheck,
-    BIconKeyFill,
-    BIconMoon,
-    BIconBrightnessHighFill,
-    BIconCupFill,
-    BIconTvFill,
-    BIconSquareFill,
-  },
   data() {
     return {
       user: this.$store.state.user.user.correo_user,
@@ -249,8 +212,24 @@ export default {
     atajoTheme() {
       return this.$store.state.general.atajoTheme
     },
+    atajoThemeIcon() {
+      return this.$store.state.general.atajoTheme !== 'false'
+        ? 'check-square-fill'
+        : 'square-fill'
+    },
+    atajoThemeVariant() {
+      return this.$store.state.general.atajoTheme !== 'false' ? 'info' : ''
+    },
     barraInferior() {
       return this.$store.state.general.barraInferior
+    },
+    barraInferiorVariant() {
+      return this.$store.state.general.barraInferior !== 'false' ? 'info' : ''
+    },
+    barraInferiorIcon() {
+      return this.$store.state.general.barraInferior !== 'false'
+        ? 'check-square-fill'
+        : 'square-fill'
     },
     backgroundInputTheme() {
       if (this.$store.state.general.themePreferences === 'system') {
@@ -373,6 +352,9 @@ export default {
     },
     iconActivo(tab) {
       return tab !== this.principal
+    },
+    activoIcon(tab) {
+      return tab !== this.principal ? 'square' : 'check-square-fill'
     },
     setActivo(tab) {
       this.principal = tab

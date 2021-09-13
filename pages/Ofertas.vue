@@ -7,7 +7,7 @@
       class="mb-3"
       @click="programarOferta()"
     >
-      <b-icon-folder-plus></b-icon-folder-plus>
+      <b-icon icon="folder-plus" />
       Programar nueva oferta
     </b-button>
     <div v-if="viewCrearOferta" id="groupDate">
@@ -76,7 +76,6 @@
 </template>
 <script>
 import { mapMutations } from 'vuex'
-import { BIconFolderPlus } from 'bootstrap-vue'
 import OfertaForm from '../components/OfertaForm'
 import OfertaLista from '../components/OfertaLista'
 import utils from '../modules/utils'
@@ -85,7 +84,6 @@ export default {
   components: {
     OfertaForm,
     OfertaLista,
-    BIconFolderPlus,
   },
   data() {
     return {

@@ -17,10 +17,7 @@
             variant="info"
             @click="setSearchBy('codigo')"
           >
-            <b-icon-check-square-fill
-              v-if="iconSelectedCodigo"
-            ></b-icon-check-square-fill>
-            <b-icon-square v-else></b-icon-square>
+            <b-icon :icon="selectedCodigoIcon" />
             Codigo
           </b-button>
           <b-button
@@ -28,10 +25,7 @@
             variant="info"
             @click="setSearchBy('nombre')"
           >
-            <b-icon-check-square-fill
-              v-if="iconSelectedName"
-            ></b-icon-check-square-fill>
-            <b-icon-square v-else></b-icon-square>
+            <b-icon :icon="selectedNameIcon" />
             Nombre
           </b-button>
         </b-button-group>
@@ -83,7 +77,7 @@
         :block="blockButton"
         @click="cleanListArticles()"
       >
-        <b-icon-archive></b-icon-archive>
+        <b-icon icon="archive" />
         Limpiar lista de articulos encontrados
       </b-button>
       <b-alert :variant="variantAlert" show>
@@ -109,7 +103,7 @@
         class="mb-1"
         @click="cleanDetails()"
       >
-        <b-icon-archive></b-icon-archive>
+        <b-icon icon="archive" />
         Limpiar detalles del articulo
       </b-button>
       <existencias-articulo-details
@@ -124,7 +118,6 @@
 </template>
 
 <script>
-import { BIconSquare, BIconCheckSquareFill, BIconArchive } from 'bootstrap-vue'
 import { mapMutations, mapActions } from 'vuex'
 import ExistenciasArticuloTable from '../components/ExistenciasArticuloTable'
 import ExistenciasArticuloCard from '../components/ExistenciasArticuloCard'
@@ -137,9 +130,6 @@ export default {
     ExistenciasArticuloCard,
     ExistenciasArticuloDetails,
     FloatButton,
-    BIconSquare,
-    BIconCheckSquareFill,
-    BIconArchive,
   },
   data() {
     return {
@@ -213,8 +203,18 @@ export default {
     iconSelectedCodigo() {
       return this.inputSearch.selected === 'codigo'
     },
+    selectedCodigoIcon() {
+      return this.inputSearch.selected === 'codigo'
+        ? 'check-square-fill'
+        : 'square'
+    },
     iconSelectedName() {
       return this.inputSearch.selected === 'nombre'
+    },
+    selectedNameIcon() {
+      return this.inputSearch.selected === 'nombre'
+        ? 'check-square-fill'
+        : 'square'
     },
     nameInputSearch() {
       if (this.inputSearch.selected === 'nombre') return 'searchName'

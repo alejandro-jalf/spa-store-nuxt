@@ -15,7 +15,7 @@
       :block="blockButton"
       @click="drawFondo()"
     >
-      <b-icon-image-fill></b-icon-image-fill>
+      <b-icon icon="image-fill" />
       Visualizar
     </b-button>
     <b-form-input
@@ -36,7 +36,7 @@
         :href="publicidad.href"
         download="Menu del dia.jpg"
       >
-        <b-icon-download></b-icon-download>
+        <b-icon icon="download" />
         Descargar
       </a>
       <img
@@ -59,14 +59,11 @@
 
 <script>
 import { mapMutations } from 'vuex'
-import { BIconDownload, BIconImageFill } from 'bootstrap-vue'
 import MenuCocinaForm from '../components/MenuCocinaForm.vue'
 import utils from '../modules/utils'
 
 export default {
   components: {
-    BIconDownload,
-    BIconImageFill,
     MenuCocinaForm,
   },
   data() {

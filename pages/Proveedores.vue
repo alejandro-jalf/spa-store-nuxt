@@ -11,7 +11,7 @@
     >
       <template #cell(Acciones)="row">
         <b-button variant="warning" size="sm" class="mb-1" @click="row">
-          <b-icon-pencil-square></b-icon-pencil-square>
+          <b-icon icon="pencil-square" />
         </b-button>
       </template>
     </b-table>
@@ -19,12 +19,7 @@
 </template>
 
 <script>
-import { BIconPencilSquare } from 'bootstrap-vue'
-
 export default {
-  components: {
-    BIconPencilSquare,
-  },
   data() {
     return {
       fields: [
