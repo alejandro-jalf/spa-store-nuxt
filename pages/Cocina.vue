@@ -87,8 +87,6 @@ export default {
   },
   mounted() {
     this.loadMeses()
-    // eslint-disable-next-line no-console
-    console.log(this.$store.state.general.themesComponents)
   },
   methods: {
     ...mapActions({

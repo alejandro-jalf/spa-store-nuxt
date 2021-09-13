@@ -1,5 +1,6 @@
 <template>
   <b-modal
+    id="alertSimple"
     :visible="alertShow"
     :title="alertTitle"
     :header-bg-variant="alertHeaderBg"
@@ -57,6 +58,13 @@ export default {
     alertHeaderText() {
       return this.$store.state.general.alert.headerTexColor
     },
+  },
+  mounted() {
+    this.$root.$on('bv::modal::hidden', (evt) => {
+      if (evt.componentId === 'alertSimple') {
+        this.hideAlertDialog()
+      }
+    })
   },
   methods: {
     ...mapMutations({

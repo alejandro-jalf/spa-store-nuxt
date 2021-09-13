@@ -95,7 +95,7 @@ export const state = () => ({
   widthWindow: 0,
   themesComponents: localStorage.getItem('spastore_themes_components')
     ? JSON.stringify(localStorage.getItem('spastore_themes_components'))
-    : { themeTableBody: '' },
+    : { themeTableBody: '', themeTableHeader: '', themeCardBody: '' },
 })
 
 export const mutations = {
