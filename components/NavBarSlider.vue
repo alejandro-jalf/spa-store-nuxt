@@ -26,28 +26,28 @@
           <b-button
             :variant="variantTheme"
             :pressed="themPreferencesSys"
-            @click="setThemePreferences('system')"
+            @click="changeThemePreferences('system')"
           >
             <b-icon icon="tv-fill" />
           </b-button>
           <b-button
             :variant="variantTheme"
             :pressed="themPreferencesDar"
-            @click="setThemePreferences('dark')"
+            @click="changeThemePreferences('dark')"
           >
             <b-icon icon="moon" />
           </b-button>
           <b-button
             :variant="variantTheme"
             :pressed="themPreferencesLig"
-            @click="setThemePreferences('light')"
+            @click="changeThemePreferences('light')"
           >
             <b-icon icon="brightness-high-fill" />
           </b-button>
           <b-button
             :variant="variantTheme"
             :pressed="themPreferencesSep"
-            @click="setThemePreferences('sepia')"
+            @click="changeThemePreferences('sepia')"
           >
             <b-icon icon="cup-fill" />
           </b-button>
@@ -84,7 +84,7 @@
 </template>
 
 <script>
-import { mapMutations } from 'vuex'
+import { mapMutations, mapActions } from 'vuex'
 
 export default {
   props: {
@@ -190,8 +190,10 @@ export default {
     isActive(nickname) {
       return this.$store.state.general.tabActual.trim() === nickname.trim()
     },
+    ...mapActions({
+      changeThemePreferences: 'general/changeThemePreferences',
+    }),
     ...mapMutations({
-      setThemePreferences: 'general/setThemePreferences',
       setLoading: 'general/setLoading',
     }),
     async updateDataUser() {

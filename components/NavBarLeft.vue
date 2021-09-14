@@ -18,28 +18,28 @@
       <b-button
         variant="outline-light"
         :pressed="themPreferencesSys"
-        @click="setThemePreferences('system')"
+        @click="changeThemePreferences('system')"
       >
         <b-icon icon="tv-fill" />
       </b-button>
       <b-button
         variant="outline-light"
         :pressed="themPreferencesDar"
-        @click="setThemePreferences('dark')"
+        @click="changeThemePreferences('dark')"
       >
         <b-icon icon="moon" />
       </b-button>
       <b-button
         variant="outline-light"
         :pressed="themPreferencesLig"
-        @click="setThemePreferences('light')"
+        @click="changeThemePreferences('light')"
       >
         <b-icon icon="brightness-high-fill" />
       </b-button>
       <b-button
         variant="outline-light"
         :pressed="themPreferencesSep"
-        @click="setThemePreferences('sepia')"
+        @click="changeThemePreferences('sepia')"
       >
         <b-icon icon="cup-fill" />
       </b-button>
@@ -121,12 +121,12 @@ export default {
   },
   methods: {
     ...mapMutations({
-      setThemePreferences: 'general/setThemePreferences',
       setLoading: 'general/setLoading',
     }),
     ...mapActions({
       logout: 'user/logout',
       refreshDataUser: 'user/refreshDataUser',
+      changeThemePreferences: 'general/changeThemePreferences',
     }),
     async updateDataUser() {
       this.setLoading(true)

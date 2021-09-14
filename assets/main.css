@@ -25,6 +25,19 @@
   color: #271601;
 }
 
+.container-gen {
+  cursor: pointer;
+  position: relative;
+  border-left: 9px solid #00c4d6;
+  max-width: 800px;
+  box-shadow: 2px 2px 2px #e6e6e6;
+}
+
+.container-gen-dark {
+  border-left: 9px solid #007883;
+  box-shadow: 2px 2px 2px #5d5d5d;
+}
+
 .darkBodyCard {
   /* background: #0f202e; */
   background: #292929;

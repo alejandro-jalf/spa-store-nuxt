@@ -46,7 +46,7 @@
             block
             :pressed="themPreferencesSys"
             class="text-left"
-            @click="setThemePreferences('system')"
+            @click="changeThemePreferences('system')"
           >
             <b-icon icon="tv-fill" />
             Sistema
@@ -56,7 +56,7 @@
             block
             :pressed="themPreferencesDar"
             class="text-left"
-            @click="setThemePreferences('dark')"
+            @click="changeThemePreferences('dark')"
           >
             <b-icon icon="moon" />
             Oscuro
@@ -66,7 +66,7 @@
             block
             :pressed="themPreferencesLig"
             class="text-left"
-            @click="setThemePreferences('light')"
+            @click="changeThemePreferences('light')"
           >
             <b-icon icon="brightness-high-fill" />
             Claro
@@ -76,7 +76,7 @@
             block
             :pressed="themPreferencesSep"
             class="text-left"
-            @click="setThemePreferences('sepia')"
+            @click="changeThemePreferences('sepia')"
           >
             <b-icon icon="cup-fill" />
             Sepia
@@ -218,9 +218,9 @@ export default {
     ...mapActions({
       logout: 'user/logout',
       refreshDataUser: 'user/refreshDataUser',
+      changeThemePreferences: 'general/changeThemePreferences',
     }),
     ...mapMutations({
-      setThemePreferences: 'general/setThemePreferences',
       setLoading: 'general/setLoading',
     }),
     async updateDataUser() {

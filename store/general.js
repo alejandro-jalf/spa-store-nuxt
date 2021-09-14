@@ -94,8 +94,15 @@ export const state = () => ({
       : localStorage.getItem('spastore_barra_move_touch') === 'true',
   widthWindow: 0,
   themesComponents: localStorage.getItem('spastore_themes_components')
-    ? JSON.stringify(localStorage.getItem('spastore_themes_components'))
-    : { themeTableBody: '', themeTableHeader: '', themeCardBody: '' },
+    ? JSON.parse(localStorage.getItem('spastore_themes_components'))
+    : {
+        themeTableBody: '',
+        themeTableHeader: '',
+        themeItemList: '',
+        themeCardBody: 'containerCard',
+        themeCard2Body: '',
+        backgroundVariantBody: 'light',
+      },
 })
 
 export const mutations = {
@@ -151,6 +158,10 @@ export const mutations = {
   setTabActual(state, nameTab) {
     state.tabActual = nameTab
   },
+  setThemesComponents(state, themes) {
+    state.themesComponents = themes
+    localStorage.setItem('spastore_themes_components', JSON.stringify(themes))
+  },
   setThemePreferences(state, theme) {
     if (theme !== state.themePreferences) {
       const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
@@ -186,5 +197,57 @@ export const mutations = {
   },
   setWidthWindow(state, width) {
     state.widthWindow = width
+  },
+}
+
+export const actions = {
+  changeThemePreferences({ commit }, themes) {
+    commit('setThemePreferences', themes)
+
+    const filterOption = (
+      theme = 'system',
+      optionLight = 'Light',
+      optionDark = 'dark',
+      optionSepia = 'sepia'
+    ) => {
+      if (theme === 'system') {
+        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
+          .matches
+        if (systemDark) return optionDark
+        return optionLight
+      } else if (theme === 'dark') return optionDark
+      else if (theme === 'sepia') return optionSepia
+      return optionLight
+    }
+
+    const themesComponents = {
+      themeTableBody: filterOption(
+        themes,
+        '',
+        'darkThemeTableBody',
+        'sepiaThemeItemList'
+      ),
+      themeTableHeader: '',
+      themeCardBody: filterOption(
+        themes,
+        'containerCard',
+        'darkBodyCard containerCarDark',
+        'sepiaBodyCard containerCard'
+      ),
+      themeCard2Body: filterOption(
+        themes,
+        'containerCard',
+        'darkBodyCard container-gen-dark',
+        'sepiaBodyCard'
+      ),
+      themeItemList: filterOption(
+        themes,
+        '',
+        'darkThemeItemList',
+        'sepiaThemeItemList'
+      ),
+      backgroundVariantBody: filterOption(themes),
+    }
+    commit('setThemesComponents', themesComponents)
   },
 }

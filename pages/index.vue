@@ -333,6 +333,7 @@ export default {
     },
     ...mapActions({
       logout: 'user/logout',
+      changeThemePreferences: 'general/changeThemePreferences',
     }),
     ...mapMutations({
       setLoading: 'general/setLoading',
@@ -340,12 +341,11 @@ export default {
       showAlertDialogOption: 'general/showAlertDialogOption',
       hideAlertDialogOption: 'general/hideAlertDialogOption',
       setUser: 'user/setUser',
-      setThemePreferences: 'general/setThemePreferences',
       setAtajoTheme: 'general/setAtajoTheme',
       setBarraInferior: 'general/setBarraInferior',
     }),
     changeTheme(theme) {
-      this.setThemePreferences(theme)
+      this.changeThemePreferences(theme)
     },
     activo(tab) {
       return tab === this.principal

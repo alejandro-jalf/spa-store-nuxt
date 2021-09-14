@@ -56,33 +56,13 @@ export default {
   },
   computed: {
     variantTheme() {
-      if (this.$store.state.general.themePreferences === 'system') {
-        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
-          .matches
-        if (systemDark) return 'darkBodyCard container-gen-dark'
-        return ''
-      } else if (this.$store.state.general.themePreferences === 'dark')
-        return 'darkBodyCard container-gen-dark'
-      else if (this.$store.state.general.themePreferences === 'sepia')
-        return 'sepiaBodyCard'
-      else return ''
+      return this.$store.state.general.themesComponents.themeCard2Body
     },
   },
 }
 </script>
 
 <style scoped>
-.container-gen {
-  cursor: pointer;
-  position: relative;
-  border-left: 9px solid #00c4d6;
-  max-width: 800px;
-  box-shadow: 2px 2px 2px #e6e6e6;
-}
-.container-gen-dark {
-  border-left: 9px solid #007883;
-  box-shadow: 2px 2px 2px #5d5d5d;
-}
 .card-img {
   max-width: 180px;
 }

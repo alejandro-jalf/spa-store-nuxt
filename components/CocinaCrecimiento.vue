@@ -131,16 +131,7 @@ export default {
       return this.$store.state.general.widthWindow
     },
     variantTheme() {
-      if (this.$store.state.general.themePreferences === 'system') {
-        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
-          .matches
-        if (systemDark) return 'darkBodyCard containerCarDark'
-        return 'containerCard'
-      } else if (this.$store.state.general.themePreferences === 'dark')
-        return 'darkBodyCard containerCarDark'
-      else if (this.$store.state.general.themePreferences === 'sepia')
-        return 'sepiaBodyCard containerCard'
-      else return 'containerCard'
+      return this.$store.state.general.themesComponents.themeCardBody
     },
     refactorMeses() {
       const arrayMes = []
@@ -173,16 +164,7 @@ export default {
         : 'circle'
     },
     variantThemeTableBody() {
-      if (this.$store.state.general.themePreferences === 'system') {
-        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
-          .matches
-        if (systemDark) return 'darkThemeTableBody'
-        return ''
-      } else if (this.$store.state.general.themePreferences === 'dark')
-        return 'darkThemeTableBody'
-      else if (this.$store.state.general.themePreferences === 'sepia')
-        return 'sepiaThemeItemList'
-      else return ''
+      return this.$store.state.general.themesComponents.themeTableBody
     },
     fields() {
       return this.$store.state.cocina.dataMes.fieldsCrecimiento
