@@ -94,18 +94,6 @@ export default {
     atajoTheme() {
       return this.$store.state.general.atajoTheme
     },
-    themeThis() {
-      if (this.$store.state.general.themePreferences === 'system') {
-        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
-          .matches
-        if (systemDark) return 'this thisThemeDark'
-        return 'this'
-      } else if (this.$store.state.general.themePreferences === 'dark')
-        return 'this thisThemeDark'
-      else if (this.$store.state.general.themePreferences === 'sepia')
-        return 'this thisThemeSepia'
-      else return 'this'
-    },
     tabsAccess() {
       const user = this.$store.state.user.user
       const tabsPermission = this.tabs.filter((tab) => {

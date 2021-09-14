@@ -42,16 +42,7 @@ export default {
   },
   computed: {
     variantThemeTableBody() {
-      if (this.$store.state.general.themePreferences === 'system') {
-        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
-          .matches
-        if (systemDark) return 'darkThemeTableBody'
-        return ''
-      } else if (this.$store.state.general.themePreferences === 'dark')
-        return 'darkThemeTableBody'
-      else if (this.$store.state.general.themePreferences === 'sepia')
-        return 'sepiaThemeItemList'
-      else return ''
+      return this.$store.state.general.themesComponents.themeTableBody
     },
     listArticulosrefactor() {
       let arrayAticulos = []

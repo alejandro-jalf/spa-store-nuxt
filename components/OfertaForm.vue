@@ -234,26 +234,10 @@ export default {
   },
   computed: {
     backgroundInputTheme() {
-      if (this.$store.state.general.themePreferences === 'system') {
-        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
-          .matches
-        if (systemDark) return 'backgroundInputDark'
-        return 'backgroundInput'
-      } else if (this.$store.state.general.themePreferences === 'dark')
-        return 'backgroundInputDark'
-      else return 'backgroundInput'
+      return this.$store.state.general.themesComponents.themeInputBackground
     },
     variantTheme() {
-      if (this.$store.state.general.themePreferences === 'system') {
-        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
-          .matches
-        if (systemDark) return 'darkBodyCard container-gen-dark'
-        return ''
-      } else if (this.$store.state.general.themePreferences === 'dark')
-        return 'darkBodyCard container-gen-dark'
-      else if (this.$store.state.general.themePreferences === 'sepia')
-        return 'sepiaBodyCard'
-      else return ''
+      return this.$store.state.general.themesComponents.themeCard2Body
     },
     editandoOferta() {
       return this.$store.state.ofertas.editandoOferta

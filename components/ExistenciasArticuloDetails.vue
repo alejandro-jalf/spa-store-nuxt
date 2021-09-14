@@ -323,16 +323,7 @@ export default {
   },
   computed: {
     variantBodyCard() {
-      if (this.$store.state.general.themePreferences === 'system') {
-        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
-          .matches
-        if (systemDark) return 'darkBodyCard'
-        return ''
-      } else if (this.$store.state.general.themePreferences === 'dark')
-        return 'darkBodyCard'
-      else if (this.$store.state.general.themePreferences === 'sepia')
-        return 'sepiaBodyCard'
-      else return ''
+      return this.$store.state.general.themesComponents.themeCardBody
     },
     detailsProveedor() {
       if (

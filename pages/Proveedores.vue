@@ -50,20 +50,10 @@ export default {
   },
   computed: {
     width() {
-      // 767
       return this.$store.state.general.widthWindow
     },
     variantItem() {
-      if (this.$store.state.general.themePreferences === 'system') {
-        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
-          .matches
-        if (systemDark) return 'darkThemeItemList'
-        return ''
-      } else if (this.$store.state.general.themePreferences === 'dark')
-        return 'darkThemeItemList'
-      else if (this.$store.state.general.themePreferences === 'sepia')
-        return 'sepiaThemeItemList'
-      else return ''
+      return this.$store.state.general.themesComponents.themeItemList
     },
   },
 }

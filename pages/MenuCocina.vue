@@ -106,14 +106,7 @@ export default {
       return this.$store.state.general.widthWindow <= 500
     },
     isDarkTheme() {
-      if (this.$store.state.general.themePreferences === 'system') {
-        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
-          .matches
-        if (systemDark) return 'outline-info'
-        return 'info'
-      } else if (this.$store.state.general.themePreferences === 'dark')
-        return 'outline-info'
-      else return 'info'
+      return this.$store.state.general.themesComponents.themeVariantButton2
     },
   },
   mounted() {

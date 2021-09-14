@@ -232,49 +232,16 @@ export default {
         : 'square-fill'
     },
     backgroundInputTheme() {
-      if (this.$store.state.general.themePreferences === 'system') {
-        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
-          .matches
-        if (systemDark) return 'passwordChange backgroundInputDark'
-        return 'passwordChange backgroundInput'
-      } else if (this.$store.state.general.themePreferences === 'dark')
-        return 'passwordChange backgroundInputDark'
-      else return 'passwordChange backgroundInput'
+      return this.$store.state.general.themesComponents.themeInputBackground
     },
     headerConfig() {
-      if (this.$store.state.general.themePreferences === 'system') {
-        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
-          .matches
-        if (systemDark) return 'darkBodyCard'
-        return ''
-      }
-      if (this.$store.state.general.themePreferences === 'sepia')
-        return 'sepiaBodyCard'
-      return this.$store.state.general.themePreferences === 'dark'
-        ? 'darkBodyCard'
-        : ''
+      return this.$store.state.general.themesComponents.themeCardHeader
     },
     variantCard() {
-      if (this.$store.state.general.themePreferences === 'system') {
-        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
-          .matches
-        if (systemDark) return 'dark'
-        return 'info'
-      }
-      return this.$store.state.general.themePreferences === 'dark'
-        ? 'dark'
-        : 'info'
+      return this.$store.state.general.themesComponents.themeBgCardHeader
     },
     themeHr() {
-      if (this.$store.state.general.themePreferences === 'system') {
-        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
-          .matches
-        if (systemDark) return 'bg-white'
-        return ''
-      }
-      return this.$store.state.general.themePreferences === 'dark'
-        ? 'bg-white'
-        : ''
+      return this.$store.state.general.themesComponents.themeHR
     },
     themPreferencesSys() {
       return this.$store.state.general.themePreferences === 'system'
@@ -289,15 +256,7 @@ export default {
       return this.$store.state.general.themePreferences === 'sepia'
     },
     variantTheme() {
-      if (this.$store.state.general.themePreferences === 'system') {
-        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
-          .matches
-        if (systemDark) return 'outline-light'
-        return 'outline-dark'
-      }
-      return this.$store.state.general.themePreferences === 'dark'
-        ? 'outline-light'
-        : 'outline-dark'
+      return this.$store.state.general.themesComponents.themeVariantButton
     },
     listAccess() {
       if (this.$store.state.user.user.access_to_user) {

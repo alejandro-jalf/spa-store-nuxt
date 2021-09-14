@@ -313,22 +313,10 @@ export default {
       return this.$store.state.general.widthWindow
     },
     backgroundInputTheme() {
-      if (this.$store.state.general.themePreferences === 'system') {
-        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
-          .matches
-        if (systemDark) return 'backgroundInputDark'
-        return 'backgroundInput'
-      } else if (this.$store.state.general.themePreferences === 'dark')
-        return 'backgroundInputDark'
-      else return 'backgroundInput'
+      return this.$store.state.general.themesComponents.themeInputBackground
     },
   },
   mounted() {
-    // this.setDateSelected(dateToday)
-    // document.querySelector('#fecha').value =
-    // this.$refs.fechaMenu.$attrs.value = dateToday
-    // eslint-disable-next-line no-console
-    // console.log(dateToday)
     this.$root.$on('bv::collapse::state', (collapseId, isJustShown) => {
       if (collapseId === 'dataCollapseAntojitos') {
         if (!isJustShown) this.iconCollapseAntojitos = true

@@ -151,36 +151,13 @@ export default {
       return this.$store.state.general.widthWindow <= 500
     },
     variantAlert() {
-      if (this.$store.state.general.themePreferences === 'system') {
-        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
-          .matches
-        if (systemDark) return 'info'
-        return 'info'
-      } else if (this.$store.state.general.themePreferences === 'dark')
-        return 'info'
-      else if (this.$store.state.general.themePreferences === 'sepia')
-        return 'dark'
-      else return 'info'
+      return this.$store.state.general.themesComponents.themeVariantAlert
     },
     variantClean() {
-      if (this.$store.state.general.themePreferences === 'system') {
-        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
-          .matches
-        if (systemDark) return 'outline-warning'
-        return 'warning'
-      } else if (this.$store.state.general.themePreferences === 'dark')
-        return 'outline-warning'
-      else return 'warning'
+      return this.$store.state.general.themesComponents.themeButtonClean
     },
     backgroundInputTheme() {
-      if (this.$store.state.general.themePreferences === 'system') {
-        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
-          .matches
-        if (systemDark) return 'backgroundInputDark'
-        return 'backgroundInput'
-      } else if (this.$store.state.general.themePreferences === 'dark')
-        return 'backgroundInputDark'
-      else return 'backgroundInput'
+      return this.$store.state.general.themesComponents.themeInputBackground
     },
     label() {
       return this.inputSearch.selected === 'nombre'

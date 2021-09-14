@@ -100,7 +100,21 @@ export const state = () => ({
         themeTableHeader: '',
         themeItemList: '',
         themeCardBody: 'containerCard',
+        themeCardHeader: '',
+        themeBgCardHeader: '',
         themeCard2Body: '',
+        themeInputBackground: 'backgroundInput',
+        themeMenuBackground: '',
+        themeNav: 'info',
+        themeNavBottom: 'bg-info',
+        themeVariantButton: 'outline-dark',
+        themeVariantButton2: 'outline-dark',
+        themeButtonClose: 'info',
+        themeItemList2: 'light',
+        themeTextSlider: 'dark',
+        themeVariantAlert: 'info',
+        themeButtonClean: 'warning',
+        themeHR: '',
         backgroundVariantBody: 'light',
       },
 })
@@ -234,6 +248,13 @@ export const actions = {
         'darkBodyCard containerCarDark',
         'sepiaBodyCard containerCard'
       ),
+      themeCardHeader: filterOption(
+        themes,
+        '',
+        'darkBodyCard',
+        'sepiaBodyCard'
+      ),
+      themeBgCardHeader: filterOption(themes, 'info', 'dark', 'info'),
       themeCard2Body: filterOption(
         themes,
         'containerCard',
@@ -246,6 +267,38 @@ export const actions = {
         'darkThemeItemList',
         'sepiaThemeItemList'
       ),
+      themeInputBackground: filterOption(
+        themes,
+        'backgroundInput',
+        'backgroundInputDark',
+        ''
+      ),
+      themeMenuBackground: filterOption(
+        themes,
+        '',
+        'menuDark',
+        'sepiaBodyCard'
+      ),
+      themeNav: filterOption(themes, 'info', 'dark', 'info'),
+      themeNavBottom: filterOption(themes, 'bg-info', 'bg-dark', 'bg-info'),
+      themeVariantButton: filterOption(
+        themes,
+        'outline-dark',
+        'outline-light',
+        'outline-dark'
+      ),
+      themeVariantButton2: filterOption(themes, 'info', 'outline-info', 'info'),
+      themeButtonClose: filterOption(themes, 'info', 'outline-info', 'info'),
+      themeItemList2: filterOption(themes, 'light', 'dark', 'light'),
+      themeTextSlider: filterOption(themes, 'dark', 'light', 'dark'),
+      themeVariantAlert: filterOption(themes, 'info', 'info', 'dark'),
+      themeButtonClean: filterOption(
+        themes,
+        'warning',
+        'outline-warning',
+        'warning'
+      ),
+      themeHR: filterOption(themes, '', 'bg-white', ''),
       backgroundVariantBody: filterOption(themes),
     }
     commit('setThemesComponents', themesComponents)

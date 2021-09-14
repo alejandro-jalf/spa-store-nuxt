@@ -143,16 +143,7 @@ export default {
   },
   computed: {
     variantTheme() {
-      if (this.$store.state.general.themePreferences === 'system') {
-        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
-          .matches
-        if (systemDark) return 'menuDark'
-        return ''
-      } else if (this.$store.state.general.themePreferences === 'dark')
-        return 'menuDark'
-      else if (this.$store.state.general.themePreferences === 'sepia')
-        return 'sepiaBodyCard'
-      else return ''
+      return this.$store.state.general.themesComponents.themeMenuBackground
     },
     themPreferencesSys() {
       return this.$store.state.general.themePreferences === 'system'
@@ -172,14 +163,7 @@ export default {
         : 'dark'
     },
     variantNav() {
-      if (this.$store.state.general.themePreferences === 'system') {
-        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
-          .matches
-        if (systemDark) return 'dark'
-        return 'info'
-      } else if (this.$store.state.general.themePreferences === 'dark')
-        return 'dark'
-      else return 'info'
+      return this.$store.state.general.themesComponents.themeNav
     },
     tabActual() {
       return this.$store.state.general.tabActual
@@ -250,9 +234,5 @@ export default {
   width: 300px;
   padding: 10px;
   border-radius: 3px;
-}
-
-.menuDark {
-  background: rgb(211, 211, 211);
 }
 </style>

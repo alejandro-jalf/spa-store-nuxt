@@ -38,6 +38,10 @@
   box-shadow: 2px 2px 2px #5d5d5d;
 }
 
+.menuDark {
+  background: rgb(211, 211, 211);
+}
+
 .darkBodyCard {
   /* background: #0f202e; */
   background: #292929;

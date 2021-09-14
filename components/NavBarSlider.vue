@@ -120,15 +120,7 @@ export default {
       return this.$store.state.general.themePreferences === 'sepia'
     },
     variantTheme() {
-      if (this.$store.state.general.themePreferences === 'system') {
-        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
-          .matches
-        if (systemDark) return 'outline-light'
-        return 'outline-dark'
-      }
-      return this.$store.state.general.themePreferences === 'dark'
-        ? 'outline-light'
-        : 'outline-dark'
+      return this.$store.state.general.themesComponents.themeVariantButton
     },
     tabsAccess() {
       const user = this.$store.state.user.user
@@ -143,47 +135,16 @@ export default {
       return tabsPermission
     },
     variantCloseSesion() {
-      if (this.$store.state.general.themePreferences === 'system') {
-        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
-          .matches
-        if (systemDark) return 'outline-info'
-        return 'info'
-      }
-      return this.$store.state.general.themePreferences === 'dark'
-        ? 'outline-info'
-        : 'info'
+      return this.$store.state.general.themesComponents.themeButtonClose
     },
     variantList() {
-      if (this.$store.state.general.themePreferences === 'system') {
-        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
-          .matches
-        if (systemDark) return 'dark'
-        return 'light'
-      }
-      return this.$store.state.general.themePreferences === 'dark'
-        ? 'dark'
-        : 'light'
+      return this.$store.state.general.themesComponents.themeItemList2
     },
     textSlider() {
-      if (this.$store.state.general.themePreferences === 'system') {
-        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
-          .matches
-        if (systemDark) return 'light'
-        return 'dark'
-      }
-      return this.$store.state.general.themePreferences === 'dark'
-        ? 'light'
-        : 'dark'
+      return this.$store.state.general.themesComponents.themeTextSlider
     },
     bgSlider() {
-      if (this.$store.state.general.themePreferences === 'system') {
-        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
-          .matches
-        if (systemDark) return 'dark'
-        return 'light'
-      } else if (this.$store.state.general.themePreferences === 'dark')
-        return 'dark'
-      else return 'light'
+      return this.$store.state.general.themesComponents.themeItemList2
     },
   },
   methods: {

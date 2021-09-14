@@ -113,26 +113,10 @@ export default {
   },
   computed: {
     backgroundMenu() {
-      if (this.$store.state.general.themePreferences === 'system') {
-        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
-          .matches
-        if (systemDark) return 'bg-dark'
-        return 'bg-info'
-      } else if (this.$store.state.general.themePreferences === 'dark')
-        return 'bg-dark'
-      else return 'bg-info'
+      return this.$store.state.general.themesComponents.themeNavBottom
     },
     variantTheme() {
-      if (this.$store.state.general.themePreferences === 'system') {
-        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
-          .matches
-        if (systemDark) return 'menuDark'
-        return ''
-      } else if (this.$store.state.general.themePreferences === 'dark')
-        return 'menuDark'
-      else if (this.$store.state.general.themePreferences === 'sepia')
-        return 'sepiaBodyCard'
-      else return ''
+      return this.$store.state.general.themesComponents.themeMenuBackground
     },
     themPreferencesSys() {
       return this.$store.state.general.themePreferences === 'system'
