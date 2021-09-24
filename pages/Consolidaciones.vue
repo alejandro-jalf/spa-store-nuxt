@@ -1,5 +1,18 @@
 <template>
   <div class="container-consolidaciones">
+    <div class="footerConexiones">
+      <span class="mr-3 mt-2">
+        <span class="font-weight-bold">Sucursal: </span>
+        {{ sucursal }}
+      </span>
+      <b-button
+        v-if="accessChangeSucursal"
+        variant="success"
+        @click="alertShow = true"
+      >
+        Cambiar sucursal
+      </b-button>
+    </div>
     <div class="containerInp">
       <b-input-group prepend="Del">
         <b-form-datepicker
@@ -40,14 +53,8 @@
         {{ utils.toHour(row.item.CantidadRegular) }}
       </template>
     </b-table>
-    <div class="footerConexiones">
-      <span class="mr-3 mt-2">
-        <span class="font-weight-bold">Sucursal: </span>
-        {{ sucursal }}
-      </span>
-      <b-button variant="success"> Cambiar sucursal </b-button>
-    </div>
     <b-modal
+      id="alertSucursal"
       :visible="alertShow"
       title="Cambiando sucursal"
       header-bg-variant="warning"
@@ -55,15 +62,29 @@
       :centered="true"
     >
       <b-container fluid>
-        <b-form-select v-model="selected" :options="options"></b-form-select>
+        <b-form-select
+          :value="suc"
+          :options="options"
+          @change="selectSucursal"
+        ></b-form-select>
       </b-container>
 
       <template #modal-footer>
         <div class="w-100">
-          <b-button variant="primary" size="sm" class="float-right">
+          <b-button
+            variant="primary"
+            size="sm"
+            class="float-right"
+            @click="updateSucursal"
+          >
             Aceptar
           </b-button>
-          <b-button variant="secondary" size="sm" class="float-right mr-2">
+          <b-button
+            variant="secondary"
+            size="sm"
+            class="float-right mr-2"
+            @click="hideAlertDialog"
+          >
             Cancelar
           </b-button>
         </div>
@@ -79,7 +100,7 @@ import utils from '../modules/utils'
 export default {
   data() {
     return {
-      alertShow: true,
+      alertShow: false,
       dateStar: '',
       dateEnd: '',
       fields: [
@@ -132,6 +153,12 @@ export default {
     variantThemeTableBody() {
       return this.$store.state.general.themesComponents.themeTableBody
     },
+    suc() {
+      return this.$store.state.consolidaciones.sucursal
+    },
+    accessChangeSucursal() {
+      return this.$store.state.user.user.tipo_user === 'manager'
+    },
   },
   mounted() {
     const tableConsolidaciones = document.getElementById('tableConsolidaciones')
@@ -145,6 +172,8 @@ export default {
     this.dateStar = now
     this.dateEnd = now
 
+    this.selected = this.$store.state.consolidaciones.sucursal
+
     if (tableConsolidaciones) {
       tableConsolidaciones.addEventListener('touchstart', (evt) => {
         this.setMoveTouch(false)
@@ -153,6 +182,13 @@ export default {
         this.setMoveTouch(true)
       })
     }
+    this.$root.$on('bv::modal::hidden', (evt) => {
+      if (evt.componentId === 'alertSucursal') {
+        this.hideAlertDialog()
+      }
+    })
+
+    this.setSucursalForUser()
   },
   methods: {
     ...mapMutations({
@@ -169,11 +205,29 @@ export default {
       const response = await this.changeData([
         this.dateStar.replace(/-/g, ''),
         this.dateEnd.replace(/-/g, ''),
-        'ZR',
+        this.$store.state.consolidaciones.sucursal,
       ])
       this.setLoading(false)
       if (!response.success)
         this.showAlertDialog([response.message, 'Error inesperado'])
+    },
+    selectSucursal(sucursal) {
+      this.selected = sucursal
+    },
+    updateSucursal() {
+      this.setSucursal(this.selected)
+      this.hideAlertDialog()
+    },
+    hideAlertDialog() {
+      this.alertShow = false
+    },
+    setSucursalForUser() {
+      if (!this.accessChangeSucursal) {
+        const sucursalUser = utils.getSucursalByName(
+          this.$store.state.user.user.sucursal_user
+        )
+        this.setSucursal(sucursalUser)
+      }
     },
   },
 }
@@ -190,6 +244,7 @@ export default {
   width: 100%;
   padding: 10px;
   padding-right: 10px;
+  margin-bottom: 30px;
 }
 
 .containerInp {

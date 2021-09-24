@@ -37,7 +37,21 @@ const refactorHora = (hour) => {
   return arrayHour[0] + ':' + arrayHour[1] + ' ' + amPm
 }
 
+const sucursalesByName = {
+  ZARAGOZA: 'ZR',
+  VICTORIA: 'VC',
+  OLUTA: 'OU',
+  JALTIPAN: 'JL',
+  BODEGA: 'BO',
+}
+
 const utils = {
+  getSucursalByName: (sucursal = 'zaragoza') => {
+    const sucursalFinded = sucursalesByName[`${sucursal.toUpperCase()}`]
+    if (sucursalFinded) return sucursalFinded
+    return 'ZR'
+  },
+
   toDate: (stringDate = '2021-08-24T00:00:00') => {
     const splitDate = stringDate.split('-')
     return `${splitDate[2].slice(0, 2)}/${splitDate[1]}/${splitDate[0]}`

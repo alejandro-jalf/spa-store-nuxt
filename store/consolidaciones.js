@@ -15,10 +15,7 @@ export const mutations = {
   },
   setSucursal(state, sucursal) {
     state.sucursal = sucursal
-    localStorage.setItem(
-      'spastore_consolidaciones_sucursal',
-      JSON.stringify(sucursal)
-    )
+    localStorage.setItem('spastore_consolidaciones_sucursal', sucursal)
   },
 }
 
@@ -45,11 +42,7 @@ export const actions = {
 
       return response.data.response
     } catch (error) {
-      // eslint-disable-next-line no-console
-      console.log(error)
       if (error.response) {
-        // eslint-disable-next-line no-console
-        console.log(error.response)
         return error.response.data
       }
       return {
