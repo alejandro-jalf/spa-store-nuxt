@@ -60,6 +60,12 @@ export const state = () => ({
       icon: 'cloud-check-fill',
     },
     {
+      path: '/consolidaciones',
+      name: 'consolidaciones',
+      nickname: 'Consolidaciones',
+      icon: 'arrow-left-right',
+    },
+    {
       path: '/existenciasarticulo',
       name: 'existenciasarticulo',
       nickname: 'Existencias Articulos',
