@@ -24,8 +24,6 @@ export const actions = {
         commit('setConexiones', response.data)
       }
     } catch (error) {
-      // eslint-disable-next-line no-console
-      console.log(error)
       if (error.response) {
         // eslint-disable-next-line no-console
         console.log(error.response)

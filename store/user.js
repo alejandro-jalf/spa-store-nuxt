@@ -82,11 +82,7 @@ export const actions = {
 
       return response.data
     } catch (error) {
-      // eslint-disable-next-line no-console
-      console.log(error)
       if (error.response) {
-        // eslint-disable-next-line no-console
-        console.log(error.response)
         return error.response.data
       }
       return {
@@ -131,11 +127,7 @@ export const actions = {
 
       return response.data
     } catch (error) {
-      // eslint-disable-next-line no-console
-      console.log(error)
       if (error.response) {
-        // eslint-disable-next-line no-console
-        console.log(error.response)
         return error.response.data
       }
       return {

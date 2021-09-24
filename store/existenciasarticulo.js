@@ -45,11 +45,7 @@ export const actions = {
       commit('setArticulosFinded', 0)
       return { data: [], count: 0 }
     } catch (error) {
-      // eslint-disable-next-line no-console
-      console.log(error)
       if (error.response) {
-        // eslint-disable-next-line no-console
-        console.log(error.response)
         return error.response.data
       }
       return { data: [], count: 0 }
@@ -70,11 +66,7 @@ export const actions = {
       commit('setArticuloDetails', {})
       return {}
     } catch (error) {
-      // eslint-disable-next-line no-console
-      console.log(error)
       if (error.response) {
-        // eslint-disable-next-line no-console
-        console.log(error.response)
         commit('setArticuloDetails', {})
         return {}
       }
