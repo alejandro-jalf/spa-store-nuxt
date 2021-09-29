@@ -36,6 +36,7 @@
     </b-button>
 
     <b-table
+      v-if="width > 991"
       id="tableConsolidaciones"
       responsive
       striped
@@ -53,6 +54,48 @@
         {{ utils.toHour(row.item.CantidadRegular) }}
       </template>
     </b-table>
+    <div v-else>
+      <b-card
+        v-for="(consolidacion, indexConsolidacion) in dataRefactor"
+        :key="indexConsolidacion"
+        no-body
+        class="containerCard"
+        :class="variantTheme"
+      >
+        <div :class="getColorClass(consolidacion.Estatus)">
+          <span class="float-right">
+            {{ consolidacion.Estatus }}
+          </span>
+          <div class="container-transferencia">
+            <span class="font-weight-bold">Transferencia:</span>
+            {{ consolidacion.Transferencia }}
+          </div>
+          <div class="container-transferencia">
+            <span class="font-weight-bold">Entrada:</span>
+            {{ consolidacion.Entrada }}
+          </div>
+          <div class="container-transferencia">
+            <span class="font-weight-bold">Referencia:</span>
+            {{ consolidacion.Referencia }}
+          </div>
+          <div class="container-transferencia">
+            <span class="font-weight-bold">Destino:</span>
+            {{ consolidacion.AlmacenDestino }}
+          </div>
+          <div class="container-transferencia">
+            <span class="font-weight-bold">Observaciones:</span>
+            {{ consolidacion.Observaciones }}
+          </div>
+          <div class="d-block">
+            <span class="font-italic float-right">
+              {{ utils.toDate(consolidacion.Fecha) }}
+              {{ utils.toHour(consolidacion.Hora) }}
+            </span>
+          </div>
+        </div>
+      </b-card>
+    </div>
+
     <b-modal
       id="alertSucursal"
       :visible="alertShow"
@@ -136,6 +179,9 @@ export default {
     width() {
       return this.$store.state.general.widthWindow
     },
+    variantTheme() {
+      return this.$store.state.general.themesComponents.themeCardBody
+    },
     dataRefactor() {
       const datos = []
       this.$store.state.consolidaciones.data.data.forEach((consolidacion) => {
@@ -200,6 +246,11 @@ export default {
     ...mapActions({
       changeData: 'consolidaciones/changeData',
     }),
+    getColorClass(estatus) {
+      if (estatus === 'Fallo') return 'container-info-warning'
+      else if (estatus === 'Exito') return 'container-info'
+      else return 'container-info-danger'
+    },
     async updateConsolidaciones() {
       this.setLoading(true)
       const response = await this.changeData([
@@ -239,6 +290,37 @@ export default {
 </script>
 
 <style scoped>
+.container-transferencia {
+  display: inline-block;
+  max-width: 320px;
+  width: 100%;
+  margin: 5px;
+}
+
+.containerCard {
+  padding: 0px;
+  margin: 10px 0px 0px 0px;
+}
+
+.container-info-danger {
+  padding: 10px;
+  background: rgba(173, 1, 1, 0.712);
+  border-radius: 3px;
+  color: #fff;
+}
+
+.container-info-warning {
+  padding: 10px;
+  background: rgba(251, 255, 29, 0.596);
+  border-radius: 3px;
+  color: #000;
+}
+
+.container-info {
+  padding: 10px;
+  border-radius: 3px;
+}
+
 .container-consolidaciones {
   padding-top: 10px;
   padding-bottom: 60px;

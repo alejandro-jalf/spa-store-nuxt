@@ -33,11 +33,20 @@
   box-shadow: 2px 2px 2px #e6e6e6;
 }
 
+.containerCard {
+  padding: 27px 15px;
+  margin-bottom: 10px;
+  box-shadow: 2px 2px 2px #e6e6e6;
+}
+
+.containerCarDark {
+  box-shadow: 2px 2px 2px #5d5d5d;
+}
+
 .container-gen-dark {
   border-left: 9px solid #007883;
   box-shadow: 2px 2px 2px #5d5d5d;
 }
-
 .menuDark {
   background: rgb(211, 211, 211);
 }
