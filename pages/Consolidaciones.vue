@@ -215,8 +215,13 @@ export default {
       this.selected = sucursal
     },
     updateSucursal() {
-      this.setSucursal(this.selected)
       this.hideAlertDialog()
+      if (this.selected === null)
+        this.showAlertDialog([
+          'Falta seleccionar una sucursal',
+          'Error al cambiar sucursal',
+        ])
+      else this.setSucursal(this.selected)
     },
     hideAlertDialog() {
       this.alertShow = false
