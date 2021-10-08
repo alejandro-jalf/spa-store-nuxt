@@ -42,6 +42,12 @@ export const state = () => ({
       icon: 'percent',
     },
     {
+      path: '/validaofertas',
+      name: 'validaofertas',
+      nickname: 'Verificador Ofertas',
+      icon: 'binoculars',
+    },
+    {
       path: '/ventav',
       name: 'ventav',
       nickname: 'Ventas',
@@ -70,6 +76,12 @@ export const state = () => ({
       name: 'existenciasarticulo',
       nickname: 'Existencias Articulos',
       icon: 'collection',
+    },
+    {
+      path: '/checadorprecios',
+      name: 'checadorprecios',
+      nickname: 'Checador Precios',
+      icon: 'upc-scan',
     },
     {
       path: '/proveedores',
