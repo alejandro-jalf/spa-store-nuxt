@@ -150,6 +150,9 @@ const utils = {
       }
     }
     rounded = arrayDivision[0] + '.' + digitsString + digitRounded
+    const lengthDigits = digits - rounded.split('.')[1].length
+    if (lengthDigits > 0)
+      for (let index = 0; index < lengthDigits; index++) rounded += '0'
     return rounded
   },
 
