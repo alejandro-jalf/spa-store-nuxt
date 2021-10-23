@@ -1,3 +1,5 @@
+import moment from 'moment'
+
 const _arrayMonths = [
   'Enero',
   'Febrero',
@@ -166,6 +168,26 @@ const utils = {
       return signo + parseFloat(arrayValue[1])
     }
     return signo + parseInt(arrayValue[1])
+  },
+
+  difHours: (dateStart = '', dateEnd = '') => {
+    if (dateStart === '' || dateEnd === '') return ''
+
+    const dateInit = moment(dateStart)
+    const dateFinal = moment(dateEnd)
+    const diff = dateFinal.diff(dateInit, 'minutes')
+    const time = `${parseInt(diff / 60)} Hrs ${diff % 60} Min`
+
+    // eslint-disable-next-line no-console
+    // console.log(
+    //   dateFinal.diff(dateInit, 'hours'),
+    //   diff,
+    //   dateFinal.diff(dateInit),
+    //   dateFinal
+    // )
+    // // eslint-disable-next-line no-console
+    // console.log(dateFinal.add(7, 'hours').subtract(1, 'seconds'))
+    return time
   },
 
   _arrayMonths,

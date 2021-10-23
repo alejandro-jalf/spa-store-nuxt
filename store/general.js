@@ -60,6 +60,12 @@ export const state = () => ({
       icon: 'people-fill',
     },
     {
+      path: '/asistencias',
+      name: 'asistencias',
+      nickname: 'Asistencias',
+      icon: 'ui-checks',
+    },
+    {
       path: '/conexiones',
       name: 'conexiones',
       nickname: 'Conexiones',

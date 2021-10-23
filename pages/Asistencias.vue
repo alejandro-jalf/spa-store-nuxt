@@ -31,18 +31,7 @@
       class="mt-2"
       :class="variantThemeTableBody"
     >
-      <!-- <caption>
-        Agrupacion por nombre:
-      </caption> -->
-      <!-- <colgroup><col><col></colgroup>
-      <colgroup><col><col><col></colgroup>
-      <colgroup><col><col></colgroup> -->
       <b-thead head-variant="dark">
-        <!-- <b-tr>
-          <b-th colspan="2">Region</b-th>
-          <b-th colspan="3">Clothes</b-th>
-          <b-th colspan="2">Accessories</b-th>
-        </b-tr> -->
         <b-tr>
           <b-th>Nombre</b-th>
           <b-th>Fecha</b-th>
@@ -56,38 +45,42 @@
         </b-tr>
       </b-thead>
       <b-tbody>
-        <b-tr>
-          <b-td rowspan="5">BRIGIDA MOGO NUÑES</b-td>
-          <b-th class="text-right">Dias Asists.</b-th>
-          <b-th variant="secondary">5</b-th>
-          <b-td></b-td>
-          <b-td></b-td>
-          <b-th>Hrs Total</b-th>
-          <b-th colspan="2" variant="secondary"> 24 Hrs 21 Min </b-th>
-        </b-tr>
-        <b-tr>
-          <b-th>18/10/2021</b-th>
-          <b-td>SI</b-td>
-          <b-td>'07:23:49</b-td>
-          <b-td></b-td>
-          <b-td></b-td>
-          <b-td>16:03:36</b-td>
-          <b-th>8 Hrs 35 Min</b-th>
-          <b-td></b-td>
+        <b-tr v-for="(trabajadores, indext) in dataRefactor" :key="indext">
+          <b-td v-if="trabajadores.header" rowspan="6">
+            {{ trabajadores.nombre }}
+          </b-td>
+          <b-th v-if="trabajadores.header" class="text-right">
+            Dias Asists.
+          </b-th>
+          <b-td v-else>{{ trabajadores.fecha }}</b-td>
+          <b-th v-if="trabajadores.header" variant="secondary">5</b-th>
+          <b-td v-else>{{ trabajadores.asistencia }}</b-td>
+          <b-td v-if="trabajadores.header"></b-td>
+          <b-td v-else>{{ trabajadores.entrada }}</b-td>
+          <b-td v-if="trabajadores.header"></b-td>
+          <b-td v-else>{{ trabajadores.scomida }}</b-td>
+          <b-th v-if="trabajadores.header">Hrs Total</b-th>
+          <b-td v-else>{{ trabajadores.ecomida }}</b-td>
+          <b-th
+            v-if="trabajadores.header"
+            colspan="2"
+            variant="secondary"
+            class="text-center"
+          >
+            24 Hrs 21 Min
+          </b-th>
+          <b-td v-else>{{ trabajadores.salida }}</b-td>
+          <b-td v-if="!trabajadores.header">{{ trabajadores.trabajo }}</b-td>
+          <b-td v-if="!trabajadores.header">{{ trabajadores.comida }}</b-td>
         </b-tr>
       </b-tbody>
-      <!-- <b-tfoot>
-        <b-tr>
-          <b-td colspan="7" variant="secondary" class="text-right">
-            Total Rows: <b>5</b>
-          </b-td>
-        </b-tr>
-      </b-tfoot> -->
     </b-table-simple>
   </div>
 </template>
 
 <script>
+import utils from '../modules/utils'
+
 export default {
   data() {
     return {
@@ -103,6 +96,7 @@ export default {
       ],
       dateInit: '',
       dateEnd: '',
+      utils,
     }
   },
   computed: {
@@ -111,14 +105,49 @@ export default {
     },
     dataRefactor() {
       const datos = []
-      let position = 0
+      // let position = 0
+      // let positionHeader = 0
+      // let sumaHoras = 0
       this.$store.state.asistencia.data.data.forEach((dato) => {
-        position = 0
-        dato.asistencias.forEach((dia) => {
-          position++
-        })
+        // position = 0
+        // positionHeader = position
         datos.push({
-          position,
+          header: true,
+          dias: 0,
+          nombre: dato.nombre,
+          fecha: 'Dias Asists.',
+          ecomida: 'Hrs Total',
+          sumaHoras: '',
+        })
+        dato.asistencias.forEach((dia) => {
+          // position++
+          const hrsWorkMonrning = utils.difHours(dia.entrada, dia.scomida)
+          const hrsWorkArternon = utils.difHours(dia.ecomida, dia.salida)
+          const hrsBreak = utils.difHours(dia.scomida, dia.ecomida)
+          let hrsWork = ''
+          if (dia.entrada === '') {
+            if (dia.ecomida !== '') hrsWork = hrsWorkArternon
+            // else hrsWork = ''
+          } else if (dia.salida === '') {
+            if (dia.scomida !== '') hrsWork = hrsWorkMonrning
+          } else {
+            if ((dia.scomida !== '' || dia.ecomida !== '') && ) {
+              hrsWork = hrsWorkArternon
+            } else hrsWork = ''
+          }
+          // eslint-disable-next-line no-console
+          console.log(hrsWorkMonrning, hrsWorkArternon, hrsBreak)
+          datos.push({
+            header: false,
+            fecha: dia.fecha,
+            asistencia: 'SI',
+            entrada: dia.entrada,
+            scomida: dia.scomida,
+            ecomida: dia.ecomida,
+            salida: dia.salida,
+            trabajo: hrsWork,
+            comida: hrsBreak,
+          })
         })
       })
       return datos
