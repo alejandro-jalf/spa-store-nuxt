@@ -177,17 +177,28 @@ const utils = {
     const dateFinal = moment(dateEnd)
     const diff = dateFinal.diff(dateInit, 'minutes')
     const time = `${parseInt(diff / 60)} Hrs ${diff % 60} Min`
-
-    // eslint-disable-next-line no-console
-    // console.log(
-    //   dateFinal.diff(dateInit, 'hours'),
-    //   diff,
-    //   dateFinal.diff(dateInit),
-    //   dateFinal
-    // )
-    // // eslint-disable-next-line no-console
-    // console.log(dateFinal.add(7, 'hours').subtract(1, 'seconds'))
     return time
+  },
+
+  formatWithMoment: (date = '', format = '') => {
+    if (date === '' || format === '') return ''
+    const formatResult = moment(date).format(format)
+    if (formatResult === 'Invalid date') return ''
+    return formatResult
+  },
+
+  sumHours: (hoursFirst = '0 Hrs 0 Min', hoursSecond = '0 Hrs 0 Min') => {
+    if (hoursFirst === '0 Hrs 0 Min' && hoursSecond === '0 Hrs 0 Min')
+      return '0 Hrs 0 Min'
+    if (hoursFirst === '0 Hrs 0 Min') return hoursSecond
+    if (hoursSecond === '0 Hrs 0 Min') return hoursFirst
+    const hrsFirst = hoursFirst.split(' ')
+    const hrsSecond = hoursSecond.split(' ')
+    let totalHrs = parseInt(hrsFirst[0]) + parseInt(hrsSecond[0])
+    let totalMin = parseInt(hrsFirst[2]) + parseInt(hrsSecond[2])
+    if (totalMin > 59) totalHrs += parseInt(totalMin / 60)
+    totalMin = totalMin % 60
+    return `${totalHrs} Hrs ${totalMin} Min`
   },
 
   _arrayMonths,

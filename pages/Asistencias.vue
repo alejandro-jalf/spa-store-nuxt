@@ -46,14 +46,16 @@
       </b-thead>
       <b-tbody>
         <b-tr v-for="(trabajadores, indext) in dataRefactor" :key="indext">
-          <b-td v-if="trabajadores.header" rowspan="6">
+          <b-td v-if="trabajadores.header" :rowspan="trabajadores.dias">
             {{ trabajadores.nombre }}
           </b-td>
           <b-th v-if="trabajadores.header" class="text-right">
             Dias Asists.
           </b-th>
           <b-td v-else>{{ trabajadores.fecha }}</b-td>
-          <b-th v-if="trabajadores.header" variant="secondary">5</b-th>
+          <b-th v-if="trabajadores.header" variant="secondary">
+            {{ trabajadores.dias }}
+          </b-th>
           <b-td v-else>{{ trabajadores.asistencia }}</b-td>
           <b-td v-if="trabajadores.header"></b-td>
           <b-td v-else>{{ trabajadores.entrada }}</b-td>
@@ -67,7 +69,7 @@
             variant="secondary"
             class="text-center"
           >
-            24 Hrs 21 Min
+            {{ trabajadores.sumaHoras }}
           </b-th>
           <b-td v-else>{{ trabajadores.salida }}</b-td>
           <b-td v-if="!trabajadores.header">{{ trabajadores.trabajo }}</b-td>
@@ -105,49 +107,50 @@ export default {
     },
     dataRefactor() {
       const datos = []
-      // let position = 0
-      // let positionHeader = 0
-      // let sumaHoras = 0
+      let position = 0
+      let positionHeader = 0
       this.$store.state.asistencia.data.data.forEach((dato) => {
-        // position = 0
-        // positionHeader = position
+        positionHeader = position
         datos.push({
           header: true,
-          dias: 0,
+          dias: 1,
           nombre: dato.nombre,
           fecha: 'Dias Asists.',
           ecomida: 'Hrs Total',
-          sumaHoras: '',
+          sumaHoras: '0 Hrs 0 Min',
         })
+        position++
         dato.asistencias.forEach((dia) => {
-          // position++
+          datos[positionHeader].dias++
+          position++
           const hrsWorkMonrning = utils.difHours(dia.entrada, dia.scomida)
           const hrsWorkArternon = utils.difHours(dia.ecomida, dia.salida)
           const hrsBreak = utils.difHours(dia.scomida, dia.ecomida)
           let hrsWork = ''
           if (dia.entrada === '') {
             if (dia.ecomida !== '') hrsWork = hrsWorkArternon
-            // else hrsWork = ''
           } else if (dia.salida === '') {
             if (dia.scomida !== '') hrsWork = hrsWorkMonrning
-          } else {
-            if ((dia.scomida !== '' || dia.ecomida !== '') && ) {
-              hrsWork = hrsWorkArternon
-            } else hrsWork = ''
-          }
-          // eslint-disable-next-line no-console
-          console.log(hrsWorkMonrning, hrsWorkArternon, hrsBreak)
+          } else if (hrsBreak !== '')
+            hrsWork = utils.sumHours(hrsWorkMonrning, hrsWorkArternon)
+          else hrsWork = utils.difHours(dia.entrada, dia.salida)
           datos.push({
             header: false,
             fecha: dia.fecha,
             asistencia: 'SI',
-            entrada: dia.entrada,
-            scomida: dia.scomida,
-            ecomida: dia.ecomida,
-            salida: dia.salida,
+            entrada: utils.formatWithMoment(dia.entrada, 'HH:mm:ss'),
+            scomida: utils.formatWithMoment(dia.scomida, 'HH:mm:ss'),
+            ecomida: utils.formatWithMoment(dia.ecomida, 'HH:mm:ss'),
+            salida: utils.formatWithMoment(dia.salida, 'HH:mm:ss'),
             trabajo: hrsWork,
             comida: hrsBreak,
           })
+          if (hrsWork !== '') {
+            datos[positionHeader].sumaHoras = utils.sumHours(
+              hrsWork,
+              datos[positionHeader].sumaHoras
+            )
+          }
         })
       })
       return datos
