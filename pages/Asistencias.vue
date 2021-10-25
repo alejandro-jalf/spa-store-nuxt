@@ -23,6 +23,14 @@
         ></b-form-datepicker>
       </b-input-group>
     </div>
+    <div class="font-weight-bold">
+      REPORTE DE ASISTENCIA DEL 18/10/2021 AL 22/10/2021
+    </div>
+    <div class="font-weight-bold">SUCURSAL SPAZARAGOZA</div>
+    <b-button variant="outline-success" class="mt-2">
+      <b-icon icon="download"></b-icon>
+      Descargar
+    </b-button>
     <b-table-simple
       hover
       small
