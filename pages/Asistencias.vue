@@ -2,7 +2,11 @@
   <div class="pt-3">
     <div id="input-Sucursal" class="inputs">
       <b-input-group prepend="Sucursal">
-        <b-form-select v-model="selected" :options="options"></b-form-select>
+        <b-form-select
+          v-model="selected"
+          :options="options"
+          @change="changeSuc"
+        ></b-form-select>
       </b-input-group>
     </div>
     <div class="inputs">
@@ -23,10 +27,13 @@
         ></b-form-datepicker>
       </b-input-group>
     </div>
+    <b-button variant="info" @click="updateConsolidaciones">
+      <b-icon icon="search"></b-icon>
+    </b-button>
     <div class="font-weight-bold">
-      REPORTE DE ASISTENCIA DEL 18/10/2021 AL 22/10/2021
+      {{ fechas }}
     </div>
-    <div class="font-weight-bold">SUCURSAL SPAZARAGOZA</div>
+    <div class="font-weight-bold">{{ sucursalFinded }}</div>
     <b-button variant="outline-success" class="mt-2">
       <b-icon icon="download"></b-icon>
       Descargar
@@ -62,7 +69,7 @@
           </b-th>
           <b-td v-else>{{ trabajadores.fecha }}</b-td>
           <b-th v-if="trabajadores.header" variant="secondary">
-            {{ trabajadores.dias }}
+            {{ trabajadores.dias - 1 }}
           </b-th>
           <b-td v-else>{{ trabajadores.asistencia }}</b-td>
           <b-td v-if="trabajadores.header"></b-td>
@@ -89,6 +96,7 @@
 </template>
 
 <script>
+import { mapMutations, mapActions } from 'vuex'
 import utils from '../modules/utils'
 
 export default {
@@ -97,12 +105,13 @@ export default {
       selected: null,
       options: [
         { value: null, text: 'Seleccione una sucursal' },
-        { value: 'ZR', text: 'Zaragoza' },
-        { value: 'VC', text: 'Victoria' },
-        { value: 'OU', text: 'Oluta' },
-        { value: 'JL', text: 'Jaltipan' },
-        { value: 'BO', text: 'Bodega' },
-        { value: 'HU', text: 'Huamuchil', disabled: true },
+        { value: 'SPAZARAGOZA', text: 'Zaragoza' },
+        { value: 'SPAOFICINA', text: 'Oficina' },
+        { value: 'SPAVICTORIA', text: 'Victoria' },
+        { value: 'SPAOLUTA', text: 'Oluta' },
+        { value: 'SPAJALTIPAN', text: 'Jaltipan' },
+        { value: 'SPABODEGA', text: 'Bodega' },
+        { value: 'HUAMUCHL', text: 'Huamuchil', disabled: true },
       ],
       dateInit: '',
       dateEnd: '',
@@ -112,6 +121,17 @@ export default {
   computed: {
     variantThemeTableBody() {
       return this.$store.state.general.themesComponents.themeTableBody
+    },
+    sucursalFinded() {
+      return 'SUCURSAL ' + this.$store.state.asistencia.sucursalFind
+    },
+    fechas() {
+      return (
+        'REPORTE DE ASISTENCIA DEL ' +
+        this.$store.state.asistencia.dateInit +
+        ' AL ' +
+        this.$store.state.asistencia.dateEnd
+      )
     },
     dataRefactor() {
       const datos = []
@@ -164,12 +184,70 @@ export default {
       return datos
     },
   },
+  mounted() {
+    const sucSel = this.$store.state.asistencia.sucursal
+    this.selected = sucSel
+    const dateNow = new Date()
+    const now =
+      dateNow.getFullYear() +
+      '-' +
+      utils.completeDateHour(dateNow.getMonth() + 1) +
+      '-' +
+      utils.completeDateHour(dateNow.getDate())
+    this.dateInit = now
+    this.dateEnd = now
+  },
+  methods: {
+    ...mapMutations({
+      setSucursal: 'asistencia/setSucursal',
+      setDateInit: 'asistencia/setDateInit',
+      setDateEnd: 'asistencia/setDateEnd',
+      setLoading: 'general/setLoading',
+      showAlertDialog: 'general/showAlertDialog',
+    }),
+    ...mapActions({
+      changeData: 'asistencia/changeData',
+    }),
+    changeSuc(suc) {
+      this.setSucursal(suc)
+    },
+    validateData() {
+      if (
+        this.$store.state.asistencia.sucursal === null ||
+        this.$store.state.asistencia.sucursal === 'null'
+      ) {
+        this.showAlertDialog(['Necesita seleccionar una sucursal'])
+        return false
+      }
+      if (this.dateInit === '') {
+        this.showAlertDialog(['No ha seleccionado la fecha de inicio'])
+        return false
+      }
+      if (this.dateEnd === '') {
+        this.showAlertDialog(['No ha seleccionado la fecha final'])
+        return false
+      }
+      return true
+    },
+    async updateConsolidaciones() {
+      if (!this.validateData()) return false
+      this.setLoading(true)
+      const response = await this.changeData([
+        this.dateInit.replace(/-/g, ''),
+        this.dateEnd.replace(/-/g, ''),
+        this.$store.state.asistencia.sucursal,
+      ])
+      this.setLoading(false)
+      if (!response.success)
+        this.showAlertDialog([response.message, 'Error inesperado'])
+    },
+  },
 }
 </script>
 
 <style scoped>
 .inputs {
-  width: 33%;
+  width: (33% - 8px);
   margin-bottom: 10px;
   display: inline-block;
 }
