@@ -201,6 +201,8 @@ const utils = {
     return `${totalHrs} Hrs ${totalMin} Min`
   },
 
+  getDateNow: () => moment().local(true),
+
   _arrayMonths,
 
   completeDateHour,

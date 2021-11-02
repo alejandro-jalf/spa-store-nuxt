@@ -187,15 +187,7 @@ export default {
   mounted() {
     const sucSel = this.$store.state.asistencia.sucursal
     this.selected = sucSel
-    const dateNow = new Date()
-    const now =
-      dateNow.getFullYear() +
-      '-' +
-      utils.completeDateHour(dateNow.getMonth() + 1) +
-      '-' +
-      utils.completeDateHour(dateNow.getDate())
-    this.dateInit = now
-    this.dateEnd = now
+    this.setDateInitials()
   },
   methods: {
     ...mapMutations({
@@ -208,6 +200,13 @@ export default {
     ...mapActions({
       changeData: 'asistencia/changeData',
     }),
+    setDateInitials() {
+      const dayActual = utils.getDateNow().day()
+      const saturday = utils.getDateNow().add(-(dayActual + 1), 'days')
+      const friday = utils.getDateNow().add(6 - dayActual, 'days')
+      this.dateInit = saturday.format('yyyy-MM-DD')
+      this.dateEnd = friday.format('yyyy-MM-DD')
+    },
     changeSuc(suc) {
       this.setSucursal(suc)
     },
