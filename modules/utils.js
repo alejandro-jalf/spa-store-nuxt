@@ -1,4 +1,6 @@
 import moment from 'moment'
+import { jsPDF } from 'jspdf'
+import 'jspdf-autotable'
 
 const _arrayMonths = [
   'Enero',
@@ -45,6 +47,111 @@ const sucursalesByName = {
   OLUTA: 'OU',
   JALTIPAN: 'JL',
   BODEGA: 'BO',
+}
+
+const createPdfAsistenciasSpa = () => {
+  // eslint-disable-next-line new-cap
+  const doc = new jsPDF()
+
+  doc.setFontSize(18)
+  doc.setFont('helvetica', 'bold')
+  doc.text('SUPER PROMOCIONES DE ACAYUCAN SA DE CV', 105, 20, 'center')
+
+  doc.setFontSize(11)
+  doc.setFont('helvetica', 'normal')
+  doc.text('ZARAGOZA No 109 COL. CENTRO CP 96000', 200, 29, 'right')
+  doc.text('ACAYUCAN, VERACRUZ.', 200, 36, 'right')
+
+  doc.setFontSize(9)
+  doc.setFont('helvetica', 'bold')
+  doc.text('REPORTE DE ASISTENCIA DEL 18/10/2021 AL 22/10/2021', 10, 43)
+  doc.text('SUCURSAL SPAZARAGOZA', 200, 43, 'right')
+
+  doc.autoTable({
+    theme: 'plain',
+    startY: 47,
+    tableWidth: 190,
+    margin: {
+      left: 10,
+    },
+    styles: { fontSize: 8 },
+    headStyles: {
+      fontStyle: 'bold',
+      halign: 'center',
+    },
+    head: [
+      [
+        'Nombre',
+        'Fecha ',
+        'Asist.',
+        'Entrada',
+        'S. Comida',
+        'E. Comida',
+        'Salida',
+        'Trabajo',
+        'Comida',
+      ],
+    ],
+    body: [
+      [
+        {
+          content: 'BRIGIDA MOGO NUÑES',
+          rowSpan: 4,
+          styles: {
+            lineWidth: 1,
+            borders: 't',
+          },
+        },
+        {
+          content: 'Dias Asists.',
+          styles: { halign: 'center', fontStyle: 'bold' },
+        },
+        {
+          content: '5',
+          styles: {
+            halign: 'center',
+            fontStyle: 'bold',
+            fillColor: [210, 210, 210],
+          },
+        },
+        { content: '' },
+        { content: '' },
+        {
+          content: 'Hrs Total',
+          styles: { halign: 'center', fontStyle: 'bold' },
+        },
+        {
+          content: '24 Hrs 21 Min',
+          colSpan: 2,
+          styles: {
+            halign: 'center',
+            fontStyle: 'bold',
+            fillColor: [210, 210, 210],
+          },
+        },
+        { content: '' },
+      ],
+      ['18/10/2021', 'SI', '07:23:49', '', '', '16:03:36 8', '8 Hrs 40 Min'],
+      ['18/10/2021', 'SI', '07:23:49', '', '', '16:03:36 8', '8 Hrs 40 Min'],
+      ['18/10/2021', 'SI', '07:23:49', '', '', '16:03:36 8', '8 Hrs 40 Min'],
+      [
+        { content: 'EDUARDO PACHECO REYES', rowSpan: 4 },
+        { content: 'Dias Asists.' },
+        { content: '5' },
+        { content: '' },
+        { content: '' },
+        { content: 'Hrs Total' },
+        { content: '24 Hrs 21 Min', colSpan: 2 },
+        { content: '' },
+      ],
+      ['18/10/2021', 'SI', '07:23:49', '', '', '16:03:36 8', '8 Hrs 40 Min'],
+      ['18/10/2021', 'SI', '07:23:49', '', '', '16:03:36 8', '8 Hrs 40 Min'],
+      ['18/10/2021', 'SI', '07:23:49', '', '', '16:03:36 8', '8 Hrs 40 Min'],
+    ],
+  })
+
+  // doc.save('Asistencias ejemplo.pdf')
+  doc.output('dataurlnewwindow')
 }
 
 const utils = {
@@ -208,6 +315,8 @@ const utils = {
   completeDateHour,
 
   refactorHora,
+
+  createPdfAsistenciasSpa,
 }
 
 export default utils

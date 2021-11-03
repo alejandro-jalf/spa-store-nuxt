@@ -34,7 +34,7 @@
       {{ fechas }}
     </div>
     <div class="font-weight-bold">{{ sucursalFinded }}</div>
-    <b-button variant="outline-success" class="mt-2">
+    <b-button variant="outline-success" class="mt-2" @click="createPdf">
       <b-icon icon="download"></b-icon>
       Descargar
     </b-button>
@@ -200,6 +200,9 @@ export default {
     ...mapActions({
       changeData: 'asistencia/changeData',
     }),
+    createPdf() {
+      utils.createPdfAsistenciasSpa()
+    },
     setDateInitials() {
       const dayActual = utils.getDateNow().day()
       const saturday = utils.getDateNow().add(-(dayActual + 1), 'days')
