@@ -1,7 +1,7 @@
 <template>
   <div class="pt-3">
     <div id="input-Sucursal" class="inputs">
-      <b-input-group prepend="Sucursal">
+      <b-input-group prepend="Suc">
         <b-form-select
           v-model="selected"
           :options="options"
@@ -10,7 +10,7 @@
       </b-input-group>
     </div>
     <div class="inputs">
-      <b-input-group prepend="Fecha inicio">
+      <b-input-group prepend="Del">
         <b-form-datepicker
           id="date-init"
           v-model="dateInit"
@@ -19,7 +19,7 @@
       </b-input-group>
     </div>
     <div class="inputs">
-      <b-input-group prepend="Fecha final">
+      <b-input-group prepend="Al">
         <b-form-datepicker
           id="date-end"
           v-model="dateEnd"
@@ -201,7 +201,22 @@ export default {
       changeData: 'asistencia/changeData',
     }),
     createPdf() {
-      utils.createPdfAsistenciasSpa()
+      const dataSuc = utils.getDataSucursal(
+        this.$store.state.asistencia.sucursalFind
+      )
+      if (dataSuc === null) {
+        this.showAlertDialog(['Sucursal no encontrada'])
+        return false
+      }
+
+      utils.createPdfAsistenciasSpa(
+        dataSuc.empresa,
+        dataSuc.direccion,
+        dataSuc.municipio,
+        this.fechas,
+        this.sucursalFinded,
+        this.dataRefactor
+      )
     },
     setDateInitials() {
       const dayActual = utils.getDateNow().day()

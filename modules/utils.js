@@ -49,65 +49,101 @@ const sucursalesByName = {
   BODEGA: 'BO',
 }
 
-const createPdfAsistenciasSpa = () => {
+const getDataSucursal = (sucursal = '') => {
+  if (sucursal === '') return null
+
+  sucursal = sucursal.toUpperCase()
+
+  const dataSucursales = [
+    {
+      sucursal: ['ZR', 'SPAZARAGOZA'],
+      municipio: 'ACAYUCAN, VERACRUZ.',
+      direccion: 'ZARAGOZA No 109 COL. CENTRO CP 96000',
+      empresa: 'SUPER PROMOCIONES DE ACAYUCAN SA DE CV',
+    },
+    {
+      sucursal: ['OF', 'SPAOFICINA'],
+      municipio: 'ACAYUCAN, VERACRUZ.',
+      direccion: 'ZARAGOZA No 109 COL. CENTRO CP 96000',
+      empresa: 'SUPER PROMOCIONES DE ACAYUCAN SA DE CV',
+    },
+    {
+      sucursal: ['VC', 'SPAVICTORIA'],
+      municipio: 'ACAYUCAN, VERACRUZ.',
+      direccion: 'VICTORIA No  COL. CENTRO CP 96000',
+      empresa: 'SUPER PROMOCIONES DE ACAYUCAN SA DE CV',
+    },
+    {
+      sucursal: ['OU', 'SPAOLUTA'],
+      municipio: 'OLUTA, VERACRUZ.',
+      direccion: 'ZARAGOZA No 109 COL. CENTRO CP 96000',
+      empresa: 'SUPER PROMOCIONES DE ACAYUCAN SA DE CV',
+    },
+    {
+      sucursal: ['JL', 'SPAJALTIPAN'],
+      municipio: 'JALTIPAN, VERACRUZ.',
+      direccion: 'MORELOS No 1200 COL. CENTRO CP 96200',
+      empresa: 'SUPER PROMOCIONES DE ACAYUCAN SA DE CV',
+    },
+    {
+      sucursal: ['BO', 'SPABODEGA'],
+      municipio: 'ACAYUCAN, VERACRUZ.',
+      direccion: 'OCAMPO No 109 COL. CENTRO CP 96000',
+      empresa: 'SUPER PROMOCIONES DE ACAYUCAN SA DE CV',
+    },
+    {
+      sucursal: ['HM', 'HUAMUCHIL'],
+      municipio: 'ACAYUCAN, VERACRUZ.',
+      direccion: 'ZARAGOZA No 109 COL. CENTRO CP 96000',
+      empresa: 'SUPER PROMOCIONES DE ACAYUCAN SA DE CV',
+    },
+  ]
+
+  const sucFinded = dataSucursales.find(
+    (suc) => suc.sucursal[0] === sucursal || suc.sucursal[1] === sucursal
+  )
+
+  return sucFinded || null
+}
+
+const createPdfAsistenciasSpa = (
+  titulo,
+  direccion,
+  mnpo,
+  fechas,
+  sucursal,
+  data
+) => {
   // eslint-disable-next-line new-cap
-  const doc = new jsPDF()
+  const doc = new jsPDF('p', 'mm', 'letter')
 
   doc.setFontSize(18)
   doc.setFont('helvetica', 'bold')
-  doc.text('SUPER PROMOCIONES DE ACAYUCAN SA DE CV', 105, 20, 'center')
+  doc.text(titulo, 105, 20, 'center')
 
   doc.setFontSize(11)
   doc.setFont('helvetica', 'normal')
-  doc.text('ZARAGOZA No 109 COL. CENTRO CP 96000', 200, 29, 'right')
-  doc.text('ACAYUCAN, VERACRUZ.', 200, 36, 'right')
+  doc.text(direccion, 200, 29, 'right')
+  doc.text(mnpo, 200, 36, 'right')
 
   doc.setFontSize(9)
   doc.setFont('helvetica', 'bold')
-  doc.text('REPORTE DE ASISTENCIA DEL 18/10/2021 AL 22/10/2021', 10, 43)
-  doc.text('SUCURSAL SPAZARAGOZA', 200, 43, 'right')
+  doc.text(fechas, 10, 43)
+  doc.text(sucursal, 200, 43, 'right')
 
-  doc.autoTable({
-    theme: 'plain',
-    startY: 47,
-    tableWidth: 190,
-    margin: {
-      left: 10,
-    },
-    styles: { fontSize: 8 },
-    headStyles: {
-      fontStyle: 'bold',
-      halign: 'center',
-    },
-    head: [
-      [
-        'Nombre',
-        'Fecha ',
-        'Asist.',
-        'Entrada',
-        'S. Comida',
-        'E. Comida',
-        'Salida',
-        'Trabajo',
-        'Comida',
-      ],
-    ],
-    body: [
-      [
+  const body = data.reduce((acumData, dato) => {
+    if (dato.header) {
+      acumData.push([
         {
-          content: 'BRIGIDA MOGO NUÑES',
-          rowSpan: 4,
-          styles: {
-            lineWidth: 1,
-            borders: 't',
-          },
+          content: dato.nombre,
+          rowSpan: dato.dias,
         },
         {
           content: 'Dias Asists.',
           styles: { halign: 'center', fontStyle: 'bold' },
         },
         {
-          content: '5',
+          content: dato.dias - 1,
           styles: {
             halign: 'center',
             fontStyle: 'bold',
@@ -121,7 +157,7 @@ const createPdfAsistenciasSpa = () => {
           styles: { halign: 'center', fontStyle: 'bold' },
         },
         {
-          content: '24 Hrs 21 Min',
+          content: dato.sumaHoras,
           colSpan: 2,
           styles: {
             halign: 'center',
@@ -130,24 +166,65 @@ const createPdfAsistenciasSpa = () => {
           },
         },
         { content: '' },
-      ],
-      ['18/10/2021', 'SI', '07:23:49', '', '', '16:03:36 8', '8 Hrs 40 Min'],
-      ['18/10/2021', 'SI', '07:23:49', '', '', '16:03:36 8', '8 Hrs 40 Min'],
-      ['18/10/2021', 'SI', '07:23:49', '', '', '16:03:36 8', '8 Hrs 40 Min'],
+      ])
+    } else {
+      acumData.push([
+        {
+          content: dato.fecha,
+          styles: { fontStyle: 'bold' },
+        },
+        { content: 'SI', halign: 'left' },
+        { content: dato.entrada },
+        { content: dato.scomida },
+        { content: dato.ecomida },
+        { content: dato.salida },
+        {
+          content: dato.trabajo,
+          styles: {
+            halign: 'center',
+            fontStyle: 'bold',
+          },
+        },
+        {
+          content: dato.comida,
+          styles: {
+            halign: 'center',
+            fontStyle: 'bold',
+          },
+        },
+      ])
+    }
+    return acumData
+  }, [])
+
+  doc.autoTable({
+    startY: 47,
+    tableWidth: 190,
+    margin: {
+      left: 10,
+    },
+    styles: { fontSize: 7 },
+    headStyles: {
+      fontStyle: 'bold',
+      halign: 'center',
+      fillColor: [255, 255, 255],
+      textColor: [0, 0, 0],
+    },
+    bodyStyles: { textColor: [0, 0, 0] },
+    head: [
       [
-        { content: 'EDUARDO PACHECO REYES', rowSpan: 4 },
-        { content: 'Dias Asists.' },
-        { content: '5' },
-        { content: '' },
-        { content: '' },
-        { content: 'Hrs Total' },
-        { content: '24 Hrs 21 Min', colSpan: 2 },
-        { content: '' },
+        'Nombre',
+        'Fecha ',
+        'Asist.',
+        'Entrada',
+        'S. Comida',
+        'E. Comida',
+        'Salida',
+        'Trabajo',
+        'Comida',
       ],
-      ['18/10/2021', 'SI', '07:23:49', '', '', '16:03:36 8', '8 Hrs 40 Min'],
-      ['18/10/2021', 'SI', '07:23:49', '', '', '16:03:36 8', '8 Hrs 40 Min'],
-      ['18/10/2021', 'SI', '07:23:49', '', '', '16:03:36 8', '8 Hrs 40 Min'],
     ],
+    body,
   })
 
   // doc.save('Asistencias ejemplo.pdf')
@@ -317,6 +394,8 @@ const utils = {
   refactorHora,
 
   createPdfAsistenciasSpa,
+
+  getDataSucursal,
 }
 
 export default utils
