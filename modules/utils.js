@@ -113,14 +113,18 @@ const createPdfAsistenciasSpa = (
   fechas,
   sucursal,
   data,
-  horaImpresion
+  horaImpresion,
+  logo
 ) => {
   // eslint-disable-next-line new-cap
   const doc = new jsPDF('p', 'mm', 'letter')
 
   doc.setFontSize(18)
   doc.setFont('helvetica', 'bold')
-  doc.text(titulo, 105, 20, 'center')
+  if (logo) {
+    doc.text(titulo, 200, 20, 'right')
+    doc.addImage(logo, 'PNG', 10, 20, 50, 30)
+  } else doc.text(titulo, 105, 20, 'center')
 
   doc.setFontSize(11)
   doc.setFont('helvetica', 'normal')
@@ -253,8 +257,8 @@ const createPdfAsistenciasSpa = (
     doc.text('LC ARTEMIO PEREZ MORATILLA', 136, 265)
   }
 
-  // doc.save(`Asistencias ${sucursal}.pdf`)
-  doc.output('dataurlnewwindow')
+  doc.save(`ASISTENCIAS ${sucursal}.pdf`)
+  // doc.output('dataurlnewwindow')
 }
 
 const utils = {

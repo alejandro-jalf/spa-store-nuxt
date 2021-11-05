@@ -173,6 +173,15 @@
         <b-button variant="info" @click="closeDetails">Cerrar</b-button>
       </template>
     </b-modal>
+    <div class="imageLogo">
+      <canvas id="canvas"></canvas>
+      <img
+        id="imgLogoSpa"
+        src="../assets/cesta.png"
+        width="100px"
+        height="100px"
+      />
+    </div>
   </div>
 </template>
 
@@ -305,6 +314,7 @@ export default {
         this.setMoveTouch(true)
       })
     }
+    this.loadDataImage()
   },
   methods: {
     ...mapMutations({
@@ -319,6 +329,14 @@ export default {
     ...mapActions({
       changeData: 'asistencia/changeData',
     }),
+    loadDataImage() {
+      const canvas = document.getElementById('canvas')
+      const context = canvas.getContext('2d')
+      const imageObject = document.getElementById('imgLogoSpa')
+      const object2 = new Image()
+      object2.src = imageObject.src
+      context.drawImage(object2, 0, 0, 100, 100)
+    },
     openDetails(trabajador) {
       const asistencias = this.dataRefactor.reduce((acumDetails, t) => {
         if (t.nombre === trabajador.nombre && !t.header)
@@ -346,9 +364,7 @@ export default {
       this.$refs.modalDetalles.hide()
     },
     createPdf() {
-      const dataSuc = utils.getDataSucursal(
-        this.$store.state.asistencia.sucursalFind
-      )
+      const dataSuc = utils.getDataSucursal('ZR')
       if (dataSuc === null) {
         this.showAlertDialog(['Sucursal no encontrada'])
         return false
@@ -363,7 +379,8 @@ export default {
         this.fechas,
         this.sucursalFinded,
         this.dataRefactor,
-        fechaActual
+        fechaActual,
+        document.getElementById('canvas')
       )
     },
     setDateInitials() {
