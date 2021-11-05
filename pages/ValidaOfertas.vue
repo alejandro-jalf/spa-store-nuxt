@@ -59,17 +59,10 @@ export default {
       ],
       utils,
       onliValid: true,
-      sucursales: {
-        ZR: 'SPAZARAGOZA',
-        VC: 'SPACENTRO',
-        OU: 'SPAOLUTA',
-        JL: 'SPAJALTIPAN',
-        BO: 'SPABODEGA',
-      },
       selected: 'ZR',
       options: [
         { value: 'ZR', text: 'SPAZARAGOZA' },
-        { value: 'VC', text: 'SPACENTRO' },
+        { value: 'VC', text: 'SPAVICTORIA' },
         { value: 'OU', text: 'SPAOLUTA' },
         { value: 'JL', text: 'SPAJALTIPAN' },
         { value: 'BO', text: 'SPABODEGA' },
