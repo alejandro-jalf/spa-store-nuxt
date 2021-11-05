@@ -112,7 +112,8 @@ const createPdfAsistenciasSpa = (
   mnpo,
   fechas,
   sucursal,
-  data
+  data,
+  horaImpresion
 ) => {
   // eslint-disable-next-line new-cap
   const doc = new jsPDF('p', 'mm', 'letter')
@@ -227,8 +228,33 @@ const createPdfAsistenciasSpa = (
     body,
   })
 
-  doc.save(`Asistencias ${sucursal}.pdf`)
-  // doc.output('dataurlnewwindow')
+  const finalY = doc.lastAutoTable.finalY
+  doc.setDrawColor(0, 0, 0)
+
+  doc.setFontSize(9)
+  doc.setFont('helvetica', 'normal')
+  doc.text(horaImpresion, 10, 275)
+
+  doc.setFont('helvetica', 'bold')
+  if (finalY > 240) {
+    doc.addPage()
+    doc.line(25, 50, 85, 50)
+    doc.text('ENCARGADO', 45, 55)
+    doc.line(131, 50, 191, 50)
+    doc.text('LC ARTEMIO PEREZ MORATILLA', 136, 55)
+
+    doc.setFontSize(9)
+    doc.setFont('helvetica', 'normal')
+    doc.text(horaImpresion, 10, 275)
+  } else {
+    doc.line(25, 260, 85, 260)
+    doc.text('ENCARGADO', 45, 265)
+    doc.line(131, 260, 191, 260)
+    doc.text('LC ARTEMIO PEREZ MORATILLA', 136, 265)
+  }
+
+  // doc.save(`Asistencias ${sucursal}.pdf`)
+  doc.output('dataurlnewwindow')
 }
 
 const utils = {
