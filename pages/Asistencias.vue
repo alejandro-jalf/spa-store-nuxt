@@ -110,26 +110,52 @@
     </div>
     <b-modal
       ref="modalDetalles"
-      centered
       header-bg-variant="info"
       header-text-variant="white"
+      centered
+      scrollable
     >
       <template #modal-header>
         <div class="headerTitle">{{ detalles.nombre }}</div>
       </template>
-      <div>
+      <div class="text-dark">
         Hrs Total:
         <span class="font-weight-bold">{{ detalles.sumaHoras }}</span>
       </div>
       <div
         v-for="(asistencia, indexAsist) in detalles.asistencias"
         :key="indexAsist"
+        class="containerAsistencias"
       >
         <hr />
-        <div class="float-left">{{ asistencia.fecha }}</div>
+        <div class="fechaTrabajador">{{ asistencia.fecha }}</div>
+        <div>
+          <span class="font-weight-bold">Entrada:</span>
+          {{ asistencia.entrada }}
+        </div>
+        <div>
+          <span class="font-weight-bold">S. Comida:</span>
+          {{ asistencia.scomida }}
+        </div>
+        <div>
+          <span class="font-weight-bold">E. Comida:</span>
+          {{ asistencia.ecomida }}
+        </div>
+        <div>
+          <span class="font-weight-bold">Salida:</span>
+          {{ asistencia.salida }}
+        </div>
+        <div class="text-right">
+          <span class="font-weight-bold">Trabajo:</span>
+          {{ asistencia.trabajo }}
+        </div>
+        <div class="text-right">
+          <span class="font-weight-bold">Comida:</span>
+          {{ asistencia.comida }}
+        </div>
       </div>
       <template #modal-footer>
-        <div class="asistDias">
+        <div class="asistDias text-dark">
           Dias Asist: <span class="font-weight-bold">{{ detalles.dias }}</span>
         </div>
         <b-button variant="info" @click="closeDetails">Cerrar</b-button>
@@ -259,15 +285,15 @@ export default {
     }),
     openDetails(trabajador) {
       const asistencias = this.dataRefactor.reduce((acumDetails, t) => {
-        // eslint-disable-next-line no-console
-        // console.log(t)
-        if (t.nombre === trabajador.nombre && t.header === true)
+        if (t.nombre === trabajador.nombre && !t.header)
           acumDetails.push({
-            fecha: trabajador.fecha,
-            entrada: trabajador.entrada,
-            scomida: trabajador.scomida,
-            ecomida: trabajador.ecomida,
-            salida: trabajador.salida,
+            fecha: t.fecha,
+            entrada: t.entrada,
+            scomida: t.scomida,
+            ecomida: t.ecomida,
+            salida: t.salida,
+            trabajo: t.trabajo,
+            comida: t.comida,
           })
         return acumDetails
       }, [])
@@ -355,6 +381,22 @@ export default {
   position: absolute;
   left: 15px;
   bottom: 18px;
+}
+
+.containerAsistencias {
+  position: relative;
+  color: #000;
+}
+
+.fechaTrabajador {
+  position: absolute;
+  top: -12px;
+  left: 0px;
+  font-weight: bold;
+  border-radius: 5px;
+  padding: 2px 5px;
+  background: rgb(1, 143, 224);
+  color: #fff;
 }
 
 .inputs {
