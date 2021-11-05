@@ -27,10 +27,15 @@
         ></b-form-datepicker>
       </b-input-group>
     </div>
-    <b-button variant="info" @click="updateConsolidaciones">
+    <b-button
+      variant="info"
+      :block="width < 992"
+      @click="updateConsolidaciones"
+    >
       <b-icon icon="search"></b-icon>
+      <span v-if="width < 992">Buscar</span>
     </b-button>
-    <div class="font-weight-bold">
+    <div class="font-weight-bold mt-2">
       {{ fechas }}
     </div>
     <div class="font-weight-bold">{{ sucursalFinded }}</div>
@@ -39,9 +44,8 @@
       Descargar
     </b-button>
     <b-table-simple
+      v-if="width > 767"
       hover
-      small
-      caption-top
       responsive
       class="mt-2"
       :class="variantThemeTableBody"
@@ -61,13 +65,17 @@
       </b-thead>
       <b-tbody>
         <b-tr v-for="(trabajadores, indext) in dataRefactor" :key="indext">
-          <b-td v-if="trabajadores.header" :rowspan="trabajadores.dias">
+          <b-td
+            v-if="trabajadores.header"
+            :rowspan="trabajadores.dias"
+            class="nameTable"
+          >
             {{ trabajadores.nombre }}
           </b-td>
           <b-th v-if="trabajadores.header" class="text-right">
             Dias Asists.
           </b-th>
-          <b-td v-else>{{ trabajadores.fecha }}</b-td>
+          <b-th v-else>{{ trabajadores.fecha }}</b-th>
           <b-th v-if="trabajadores.header" variant="secondary">
             {{ trabajadores.dias - 1 }}
           </b-th>
@@ -87,19 +95,58 @@
             {{ trabajadores.sumaHoras }}
           </b-th>
           <b-td v-else>{{ trabajadores.salida }}</b-td>
-          <b-td v-if="!trabajadores.header">{{ trabajadores.trabajo }}</b-td>
-          <b-td v-if="!trabajadores.header">{{ trabajadores.comida }}</b-td>
+          <b-th v-if="!trabajadores.header">{{ trabajadores.trabajo }}</b-th>
+          <b-th v-if="!trabajadores.header">{{ trabajadores.comida }}</b-th>
         </b-tr>
       </b-tbody>
     </b-table-simple>
+    <div v-else>
+      <asistencias-card
+        v-for="(trabajadores, indexCard) in dataRefactor"
+        :key="indexCard"
+        :trabajador="trabajadores"
+        :show-details="openDetails"
+      />
+    </div>
+    <b-modal
+      ref="modalDetalles"
+      centered
+      header-bg-variant="info"
+      header-text-variant="white"
+    >
+      <template #modal-header>
+        <div class="headerTitle">{{ detalles.nombre }}</div>
+      </template>
+      <div>
+        Hrs Total:
+        <span class="font-weight-bold">{{ detalles.sumaHoras }}</span>
+      </div>
+      <div
+        v-for="(asistencia, indexAsist) in detalles.asistencias"
+        :key="indexAsist"
+      >
+        <hr />
+        <div class="float-left">{{ asistencia.fecha }}</div>
+      </div>
+      <template #modal-footer>
+        <div class="asistDias">
+          Dias Asist: <span class="font-weight-bold">{{ detalles.dias }}</span>
+        </div>
+        <b-button variant="info" @click="closeDetails">Cerrar</b-button>
+      </template>
+    </b-modal>
   </div>
 </template>
 
 <script>
 import { mapMutations, mapActions } from 'vuex'
 import utils from '../modules/utils'
+import AsistenciasCard from '../components/AsistenciasCard'
 
 export default {
+  components: {
+    AsistenciasCard,
+  },
   data() {
     return {
       selected: null,
@@ -116,9 +163,18 @@ export default {
       dateInit: '',
       dateEnd: '',
       utils,
+      detalles: {
+        nombre: '',
+        sumaHoras: '',
+        dias: 5,
+        asistencias: {},
+      },
     }
   },
   computed: {
+    width() {
+      return this.$store.state.general.widthWindow
+    },
     variantThemeTableBody() {
       return this.$store.state.general.themesComponents.themeTableBody
     },
@@ -164,6 +220,7 @@ export default {
           else hrsWork = utils.difHours(dia.entrada, dia.salida)
           datos.push({
             header: false,
+            nombre: dato.nombre,
             fecha: dia.fecha,
             asistencia: 'SI',
             entrada: utils.formatWithMoment(dia.entrada, 'HH:mm:ss'),
@@ -200,6 +257,32 @@ export default {
     ...mapActions({
       changeData: 'asistencia/changeData',
     }),
+    openDetails(trabajador) {
+      const asistencias = this.dataRefactor.reduce((acumDetails, t) => {
+        // eslint-disable-next-line no-console
+        // console.log(t)
+        if (t.nombre === trabajador.nombre && t.header === true)
+          acumDetails.push({
+            fecha: trabajador.fecha,
+            entrada: trabajador.entrada,
+            scomida: trabajador.scomida,
+            ecomida: trabajador.ecomida,
+            salida: trabajador.salida,
+          })
+        return acumDetails
+      }, [])
+
+      this.detalles = {
+        nombre: trabajador.nombre,
+        dias: trabajador.dias,
+        sumaHoras: trabajador.sumaHoras,
+        asistencias,
+      }
+      this.$refs.modalDetalles.show()
+    },
+    closeDetails() {
+      this.$refs.modalDetalles.hide()
+    },
     createPdf() {
       const dataSuc = utils.getDataSucursal(
         this.$store.state.asistencia.sucursalFind
@@ -221,7 +304,7 @@ export default {
     setDateInitials() {
       const dayActual = utils.getDateNow().day()
       const saturday = utils.getDateNow().add(-(dayActual + 1), 'days')
-      const friday = utils.getDateNow().add(6 - dayActual, 'days')
+      const friday = utils.getDateNow().add(5 - dayActual, 'days')
       this.dateInit = saturday.format('yyyy-MM-DD')
       this.dateEnd = friday.format('yyyy-MM-DD')
     },
@@ -263,23 +346,44 @@ export default {
 </script>
 
 <style scoped>
+.headerTitle {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.asistDias {
+  position: absolute;
+  left: 15px;
+  bottom: 18px;
+}
+
 .inputs {
   width: (33% - 8px);
   margin-bottom: 10px;
   display: inline-block;
 }
 
-@media screen and (max-width: 1200px) {
+@media screen and (max-width: 1199px) {
   .inputs {
-    width: 49%;
+    width: calc(49% - 19px);
   }
 
   #input-Sucursal {
     width: 100%;
   }
+
+  .nameTable {
+    width: 250px;
+  }
 }
 
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 991px) {
+  .inputs {
+    width: calc(49% + 2px);
+  }
+}
+
+@media screen and (max-width: 767px) {
   .inputs {
     width: 100%;
   }

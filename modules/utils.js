@@ -227,8 +227,8 @@ const createPdfAsistenciasSpa = (
     body,
   })
 
-  // doc.save('Asistencias ejemplo.pdf')
-  doc.output('dataurlnewwindow')
+  doc.save(`Asistencias ${sucursal}.pdf`)
+  // doc.output('dataurlnewwindow')
 }
 
 const utils = {
