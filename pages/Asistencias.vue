@@ -35,78 +35,90 @@
       <b-icon icon="search"></b-icon>
       <span v-if="width < 992">Buscar</span>
     </b-button>
-    <div class="font-weight-bold mt-2">
-      {{ fechas }}
+    <div v-if="!firstSession">
+      <div class="font-weight-bold mt-2">
+        {{ fechas }}
+      </div>
+      <div class="font-weight-bold">{{ sucursalFinded }}</div>
+      <b-button :variant="variantSuccess" class="mt-2" @click="createPdf">
+        <b-icon icon="download"></b-icon>
+        Descargar
+      </b-button>
+      <b-button :variant="variantClean" class="mt-2" @click="cleanData">
+        <b-icon icon="ui-checks" />
+        Limpiar lista de asistencias
+      </b-button>
     </div>
-    <div class="font-weight-bold">{{ sucursalFinded }}</div>
-    <b-button variant="outline-success" class="mt-2" @click="createPdf">
-      <b-icon icon="download"></b-icon>
-      Descargar
-    </b-button>
-    <b-table-simple
-      v-if="width > 767"
-      hover
-      responsive
-      class="mt-2"
-      :class="variantThemeTableBody"
-    >
-      <b-thead head-variant="dark">
-        <b-tr>
-          <b-th>Nombre</b-th>
-          <b-th>Fecha</b-th>
-          <b-th>Asist.</b-th>
-          <b-th>Entrada</b-th>
-          <b-th>S. Comida</b-th>
-          <b-th>E. Comida</b-th>
-          <b-th>Salida</b-th>
-          <b-th>Trabajo</b-th>
-          <b-th>Comida</b-th>
-        </b-tr>
-      </b-thead>
-      <b-tbody>
-        <b-tr v-for="(trabajadores, indext) in dataRefactor" :key="indext">
-          <b-td
-            v-if="trabajadores.header"
-            :rowspan="trabajadores.dias"
-            class="nameTable"
-          >
-            {{ trabajadores.nombre }}
-          </b-td>
-          <b-th v-if="trabajadores.header" class="text-right">
-            Dias Asists.
-          </b-th>
-          <b-th v-else>{{ trabajadores.fecha }}</b-th>
-          <b-th v-if="trabajadores.header" variant="secondary">
-            {{ trabajadores.dias - 1 }}
-          </b-th>
-          <b-td v-else>{{ trabajadores.asistencia }}</b-td>
-          <b-td v-if="trabajadores.header"></b-td>
-          <b-td v-else>{{ trabajadores.entrada }}</b-td>
-          <b-td v-if="trabajadores.header"></b-td>
-          <b-td v-else>{{ trabajadores.scomida }}</b-td>
-          <b-th v-if="trabajadores.header">Hrs Total</b-th>
-          <b-td v-else>{{ trabajadores.ecomida }}</b-td>
-          <b-th
-            v-if="trabajadores.header"
-            colspan="2"
-            variant="secondary"
-            class="text-center"
-          >
-            {{ trabajadores.sumaHoras }}
-          </b-th>
-          <b-td v-else>{{ trabajadores.salida }}</b-td>
-          <b-th v-if="!trabajadores.header">{{ trabajadores.trabajo }}</b-th>
-          <b-th v-if="!trabajadores.header">{{ trabajadores.comida }}</b-th>
-        </b-tr>
-      </b-tbody>
-    </b-table-simple>
+    <h3 v-if="emptyData && !firstSession" class="mt-3 text-danger text-center">
+      ¡No se encontraron registros de asistencias entre estas fechas!
+    </h3>
     <div v-else>
-      <asistencias-card
-        v-for="(trabajadores, indexCard) in dataRefactor"
-        :key="indexCard"
-        :trabajador="trabajadores"
-        :show-details="openDetails"
-      />
+      <b-table-simple
+        v-if="width > 767"
+        id="tableAsistencias"
+        hover
+        responsive
+        class="mt-2"
+        :class="variantThemeTableBody"
+      >
+        <b-thead head-variant="dark">
+          <b-tr>
+            <b-th>Nombre</b-th>
+            <b-th>Fecha</b-th>
+            <b-th>Asist.</b-th>
+            <b-th>Entrada</b-th>
+            <b-th>S. Comida</b-th>
+            <b-th>E. Comida</b-th>
+            <b-th>Salida</b-th>
+            <b-th>Trabajo</b-th>
+            <b-th>Comida</b-th>
+          </b-tr>
+        </b-thead>
+        <b-tbody>
+          <b-tr v-for="(trabajadores, indext) in dataRefactor" :key="indext">
+            <b-td
+              v-if="trabajadores.header"
+              :rowspan="trabajadores.dias"
+              class="nameTable"
+            >
+              {{ trabajadores.nombre }}
+            </b-td>
+            <b-th v-if="trabajadores.header" class="text-right">
+              Dias Asists.
+            </b-th>
+            <b-th v-else>{{ trabajadores.fecha }}</b-th>
+            <b-th v-if="trabajadores.header" variant="secondary">
+              {{ trabajadores.dias - 1 }}
+            </b-th>
+            <b-td v-else>{{ trabajadores.asistencia }}</b-td>
+            <b-td v-if="trabajadores.header"></b-td>
+            <b-td v-else>{{ trabajadores.entrada }}</b-td>
+            <b-td v-if="trabajadores.header"></b-td>
+            <b-td v-else>{{ trabajadores.scomida }}</b-td>
+            <b-th v-if="trabajadores.header">Hrs Total</b-th>
+            <b-td v-else>{{ trabajadores.ecomida }}</b-td>
+            <b-th
+              v-if="trabajadores.header"
+              colspan="2"
+              variant="secondary"
+              class="text-center"
+            >
+              {{ trabajadores.sumaHoras }}
+            </b-th>
+            <b-td v-else>{{ trabajadores.salida }}</b-td>
+            <b-th v-if="!trabajadores.header">{{ trabajadores.trabajo }}</b-th>
+            <b-th v-if="!trabajadores.header">{{ trabajadores.comida }}</b-th>
+          </b-tr>
+        </b-tbody>
+      </b-table-simple>
+      <div v-else>
+        <asistencias-card
+          v-for="(trabajadores, indexCard) in dataRefactor"
+          :key="indexCard"
+          :trabajador="trabajadores"
+          :show-details="openDetails"
+        />
+      </div>
     </div>
     <b-modal
       ref="modalDetalles"
@@ -198,6 +210,18 @@ export default {
     }
   },
   computed: {
+    variantClean() {
+      return this.$store.state.general.themesComponents.themeButtonClean
+    },
+    variantSuccess() {
+      return this.$store.state.general.themesComponents.themeButtonSuccess
+    },
+    firstSession() {
+      return this.$store.state.asistencia.data.firstSession
+    },
+    emptyData() {
+      return this.$store.state.asistencia.data.data.length === 0
+    },
     width() {
       return this.$store.state.general.widthWindow
     },
@@ -268,15 +292,27 @@ export default {
     },
   },
   mounted() {
+    const tableAsistencias = document.getElementById('tableAsistencias')
     const sucSel = this.$store.state.asistencia.sucursal
     this.selected = sucSel
     this.setDateInitials()
+
+    if (tableAsistencias) {
+      tableAsistencias.addEventListener('touchstart', (evt) => {
+        this.setMoveTouch(false)
+      })
+      tableAsistencias.addEventListener('touchend', (evt) => {
+        this.setMoveTouch(true)
+      })
+    }
   },
   methods: {
     ...mapMutations({
+      setMoveTouch: 'general/setMoveTouch',
       setSucursal: 'asistencia/setSucursal',
       setDateInit: 'asistencia/setDateInit',
       setDateEnd: 'asistencia/setDateEnd',
+      cleanData: 'asistencia/cleanData',
       setLoading: 'general/setLoading',
       showAlertDialog: 'general/showAlertDialog',
     }),
@@ -318,13 +354,16 @@ export default {
         return false
       }
 
+      const fechaActual = utils.getDateNow().format('DD/MM/YYYY hh:mm:ss a')
+
       utils.createPdfAsistenciasSpa(
         dataSuc.empresa,
         dataSuc.direccion,
         dataSuc.municipio,
         this.fechas,
         this.sucursalFinded,
-        this.dataRefactor
+        this.dataRefactor,
+        fechaActual
       )
     },
     setDateInitials() {

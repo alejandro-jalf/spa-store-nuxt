@@ -138,6 +138,7 @@ export const state = () => ({
         themeTextSlider: 'dark',
         themeVariantAlert: 'info',
         themeButtonClean: 'warning',
+        themeButtonSuccess: 'success',
         themeHR: '',
         backgroundVariantBody: 'light',
       },
@@ -321,6 +322,12 @@ export const actions = {
         'warning',
         'outline-warning',
         'warning'
+      ),
+      themeButtonSuccess: filterOption(
+        themes,
+        'success',
+        'outline-success',
+        'success'
       ),
       themeHR: filterOption(themes, '', 'bg-white', ''),
       backgroundVariantBody: filterOption(themes),

@@ -1,5 +1,5 @@
 if (!localStorage.getItem('spastore_asistencias_sucursal'))
-  localStorage.setItem('spastore_asistencias_sucursal', 'null')
+  localStorage.setItem('spastore_asistencias_sucursal', null)
 if (!localStorage.getItem('spastore_asistencias_sucursal_find'))
   localStorage.setItem('spastore_asistencias_sucursal', '')
 if (!localStorage.getItem('spastore_asistencias_dateInit'))
@@ -10,7 +10,7 @@ if (!localStorage.getItem('spastore_asistencias_dateEnd'))
 export const state = () => ({
   data: localStorage.getItem('spastore_asistencias_data')
     ? JSON.parse(localStorage.getItem('spastore_asistencias_data'))
-    : { data: [] },
+    : { data: [], firstSession: true },
   sucursal: localStorage.getItem('spastore_asistencias_sucursal'),
   sucursalFind: localStorage.getItem('spastore_asistencias_sucursal_find'),
   dateInit: localStorage.getItem('spastore_asistencias_dateInit'),
@@ -21,6 +21,10 @@ export const mutations = {
   setData(state, data) {
     state.data = data
     localStorage.setItem('spastore_asistencias_data', JSON.stringify(data))
+  },
+  cleanData(state) {
+    state.data = { data: [], firstSession: true }
+    localStorage.removeItem('spastore_asistencias_data')
   },
   setSucursal(state, sucursal) {
     state.sucursal = sucursal
