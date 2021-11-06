@@ -372,6 +372,11 @@ export default {
 
       const fechaActual = utils.getDateNow().format('DD/MM/YYYY hh:mm:ss a')
 
+      const logo =
+        this.selected === 'HUAMUCHL'
+          ? undefined
+          : document.getElementById('canvas')
+
       utils.createPdfAsistenciasSpa(
         dataSuc.empresa,
         dataSuc.direccion,
@@ -380,7 +385,7 @@ export default {
         this.sucursalFinded,
         this.dataRefactor,
         fechaActual,
-        document.getElementById('canvas')
+        logo
       )
     },
     setDateInitials() {

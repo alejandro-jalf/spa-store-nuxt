@@ -123,7 +123,7 @@ const createPdfAsistenciasSpa = (
   doc.setFont('helvetica', 'bold')
   if (logo) {
     doc.text(titulo, 200, 20, 'right')
-    doc.addImage(logo, 'PNG', 10, 20, 50, 30)
+    doc.addImage(logo, 'PNG', 10, 15, 60, 30)
   } else doc.text(titulo, 105, 20, 'center')
 
   doc.setFontSize(11)
