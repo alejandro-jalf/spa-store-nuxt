@@ -174,13 +174,13 @@
       </template>
     </b-modal>
     <div class="imageLogo">
-      <canvas id="canvas"></canvas>
-      <img
-        id="imgLogoSpa"
-        src="../assets/cesta.png"
+      <canvas
+        id="canvas"
+        class="canvasLogo"
         width="100px"
         height="100px"
-      />
+      ></canvas>
+      <img id="imgLogoSpa" class="imgLogo" src="../assets/cesta.png" />
     </div>
   </div>
 </template>
@@ -433,6 +433,16 @@ export default {
 </script>
 
 <style scoped>
+.canvasLogo,
+.imgLogo {
+  width: 100px;
+  height: 100px;
+  visibility: hidden;
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+}
+
 .headerTitle {
   font-size: 16px;
   font-weight: bold;
