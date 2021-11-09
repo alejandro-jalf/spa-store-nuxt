@@ -127,6 +127,7 @@
           :options="listTabs"
           multiple
           required
+          :select-size="12"
           :class="backgroundInputTheme"
         ></b-form-select>
       </b-form-group>
