@@ -1,9 +1,11 @@
 if (!localStorage.getItem('spastore_valuacion_inv_sucursal'))
   localStorage.setItem('spastore_valuacion_inv_sucursal', 'ZR')
 if (!localStorage.getItem('spastore_valuacion_inv_tienda'))
-  localStorage.setItem('spastore_valuacion_inv_tienda', 'ZR')
+  localStorage.setItem('spastore_valuacion_inv_tienda', '2')
 if (!localStorage.getItem('spastore_valuacion_inv_almacen'))
-  localStorage.setItem('spastore_valuacion_inv_almacen', 'ZR')
+  localStorage.setItem('spastore_valuacion_inv_almacen', '3')
+if (!localStorage.getItem('spastore_valuacion_inv_horaConsulta'))
+  localStorage.setItem('spastore_valuacion_inv_horaConsulta', '')
 
 export const state = () => ({
   data: localStorage.getItem('spastore_valuacion_inv_data')
@@ -12,6 +14,7 @@ export const state = () => ({
   sucursal: localStorage.getItem('spastore_valuacion_inv_sucursal'),
   tienda: localStorage.getItem('spastore_valuacion_inv_tienda'),
   almacen: localStorage.getItem('spastore_valuacion_inv_almacen'),
+  horaConsulta: localStorage.getItem('spastore_valuacion_inv_horaConsulta'),
 })
 
 export const mutations = {
@@ -31,6 +34,10 @@ export const mutations = {
     state.almacen = almacen
     localStorage.setItem('spastore_valuacion_inv_almacen', almacen)
   },
+  setHoraConsulta(state, horaConsulta) {
+    state.horaConsulta = horaConsulta
+    localStorage.setItem('spastore_valuacion_inv_horaConsulta', horaConsulta)
+  },
 }
 
 export const actions = {
@@ -49,10 +56,8 @@ export const actions = {
         method: 'get',
       })
 
-      // eslint-disable-next-line no-console
-      console.log(response.data)
       if (response.data.success) {
-        commit('setData', { data: response.data })
+        commit('setData', { data: response.data.data })
       }
 
       return response.data
