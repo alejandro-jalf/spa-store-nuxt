@@ -84,6 +84,12 @@ export const state = () => ({
       icon: 'collection',
     },
     {
+      path: '/ValuacionInventario',
+      name: 'ValuacionInventario',
+      nickname: 'Valuacion Inventario',
+      icon: 'patch-check',
+    },
+    {
       path: '/checadorprecios',
       name: 'checadorprecios',
       nickname: 'Checador Precios',
