@@ -261,6 +261,106 @@ const createPdfAsistenciasSpa = (
   // doc.output('dataurlnewwindow')
 }
 
+const createPdfValuacionInventarioCierre = (
+  titulo,
+  direccion,
+  mnpo,
+  sucursal,
+  data,
+  horaImpresion,
+  logo
+) => {
+  // eslint-disable-next-line new-cap
+  const doc = new jsPDF('p', 'mm', 'letter')
+
+  doc.setFontSize(18)
+  doc.setFont('helvetica', 'bold')
+  if (logo) {
+    doc.text(titulo, 200, 20, 'right')
+    doc.addImage(logo, 'PNG', 10, 15, 23, 23)
+  } else doc.text(titulo, 105, 20, 'center')
+
+  doc.setFontSize(11)
+  doc.setFont('helvetica', 'normal')
+  doc.text(direccion, 200, 29, 'right')
+  doc.text(mnpo, 200, 36, 'right')
+
+  doc.setFontSize(9)
+  doc.setFont('helvetica', 'bold')
+  doc.text(sucursal, 200, 43, 'right')
+
+  const body = data.reduce((acumData, dato) => {
+    acumData.push([
+      { content: dato.Articulo },
+      { content: dato.Nombre },
+      {
+        content: dato.footer
+          ? ''
+          : utils.aplyFormatNumeric(utils.roundTo(dato.Existencia)),
+      },
+      {
+        content: dato.footer
+          ? dato.UCosto
+          : utils.aplyFormatNumeric(utils.roundTo(dato.UCosto)),
+        styles: dato.footer ? { fontStyle: 'bold' } : undefined,
+      },
+      {
+        content: utils.aplyFormatNumeric(utils.roundTo(dato.Valuacion)),
+        styles: dato.footer ? { fontStyle: 'bold' } : undefined,
+      },
+      {
+        content: utils.aplyFormatNumeric(utils.roundTo(dato.Ieps)),
+        styles: dato.footer ? { fontStyle: 'bold' } : undefined,
+      },
+      {
+        content: utils.aplyFormatNumeric(utils.roundTo(dato.Iva)),
+        styles: dato.footer ? { fontStyle: 'bold' } : undefined,
+      },
+      {
+        content: utils.aplyFormatNumeric(utils.roundTo(dato.ValuacionNeta)),
+        styles: dato.footer ? { fontStyle: 'bold' } : undefined,
+      },
+    ])
+    return acumData
+  }, [])
+
+  doc.autoTable({
+    startY: 47,
+    tableWidth: 190,
+    margin: {
+      left: 10,
+    },
+    styles: { fontSize: 9 },
+    headStyles: {
+      fontStyle: 'bold',
+      halign: 'center',
+      fillColor: [255, 255, 255],
+      textColor: [0, 0, 0],
+    },
+    bodyStyles: { textColor: [0, 0, 0] },
+    head: [
+      [
+        'Articulo',
+        'Nombre',
+        'Exist.',
+        'U Costo',
+        'Valuacion',
+        'Ieps',
+        'va',
+        'Valuacion Neta',
+      ],
+    ],
+    body,
+  })
+
+  doc.setFontSize(9)
+  doc.setFont('helvetica', 'normal')
+  doc.text(horaImpresion, 10, 275)
+
+  // doc.save(`ASISTENCIAS ${sucursal}.pdf`)
+  doc.output('dataurlnewwindow')
+}
+
 const utils = {
   getSucursalByName: (sucursal = 'zaragoza') => {
     const sucursalFinded = sucursalesByName[`${sucursal.toUpperCase()}`]
@@ -424,6 +524,8 @@ const utils = {
   refactorHora,
 
   createPdfAsistenciasSpa,
+
+  createPdfValuacionInventarioCierre,
 
   getDataSucursal,
 }

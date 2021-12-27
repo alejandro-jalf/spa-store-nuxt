@@ -12,6 +12,19 @@
       </b-input-group-append>
     </b-input-group>
 
+    <div class="h5">{{ 'SUCURSAL ' + sucursalData }}</div>
+
+    <div class="mt-2 mb-3">
+      <b-button variant="outline-success" @click="createPDF">
+        <b-icon icon="download" />
+        Descargar PDF
+      </b-button>
+      <b-button variant="outline-success">
+        <b-icon icon="download" />
+        Descargar EXCEL
+      </b-button>
+    </div>
+
     <b-container fluid="xl">
       <b-row cols="1" cols-sm="2">
         <b-col sm="3" md="2" class="mb-2">
@@ -90,6 +103,16 @@
     </b-table>
 
     <h5 class="font-italic">{{ horaConsulta }}</h5>
+
+    <div class="imageLogo">
+      <canvas
+        id="canvas"
+        class="canvasLogo"
+        width="100px"
+        height="100px"
+      ></canvas>
+      <img id="imgLogoSpa" class="imgLogo" src="../assets/cesta.png" />
+    </div>
   </div>
 </template>
 
@@ -110,7 +133,6 @@ export default {
         'Ieps',
         'Iva',
         'ValuacionNeta',
-        'Acciones',
       ],
       totalValuacion: 0,
       totalIeps: 0,
@@ -143,6 +165,27 @@ export default {
       else if (this.$store.state.general.themePreferences === 'sepia')
         return 'sepiaThemeItemList'
       else return ''
+    },
+    sucursalData() {
+      if (this.$store.state.valuacioninventario.sucursalData === 'ZR')
+        return 'SPAZARAGOZA'
+      else if (this.$store.state.valuacioninventario.sucursalData === 'VC')
+        return 'SPAVICTORIA'
+      else if (this.$store.state.valuacioninventario.sucursalData === 'OU')
+        return 'SPAOLUTA'
+      else if (this.$store.state.valuacioninventario.sucursalData === 'JL')
+        return 'SPAJALTIPAN'
+      else if (this.$store.state.valuacioninventario.sucursalData === 'BO')
+        return 'SPABODEGA'
+      else if (
+        this.$store.state.valuacioninventario.sucursalData === 'BO%TRANSITO'
+      )
+        return 'SPABODEGA - TRANSITO'
+      else if (
+        this.$store.state.valuacioninventario.sucursalData === 'BO%ESPERANZA'
+      )
+        return 'SPABODEGA - LA ESPERANZA'
+      return 'SPAZARAGOZA'
     },
     inventarioList() {
       const datos = []
@@ -186,6 +229,7 @@ export default {
   },
   mounted() {
     this.selected = this.$store.state.valuacioninventario.sucursal
+    this.loadDataImage()
   },
   methods: {
     ...mapMutations({
@@ -193,6 +237,7 @@ export default {
       setMoveTouch: 'general/setMoveTouch',
       showAlertDialog: 'general/showAlertDialog',
       setHoraConsulta: 'valuacioninventario/setHoraConsulta',
+      setSucursalData: 'valuacioninventario/setSucursalData',
       setSucursal: 'valuacioninventario/setSucursal',
       setAlmacen: 'valuacioninventario/setAlmacen',
       setTienda: 'valuacioninventario/setTienda',
@@ -200,6 +245,38 @@ export default {
     ...mapActions({
       changeData: 'valuacioninventario/changeData',
     }),
+    loadDataImage() {
+      const canvas = document.getElementById('canvas')
+      const context = canvas.getContext('2d')
+      const imageObject = document.getElementById('imgLogoSpa')
+      const object2 = new Image()
+      object2.src = imageObject.src
+      context.drawImage(object2, 0, 0, 100, 100)
+    },
+    createPDF() {
+      const logo = document.getElementById('canvas')
+      const listInventory = [...this.inventarioList]
+      listInventory.push({
+        footer: true,
+        Articulo: '',
+        Nombre: '',
+        Existencia: '',
+        UCosto: 'Totales',
+        Valuacion: this.totalValuacion,
+        Ieps: this.totalIeps,
+        Iva: this.totalIva,
+        ValuacionNeta: this.totalValuacionNeta,
+      })
+      utils.createPdfValuacionInventarioCierre(
+        'SUPER PROMOCIONES DE ACAYUCAN SA DE CV',
+        'ZARAGOZA No 109 COL. CENTRO CP 96000',
+        'ACAYUCAN, VERACRUZ.',
+        'SUCURSAL ' + this.sucursalData,
+        listInventory,
+        this.horaConsulta,
+        logo
+      )
+    },
     selectSucursal(sucursal) {
       if (sucursal === null) return false
       const sucArray = sucursal.split('%')
@@ -240,11 +317,9 @@ export default {
         this.showAlertDialog(['Falta seleccionar sucursal'])
       else {
         this.setLoading(true)
-        const sucursal = this.$store.state.valuacioninventario.sucursal.split(
-          '%'
-        )
+        const sucursal = this.$store.state.valuacioninventario.sucursal
         const response = await this.changeData([
-          sucursal[0],
+          sucursal.split('%')[0],
           this.$store.state.valuacioninventario.tienda,
           this.$store.state.valuacioninventario.almacen,
         ])
@@ -252,6 +327,7 @@ export default {
         if (!response.success)
           this.showAlertDialog([response.message, 'Error inesperado'])
         else {
+          this.setSucursalData(sucursal)
           this.setHoraConsulta(
             utils.getDateNow().format('DD/MM/YYYY hh:mm:ss a')
           )
@@ -263,8 +339,13 @@ export default {
 </script>
 
 <style scoped>
-.prevPagination {
-  background: green;
-  color: white;
+.canvasLogo,
+.imgLogo {
+  width: 100px;
+  height: 100px;
+  visibility: hidden;
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
 }
 </style>

@@ -1,5 +1,7 @@
 if (!localStorage.getItem('spastore_valuacion_inv_sucursal'))
   localStorage.setItem('spastore_valuacion_inv_sucursal', 'ZR')
+if (!localStorage.getItem('spastore_valuacion_inv_sucursaldata'))
+  localStorage.setItem('spastore_valuacion_inv_sucursaldata', 'ZR')
 if (!localStorage.getItem('spastore_valuacion_inv_tienda'))
   localStorage.setItem('spastore_valuacion_inv_tienda', '2')
 if (!localStorage.getItem('spastore_valuacion_inv_almacen'))
@@ -12,6 +14,7 @@ export const state = () => ({
     ? JSON.parse(localStorage.getItem('spastore_valuacion_inv_data'))
     : { data: [] },
   sucursal: localStorage.getItem('spastore_valuacion_inv_sucursal'),
+  sucursalData: localStorage.getItem('spastore_valuacion_inv_sucursaldata'),
   tienda: localStorage.getItem('spastore_valuacion_inv_tienda'),
   almacen: localStorage.getItem('spastore_valuacion_inv_almacen'),
   horaConsulta: localStorage.getItem('spastore_valuacion_inv_horaConsulta'),
@@ -25,6 +28,10 @@ export const mutations = {
   setSucursal(state, sucursal) {
     state.sucursal = sucursal
     localStorage.setItem('spastore_valuacion_inv_sucursal', sucursal)
+  },
+  setSucursalData(state, sucursalData) {
+    state.sucursalData = sucursalData
+    localStorage.setItem('spastore_valuacion_inv_sucursaldata', sucursalData)
   },
   setTienda(state, tienda) {
     state.tienda = tienda
