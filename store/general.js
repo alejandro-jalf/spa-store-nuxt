@@ -84,7 +84,7 @@ export const state = () => ({
       icon: 'collection',
     },
     {
-      path: '/ValuacionInventario',
+      path: '/valuacioninventario',
       name: 'ValuacionInventario',
       nickname: 'Valuacion Inventario',
       icon: 'patch-check',

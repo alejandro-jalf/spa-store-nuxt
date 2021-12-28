@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1 class="text-center">Validacion de inventario</h1>
+    <h1 class="text-center mt-2">Valuacion de inventario</h1>
     <b-input-group prepend="Sucursal" class="mt-3 mb-3">
       <b-form-select
         :value="suc"
