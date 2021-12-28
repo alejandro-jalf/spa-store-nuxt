@@ -289,6 +289,10 @@ const createPdfValuacionInventarioCierre = (
   doc.setFont('helvetica', 'bold')
   doc.text(sucursal, 200, 43, 'right')
 
+  doc.setFontSize(11)
+  doc.setFont('helvetica', 'bold')
+  doc.text('Inventario al ' + horaImpresion, 10, 43, 'left')
+
   const body = data.reduce((acumData, dato) => {
     acumData.push([
       { content: dato.Articulo },
@@ -325,7 +329,7 @@ const createPdfValuacionInventarioCierre = (
   }, [])
 
   doc.autoTable({
-    startY: 47,
+    startY: 49,
     tableWidth: 190,
     margin: {
       left: 10,
@@ -357,8 +361,12 @@ const createPdfValuacionInventarioCierre = (
   doc.setFont('helvetica', 'normal')
   doc.text(horaImpresion, 10, 275)
 
-  // doc.save(`ASISTENCIAS ${sucursal}.pdf`)
-  doc.output('dataurlnewwindow')
+  const fecha = horaImpresion.split(' ')
+  const fechaSplit = fecha[0].split('/')
+  doc.save(
+    `${fechaSplit[2]} ${fechaSplit[1]}${fechaSplit[0]} - Valuacion Inventario - ${sucursal}.pdf`
+  )
+  // doc.output('dataurlnewwindow')
 }
 
 const utils = {

@@ -19,7 +19,7 @@
         <b-icon icon="download" />
         Descargar PDF
       </b-button>
-      <b-button variant="outline-success">
+      <b-button variant="outline-success" @click="createExcel">
         <b-icon icon="download" />
         Descargar EXCEL
       </b-button>
@@ -118,6 +118,8 @@
 
 <script>
 import { mapMutations, mapActions } from 'vuex'
+import XLSX from 'xlsx'
+import FileSaver from 'file-saver'
 import utils from '../modules/utils'
 
 export default {
@@ -333,6 +335,130 @@ export default {
           )
         }
       }
+    },
+
+    createExcel() {
+      const wb = XLSX.utils.book_new()
+      wb.Props = {
+        Title: 'Valuacion Inventario Cierre - ' + this.sucursalData,
+        Subject: 'Cierre',
+        Author: this.$store.state.user.name,
+      }
+      wb.SheetNames.push('Hoja')
+
+      const header = [
+        'Articulo',
+        'Nombre',
+        'Existencia',
+        'UCosto',
+        'Valuacion',
+        'Ieps',
+        'Iva',
+        'ValuacionNeta',
+      ]
+
+      const listInventory = [...this.inventarioList]
+      const listRefactor = []
+
+      listRefactor.push(
+        {
+          Nombre: 'SUPER PROMOCIONES DE ACAYUCAN SA DE CV',
+        },
+        {
+          Existencia: 'ZARAGOZA #109. CP 96000',
+        },
+        {
+          Nombre: 'SUC ' + this.sucursalData,
+        },
+        {
+          Existencia: 'ACAYUCAN, VERACRUZ.',
+        },
+        {
+          Nombre: 'INVENTARIO AL ' + this.horaConsulta,
+        },
+        {},
+        {},
+        {
+          Articulo: 'Articulo',
+          Nombre: 'Nombre',
+          Existencia: 'Existencia',
+          UCosto: 'Ultimo Costo',
+          Valuacion: 'Valuacion',
+          Ieps: 'Ieps',
+          Iva: 'Iva',
+          ValuacionNeta: 'Valuacion Neta',
+        }
+      )
+
+      listInventory.forEach((invetory) => {
+        listRefactor.push({
+          Articulo: invetory.Articulo,
+          Nombre: invetory.Nombre,
+          Existencia: invetory.Existencia,
+          UCosto: invetory.UltimoCosto,
+          Valuacion: invetory.Valuacion,
+          Ieps: invetory.IepsValuacion,
+          Iva: invetory.IvaValuacion,
+          ValuacionNeta: invetory.ValuacionNeta,
+        })
+      })
+
+      listRefactor.push({
+        Articulo: '',
+        Nombre: '',
+        Existencia: '',
+        UCosto: 'Totales',
+        Valuacion: this.totalValuacion,
+        Ieps: this.totalIeps,
+        Iva: this.totalIva,
+        ValuacionNeta: this.totalValuacionNeta,
+      })
+
+      const data = XLSX.utils.json_to_sheet(listRefactor, {
+        header,
+        skipHeader: true,
+        origin: 'A2',
+      })
+
+      wb.Sheets.Hoja = data
+      wb.Sheets.Hoja['!cols'] = [
+        { wpx: 70 },
+        { wpx: 250 },
+        { wpx: 70 },
+        { wpx: 80 },
+        { wpx: 70 },
+        { wpx: 70 },
+        { wpx: 70 },
+        { wpx: 90 },
+      ]
+
+      const num = 3
+      if (num !== 2) {
+        const horaImpresion = this.horaConsulta
+        const fecha = horaImpresion.split(' ')
+        const fechaSplit = fecha[0].split('/')
+        const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'binary' })
+
+        FileSaver.saveAs(
+          new Blob([this.s2ab(wbout)], { type: 'application/octet-stream' }),
+          fechaSplit[2] +
+            ' ' +
+            fechaSplit[1] +
+            '' +
+            fechaSplit[0] +
+            ' - Valuacion Inventario - ' +
+            this.sucursalData +
+            '.xlsx'
+        )
+      }
+    },
+
+    s2ab(s) {
+      const buf = new ArrayBuffer(s.length)
+      const view = new Uint8Array(buf)
+      // eslint-disable-next-line prettier/prettier
+      for (let i = 0; i < s.length; i++) view[i] = s.charCodeAt(i) & 0xFF
+      return buf
     },
   },
 }
