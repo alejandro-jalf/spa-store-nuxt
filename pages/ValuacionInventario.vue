@@ -12,97 +12,119 @@
       </b-input-group-append>
     </b-input-group>
 
-    <div class="h5">{{ 'SUCURSAL ' + sucursalData }}</div>
+    <b-alert v-if="rows <= 0" :variant="variantAlert" show>
+      No hay datos para mostrar
+    </b-alert>
 
-    <div class="mt-2 mb-3">
-      <b-button variant="outline-success" @click="createPDF">
-        <b-icon icon="download" />
-        Descargar PDF
-      </b-button>
-      <b-button variant="outline-success" @click="createExcel">
-        <b-icon icon="download" />
-        Descargar EXCEL
-      </b-button>
+    <div v-else>
+      <div class="h5">{{ 'SUCURSAL ' + sucursalData }}</div>
+
+      <div class="mt-2 mb-3">
+        <b-button
+          :variant="variantSuccess"
+          :block="blockButton"
+          @click="createPDF"
+        >
+          <b-icon icon="download" />
+          Descargar PDF
+        </b-button>
+        <b-button
+          :variant="variantSuccess"
+          :block="blockButton"
+          @click="createExcel"
+        >
+          <b-icon icon="download" />
+          Descargar EXCEL
+        </b-button>
+        <b-button
+          :variant="variantClean"
+          :block="blockButton"
+          @click="cleanData"
+        >
+          <b-icon icon="archive" />
+          Limpiar tabla
+        </b-button>
+      </div>
+
+      <b-container fluid="xl">
+        <b-row cols="1" cols-sm="2">
+          <b-col sm="3" md="2" class="mb-2">
+            <b-form-select
+              id="per-page-select"
+              v-model="perPage"
+              :options="pageOptions"
+              size="sm"
+            ></b-form-select>
+          </b-col>
+          <b-col sm="9" md="10" class="mb-2">
+            <b-pagination
+              v-model="currentPage"
+              aria-controls="tableInventarioValuacion"
+              :total-rows="rows"
+              :per-page="perPage"
+              align="fill"
+              size="sm"
+              first-number
+              class="my-0"
+              last-number
+            >
+            </b-pagination>
+          </b-col>
+        </b-row>
+      </b-container>
+
+      <b-table
+        id="tableInventarioValuacion"
+        responsive
+        outlined
+        hover
+        head-variant="dark"
+        :per-page="perPage"
+        :current-page="currentPage"
+        :items="inventarioList"
+        :fields="fields"
+        :class="variantThemeTableBody"
+        foot-clone
+      >
+        <template #cell(Existencia)="row">
+          {{ utils.aplyFormatNumeric(utils.roundTo(row.item.Existencia, 3)) }}
+        </template>
+        <template #cell(UCosto)="row">
+          {{ utils.aplyFormatNumeric(utils.roundTo(row.item.UCosto)) }}
+        </template>
+        <template #cell(Valuacion)="row">
+          {{ utils.aplyFormatNumeric(utils.roundTo(row.item.Valuacion)) }}
+        </template>
+        <template #cell(Ieps)="row">
+          {{ utils.aplyFormatNumeric(utils.roundTo(row.item.Ieps)) }}
+        </template>
+        <template #cell(Iva)="row">
+          {{ utils.aplyFormatNumeric(utils.roundTo(row.item.Iva)) }}
+        </template>
+        <template #cell(ValuacionNeta)="row">
+          {{ utils.aplyFormatNumeric(utils.roundTo(row.item.ValuacionNeta)) }}
+        </template>
+        <template #foot(Articulo)>{{ '' }}</template>
+        <template #foot(Nombre)>{{ '' }}</template>
+        <template #foot(Existencia)>{{ '' }}</template>
+        <template #foot(UCosto)>{{ 'Totales' }}</template>
+        <template #foot(Valuacion)>{{
+          utils.aplyFormatNumeric(utils.roundTo(totalValuacion))
+        }}</template>
+        <template #foot(Ieps)>{{
+          utils.aplyFormatNumeric(utils.roundTo(totalIeps))
+        }}</template>
+        <template #foot(Iva)>{{
+          utils.aplyFormatNumeric(utils.roundTo(totalIva))
+        }}</template>
+        <template #foot(ValuacionNeta)>{{
+          utils.aplyFormatNumeric(utils.roundTo(totalValuacionNeta))
+        }}</template>
+        <template #foot(Acciones)>{{ '' }}</template>
+      </b-table>
+
+      <h5 class="font-italic">{{ horaConsulta }}</h5>
     </div>
-
-    <b-container fluid="xl">
-      <b-row cols="1" cols-sm="2">
-        <b-col sm="3" md="2" class="mb-2">
-          <b-form-select
-            id="per-page-select"
-            v-model="perPage"
-            :options="pageOptions"
-            size="sm"
-          ></b-form-select>
-        </b-col>
-        <b-col sm="9" md="10" class="mb-2">
-          <b-pagination
-            v-model="currentPage"
-            aria-controls="tableInventarioValuacion"
-            :total-rows="rows"
-            :per-page="perPage"
-            align="fill"
-            size="sm"
-            first-number
-            class="my-0"
-            last-number
-          >
-          </b-pagination>
-        </b-col>
-      </b-row>
-    </b-container>
-
-    <b-table
-      id="tableInventarioValuacion"
-      responsive
-      outlined
-      hover
-      head-variant="dark"
-      :per-page="perPage"
-      :current-page="currentPage"
-      :items="inventarioList"
-      :fields="fields"
-      :class="variantThemeTableBody"
-      foot-clone
-    >
-      <template #cell(Existencia)="row">
-        {{ utils.aplyFormatNumeric(utils.roundTo(row.item.Existencia, 3)) }}
-      </template>
-      <template #cell(UCosto)="row">
-        {{ utils.aplyFormatNumeric(utils.roundTo(row.item.UCosto)) }}
-      </template>
-      <template #cell(Valuacion)="row">
-        {{ utils.aplyFormatNumeric(utils.roundTo(row.item.Valuacion)) }}
-      </template>
-      <template #cell(Ieps)="row">
-        {{ utils.aplyFormatNumeric(utils.roundTo(row.item.Ieps)) }}
-      </template>
-      <template #cell(Iva)="row">
-        {{ utils.aplyFormatNumeric(utils.roundTo(row.item.Iva)) }}
-      </template>
-      <template #cell(ValuacionNeta)="row">
-        {{ utils.aplyFormatNumeric(utils.roundTo(row.item.ValuacionNeta)) }}
-      </template>
-      <template #foot(Articulo)>{{ '' }}</template>
-      <template #foot(Nombre)>{{ '' }}</template>
-      <template #foot(Existencia)>{{ '' }}</template>
-      <template #foot(UCosto)>{{ 'Totales' }}</template>
-      <template #foot(Valuacion)>{{
-        utils.aplyFormatNumeric(utils.roundTo(totalValuacion))
-      }}</template>
-      <template #foot(Ieps)>{{
-        utils.aplyFormatNumeric(utils.roundTo(totalIeps))
-      }}</template>
-      <template #foot(Iva)>{{
-        utils.aplyFormatNumeric(utils.roundTo(totalIva))
-      }}</template>
-      <template #foot(ValuacionNeta)>{{
-        utils.aplyFormatNumeric(utils.roundTo(totalValuacionNeta))
-      }}</template>
-      <template #foot(Acciones)>{{ '' }}</template>
-    </b-table>
-
-    <h5 class="font-italic">{{ horaConsulta }}</h5>
 
     <div class="imageLogo">
       <canvas
@@ -156,6 +178,18 @@ export default {
     }
   },
   computed: {
+    variantAlert() {
+      return this.$store.state.general.themesComponents.themeVariantAlert
+    },
+    variantClean() {
+      return this.$store.state.general.themesComponents.themeButtonClean
+    },
+    variantSuccess() {
+      return this.$store.state.general.themesComponents.themeButtonSuccess
+    },
+    blockButton() {
+      return this.$store.state.general.widthWindow <= 502
+    },
     variantThemeTableBody() {
       if (this.$store.state.general.themePreferences === 'system') {
         const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
@@ -187,7 +221,7 @@ export default {
         this.$store.state.valuacioninventario.sucursalData === 'BO%ESPERANZA'
       )
         return 'SPABODEGA - LA ESPERANZA'
-      return 'SPAZARAGOZA'
+      return ''
     },
     inventarioList() {
       const datos = []
@@ -230,8 +264,20 @@ export default {
     },
   },
   mounted() {
+    const tableInventarioValuacion = document.getElementById(
+      'tableInventarioValuacion'
+    )
     this.selected = this.$store.state.valuacioninventario.sucursal
     this.loadDataImage()
+
+    if (tableInventarioValuacion) {
+      tableInventarioValuacion.addEventListener('touchstart', (evt) => {
+        this.setMoveTouch(false)
+      })
+      tableInventarioValuacion.addEventListener('touchend', (evt) => {
+        this.setMoveTouch(true)
+      })
+    }
   },
   methods: {
     ...mapMutations({
@@ -243,6 +289,7 @@ export default {
       setSucursal: 'valuacioninventario/setSucursal',
       setAlmacen: 'valuacioninventario/setAlmacen',
       setTienda: 'valuacioninventario/setTienda',
+      setData: 'valuacioninventario/setData',
     }),
     ...mapActions({
       changeData: 'valuacioninventario/changeData',
@@ -335,6 +382,11 @@ export default {
           )
         }
       }
+    },
+    cleanData() {
+      this.setHoraConsulta('')
+      this.setSucursalData('')
+      this.setData({ data: [] })
     },
 
     createExcel() {
