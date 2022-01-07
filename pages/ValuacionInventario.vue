@@ -163,7 +163,7 @@ export default {
       totalIva: 0,
       totalValuacionNeta: 0,
       perPage: 15,
-      currentPage: 3,
+      currentPage: 1,
       pageOptions: [5, 10, 15, 20, 50, 100],
       selected: null,
       options: [
