@@ -19,12 +19,15 @@ export default function verifyRouters({ store, redirect, route, from }) {
         'Error en la navegacion',
       ])
 
+      // eslint-disable-next-line no-console
+      console.log(route)
       if (tabPrincipal) {
         const tabFinded = listTabs.find((tab) => tab.nickname === tabPrincipal)
         if (tabFinded) {
           store.commit('general/setTabActual', tabFinded.nickname)
           store.commit('user/setSesionInstancia', tabFinded.nickname)
-          redirect(tabFinded.path)
+          if (route.path.toLowerCase() !== tabFinded.path.toLowerCase())
+            redirect(tabFinded.path)
           return
         }
       }
