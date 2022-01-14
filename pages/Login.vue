@@ -241,7 +241,7 @@ export default {
           // eslint-disable-next-line no-console
           console.log(error.response)
           this.showAlertDialog([
-            error.response.data.error,
+            error.response.data.message,
             'Error al intentar recuperar su cuenta',
             'danger',
           ])
