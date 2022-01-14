@@ -47,6 +47,7 @@ const sucursalesByName = {
   OLUTA: 'OU',
   JALTIPAN: 'JL',
   BODEGA: 'BO',
+  OFICINA: 'ZR',
 }
 
 const getDataSucursal = (sucursal = '') => {
@@ -524,6 +525,9 @@ const utils = {
   },
 
   getDateNow: () => moment().local(true),
+
+  // eslint-disable-next-line new-cap
+  toMoment: (cadena) => new moment(cadena),
 
   _arrayMonths,
 

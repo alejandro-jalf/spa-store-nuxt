@@ -1,3 +1,6 @@
+if (!localStorage.getItem('spastore_ofertas_sucursal'))
+  localStorage.setItem('spastore_ofertas_sucursal', 'ZR')
+
 export const state = () => ({
   programandoOferta: false,
   editandoOferta: false,
@@ -13,77 +16,29 @@ export const state = () => ({
     descripcion: '',
     listaProductos: [],
   },
-  listaOfertas: {
-    oferta1: {
-      status: 'Programada',
-      editable: false,
-      uuid: 'oferta1',
-      tipoOferta: 'Sigma',
-      fechaInico: '2020-12-11',
-      fechaFin: '2020-12-14',
-      descripcion: 'Ofertas de sigma',
-      listaProductos: [
-        {
-          sucursal: 'Zaragoza',
-          articulo: '0111255',
-          nombre: 'Tang Naranja Sobre 15gr',
-          costo: '2.71',
-          descripcion: 'Tang Naranja Sobre 15gr',
-          precio: '3.50',
-          utilidad: '10',
-          oferta: '3',
-          margen: '23',
-        },
-      ],
-    },
-    oferta2: {
-      status: 'Programada',
-      editable: true,
-      uuid: 'oferta2',
-      tipoOferta: 'Sigma',
-      fechaInico: '2020-12-10',
-      fechaFin: '2020-12-10',
-      descripcion: 'Ofertas de sigma',
-      listaProductos: [
-        {
-          sucursal: 'Zaragoza',
-          articulo: '0111255',
-          nombre: 'Tang Naranja Sobre 15gr',
-          costo: '2.71',
-          descripcion: 'Tang Naranja Sobre 15gr',
-          precio: '3.50',
-          utilidad: '10',
-          oferta: '3',
-          margen: '23',
-        },
-      ],
-    },
-    oferta3: {
-      status: 'Atendida',
-      editable: false,
-      uuid: 'oferta3',
-      tipoOferta: 'Sigma',
-      fechaInico: '2020-11-28',
-      fechaFin: '2020-11-28',
-      descripcion: 'Ofertas de sigma',
-      listaProductos: [
-        {
-          sucursal: 'Zaragoza',
-          articulo: '0111255',
-          nombre: 'Tang Naranja Sobre 15gr',
-          costo: '2.71',
-          descripcion: 'Tang Naranja Sobre 15gr',
-          precio: '3.50',
-          utilidad: '10',
-          oferta: '3',
-          margen: '23',
-        },
-      ],
-    },
-  },
+  // new
+  listaOfertas: localStorage.getItem('spastore_ofertas_articulos')
+    ? JSON.parse(localStorage.getItem('spastore_ofertas_articulos'))
+    : { data: [] },
+  sucursal: localStorage.getItem('spastore_ofertas_sucursal'),
 })
 
 export const mutations = {
+  setListasOfertas(state, listaOfertas) {
+    // eslint-disable-next-line no-console
+    console.log(listaOfertas)
+    state.listaOfertas = listaOfertas
+    localStorage.setItem(
+      'spastore_ofertas_articulos',
+      JSON.stringify(listaOfertas)
+    )
+  },
+  setSucursal(state, sucursal) {
+    state.sucursal = sucursal
+    localStorage.setItem('spastore_ofertas_sucursal', sucursal)
+  },
+
+  // old
   addOFerta(state, oferta) {
     // eslint-disable-next-line no-console
     console.log('Agregando', oferta)
@@ -150,6 +105,38 @@ export const mutations = {
       margen: '',
       oferta: '',
       utilidad: '',
+    }
+  },
+}
+
+export const actions = {
+  async changeListaOfertas({ commit }, sucursal) {
+    try {
+      const url =
+        process.env.spastore_url_backend +
+        'api/v1/ofertas/' +
+        sucursal +
+        '/maestros'
+      const response = await this.$axios({
+        url,
+        method: 'get',
+        headers: { 'access-token': 'dfa94a69ee28ebdade02657328f187b74db98dd0' },
+      })
+
+      if (response.data.success) {
+        commit('setListasOfertas', { data: response.data.data })
+      }
+
+      return response.data
+    } catch (error) {
+      if (error.response) {
+        return error.response.data
+      }
+      return {
+        success: false,
+        message: 'Error con el servidor',
+        error,
+      }
     }
   },
 }
