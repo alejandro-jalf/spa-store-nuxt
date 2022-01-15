@@ -120,12 +120,32 @@ export const actions = {
       const response = await this.$axios({
         url,
         method: 'get',
-        headers: { 'access-token': 'dfa94a69ee28ebdade02657328f187b74db98dd0' },
       })
 
       if (response.data.success) {
         commit('setListasOfertas', { data: response.data.data })
       }
+
+      return response.data
+    } catch (error) {
+      if (error.response) {
+        return error.response.data
+      }
+      return {
+        success: false,
+        message: 'Error con el servidor',
+        error,
+      }
+    }
+  },
+  async createMasterOffer({ commit }, bodyOffer) {
+    try {
+      const url = process.env.spastore_url_backend + 'api/v1/ofertas/maestros'
+      const response = await this.$axios({
+        url,
+        method: 'post',
+        data: bodyOffer,
+      })
 
       return response.data
     } catch (error) {

@@ -102,9 +102,31 @@
             </b-button>
           </div>
           <div v-else>
-            <b-spinner small variant="secondary" type="grow"></b-spinner>
-            <b-spinner small variant="secondary" type="grow"></b-spinner>
-            <b-spinner small variant="secondary" type="grow"></b-spinner>
+            <b-spinner
+              style="width: 10px; height: 10px"
+              variant="success"
+              type="grow"
+            ></b-spinner>
+            <b-spinner
+              style="width: 10px; height: 10px"
+              variant="success"
+              type="grow"
+            ></b-spinner>
+            <b-spinner
+              style="width: 10px; height: 10px"
+              variant="success"
+              type="grow"
+            ></b-spinner>
+            <b-spinner
+              style="width: 10px; height: 10px"
+              variant="success"
+              type="grow"
+            ></b-spinner>
+            <b-spinner
+              style="width: 10px; height: 10px"
+              variant="success"
+              type="grow"
+            ></b-spinner>
           </div>
         </template>
         <template #cell(sucursal)="row">
@@ -316,6 +338,7 @@ export default {
       this.cleanOfertaActual()
     },
     viewDetails(uuid) {
+      // falta ajustar
       this.setProgramandoLista(true)
       this.setEditable(false)
       this.openOfertaByUuid(uuid)

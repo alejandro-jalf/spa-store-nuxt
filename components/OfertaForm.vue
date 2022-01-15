@@ -3,6 +3,21 @@
     <b-card title="Crear una lista de ofertas" :class="variantTheme">
       <b-card-text>Datos necesarios</b-card-text>
       <b-form class="p-2">
+        <b-input-group
+          v-if="tipoUser === 'manager'"
+          prepend="Tipo"
+          class="mb-3 p-0 mr-2"
+        >
+          <template #prepend>
+            <b-button disabled>Sucursal</b-button>
+          </template>
+          <b-form-select
+            :value="suc"
+            :options="options"
+            @change="selectSucursal"
+          ></b-form-select>
+        </b-input-group>
+
         <b-input-group prepend="Tipo" class="mb-3 p-0 mr-2">
           <template #prepend>
             <b-button disabled>Tipo</b-button>
@@ -189,7 +204,8 @@
 </template>
 
 <script>
-import { mapMutations } from 'vuex'
+import { mapMutations, mapActions } from 'vuex'
+import utils from '../modules/utils'
 import MessageText from './MessageText'
 
 export default {
@@ -198,6 +214,8 @@ export default {
   },
   data() {
     return {
+      utils,
+      dataUser: this.$store.state.user.user,
       form_oferta: {
         placeholderTipo: 'Seleccione...',
         isVisibleTipo: false,
@@ -230,9 +248,19 @@ export default {
         color: 'text-secondary',
         message: 'Elija una fecha',
       },
+      options: [
+        { value: 'ZR', text: 'SPAZARAGOZA' },
+        { value: 'VC', text: 'SPAVICTORIA' },
+        { value: 'OU', text: 'SPAOLUTA' },
+        { value: 'JL', text: 'SPAJALTIPAN' },
+        { value: 'BO', text: 'SPABODEGA' },
+      ],
     }
   },
   computed: {
+    tipoUser() {
+      return this.$store.state.user.user.tipo_user
+    },
     backgroundInputTheme() {
       return this.$store.state.general.themesComponents.themeInputBackground
     },
@@ -278,6 +306,9 @@ export default {
       }
       return 'text-danger'
     },
+    suc() {
+      return this.$store.state.ofertas.sucursal
+    },
   },
   mounted() {
     this.form_oferta.uuid = this.$store.state.ofertas.ofertaActual.tipo
@@ -285,6 +316,10 @@ export default {
     this.form_oferta.fecha_inicio = this.$store.state.ofertas.ofertaActual.fechaInico
     this.form_oferta.fecha_fin = this.$store.state.ofertas.ofertaActual.fechaFin
     this.form_oferta.descripcion = this.$store.state.ofertas.ofertaActual.descripcion
+
+    if (this.tipoUser !== 'manager')
+      this.setSucursal(utils.getSucursalByName(this.dataUser.sucursal_user))
+
     this.$root.$on('bv::dropdown::show', (bvEvent) => {
       if (bvEvent.componentId === 'btnSelectFechaF') {
       }
@@ -303,6 +338,9 @@ export default {
     })
   },
   methods: {
+    selectSucursal(sucursal) {
+      this.setSucursal(sucursal)
+    },
     validaFormulario() {
       if (this.form_oferta.tipo.trim() === '') {
         this.showAlertDialog(['Falta elejir el tipo de oferta'])
@@ -346,27 +384,36 @@ export default {
       this.setProgramandoOferta(false)
       this.setProgramandoLista(true)
     },
-    pseudoUuid() {
-      const ramdonNum = parseInt(Math.random() * 100000)
-      return 'Oferta_' + ramdonNum
-    },
-    generarOFerta() {
-      if (!this.validaFormulario()) {
-        return false
-      }
-      const uuid = this.pseudoUuid()
+    async generarOFerta() {
+      if (!this.validaFormulario()) return false
+      // eslint-disable-next-line no-console
+      console.log(this.form_oferta.fecha_inicio)
+      const sucursal = this.$store.state.ofertas.sucursal
+      const creadoPor = this.dataUser.correo_user
       const newOferta = {
-        status: 'En espera',
-        uuid,
+        sucursal,
+        status: 0,
+        editable: true,
         tipoOferta: this.form_oferta.tipo,
-        fechaInico: this.form_oferta.fecha_inicio,
-        fechaFin: this.form_oferta.fecha_fin,
+        fechaInicio: this.form_oferta.fecha_inicio + 'T23:59:59.999z',
+        fechaFin: this.form_oferta.fecha_fin + 'T23:59:59.999z',
         descripcion: this.form_oferta.descripcion,
-        listaProductos: [],
+        creadoPor,
       }
-      this.openOferta(newOferta)
-      this.setProgramandoOferta(false)
-      this.setProgramandoLista(true)
+
+      this.setLoading(true)
+      const response = await this.createMasterOffer(newOferta)
+      this.setLoading(false)
+      this.showAlertDialog([response.message])
+      if (response.success) {
+        this.setLoading(true)
+        await this.changeListaOfertas(sucursal)
+        this.setLoading(false)
+      }
+
+      // this.openOferta(newOferta)
+      // this.setProgramandoOferta(false)
+      // this.setProgramandoLista(true)
     },
     ...mapMutations({
       setProgramandoLista: 'ofertas/setProgramandoLista',
@@ -374,6 +421,11 @@ export default {
       openOferta: 'ofertas/openOferta',
       updateDataForm: 'ofertas/updateDataForm',
       showAlertDialog: 'general/showAlertDialog',
+      setLoading: 'general/setLoading',
+    }),
+    ...mapActions({
+      createMasterOffer: 'ofertas/createMasterOffer',
+      changeListaOfertas: 'ofertas/changeListaOfertas',
     }),
     getDateWithTime0() {
       const fecha = new Date()
