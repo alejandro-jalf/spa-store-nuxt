@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="mt-2">
     <div class="footerConexiones">
       <span class="mr-3 mt-2">
         <span class="font-weight-bold">Sucursal: </span>
@@ -15,10 +15,10 @@
     </div>
 
     <b-card no-body class="containerCard" :class="variantTheme">
-      <div class="nameArticle">Sha Caprice Esp Fuerza Crec. Biotina 750ml</div>
-      <div class="precioArticle">Precio: $31.00</div>
+      <div class="nameArticle">{{ article.Nombre }}</div>
+      <div class="precioArticle">Precio: ${{ article.Precio1IVAUV }}</div>
       <div class="descriptionArticle">
-        Sha Caprice Esp Fuerza Crec. Biotina 750ml
+        {{ article.Descripcion }}
       </div>
     </b-card>
 
@@ -67,7 +67,7 @@
 </template>
 
 <script>
-import { mapMutations } from 'vuex'
+import { mapMutations, mapActions } from 'vuex'
 import Quagga from 'quagga'
 // import audio from '@/assets/beep6.mp3'
 import utils from '../modules/utils'
@@ -93,6 +93,7 @@ export default {
         { value: 'BO', text: 'SPABODEGA' },
       ],
       sound: null,
+      barCode: '',
     }
   },
   computed: {
@@ -109,17 +110,32 @@ export default {
     variantTheme() {
       return this.$store.state.general.themesComponents.themeCardBody
     },
+    article() {
+      return this.$store.state.checadorprecios.article.data[0]
+    },
+    nameArticle() {
+      return this.$store.state.checadorprecios.article.data[0]
+    },
   },
   mounted() {
     this.setSucursalForUser()
     this.sound = document.querySelector('#reproductor')
+    this.barCode = ''
     // audio.play()
+    window.addEventListener('keyup', (evt) => {
+      if (parseInt(evt.key) >= 0 && parseInt(evt.key) <= 9)
+        this.barCode += evt.key
+      else if (evt.key === 'Enter') this.getArticleByCodeOrArticle()
+    })
   },
   methods: {
     ...mapMutations({
       setLoading: 'general/setLoading',
       showAlertDialog: 'general/showAlertDialog',
       setSucursal: 'checadorprecios/setSucursal',
+    }),
+    ...mapActions({
+      updateArticle: 'checadorprecios/updateArticle',
     }),
     selectSucursal(sucursal) {
       this.selected = sucursal
@@ -143,6 +159,20 @@ export default {
         )
         this.setSucursal(sucursalUser)
       }
+    },
+    async getArticleByCodeOrArticle() {
+      // eslint-disable-next-line no-console
+      console.log(this.barCode)
+      this.setLoading(true)
+      const response = await this.updateArticle([
+        this.$store.state.checadorprecios.sucursal,
+        this.barCode,
+      ])
+
+      this.barCode = ''
+      this.setLoading(false)
+      // eslint-disable-next-line no-console
+      console.log(response)
     },
     initLector() {
       // eslint-disable-next-line no-console
