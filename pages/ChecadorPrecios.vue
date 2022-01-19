@@ -1,6 +1,7 @@
 <template>
-  <div class="mt-2">
-    <div class="footerConexiones">
+  <div>
+    <div class="header-chec"></div>
+    <div v-if="dataUser.tipo_user === 'manager'" class="footerConexiones mt-2">
       <span class="mr-3 mt-2">
         <span class="font-weight-bold">Sucursal: </span>
         {{ sucursal }}
@@ -16,7 +17,25 @@
 
     <b-card no-body class="containerCard" :class="variantTheme">
       <div class="nameArticle">{{ article.Nombre }}</div>
-      <div class="precioArticle">Precio: ${{ article.Precio1IVAUV }}</div>
+      <div class="precioArticle precioArticle1">
+        Precio: ${{ utils.roundTo(article.Precio1IVAUV) }}
+      </div>
+      <div v-if="precio2 !== null">
+        <div class="preciosMore">
+          A partir de {{ article.CantidadParaPrecio2 }} pz a:
+        </div>
+        <div class="precioArticle">
+          Precio: ${{ utils.roundTo(article.Precio2IVAUV) }}
+        </div>
+      </div>
+      <div v-if="precio3 !== null">
+        <div class="preciosMore">
+          A partir de {{ article.CantidadParaPrecio3 }} pz a:
+        </div>
+        <div class="precioArticle">
+          Precio: ${{ utils.roundTo(article.Precio3IVAUV) }}
+        </div>
+      </div>
       <div class="descriptionArticle">
         {{ article.Descripcion }}
       </div>
@@ -75,6 +94,7 @@ import utils from '../modules/utils'
 export default {
   data() {
     return {
+      dataUser: this.$store.state.user.user,
       alertShow: false,
       sucursales: {
         ZR: 'SPAZARAGOZA',
@@ -94,6 +114,7 @@ export default {
       ],
       sound: null,
       barCode: '',
+      utils,
     }
   },
   computed: {
@@ -113,20 +134,25 @@ export default {
     article() {
       return this.$store.state.checadorprecios.article.data[0]
     },
-    nameArticle() {
-      return this.$store.state.checadorprecios.article.data[0]
+    precio2() {
+      return this.$store.state.checadorprecios.article.data[0].Precio2IVAUV
+    },
+    precio3() {
+      return this.$store.state.checadorprecios.article.data[0].Precio3IVAUV
     },
   },
   mounted() {
+    // eslint-disable-next-line no-console
+    console.log(
+      this.$store.state.general.tabActual.trim() === 'Checador Precios',
+      this.dataUser.sucursal_user
+    )
+    if (this.dataUser.tipo_user !== 'manager')
+      this.setSucursal(utils.getSucursalByName(this.dataUser.sucursal_user))
     this.setSucursalForUser()
     this.sound = document.querySelector('#reproductor')
     this.barCode = ''
     // audio.play()
-    window.addEventListener('keyup', (evt) => {
-      if (parseInt(evt.key) >= 0 && parseInt(evt.key) <= 9)
-        this.barCode += evt.key
-      else if (evt.key === 'Enter') this.getArticleByCodeOrArticle()
-    })
   },
   methods: {
     ...mapMutations({
@@ -159,20 +185,6 @@ export default {
         )
         this.setSucursal(sucursalUser)
       }
-    },
-    async getArticleByCodeOrArticle() {
-      // eslint-disable-next-line no-console
-      console.log(this.barCode)
-      this.setLoading(true)
-      const response = await this.updateArticle([
-        this.$store.state.checadorprecios.sucursal,
-        this.barCode,
-      ])
-
-      this.barCode = ''
-      this.setLoading(false)
-      // eslint-disable-next-line no-console
-      console.log(response)
     },
     initLector() {
       // eslint-disable-next-line no-console
@@ -268,6 +280,21 @@ export default {
 </script>
 
 <style scoped>
+.preciosMore {
+  text-align: center;
+  padding-top: 1px;
+  font-size: 22px;
+  border-top: 1px solid rgb(161, 161, 161);
+  width: 90%;
+  margin-left: 5%;
+}
+
+.header-chec {
+  background: rgba(0, 0, 0, 0);
+  width: 100%;
+  height: 25px;
+}
+
 .footerConexiones {
   background: rgba(196, 167, 167, 0.411);
   width: 100%;
@@ -293,5 +320,9 @@ export default {
   text-align: center;
   font-size: 35px;
   color: rgb(255, 23, 23);
+}
+
+.precioArticle1 {
+  padding: 30px 0px;
 }
 </style>

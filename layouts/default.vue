@@ -218,6 +218,14 @@ export default {
       document.querySelector('.slider').style.left = widthWindow + 30 + 'px'
     }
 
+    const checadorPrecios = (evt) => {
+      if (this.$store.state.general.tabActual.trim() === 'Checador Precios') {
+        if (parseInt(evt.key) >= 0 && parseInt(evt.key) <= 9)
+          this.barCode += evt.key
+        else if (evt.key === 'Enter') this.getArticleByCodeOrArticle()
+      }
+    }
+
     this.setWidthWindow(window.innerWidth)
     setTheme()
     updateDataUser()
@@ -225,6 +233,7 @@ export default {
     setMarginPrincipal(window.innerWidth)
     setWidthContainerAll(window.innerWidth)
 
+    window.addEventListener('keyup', checadorPrecios)
     document.addEventListener('touchstart', this.handleTouchStart, false)
     document.addEventListener('touchmove', this.handleTouchMove, false)
     document.addEventListener('touchend', this.handleEnd, false)
@@ -244,7 +253,19 @@ export default {
 
     ...mapActions({
       refreshDataUser: 'user/refreshDataUser',
+      updateArticle: 'checadorprecios/updateArticle',
     }),
+
+    async getArticleByCodeOrArticle() {
+      this.setLoading(true)
+      await this.updateArticle([
+        this.$store.state.checadorprecios.sucursal,
+        this.barCode,
+      ])
+
+      this.barCode = ''
+      this.setLoading(false)
+    },
 
     tabsAccess() {
       const user = this.$store.state.user.user
