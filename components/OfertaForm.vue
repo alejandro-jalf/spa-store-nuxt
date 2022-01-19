@@ -313,7 +313,7 @@ export default {
   mounted() {
     this.form_oferta.uuid = this.$store.state.ofertas.ofertaActual.tipo
     this.form_oferta.tipo = this.$store.state.ofertas.ofertaActual.tipoOferta
-    this.form_oferta.fecha_inicio = this.$store.state.ofertas.ofertaActual.fechaInico
+    this.form_oferta.fecha_inicio = this.$store.state.ofertas.ofertaActual.fechaInicio
     this.form_oferta.fecha_fin = this.$store.state.ofertas.ofertaActual.fechaFin
     this.form_oferta.descripcion = this.$store.state.ofertas.ofertaActual.descripcion
 
@@ -376,7 +376,7 @@ export default {
     setDataUpdateForm() {
       const newOferta = {
         tipoOferta: this.form_oferta.tipo,
-        fechaInico: this.form_oferta.fecha_inicio,
+        fechaInicio: this.form_oferta.fecha_inicio,
         fechaFin: this.form_oferta.fecha_fin,
         descripcion: this.form_oferta.descripcion,
       }
@@ -403,17 +403,19 @@ export default {
 
       this.setLoading(true)
       const response = await this.createMasterOffer(newOferta)
+      // eslint-disable-next-line no-console
+      console.log(response)
       this.setLoading(false)
-      this.showAlertDialog([response.message])
+      this.showAlertDialog([response.message, 'Informacion', 'success'])
       if (response.success) {
         this.setLoading(true)
         await this.changeListaOfertas(sucursal)
         this.setLoading(false)
+        this.setListaArticulos({ data: [] })
+        this.setProgramandoOferta(false)
+        this.setProgramandoLista(true)
+        this.openOferta(response.data.newOffer)
       }
-
-      // this.openOferta(newOferta)
-      // this.setProgramandoOferta(false)
-      // this.setProgramandoLista(true)
     },
     ...mapMutations({
       setProgramandoLista: 'ofertas/setProgramandoLista',
@@ -422,6 +424,7 @@ export default {
       updateDataForm: 'ofertas/updateDataForm',
       showAlertDialog: 'general/showAlertDialog',
       setLoading: 'general/setLoading',
+      setListaArticulos: 'ofertas/setListaArticulos',
     }),
     ...mapActions({
       createMasterOffer: 'ofertas/createMasterOffer',

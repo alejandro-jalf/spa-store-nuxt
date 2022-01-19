@@ -1,4 +1,6 @@
 export default function verifyRouters({ store, redirect, route, from }) {
+  // eslint-disable-next-line no-console
+  console.log(route)
   const login = store.state.user.login
   const user = store.state.user.user
   const sesionInstancia = store.state.user.sesionInstancia

@@ -5,7 +5,7 @@
       header-bg-variant="primary"
       header-text-variant="white"
       :header="'Oferta abierta: ' + uuid"
-      :title="tipoOferta + ' Del ' + fechaInico + ' al ' + fechaFin"
+      :title="tipoOferta + ' Del ' + fechaInicio + ' al ' + fechaFin"
       :class="variantTheme"
     >
       <b-alert v-if="!ofertaEditable" variant="warning">
@@ -23,13 +23,16 @@
             v-model="formArticulo.articulo"
             :class="backgroundInputTheme"
             placeholder="Codigo de articulo"
-            @keyup.enter="getArticuloByArticulo"
+            @keyup.enter="getDetailsArticleByArticle"
+            @keyup.esc="clearFormArticulo"
           ></b-form-input>
           <b-form-input
             id="codigo-barras"
             v-model="formArticulo.codigobarras"
             placeholder="Codigo de barras"
+            class="text-dark"
             :class="backgroundInputTheme"
+            readonly
             @keyup.enter="getArticuloByCodigoCarras"
           ></b-form-input>
           <b-form-input
@@ -37,7 +40,8 @@
             v-model="formArticulo.nombre"
             placeholder="*Nombre articulo*"
             :class="backgroundInputTheme"
-            @keyup.enter="showTableArticulosFinded"
+            @keyup.enter="getArticleByName"
+            @keyup.esc="clearFormArticulo"
           ></b-form-input>
         </b-form>
         <message-text
@@ -47,50 +51,62 @@
           class="mb-2 text-center"
         ></message-text>
         <b-card-text class="font-weight-bold mb-1">
-          Datos de la oferta para el articulo: 0090098
+          Datos de la oferta para el articulo: {{ articuloActual }}
         </b-card-text>
         <divider class="mb-2"></divider>
         <b-form inline class="mt-2 mb-2">
-          <b-form-input
-            id="input-costo"
-            v-model="formArticulo.costo"
-            placeholder="Costo"
-            class="input-resp-dt-ofe"
-            readonly
-          ></b-form-input>
-          <b-form-input
-            id="input-precio"
-            v-model="formArticulo.precio"
-            placeholder="Precio"
-            class="input-resp-dt-ofe"
-            readonly
-          ></b-form-input>
-          <b-form-input
-            id="input-margen"
-            v-model="formArticulo.margen"
-            placeholder="Margen"
-            class="input-resp-dt-ofe"
-            readonly
-          ></b-form-input>
-          <b-form-input
-            id="input-oferta"
-            ref="oferta"
-            v-model="formArticulo.oferta"
-            placeholder="Precio de oferta"
-            class="input-resp-dt-ofe"
-            :class="backgroundInputTheme"
-            @keydown="verifyData"
-            @keyup="calcUtilidad"
-            @keyup.enter="agregarArticulo"
-          ></b-form-input>
-          <b-form-input
-            id="input-utilidad"
-            v-model="formArticulo.utilidad"
-            placeholder="Utilidad"
-            class="input-resp-dt-ofe"
-            :state="status_utulidad"
-            readonly
-          ></b-form-input>
+          <b-form-group label="Costo" class="input-resp-dt-ofe">
+            <b-form-input
+              id="input-costo"
+              v-model="formArticulo.costo"
+              placeholder="Costo"
+              class="w-100"
+              desc
+              readonly
+            ></b-form-input>
+          </b-form-group>
+          <b-form-group label="Precio" class="input-resp-dt-ofe">
+            <b-form-input
+              id="input-precio"
+              v-model="formArticulo.precio"
+              placeholder="Precio"
+              class="w-100"
+              readonly
+            ></b-form-input>
+          </b-form-group>
+          <b-form-group label="Margen" class="input-resp-dt-ofe">
+            <b-form-input
+              id="input-margen"
+              v-model="formArticulo.margen"
+              placeholder="Margen"
+              class="w-100"
+              readonly
+            ></b-form-input>
+          </b-form-group>
+          <b-form-group label="Oferta" class="input-resp-dt-ofe">
+            <b-form-input
+              id="input-oferta"
+              ref="oferta"
+              v-model="formArticulo.oferta"
+              placeholder="Precio de oferta"
+              class="w-100"
+              :class="backgroundInputTheme"
+              @keydown="verifyData"
+              @keyup="calcUtilidad"
+              @keyup.enter="agregarArticulo"
+              @keyup.esc="clearFormArticulo"
+            ></b-form-input>
+          </b-form-group>
+          <b-form-group label="Utilidad" class="input-resp-dt-ofe">
+            <b-form-input
+              id="input-utilidad"
+              v-model="formArticulo.utilidad"
+              placeholder="Utilidad"
+              class="w-100"
+              :state="status_utulidad"
+              readonly
+            ></b-form-input>
+          </b-form-group>
         </b-form>
         <b-button variant="success" class="mb-3" @click="agregarArticulo">
           <b-icon icon="plus-circle-fill" />
@@ -243,6 +259,29 @@
       :on-row-selected="onRowSelected"
       :enter-select="enterSelect"
     ></OfertaListProducts>
+    <div v-if="searchProducts" class="background-names">
+      <b-button
+        class="btnSearchProducts"
+        variant="danger"
+        @click="searchProducts = false"
+      >
+        Cancelar
+      </b-button>
+      <b-table
+        sticky-header
+        striped
+        hover
+        :fields="fieldsProducts"
+        :items="productsNames"
+        class="tableProducts"
+      >
+        <template #cell(Acciones)="row">
+          <b-button variant="success" @click="selectProduct(row.item)">
+            Agregar
+          </b-button>
+        </template>
+      </b-table>
+    </div>
   </div>
 </template>
 
@@ -298,141 +337,17 @@ export default {
         'utilidad',
         'Acciones',
       ],
-      articulos: [
-        {
-          articulo: '0102126',
-          codigobarras: '7501003337887',
-          nombre: 'Ablandador Carnes MC 155gr',
-          precio: '16.000000',
-          costo: '12.713600',
-        },
-        {
-          articulo: '0102134',
-          codigobarras: '7501003300843',
-          nombre: 'Te Manzanilla MC C/25',
-          precio: '17.000000',
-          costo: '13.560000',
-        },
-        {
-          articulo: '0102137',
-          codigobarras: '7501005151955',
-          nombre: 'Mayo. Hellmanns 190gr',
-          precio: '10.000000',
-          costo: '8.330000',
-        },
-        {
-          articulo: '0102159',
-          codigobarras: '041351914639',
-          nombre: 'Pimienta negra mol tones 511g',
-          precio: '218.000000',
-          costo: '186.088661',
-        },
-        {
-          articulo: '0102160',
-          codigobarras: '041351913878',
-          nombre: 'Ablandador Carnes Tones 1.175KG',
-          precio: '138.000000',
-          costo: '54.659518',
-        },
-        {
-          articulo: '0102161',
-          codigobarras: '041351914899',
-          nombre: 'Sazonador Carnes Tones 681gr',
-          precio: '195.000000',
-          costo: '159.964464',
-        },
-        {
-          articulo: '0102340',
-          codigobarras: '7501017043262',
-          nombre: 'Mayo. La Costeña 330gr',
-          precio: '22.000000',
-          costo: '20.400000',
-        },
-        {
-          articulo: '0102343',
-          codigobarras: '7506192505802',
-          nombre: 'Ade. Riko Pollo 33gr',
-          precio: '4.500000',
-          costo: '3.250000',
-        },
-        {
-          articulo: '0102346',
-          codigobarras: '7501003308696',
-          nombre: 'Mayo. MC Habanero SQ 345gr',
-          precio: '23.000000',
-          costo: '19.480000',
-        },
-        {
-          articulo: '0102350',
-          codigobarras: '7501058628503',
-          nombre: 'Salsa Soya Maggi 140ml',
-          precio: '17.000000',
-          costo: '14.330000',
-        },
-        {
-          articulo: '0102372',
-          codigobarras: '7501003312808',
-          nombre: 'Te Manzanilla MC C/200',
-          precio: '118.000000',
-          costo: '90.700000',
-        },
-        {
-          articulo: '0102377',
-          codigobarras: '7501005100854',
-          nombre: 'Sazonador Costilla Knorr 10g',
-          precio: '24.000000',
-          costo: '12.900000',
-        },
-        {
-          articulo: '0102391',
-          codigobarras: '7501052470016',
-          nombre: 'Ade. Ensalada Est. Cesar CJ 237ml',
-          precio: '21.000000',
-          costo: '17.460000',
-        },
-        {
-          articulo: '0102394',
-          codigobarras: '7501003314918',
-          nombre: 'Te Jengibre/Limon Mc Cormick 35gr c/25',
-          precio: '40.000000',
-          costo: '32.500000',
-        },
-        {
-          articulo: '0102433',
-          codigobarras: '7501017035168',
-          nombre: 'Mayo. La Costeña 1.8kg',
-          precio: '98.500000',
-          costo: '98.000000',
-        },
-        {
-          articulo: '0102436',
-          codigobarras: '086141002615',
-          nombre: 'Te de Manzanilla Anis La Pastora 24gr',
-          precio: '25.000000',
-          costo: '21.000000',
-        },
-        {
-          articulo: '0102441',
-          codigobarras: '7500533001602',
-          nombre: 'Paprika Est. Esp Tones 405gr',
-          precio: '130.000000',
-          costo: '109.040000',
-        },
-        {
-          articulo: '0102446',
-          codigobarras: '7501791601313',
-          nombre: 'Sal con Ajo Great Value 125gr',
-          precio: '20.000000',
-          costo: '15.900000',
-        },
-        {
-          articulo: '0103001',
-          codigobarras: '7501000913343',
-          nombre: 'Pap. Gerber E2 Pera 100gr',
-          precio: '8.500000',
-          costo: '7.080000',
-        },
+      fieldsProducts: [
+        'Articulo',
+        'CodigoBarras',
+        'Nombre',
+        'Descripcion',
+        'Acciones',
       ],
+      articulos: [],
+      articuloActual: '',
+      productsNames: [],
+      searchProducts: false,
     }
   },
   computed: {
@@ -446,19 +361,22 @@ export default {
       return this.$store.state.general.themesComponents.themeCard2Body
     },
     ofertaEditable() {
-      return this.$store.state.ofertas.ofertaEditable
+      return (
+        this.$store.state.ofertas.ofertaActual.status === 0 ||
+        this.$store.state.ofertas.ofertaActual.status === 2
+      )
     },
     status() {
       if (
-        this.$store.state.ofertas.ofertaActual.status === 'Atendida' ||
-        this.$store.state.ofertas.ofertaActual.status === 'Programada'
+        this.$store.state.ofertas.ofertaActual.status === 4 ||
+        this.$store.state.ofertas.ofertaActual.status === 3
       ) {
         return false
       }
       return true
     },
     listaProductos() {
-      return this.$store.state.ofertas.ofertaActual.listaProductos
+      return this.$store.state.ofertas.listaArticulos.data
     },
     uuid() {
       return this.$store.state.ofertas.ofertaActual.uuid
@@ -466,8 +384,10 @@ export default {
     tipoOferta() {
       return this.$store.state.ofertas.ofertaActual.tipoOferta
     },
-    fechaInico() {
-      return utils.parseFecha(this.$store.state.ofertas.ofertaActual.fechaInico)
+    fechaInicio() {
+      return utils.parseFecha(
+        this.$store.state.ofertas.ofertaActual.fechaInicio
+      )
     },
     fechaFin() {
       return utils.parseFecha(this.$store.state.ofertas.ofertaActual.fechaFin)
@@ -592,10 +512,13 @@ export default {
       }
     },
     verifyData(evt) {
-      if (evt.keyCode !== 190 && evt.keyCode !== 13 && evt.keyCode !== 8) {
-        if (isNaN(parseInt(evt.key))) {
-          evt.preventDefault()
-        }
+      if (
+        evt.keyCode !== 190 &&
+        evt.keyCode !== 13 &&
+        evt.keyCode !== 8 &&
+        evt.keyCode !== 110
+      ) {
+        if (isNaN(parseInt(evt.key))) evt.preventDefault()
       }
     },
     calcUtilidad() {
@@ -618,6 +541,7 @@ export default {
       setEditandoOferta: 'ofertas/setEditandoOferta',
       addOFerta: 'ofertas/addOFerta',
       showAlertDialog: 'general/showAlertDialog',
+      setLoading: 'general/setLoading',
     }),
     editarDatosOferta() {
       this.setEditandoOferta(true)
@@ -685,47 +609,115 @@ export default {
       this.formArticulo.margen = `${porcentaje}%`
       this.$refs.oferta.focus()
     },
-    getArticuloByCodigoCarras() {
-      const articulofinded = this.articulos.find((element) => {
-        return element.codigobarras === this.formArticulo.codigobarras
-      })
-      if (articulofinded === undefined) {
+    async getDetailsArticleByArticle() {
+      try {
+        const articulo = this.formArticulo.articulo
+        if (articulo.trim() === '') return false
+        const urlBase = process.env.spastore_url_backend
+        const sucursal = this.$store.state.ofertas.ofertaActual.sucursal
+        this.setLoading(true)
+        const response = await this.$axios({
+          url:
+            urlBase + 'api/v1/ofertas/' + sucursal + '/articulos/' + articulo,
+          method: 'get',
+        })
+        this.setLoading(false)
+
+        if (response.data.success) {
+          if (response.data.data.length !== 0) {
+            const article = response.data.data[0]
+            this.showError = false
+            this.formArticulo.articulo = article.Articulo
+            this.formArticulo.codigobarras = article.CodigoBarras
+            this.formArticulo.nombre = article.Nombre
+            this.formArticulo.costo = utils.roundTo(article.UltimoCosto)
+            this.formArticulo.precio = utils.roundTo(article.Precio1IVAUV)
+            const operacion = 1 - article.UltimoCosto / article.Precio1IVAUV
+            const rounded = utils.roundTo(operacion, 4)
+            const porcentaje = utils.parseToPorcent(rounded)
+            this.formArticulo.margen = `${porcentaje}%`
+            this.$refs.oferta.focus()
+            this.articuloActual = article.Articulo
+          } else {
+            this.showError = true
+            this.clearFormArticulo()
+          }
+        } else {
+          this.showAlertDialog([response.data.message])
+          this.showError = true
+          this.clearFormArticulo()
+        }
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.log(error, error.response)
+        this.setLoading(false)
         this.showError = true
         this.clearFormArticulo()
-        return true
+        if (error.response) this.showAlertDialog([error.response.data.message])
+        else this.showAlertDialog(['Error con el servidor'])
       }
-      this.showError = false
-      this.formArticulo.articulo = articulofinded.articulo
-      this.formArticulo.codigobarras = articulofinded.codigobarras
-      this.formArticulo.nombre = articulofinded.nombre
-      this.formArticulo.costo = utils.roundTo(articulofinded.costo)
-      this.formArticulo.precio = utils.roundTo(articulofinded.precio)
-      const operacion = 1 - articulofinded.costo / articulofinded.precio
-      const rounded = utils.roundTo(operacion, 4)
-      const porcentaje = utils.parseToPorcent(rounded)
-      this.formArticulo.margen = `${porcentaje}%`
-      this.$refs.oferta.focus()
     },
-    getArticuloByArticulo() {
-      const articulofinded = this.articulos.find((element) => {
-        return element.articulo === this.formArticulo.articulo
-      })
-      if (articulofinded === undefined) {
+    async getArticleByName() {
+      try {
+        if (this.formArticulo.nombre.trim() === '') {
+          this.showAlertDialog(['No ha ingresado a ningun nombre'])
+          return
+        }
+        const urlBase = process.env.spastore_url_backend
+        const sucursal = this.$store.state.ofertas.ofertaActual.sucursal
+        const nombre = this.formArticulo.nombre
+        this.setLoading(true)
+        const response = await this.$axios({
+          url:
+            urlBase +
+            'api/v1/ofertas/' +
+            sucursal +
+            '/articulos/' +
+            nombre +
+            '/details',
+          method: 'get',
+        })
+        this.setLoading(false)
+
+        if (response.data.success) {
+          if (response.data.data.length !== 0) {
+            this.productsNames = response.data.data
+            this.searchProducts = true
+          } else {
+            this.showError = true
+            this.clearFormArticulo()
+          }
+        } else {
+          this.showAlertDialog([response.data.message])
+          this.showError = true
+          this.clearFormArticulo()
+        }
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.log(error, error.response)
+        this.setLoading(false)
         this.showError = true
         this.clearFormArticulo()
-        return true
+        if (error.response) this.showAlertDialog([error.response.data.message])
+        else this.showAlertDialog(['Error con el servidor'])
       }
+    },
+    selectProduct(article) {
+      // eslint-disable-next-line no-console
+      console.log(article)
+      this.searchProducts = false
       this.showError = false
-      this.formArticulo.articulo = articulofinded.articulo
-      this.formArticulo.codigobarras = articulofinded.codigobarras
-      this.formArticulo.nombre = articulofinded.nombre
-      this.formArticulo.costo = utils.roundTo(articulofinded.costo)
-      this.formArticulo.precio = utils.roundTo(articulofinded.precio)
-      const operacion = 1 - articulofinded.costo / articulofinded.precio
+      this.formArticulo.articulo = article.Articulo
+      this.formArticulo.codigobarras = article.CodigoBarras
+      this.formArticulo.nombre = article.Nombre
+      this.formArticulo.costo = utils.roundTo(article.UltimoCosto)
+      this.formArticulo.precio = utils.roundTo(article.Precio1IVAUV)
+      const operacion = 1 - article.UltimoCosto / article.Precio1IVAUV
       const rounded = utils.roundTo(operacion, 4)
       const porcentaje = utils.parseToPorcent(rounded)
       this.formArticulo.margen = `${porcentaje}%`
       this.$refs.oferta.focus()
+      this.articuloActual = article.Articulo
     },
   },
 }
@@ -758,6 +750,29 @@ export default {
   position: absolute;
   bottom: 0px;
   right: 0px;
+}
+
+.btnSearchProducts {
+  position: fixed;
+  margin-left: 83%;
+  margin-top: 15%;
+}
+
+.background-names {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0px;
+  left: 0px;
+  background: rgba(0, 0, 0, 0.8);
+  z-index: 5;
+}
+
+.tableProducts {
+  margin: auto;
+  width: 80%;
+  margin-top: 20%;
+  background: #fff;
 }
 
 @media screen and (max-width: 767px) {

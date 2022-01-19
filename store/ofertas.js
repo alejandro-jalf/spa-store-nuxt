@@ -14,23 +14,32 @@ export const state = () => ({
     fechaInico: '',
     fechaFin: '',
     descripcion: '',
-    listaProductos: [],
   },
   // new
-  listaOfertas: localStorage.getItem('spastore_ofertas_articulos')
-    ? JSON.parse(localStorage.getItem('spastore_ofertas_articulos'))
+  listaOfertas: localStorage.getItem('spastore_ofertas_maestros')
+    ? JSON.parse(localStorage.getItem('spastore_ofertas_maestros'))
     : { data: [] },
   sucursal: localStorage.getItem('spastore_ofertas_sucursal'),
+  listaArticulos: localStorage.getItem('spastore_ofertas_articulos')
+    ? JSON.parse(localStorage.getItem('spastore_ofertas_articulos'))
+    : { data: [] },
 })
 
 export const mutations = {
   setListasOfertas(state, listaOfertas) {
-    // eslint-disable-next-line no-console
-    console.log(listaOfertas)
     state.listaOfertas = listaOfertas
     localStorage.setItem(
-      'spastore_ofertas_articulos',
+      'spastore_ofertas_maestros',
       JSON.stringify(listaOfertas)
+    )
+  },
+  setListaArticulos(state, listaArticulos) {
+    // eslint-disable-next-line no-console
+    console.log(listaArticulos)
+    state.listaArticulos = listaArticulos
+    localStorage.setItem(
+      'spastore_ofertas_articulos',
+      JSON.stringify(listaArticulos)
     )
   },
   setSucursal(state, sucursal) {
@@ -146,6 +155,33 @@ export const actions = {
         method: 'post',
         data: bodyOffer,
       })
+
+      return response.data
+    } catch (error) {
+      if (error.response) {
+        return error.response.data
+      }
+      return {
+        success: false,
+        message: 'Error con el servidor',
+        error,
+      }
+    }
+  },
+  async changeListaArticulos({ commit }, uuidmaster) {
+    try {
+      const url =
+        process.env.spastore_url_backend +
+        'api/v1/ofertas/articulos/' +
+        uuidmaster
+      const response = await this.$axios({
+        url,
+        method: 'get',
+      })
+
+      if (response.data.success) {
+        commit('setListaArticulos', { data: response.data.data })
+      }
 
       return response.data
     } catch (error) {

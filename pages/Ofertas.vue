@@ -71,7 +71,7 @@
               variant="info"
               size="sm"
               class="mr-2 mt-2"
-              @click="viewDetails(row.item.uuid)"
+              @click="viewDetails(row.item.uuid, row.item)"
             >
               {{ detailsMessage(row.item.status) }}
             </b-button>
@@ -321,7 +321,7 @@ export default {
       setProgramandoOferta: 'ofertas/setProgramandoOferta',
       setEditandoOferta: 'ofertas/setEditandoOferta',
       cleanOfertaActual: 'ofertas/cleanOfertaActual',
-      openOfertaByUuid: 'ofertas/openOfertaByUuid',
+      openOferta: 'ofertas/openOferta',
       setEditable: 'ofertas/setEditable',
       setProgramandoLista: 'ofertas/setProgramandoLista',
       setLoading: 'general/setLoading', // nuevas
@@ -330,6 +330,7 @@ export default {
     }),
     ...mapActions({
       changeListaOfertas: 'ofertas/changeListaOfertas', // nuevas
+      changeListaArticulos: 'ofertas/changeListaArticulos', // nuevas
     }),
     programarOferta() {
       this.setEditandoOferta(false)
@@ -337,11 +338,22 @@ export default {
       this.setEditable(true)
       this.cleanOfertaActual()
     },
-    viewDetails(uuid) {
+    async viewDetails(uuid, oferta) {
+      // eslint-disable-next-line no-console
+      console.log(uuid, oferta)
+      const ofertaAct = { ...oferta }
+      ofertaAct.fechaAlta = ofertaAct.fechaalta
+      ofertaAct.fechaInicio = ofertaAct.fechainicio
+      ofertaAct.fechaFin = ofertaAct.fechafin
+      ofertaAct.tipoOferta = ofertaAct.tipooferta
+      ofertaAct.modificadoPor = ofertaAct.modificadopor
       // falta ajustar
+      this.setLoading(true)
+      await this.changeListaArticulos(uuid)
+      this.setLoading(false)
+      this.openOferta(ofertaAct)
       this.setProgramandoLista(true)
       this.setEditable(false)
-      this.openOfertaByUuid(uuid)
     },
     async reloadListaOfertas() {
       const sucursal = this.$store.state.ofertas.sucursal
