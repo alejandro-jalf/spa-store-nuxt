@@ -1,6 +1,4 @@
 export default function verifyRouters({ store, redirect, route, from }) {
-  // eslint-disable-next-line no-console
-  console.log(route)
   const login = store.state.user.login
   const user = store.state.user.user
   const sesionInstancia = store.state.user.sesionInstancia
@@ -21,8 +19,6 @@ export default function verifyRouters({ store, redirect, route, from }) {
         'Error en la navegacion',
       ])
 
-      // eslint-disable-next-line no-console
-      console.log(route)
       if (tabPrincipal) {
         const tabFinded = listTabs.find((tab) => tab.nickname === tabPrincipal)
         if (tabFinded) {
@@ -86,7 +82,10 @@ export default function verifyRouters({ store, redirect, route, from }) {
           const tabFinded = listTabs.find(
             (tab) => tab.nickname === tabPrincipal
           )
-          if (tabFinded) {
+          if (
+            tabFinded &&
+            route.path.toLowerCase() !== tabFinded.path.toLowerCase()
+          ) {
             store.commit('general/setTabActual', tabFinded.nickname)
             store.commit('user/setSesionInstancia', tabFinded.nickname)
             redirect(tabFinded.path)

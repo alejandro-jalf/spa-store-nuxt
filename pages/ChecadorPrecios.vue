@@ -15,6 +15,35 @@
       </b-button>
     </div>
 
+    <div v-if="false" id="scanner" class="col-md-3" style="padding: 5% 1%">
+      <b-button
+        v-if="scannerVisible"
+        class="btn btn-danger"
+        style="margin-top: 3%"
+        @click="stopScanner"
+      >
+        Detener
+      </b-button>
+      <div id="container-escaner" class="text-center">
+        <div id="lector">
+          <div v-if="scannerVisible" id="laserImage"></div>
+        </div>
+        <div v-if="!scannerVisible" id="imageCodigo"></div>
+        <div v-if="!scannerVisible" id="escaner">
+          <div class="laser"></div>
+        </div>
+        <button
+          v-if="!scannerVisible"
+          id="btn-scanear"
+          class="btn btn-outline-danger"
+          @click="activateScanner"
+        >
+          Escanear
+        </button>
+        <canvas></canvas>
+      </div>
+    </div>
+
     <b-card no-body class="containerCard" :class="variantTheme">
       <div class="nameArticle">{{ article.Nombre }}</div>
       <div class="precioArticle precioArticle1">
@@ -115,6 +144,7 @@ export default {
       sound: null,
       barCode: '',
       utils,
+      scannerVisible: false,
     }
   },
   computed: {
@@ -142,11 +172,6 @@ export default {
     },
   },
   mounted() {
-    // eslint-disable-next-line no-console
-    console.log(
-      this.$store.state.general.tabActual.trim() === 'Checador Precios',
-      this.dataUser.sucursal_user
-    )
     if (this.dataUser.tipo_user !== 'manager')
       this.setSucursal(utils.getSucursalByName(this.dataUser.sucursal_user))
     this.setSucursalForUser()
@@ -163,6 +188,15 @@ export default {
     ...mapActions({
       updateArticle: 'checadorprecios/updateArticle',
     }),
+    activateScanner() {
+      this.scannerVisible = true
+      // objectQuagga.initQuagga()
+      this.initLector()
+    },
+    stopScanner() {
+      Quagga.stop()
+      this.scannerVisible = false
+    },
     selectSucursal(sucursal) {
       this.selected = sucursal
     },
@@ -280,6 +314,109 @@ export default {
 </script>
 
 <style scoped>
+#btn-scanear {
+  position: absolute;
+  top: 41%;
+  left: 30%;
+  z-index: 4;
+  background: rgb(253, 207, 0);
+  padding: 5%;
+  color: #020202;
+  border: 1px solid #000000;
+}
+#btn-scanear:hover {
+  color: #000000;
+  box-shadow: 0px 0px 9px 5px #ff0000;
+}
+
+#lector {
+  position: absolute;
+  max-width: 300px;
+  max-height: 300px;
+  width: 300px;
+  height: 300px;
+  border-radius: 3%;
+  left: 0px;
+  top: 0px;
+  background: #464545;
+}
+
+#escaner {
+  background: rgba(255, 0, 0, 0.507);
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: 3;
+  border-radius: 3%;
+  border: 3px solid #505050;
+}
+
+#imageCodigo {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-image: url('../assets/codigo1.jpg');
+  background-size: 100% 100%;
+  border-radius: 3%;
+  z-index: 2;
+}
+
+.laser,
+#laserImage {
+  position: absolute;
+  top: 50%;
+  left: 5%;
+  width: 90%;
+  background: rgb(255, 195, 195);
+  height: 4px;
+  box-shadow: 0px 0px 9px 5px #ff0000;
+}
+
+#laserImage {
+  z-index: 3;
+  box-shadow: 0px 0px 7px 3px #ff0000;
+  height: 1px;
+  top: 50%;
+  width: 96%;
+  left: 2%;
+}
+
+#lector video {
+  max-width: 300px;
+  max-height: 300px;
+  width: 100%;
+  height: 100%;
+}
+
+@media screen and (max-width: 900px) {
+  #container-escaner,
+  #lector {
+    width: 200px;
+    height: 200px;
+  }
+  #escaner {
+    width: 200px;
+    height: 200px;
+  }
+}
+@media screen and (max-width: 767px) {
+  #container-escaner,
+  #lector {
+    width: 250px;
+    height: 250px;
+  }
+  #escaner {
+    width: 250px;
+    height: 250px;
+  }
+  #container-escaner {
+    margin: auto;
+  }
+  #btn-scanear {
+    left: 34%;
+  }
+}
+
 .preciosMore {
   text-align: center;
   padding-top: 1px;
