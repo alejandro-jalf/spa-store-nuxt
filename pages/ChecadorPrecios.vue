@@ -15,11 +15,11 @@
       </b-button>
     </div>
 
-    <div v-if="false" id="scanner" class="col-md-3" style="padding: 5% 1%">
+    <div v-if="true" id="scanner">
       <b-button
         v-if="scannerVisible"
-        class="btn btn-danger"
-        style="margin-top: 3%"
+        class="mt-2 mb-2"
+        variant="danger"
         @click="stopScanner"
       >
         Detener
@@ -40,11 +40,16 @@
         >
           Escanear
         </button>
-        <canvas></canvas>
+        <canvas v-if="!scannerVisible" class="canvas-scan"></canvas>
       </div>
     </div>
 
-    <b-card no-body class="containerCard" :class="variantTheme">
+    <b-card
+      v-if="!scannerVisible"
+      no-body
+      class="containerCard"
+      :class="variantTheme"
+    >
       <div class="nameArticle">{{ article.Nombre }}</div>
       <div class="precioArticle precioArticle1">
         Precio: ${{ utils.roundTo(article.Precio1IVAUV) }}
@@ -221,8 +226,7 @@ export default {
       }
     },
     initLector() {
-      // eslint-disable-next-line no-console
-      console.log('entraaaa')
+      const stopScanner = this.stopScanner
       Quagga.init(
         {
           inputStream: {
@@ -254,10 +258,9 @@ export default {
           if (err) {
             // eslint-disable-next-line no-console
             console.log(err)
+            stopScanner()
             return
           }
-          // eslint-disable-next-line no-console
-          console.log('Iniciado correctamente')
           Quagga.start()
         }
       )
@@ -314,6 +317,30 @@ export default {
 </script>
 
 <style scoped>
+#scanner {
+  width: 250px;
+  height: 250px;
+  border-radius: 3%;
+  margin-bottom: 30px;
+}
+
+#container-escaner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 3%;
+}
+
+#imageCodigo {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-image: url('../assets/codigo1.jpg');
+  background-size: 100% 100%;
+  border-radius: 3%;
+  z-index: 2;
+}
+
 #btn-scanear {
   position: absolute;
   top: 41%;
@@ -321,9 +348,11 @@ export default {
   z-index: 4;
   background: rgb(253, 207, 0);
   padding: 5%;
-  color: #020202;
-  border: 1px solid #000000;
+  color: #ffffff;
+  border: 2px solid #fffbc1;
+  box-shadow: 0px 0px 3px 5px #ffee00;
 }
+
 #btn-scanear:hover {
   color: #000000;
   box-shadow: 0px 0px 9px 5px #ff0000;
@@ -333,8 +362,8 @@ export default {
   position: absolute;
   max-width: 300px;
   max-height: 300px;
-  width: 300px;
-  height: 300px;
+  width: 100%;
+  height: 100%;
   border-radius: 3%;
   left: 0px;
   top: 0px;
@@ -349,16 +378,6 @@ export default {
   z-index: 3;
   border-radius: 3%;
   border: 3px solid #505050;
-}
-
-#imageCodigo {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  background-image: url('../assets/codigo1.jpg');
-  background-size: 100% 100%;
-  border-radius: 3%;
-  z-index: 2;
 }
 
 .laser,
@@ -386,35 +405,6 @@ export default {
   max-height: 300px;
   width: 100%;
   height: 100%;
-}
-
-@media screen and (max-width: 900px) {
-  #container-escaner,
-  #lector {
-    width: 200px;
-    height: 200px;
-  }
-  #escaner {
-    width: 200px;
-    height: 200px;
-  }
-}
-@media screen and (max-width: 767px) {
-  #container-escaner,
-  #lector {
-    width: 250px;
-    height: 250px;
-  }
-  #escaner {
-    width: 250px;
-    height: 250px;
-  }
-  #container-escaner {
-    margin: auto;
-  }
-  #btn-scanear {
-    left: 34%;
-  }
 }
 
 .preciosMore {
@@ -461,5 +451,35 @@ export default {
 
 .precioArticle1 {
   padding: 30px 0px;
+}
+
+@media screen and (max-width: 900px) {
+  #container-escaner,
+  #lector {
+    width: 200px;
+    height: 200px;
+  }
+  #escaner {
+    width: 200px;
+    height: 200px;
+  }
+}
+
+@media screen and (max-width: 767px) {
+  #container-escaner,
+  #lector {
+    width: 250px;
+    height: 250px;
+  }
+  #escaner {
+    width: 250px;
+    height: 250px;
+  }
+  #container-escaner {
+    margin: auto;
+  }
+  #btn-scanear {
+    left: 34%;
+  }
 }
 </style>
