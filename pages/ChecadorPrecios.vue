@@ -15,7 +15,7 @@
       </b-button>
     </div>
 
-    <div v-if="true" id="scanner">
+    <div v-if="dataUser.tipo_user === 'manager'" id="scanner">
       <b-button
         v-if="scannerVisible"
         class="mt-2 mb-2"
