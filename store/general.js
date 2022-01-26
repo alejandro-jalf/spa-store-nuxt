@@ -157,11 +157,9 @@ export const mutations = {
       message = null,
       title = 'Realizando Accion',
       clickAcept = () => {},
-      clickCancel = () => {
-        state.alertOption.show = false
-      },
       background = 'primary',
-      textColor = 'light',
+      textColor = 'white',
+      clickCancel,
     ]
   ) => {
     if (message === null) return true

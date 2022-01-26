@@ -231,6 +231,8 @@ export default {
         {
           inputStream: {
             constraints: {
+              // width: 600,
+              // height: 600,
               width: 1920,
               height: 1080,
             },
@@ -265,6 +267,8 @@ export default {
         }
       )
       Quagga.onDetected((data) => {
+        // eslint-disable-next-line no-console
+        console.log(data.codeResult.code)
         this.sound.play()
         // app.codigoActual = data.codeResult.code;
         // app.setDatosActuales(data.codeResult.code);
@@ -318,8 +322,8 @@ export default {
 
 <style scoped>
 #scanner {
-  width: 250px;
-  height: 250px;
+  width: 300px;
+  height: 300px;
   border-radius: 3%;
   margin-bottom: 30px;
 }

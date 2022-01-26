@@ -22,6 +22,7 @@
             ref="articulo"
             v-model="formArticulo.articulo"
             :class="backgroundInputTheme"
+            :readonly="!editableArticulo"
             placeholder="Codigo de articulo"
             @keyup.enter="getDetailsArticleByArticle"
             @keyup.esc="clearFormArticulo"
@@ -40,6 +41,7 @@
             v-model="formArticulo.nombre"
             placeholder="*Nombre articulo*"
             :class="backgroundInputTheme"
+            :readonly="!editableArticulo"
             @keyup.enter="getArticleByName"
             @keyup.esc="clearFormArticulo"
           ></b-form-input>
@@ -110,7 +112,7 @@
         </b-form>
         <b-button variant="success" class="mb-3" @click="agregarArticulo">
           <b-icon icon="plus-circle-fill" />
-          Agregar a la lista
+          {{ messageButtonAddArticle }}
         </b-button>
         <b-button variant="warning" class="mb-3" @click="clearFormArticulo">
           <b-icon icon="backspace-fill" />
@@ -132,6 +134,18 @@
           responsive=""
           :class="variantThemeTableBody"
         >
+          <template #cell(margen)="row">
+            {{ getCalculaUtilidad(row.item.costo, row.item.precio) }}
+          </template>
+          <template #cell(utilidad)="row">
+            {{ getCalculaUtilidad(row.item.costo, row.item.oferta) }}
+          </template>
+          <template #cell(precio)="row">
+            {{ utils.roundTo(row.item.precio) }}
+          </template>
+          <template #cell(oferta)="row">
+            {{ utils.roundTo(row.item.oferta) }}
+          </template>
           <template v-if="ofertaEditable" #cell(Acciones)="row">
             <b-button
               variant="warning"
@@ -145,7 +159,7 @@
               variant="danger"
               size="sm"
               class="mb-1"
-              @click="deleteArticulo(row.item.articulo)"
+              @click="prepareDeleteArticle(row.item.articulo, row.item.nombre)"
             >
               <b-icon icon="trash" />
             </b-button>
@@ -153,6 +167,14 @@
         </b-table>
       </div>
       <div v-if="ofertaEditable" class="text-right mt-3 buttons-end">
+        <b-button
+          variant="secondary"
+          class="mb-2"
+          @click="cerrarListaArticulos"
+        >
+          <b-icon icon="x-circle-fill"></b-icon>
+          Cerrar
+        </b-button>
         <b-button variant="secondary" class="mb-2" @click="editarDatosOferta">
           <b-icon icon="arrow-left-circle-fill" />
           Datos de oferta
@@ -162,7 +184,7 @@
           Cancelar oferta
         </b-button>
         <b-button variant="primary" class="mb-2" @click="saveAndSend">
-          <b-icon icon="upload-fill" />
+          <b-icon icon="arrow-right-circle-fill" />
           Guardar y enviar
         </b-button>
         <b-button
@@ -246,13 +268,13 @@
         </div>
       </div>
     </b-card>
-    <alert-option
+    <!-- <alert-option
       :alert-title="alert.title"
       :alert-message="alert.message"
       :alert-show="showAlert"
       :click-cancel="hideAlertDialog"
       :click-acept="functionGeneralAcept"
-    ></alert-option>
+    ></alert-option> -->
     <OfertaListProducts
       :form-modal-productos="formModalProductos"
       :handle-ok="handleOk"
@@ -286,22 +308,23 @@
 </template>
 
 <script>
-import { mapMutations } from 'vuex'
+import { mapMutations, mapActions } from 'vuex'
 import utils from '../modules/utils'
 import Divider from './Divider'
 import MessageText from './MessageText'
-import AlertOption from './AlertOption'
+// import AlertOption from './AlertOption'
 import OfertaListProducts from './OfertaListaProducts'
 
 export default {
   components: {
     Divider,
     MessageText,
-    AlertOption,
+    // AlertOption,
     OfertaListProducts,
   },
   data() {
     return {
+      utils,
       formModalProductos: {
         position: 0,
         selected: [],
@@ -324,6 +347,7 @@ export default {
         oferta: '',
         utilidad: '',
       },
+      editableArticulo: true,
       showError: false,
       status_utulidad: false,
       editingArticle: false,
@@ -351,6 +375,12 @@ export default {
     }
   },
   computed: {
+    messageButtonAddArticle() {
+      return this.editingArticle ? 'Guardar cambios' : 'Agregar a la lista'
+    },
+    dataUser() {
+      return this.$store.state.user.user
+    },
     variantThemeTableBody() {
       return this.$store.state.general.themesComponents.themeTableBody
     },
@@ -400,6 +430,25 @@ export default {
     // console.log(this.$store.state.ofertas.ofertaActual.listaProductos)
   },
   methods: {
+    ...mapMutations({
+      setProgramandoLista: 'ofertas/setProgramandoLista',
+      setProgramandoOferta: 'ofertas/setProgramandoOferta',
+      setEditandoOferta: 'ofertas/setEditandoOferta',
+      addOFerta: 'ofertas/addOFerta',
+      showAlertDialog: 'general/showAlertDialog',
+      showAlertDialogOption: 'general/showAlertDialogOption',
+      hideAlertDialogOption: 'general/hideAlertDialogOption',
+      setLoading: 'general/setLoading',
+    }),
+    ...mapActions({
+      changeListaArticulos: 'ofertas/changeListaArticulos', // nuevas
+    }),
+    cerrarListaArticulos() {
+      // eslint-disable-next-line no-console
+      console.log('cierra')
+      this.setProgramandoOferta(false)
+      this.setProgramandoLista(false)
+    },
     enterSelect(evt) {
       if (evt.keyCode === 65) {
         this.formModalProductos.showModal = false
@@ -426,38 +475,31 @@ export default {
       this.$refs.oferta.focus()
     },
     functionGeneralAcept() {},
-    showAlertDialogOption(title, message, functionR) {
-      this.alert.title = title
-      this.alert.message = message
-      this.functionGeneralAcept = functionR
-      this.showAlert = true
-    },
+    // showAlertDialogOption(title, message, functionR) {
+    //   this.alert.title = title
+    //   this.alert.message = message
+    //   this.functionGeneralAcept = functionR
+    //   this.showAlert = true
+    // },
     hideAlertDialog() {
       this.showAlert = false
     },
     editArticle(articuloRe) {
-      this.setArticle(articuloRe.item.articulo)
-      const {
-        articulo,
-        codigobarras,
-        nombre,
-        precio,
-        costo,
-        margen,
-        oferta,
-        utilidad,
-      } = this.$store.state.ofertas.formArticulo
-      this.formArticulo = {
-        articulo,
-        codigobarras,
-        nombre,
-        precio,
-        costo,
-        margen,
-        oferta,
-        utilidad,
-      }
+      const editArtiicle = { ...articuloRe.item }
+
+      // eslint-disable-next-line no-console
+      console.log(editArtiicle)
+      this.formArticulo = editArtiicle
+      this.formArticulo.codigobarras = editArtiicle.articulo
+      this.editableArticulo = false
       this.editingArticle = true
+      const operacion = 1 - editArtiicle.costo / editArtiicle.precio
+      const rounded = utils.roundTo(operacion, 4)
+      const porcentaje = utils.parseToPorcent(rounded)
+      this.formArticulo.margen = `${porcentaje}%`
+      this.articuloActual = editArtiicle.articulo
+      this.calcUtilidad()
+      this.$refs.oferta.focus()
     },
     clearFormArticulo() {
       this.formArticulo = {
@@ -470,19 +512,25 @@ export default {
         oferta: '',
         utilidad: '',
       }
+      this.editableArticulo = true
+      this.editingArticle = false
     },
     validaArticulo() {
-      if (this.formArticulo.costo.trim() === '') {
-        this.showAlertDialog(['No a seleccionado algun producto'])
-        return false
-      }
-      if (this.formArticulo.nombre.trim() === '') {
-        this.showAlertDialog(['No puede dejar vacio el campo de nombre'])
-        return false
-      }
-      if (this.formArticulo.articulo.trim() === '') {
-        this.showAlertDialog(['No puede quedar vacio el campo de articulo'])
-        return false
+      // eslint-disable-next-line no-console
+      console.log(this.formArticulo)
+      if (!this.editingArticle) {
+        if (this.formArticulo.costo.trim() === '') {
+          this.showAlertDialog(['No a seleccionado algun producto'])
+          return false
+        }
+        if (this.formArticulo.nombre.trim() === '') {
+          this.showAlertDialog(['No puede dejar vacio el campo de nombre'])
+          return false
+        }
+        if (this.formArticulo.articulo.trim() === '') {
+          this.showAlertDialog(['No puede quedar vacio el campo de articulo'])
+          return false
+        }
       }
       if (this.formArticulo.oferta.trim() === '') {
         this.showAlertDialog(['Falta ingresar el precio de oferta'])
@@ -494,21 +542,150 @@ export default {
       }
       return true
     },
-    agregarArticulo() {
-      if (this.validaArticulo()) {
-        const articulofinded = this.$store.state.ofertas.ofertaActual.listaProductos.find(
-          (elemento) => this.formArticulo.articulo === elemento.articulo
-        )
-        if (this.editingArticle) {
-          this.deleteArticulo(this.formArticulo.articulo)
-          this.editingArticle = false
-        } else if (articulofinded !== undefined) {
-          this.showAlertDialog(['Este articulo ya esta en la lista'])
-          return false
+    async agregarArticulo() {
+      if (!this.validaArticulo()) return false
+      if (this.editingArticle) {
+        this.actualizaArticulo()
+        return true
+      }
+      try {
+        const urlBase = process.env.spastore_url_backend
+        const sucursal = this.$store.state.ofertas.ofertaActual.sucursal
+        this.setLoading(true)
+        const response = await this.$axios({
+          url: urlBase + 'api/v1/ofertas/' + sucursal + '/articulos',
+          method: 'post',
+          data: {
+            uuid_maestro: this.uuid,
+            articulo: this.formArticulo.articulo,
+            nombre: this.formArticulo.nombre,
+            costo: this.formArticulo.costo,
+            descripcion: this.formArticulo.descripcion,
+            precio: this.formArticulo.precio,
+            oferta: this.formArticulo.oferta,
+            creadoPor: this.dataUser.correo_user,
+          },
+        })
+        this.setLoading(false)
+        this.showError = false
+        // eslint-disable-next-line no-console
+        console.log(response.data)
+
+        if (response.data.success) {
+          this.setLoading(true)
+          await this.changeListaArticulos(this.uuid)
+          this.setLoading(false)
+          this.clearFormArticulo()
+          this.editableArticulo = true
+        } else {
+          this.showAlertDialog([response.data.message])
         }
-        this.addArticulo(this.formArticulo)
-        this.clearFormArticulo()
-        this.$refs.articulo.focus()
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.log(error, error.response)
+        this.setLoading(false)
+        if (error.response) this.showAlertDialog([error.response.data.message])
+        else this.showAlertDialog(['Error con el servidor'])
+      }
+    },
+    async actualizaArticulo() {
+      try {
+        const urlBase = process.env.spastore_url_backend
+        const sucursal = this.$store.state.ofertas.ofertaActual.sucursal
+        const articulo = this.formArticulo.articulo
+        this.setLoading(true)
+        const response = await this.$axios({
+          url:
+            urlBase +
+            'api/v1/ofertas/' +
+            sucursal +
+            '/articulos/' +
+            articulo +
+            '?uuidmaster=' +
+            this.uuid,
+          method: 'put',
+          data: {
+            nombre: this.formArticulo.nombre,
+            costo: this.formArticulo.costo,
+            descripcion: this.formArticulo.descripcion,
+            precio: this.formArticulo.precio,
+            oferta: this.formArticulo.oferta,
+            modificadoPor: this.dataUser.correo_user,
+          },
+        })
+        this.setLoading(false)
+        this.showError = false
+        // eslint-disable-next-line no-console
+        console.log(response.data)
+
+        if (response.data.success) {
+          this.setLoading(true)
+          await this.changeListaArticulos(this.uuid)
+          this.setLoading(false)
+          this.clearFormArticulo()
+          this.editableArticulo = true
+          this.editingArticle = false
+        } else {
+          this.showAlertDialog([response.data.message])
+        }
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.log(error, error.response)
+        this.setLoading(false)
+        if (error.response) this.showAlertDialog([error.response.data.message])
+        else this.showAlertDialog(['Error con el servidor'])
+      }
+    },
+    prepareDeleteArticle(articulo, nombre) {
+      this.showAlertDialogOption([
+        `¿Quiere quitar el articulo "${nombre}" de la oferta?`,
+        'Quitando articulo',
+        () => {
+          this.hideAlertDialogOption()
+          this.deleteArticulo(articulo)
+        },
+        'danger',
+        'light',
+        this.hideAlertDialogOption,
+      ])
+    },
+    async deleteArticulo(articulo) {
+      try {
+        const urlBase = process.env.spastore_url_backend
+        const sucursal = this.$store.state.ofertas.ofertaActual.sucursal
+        this.setLoading(true)
+        const response = await this.$axios({
+          url:
+            urlBase +
+            'api/v1/ofertas/' +
+            sucursal +
+            '/articulos/' +
+            articulo +
+            '?uuidmaster=' +
+            this.uuid,
+          method: 'delete',
+        })
+        this.setLoading(false)
+        this.showError = false
+        // eslint-disable-next-line no-console
+        console.log(response.data)
+
+        if (response.data.success) {
+          this.setLoading(true)
+          await this.changeListaArticulos(this.uuid)
+          this.setLoading(false)
+          this.clearFormArticulo()
+          this.editableArticulo = true
+          this.editingArticle = false
+        } else {
+          this.showAlertDialog([response.data.message])
+        }
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.log(error, error.response)
+        this.setLoading(false)
+        if (error.response) this.showAlertDialog([error.response.data.message])
+        else this.showAlertDialog(['Error con el servidor'])
       }
     },
     verifyData(evt) {
@@ -516,6 +693,8 @@ export default {
         evt.keyCode !== 190 &&
         evt.keyCode !== 13 &&
         evt.keyCode !== 8 &&
+        evt.keyCode !== 37 &&
+        evt.keyCode !== 39 &&
         evt.keyCode !== 110
       ) {
         if (isNaN(parseInt(evt.key))) evt.preventDefault()
@@ -532,42 +711,43 @@ export default {
         this.status_utulidad = true
       }
     },
-    ...mapMutations({
-      setProgramandoLista: 'ofertas/setProgramandoLista',
-      setProgramandoOferta: 'ofertas/setProgramandoOferta',
-      addArticulo: 'ofertas/addArticulo',
-      deleteArticulo: 'ofertas/deleteArticulo',
-      setArticle: 'ofertas/setArticle',
-      setEditandoOferta: 'ofertas/setEditandoOferta',
-      addOFerta: 'ofertas/addOFerta',
-      showAlertDialog: 'general/showAlertDialog',
-      setLoading: 'general/setLoading',
-    }),
+    getCalculaUtilidad(costo, precio) {
+      const porcentaje = utils.parseToPorcent(
+        utils.roundTo(1 - costo / precio, 4)
+      )
+      return `${porcentaje}%`
+    },
     editarDatosOferta() {
       this.setEditandoOferta(true)
       this.setProgramandoOferta(true)
       this.setProgramandoLista(false)
     },
     saveAndSend() {
-      const newFunction = () => {
-        this.addOFerta(this.$store.state.ofertas.ofertaActual)
-        this.setProgramandoLista(false)
-      }
-      this.showAlertDialogOption(
-        'Guardando la lista de ofertas',
-        '¿Teminar el proceso de guardar la oferta?',
-        newFunction
-      )
+      this.showAlertDialogOption([
+        '¿Quiere guardar y enviar la oferta?',
+        'Enviando la lista de ofertas',
+        () => {
+          this.hideAlertDialogOption()
+          this.addOFerta(this.$store.state.ofertas.ofertaActual)
+          this.setProgramandoLista(false)
+        },
+        'primary',
+        'white',
+        this.hideAlertDialogOption,
+      ])
     },
     cancelarOferta() {
-      const newFunction = () => {
-        this.setProgramandoLista(false)
-      }
-      this.showAlertDialogOption(
-        'Cancelando oferta',
+      this.showAlertDialogOption([
         '¿Quiere cancelar la oferta?',
-        newFunction
-      )
+        'Cancelando oferta',
+        () => {
+          this.hideAlertDialogOption()
+          this.setProgramandoLista(false)
+        },
+        'danger',
+        'white',
+        this.hideAlertDialogOption,
+      ])
     },
     showTableArticulosFinded() {
       if (this.formArticulo.nombre.trim() === '') {
@@ -629,6 +809,7 @@ export default {
             this.showError = false
             this.formArticulo.articulo = article.Articulo
             this.formArticulo.codigobarras = article.CodigoBarras
+            this.formArticulo.descripcion = article.Descripcion
             this.formArticulo.nombre = article.Nombre
             this.formArticulo.costo = utils.roundTo(article.UltimoCosto)
             this.formArticulo.precio = utils.roundTo(article.Precio1IVAUV)
@@ -638,18 +819,22 @@ export default {
             this.formArticulo.margen = `${porcentaje}%`
             this.$refs.oferta.focus()
             this.articuloActual = article.Articulo
+            this.editableArticulo = false
           } else {
             this.showError = true
             this.clearFormArticulo()
+            this.editableArticulo = true
           }
         } else {
           this.showAlertDialog([response.data.message])
           this.showError = true
           this.clearFormArticulo()
+          this.editableArticulo = true
         }
       } catch (error) {
         // eslint-disable-next-line no-console
         console.log(error, error.response)
+        this.editableArticulo = true
         this.setLoading(false)
         this.showError = true
         this.clearFormArticulo()
@@ -718,6 +903,7 @@ export default {
       this.formArticulo.margen = `${porcentaje}%`
       this.$refs.oferta.focus()
       this.articuloActual = article.Articulo
+      this.editableArticulo = false
     },
   },
 }
