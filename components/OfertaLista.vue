@@ -179,7 +179,7 @@
           <b-icon icon="arrow-left-circle-fill" />
           Datos de oferta
         </b-button>
-        <b-button variant="danger" class="mb-2" @click="cancelarOferta">
+        <b-button variant="danger" class="mb-2" @click="prepareCancelOffert">
           <b-icon icon="trash-fill" />
           Cancelar oferta
         </b-button>
@@ -442,6 +442,7 @@ export default {
     }),
     ...mapActions({
       changeListaArticulos: 'ofertas/changeListaArticulos', // nuevas
+      changeListaOfertas: 'ofertas/changeListaOfertas', // nuevas
     }),
     cerrarListaArticulos() {
       // eslint-disable-next-line no-console
@@ -736,18 +737,58 @@ export default {
         this.hideAlertDialogOption,
       ])
     },
-    cancelarOferta() {
+    prepareCancelOffert() {
       this.showAlertDialogOption([
         '¿Quiere cancelar la oferta?',
         'Cancelando oferta',
         () => {
           this.hideAlertDialogOption()
-          this.setProgramandoLista(false)
+          this.cancelarOferta()
         },
         'danger',
         'white',
         this.hideAlertDialogOption,
       ])
+    },
+    async cancelarOferta() {
+      try {
+        const urlBase = process.env.spastore_url_backend
+        const sucursal = this.$store.state.ofertas.ofertaActual.sucursal
+        this.setLoading(true)
+        const response = await this.$axios({
+          url:
+            urlBase +
+            'api/v1/ofertas/' +
+            sucursal +
+            '/maestros/' +
+            this.uuid +
+            '/status',
+          method: 'put',
+          data: {
+            status: 4,
+            modificadoPor: this.dataUser.correo_user,
+          },
+        })
+        this.setLoading(false)
+        this.showError = false
+        // eslint-disable-next-line no-console
+        console.log(response.data)
+
+        if (response.data.success) {
+          this.setLoading(true)
+          await this.changeListaOfertas(sucursal)
+          this.setLoading(false)
+          this.setProgramandoLista(false)
+        } else {
+          this.showAlertDialog([response.data.message])
+        }
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.log(error, error.response)
+        this.setLoading(false)
+        if (error.response) this.showAlertDialog([error.response.data.message])
+        else this.showAlertDialog(['Error con el servidor'])
+      }
     },
     showTableArticulosFinded() {
       if (this.formArticulo.nombre.trim() === '') {

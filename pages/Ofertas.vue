@@ -80,6 +80,7 @@
               class="mr-2 mt-2"
               size="sm"
               :variant="variantStatus(row.item.status)"
+              @click="prepareChangeStatusOffer(row.item)"
             >
               {{ messageButton(row.item.status) }}
             </b-button>
@@ -88,6 +89,7 @@
               class="mr-2 mt-2"
               size="sm"
               variant="danger"
+              @click="prepareCancelOffer(row.item)"
             >
               Cancelar
             </b-button>
@@ -96,7 +98,7 @@
               size="sm"
               class="mr-2 mt-2"
               variant="danger"
-              @click="viewDetails(row.item.uuid)"
+              @click="prepareDeleteOffer(row.item)"
             >
               Eliminar
             </b-button>
@@ -264,6 +266,124 @@ export default {
     detailsMessage(status) {
       return status === 0 || status === 2 ? 'Editar' : 'Detalles'
     },
+    prepareCancelOffer(dataOffer) {
+      this.showAlertDialogOption([
+        '¿Quiere "cancelar" la oferta?',
+        'Cancelando oferta',
+        () => {
+          this.hideAlertDialogOption()
+          this.changeStatusOffer(dataOffer, 4)
+        },
+        'danger',
+        'light',
+        this.hideAlertDialogOption,
+      ])
+    },
+    prepareChangeStatusOffer(dataOffer) {
+      const offer = { ...dataOffer }
+      const statusIncrement = offer.status + 1
+      const messageStatus =
+        offer.status === 1
+          ? 'poner en proceso'
+          : this.messageButton(offer.status)
+      const newStatus = offer.status === 4 ? 0 : statusIncrement
+
+      this.showAlertDialogOption([
+        `¿Quiere "${messageStatus}" la oferta?`,
+        'Cambiando status de oferta',
+        () => {
+          this.hideAlertDialogOption()
+          this.changeStatusOffer(offer, newStatus)
+        },
+        'success',
+        'light',
+        this.hideAlertDialogOption,
+      ])
+    },
+    async changeStatusOffer(dataOffer, newStatus) {
+      // eslint-disable-next-line no-console
+      console.log(dataOffer)
+      try {
+        const urlBase = process.env.spastore_url_backend
+        this.setLoading(true)
+        const response = await this.$axios({
+          url:
+            urlBase +
+            'api/v1/ofertas/' +
+            dataOffer.sucursal +
+            '/maestros/' +
+            dataOffer.uuid +
+            '/status',
+          method: 'put',
+          data: {
+            status: newStatus,
+            modificadoPor: this.dataUser.correo_user,
+          },
+        })
+        this.setLoading(false)
+        // eslint-disable-next-line no-console
+        console.log(response.data)
+
+        if (response.data.success) {
+          this.setLoading(true)
+          await this.changeListaOfertas(dataOffer.sucursal)
+          this.setLoading(false)
+        } else {
+          this.showAlertDialog([response.data.message])
+        }
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.log(error, error.response)
+        this.setLoading(false)
+        if (error.response) this.showAlertDialog([error.response.data.message])
+        else this.showAlertDialog(['Error con el servidor'])
+      }
+    },
+    prepareDeleteOffer(dataOffer) {
+      this.showAlertDialogOption([
+        '¿Quiere "eliminar" la oferta de manera permanente?',
+        'Eliminando oferta',
+        () => {
+          this.hideAlertDialogOption()
+          this.deleteOffer(dataOffer)
+        },
+        'danger',
+        'light',
+        this.hideAlertDialogOption,
+      ])
+    },
+    async deleteOffer(dataOffer) {
+      try {
+        const urlBase = process.env.spastore_url_backend
+        this.setLoading(true)
+        const response = await this.$axios({
+          url:
+            urlBase +
+            'api/v1/ofertas/' +
+            dataOffer.sucursal +
+            '/maestros/' +
+            dataOffer.uuid,
+          method: 'delete',
+        })
+        this.setLoading(false)
+        // eslint-disable-next-line no-console
+        console.log(response.data)
+
+        if (response.data.success) {
+          this.setLoading(true)
+          await this.changeListaOfertas(dataOffer.sucursal)
+          this.setLoading(false)
+        } else {
+          this.showAlertDialog([response.data.message])
+        }
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.log(error, error.response)
+        this.setLoading(false)
+        if (error.response) this.showAlertDialog([error.response.data.message])
+        else this.showAlertDialog(['Error con el servidor'])
+      }
+    },
     messageButton(status) {
       switch (status) {
         case 0:
@@ -327,6 +447,8 @@ export default {
       setLoading: 'general/setLoading', // nuevas
       showAlertDialog: 'general/showAlertDialog',
       setSucursal: 'ofertas/setSucursal',
+      showAlertDialogOption: 'general/showAlertDialogOption',
+      hideAlertDialogOption: 'general/hideAlertDialogOption',
     }),
     ...mapActions({
       changeListaOfertas: 'ofertas/changeListaOfertas', // nuevas
