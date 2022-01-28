@@ -190,7 +190,7 @@
       <b-button
         v-if="editandoOferta"
         variant="success"
-        @click="setDataUpdateForm()"
+        @click="viewListArticles()"
       >
         Lista de articulos
         <b-icon icon="arrow-right-circle-fill" />
@@ -198,6 +198,14 @@
       <b-button variant="warning" @click="setProgramandoOferta(false)">
         <b-icon icon="file-earmark-excel-fill" />
         Cancelar
+      </b-button>
+      <b-button
+        v-if="editandoOferta"
+        variant="primary"
+        @click="prepareUpdateDataForm()"
+      >
+        <b-icon icon="check-circle-fill" />
+        Guardar Cambios
       </b-button>
     </b-card>
   </div>
@@ -373,14 +381,59 @@ export default {
       }
       return true
     },
-    setDataUpdateForm() {
-      const newOferta = {
-        tipoOferta: this.form_oferta.tipo,
-        fechaInicio: this.form_oferta.fecha_inicio,
-        fechaFin: this.form_oferta.fecha_fin,
-        descripcion: this.form_oferta.descripcion,
+    prepareUpdateDataForm() {
+      this.showAlertDialogOption([
+        '¿Quiere guardar los cambios en la oferta?',
+        'Actualizando datos de la oferta',
+        () => {
+          this.hideAlertDialogOption()
+          this.updateDataForm()
+        },
+        'warning',
+        'light',
+        this.hideAlertDialogOption,
+      ])
+    },
+    async updateDataForm() {
+      if (!this.validaFormulario()) return false
+      try {
+        const urlBase = process.env.spastore_url_backend
+        const sucursal = this.$store.state.ofertas.sucursal
+        const uuidMaster = this.$store.state.ofertas.ofertaActual.uuid
+        this.setLoading(true)
+        const response = await this.$axios({
+          url:
+            urlBase + 'api/v1/ofertas/' + sucursal + '/maestros/' + uuidMaster,
+          method: 'put',
+          data: {
+            status: this.$store.state.ofertas.ofertaActual.status,
+            editable: this.$store.state.ofertas.ofertaActual.editable,
+            tipoOferta: this.form_oferta.tipo,
+            fechaInicio: this.form_oferta.fecha_inicio + 'T23:59:59.999z',
+            fechaFin: this.form_oferta.fecha_fin + 'T23:59:59.999z',
+            descripcion: this.form_oferta.descripcion,
+            modificadoPor: this.dataUser.correo_user,
+          },
+        })
+        this.setLoading(false)
+
+        this.showAlertDialog([response.data.message, 'Informacion', 'success'])
+        if (response.data.success) {
+          this.setLoading(true)
+          await this.changeListaOfertas(sucursal)
+          this.setLoading(false)
+          this.setProgramandoLista(false)
+          this.setProgramandoOferta(false)
+        }
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.log(error, error.response)
+        this.setLoading(false)
+        if (error.response) this.showAlertDialog([error.response.data.message])
+        else this.showAlertDialog(['Error con el servidor'])
       }
-      this.updateDataForm(newOferta)
+    },
+    viewListArticles() {
       this.setProgramandoOferta(false)
       this.setProgramandoLista(true)
     },
@@ -421,10 +474,11 @@ export default {
       setProgramandoLista: 'ofertas/setProgramandoLista',
       setProgramandoOferta: 'ofertas/setProgramandoOferta',
       openOferta: 'ofertas/openOferta',
-      updateDataForm: 'ofertas/updateDataForm',
       showAlertDialog: 'general/showAlertDialog',
       setLoading: 'general/setLoading',
       setListaArticulos: 'ofertas/setListaArticulos',
+      showAlertDialogOption: 'general/showAlertDialogOption',
+      hideAlertDialogOption: 'general/hideAlertDialogOption',
     }),
     ...mapActions({
       createMasterOffer: 'ofertas/createMasterOffer',

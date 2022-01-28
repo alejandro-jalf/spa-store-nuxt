@@ -183,7 +183,7 @@
           <b-icon icon="trash-fill" />
           Cancelar oferta
         </b-button>
-        <b-button variant="primary" class="mb-2" @click="saveAndSend">
+        <b-button variant="primary" class="mb-2" @click="prepareSendOffer">
           <b-icon icon="arrow-right-circle-fill" />
           Guardar y enviar
         </b-button>
@@ -268,13 +268,6 @@
         </div>
       </div>
     </b-card>
-    <!-- <alert-option
-      :alert-title="alert.title"
-      :alert-message="alert.message"
-      :alert-show="showAlert"
-      :click-cancel="hideAlertDialog"
-      :click-acept="functionGeneralAcept"
-    ></alert-option> -->
     <OfertaListProducts
       :form-modal-productos="formModalProductos"
       :handle-ok="handleOk"
@@ -475,13 +468,6 @@ export default {
       this.getArticuloByPosition()
       this.$refs.oferta.focus()
     },
-    functionGeneralAcept() {},
-    // showAlertDialogOption(title, message, functionR) {
-    //   this.alert.title = title
-    //   this.alert.message = message
-    //   this.functionGeneralAcept = functionR
-    //   this.showAlert = true
-    // },
     hideAlertDialog() {
       this.showAlert = false
     },
@@ -723,19 +709,57 @@ export default {
       this.setProgramandoOferta(true)
       this.setProgramandoLista(false)
     },
-    saveAndSend() {
+    prepareSendOffer() {
       this.showAlertDialogOption([
         '¿Quiere guardar y enviar la oferta?',
         'Enviando la lista de ofertas',
         () => {
           this.hideAlertDialogOption()
-          this.addOFerta(this.$store.state.ofertas.ofertaActual)
-          this.setProgramandoLista(false)
+          this.saveAndSend()
         },
         'primary',
         'white',
         this.hideAlertDialogOption,
       ])
+    },
+    async saveAndSend() {
+      try {
+        const urlBase = process.env.spastore_url_backend
+        const sucursal = this.$store.state.ofertas.ofertaActual.sucursal
+        this.setLoading(true)
+        const response = await this.$axios({
+          url:
+            urlBase +
+            'api/v1/ofertas/' +
+            sucursal +
+            '/maestros/' +
+            this.uuid +
+            '/status',
+          method: 'put',
+          data: {
+            status: 1,
+            modificadoPor: this.dataUser.correo_user,
+          },
+        })
+        this.setLoading(false)
+        // eslint-disable-next-line no-console
+        console.log(response.data)
+
+        if (response.data.success) {
+          this.setLoading(true)
+          await this.changeListaOfertas(sucursal)
+          this.setLoading(false)
+          this.setProgramandoLista(false)
+        } else {
+          this.showAlertDialog([response.data.message])
+        }
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.log(error, error.response)
+        this.setLoading(false)
+        if (error.response) this.showAlertDialog([error.response.data.message])
+        else this.showAlertDialog(['Error con el servidor'])
+      }
     },
     prepareCancelOffert() {
       this.showAlertDialogOption([
