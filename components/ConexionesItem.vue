@@ -23,6 +23,11 @@ export default {
       required: true,
     },
   },
+  data() {
+    return {
+      dataUser: this.$store.state.user.user,
+    }
+  },
   computed: {
     variantItem() {
       if (this.$store.state.general.themePreferences === 'system') {
@@ -43,6 +48,8 @@ export default {
       return status ? 'primary' : 'danger'
     },
     refactorName(sucursal) {
+      const sucSplited = this.dataUser.sucursal_user.split(' ')
+      if (sucSplited[0].trim().toUpperCase() === 'CAASA') return sucursal
       const arraySucursal = sucursal.split('.')
       const name = arraySucursal[0].slice(3)
       if (name === 'SUPERUNO') return 'ZARAGOZA'

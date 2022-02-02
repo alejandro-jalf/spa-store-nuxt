@@ -29,13 +29,20 @@
 export default {
   data() {
     return {
-      conexionesSkeleton: [0, 1, 2, 3, 4],
+      conexionesSkeleton: [],
+      dataUser: this.$store.state.user.user,
     }
   },
   computed: {
     variantClass() {
       return this.$store.state.general.themesComponents.themeItemList
     },
+  },
+  mounted() {
+    const sucSplited = this.dataUser.sucursal_user.split(' ')
+    if (sucSplited[0].trim().toUpperCase() === 'CAASA')
+      this.conexionesSkeleton = [0, 1, 2]
+    else this.conexionesSkeleton = [0, 1, 2, 3, 4]
   },
 }
 </script>

@@ -29,12 +29,19 @@ export default {
     FloatButton,
   },
   computed: {
+    dataUser() {
+      return this.$store.state.user.user
+    },
     conexiones() {
       return this.$store.state.conexiones.conexiones.data
     },
     thereAreConections() {
       return !!this.$store.state.conexiones.conexiones.data
     },
+  },
+  mounted() {
+    // eslint-disable-next-line no-console
+    console.log(this.dataUser)
   },
   methods: {
     ...mapActions({
@@ -45,7 +52,7 @@ export default {
     }),
     async loadConexiones() {
       this.setLoading(true)
-      await this.verifyConexiones()
+      await this.verifyConexiones(this.dataUser.sucursal_user)
       this.setLoading(false)
     },
   },
