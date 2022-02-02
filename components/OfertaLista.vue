@@ -166,7 +166,7 @@
           </template>
         </b-table>
       </div>
-      <div v-if="ofertaEditable" class="text-right mt-3 buttons-end">
+      <div class="text-right mt-3 buttons-end">
         <b-button
           variant="secondary"
           class="mb-2"
@@ -175,79 +175,32 @@
           <b-icon icon="x-circle-fill"></b-icon>
           Cerrar
         </b-button>
-        <b-button variant="secondary" class="mb-2" @click="editarDatosOferta">
-          <b-icon icon="arrow-left-circle-fill" />
-          Datos de oferta
+        <b-button variant="primary" class="mb-2">
+          <b-icon icon="arrow-up-right-circle-fill" />
+          Programar
         </b-button>
-        <b-button variant="danger" class="mb-2" @click="prepareCancelOffert">
-          <b-icon icon="trash-fill" />
-          Cancelar oferta
-        </b-button>
-        <b-button variant="primary" class="mb-2" @click="prepareSendOffer">
-          <b-icon icon="arrow-right-circle-fill" />
-          Guardar y enviar
-        </b-button>
-        <b-button
-          variant="info"
-          class="mb-2"
-          @click="$bvToast.show('toast-create-ofer')"
-        >
-          <b-icon icon="question-circle-fill" />
-        </b-button>
-        <b-toast
-          id="toast-create-ofer"
-          title="Ayuda"
-          static
-          no-auto-hide
-          class="toast-buttons text-justify"
-          variant="info"
-          solid
-        >
-          Al dar click en "Datos de oferta" podra editar los datos generales de
-          la oferta, como lo es el tipo, fechas o descripcion.
-          <br />
-          <br />
-          Al dar click en "Cancelar oferta" se eliminara toda la oferta junto
-          con todos los articulos registrados.
-          <br />
-          <br />
-          Al dar click en "Guardar y enviar" la oferta sera almacenada y enviada
-          para su programacion
-        </b-toast>
-      </div>
-      <div v-if="!ofertaEditable" class="text-right mt-3 buttons-end">
-        <div v-if="!status">
-          <b-button
-            variant="secondary"
-            class="mb-2"
-            @click="setProgramandoLista(false)"
-          >
-            <b-icon icon="file-earmark-excel-fill" />
-            Cerrar
+        <span v-if="ofertaEditable && statusActual === 0">
+          <b-button variant="secondary" class="mb-2" @click="editarDatosOferta">
+            <b-icon icon="arrow-left-circle-fill" />
+            Datos de oferta
           </b-button>
-        </div>
-        <div v-if="status">
-          <b-button
-            variant="secondary"
-            class="mb-2"
-            @click="setProgramandoLista(false)"
-          >
-            <b-icon icon="file-earmark-excel-fill" />
-            Cerrar
+          <b-button variant="danger" class="mb-2" @click="prepareCancelOffert">
+            <b-icon icon="trash-fill" />
+            Cancelar oferta
           </b-button>
-          <b-button variant="primary" class="mb-2">
-            <b-icon icon="folder-symlink-fill" />
-            Guardar cambios
+          <b-button variant="primary" class="mb-2" @click="prepareSendOffer">
+            <b-icon icon="arrow-right-circle-fill" />
+            Guardar y enviar
           </b-button>
           <b-button
             variant="info"
             class="mb-2"
-            @click="$bvToast.show('toast-view-ofert')"
+            @click="$bvToast.show('toast-create-ofer')"
           >
             <b-icon icon="question-circle-fill" />
           </b-button>
           <b-toast
-            id="toast-view-ofert"
+            id="toast-create-ofer"
             title="Ayuda"
             static
             no-auto-hide
@@ -255,17 +208,18 @@
             variant="info"
             solid
           >
-            Al dar click en "Cerrar" solamente se cerrar la oferta, esto no
-            afecta en nada a los datos ya registrado.
+            Al dar click en "Datos de oferta" podra editar los datos generales
+            de la oferta, como lo es el tipo, fechas o descripcion.
             <br />
             <br />
-            <div>
-              Al dar click en "Guardar cambios" Se guardara los ajustes que se
-              le haya realizado a algun producto y en automatico se enviaran los
-              datos.
-            </div>
+            Al dar click en "Cancelar oferta" se eliminara toda la oferta junto
+            con todos los articulos registrados.
+            <br />
+            <br />
+            Al dar click en "Guardar y enviar" la oferta sera almacenada y
+            enviada para su programacion
           </b-toast>
-        </div>
+        </span>
       </div>
     </b-card>
     <OfertaListProducts
@@ -397,6 +351,9 @@ export default {
         return false
       }
       return true
+    },
+    statusActual() {
+      return this.$store.state.ofertas.ofertaActual.status
     },
     listaProductos() {
       return this.$store.state.ofertas.listaArticulos.data

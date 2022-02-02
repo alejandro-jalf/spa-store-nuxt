@@ -66,44 +66,43 @@
         :class="variantThemeTableBody"
       >
         <template #cell(Acciones)="row">
-          <div v-if="isOwnerUser(row)">
-            <b-button
-              variant="info"
-              size="sm"
-              class="mr-2 mt-2"
-              @click="viewDetails(row.item.uuid, row.item)"
-            >
-              {{ detailsMessage(row.item.status) }}
-            </b-button>
-            <b-button
-              v-if="row.item.status !== 3"
-              class="mr-2 mt-2"
-              size="sm"
-              :variant="variantStatus(row.item.status)"
-              @click="prepareChangeStatusOffer(row.item)"
-            >
-              {{ messageButton(row.item.status) }}
-            </b-button>
-            <b-button
-              v-if="row.item.status === 0"
-              class="mr-2 mt-2"
-              size="sm"
-              variant="danger"
-              @click="prepareCancelOffer(row.item)"
-            >
-              Cancelar
-            </b-button>
-            <b-button
-              v-if="row.item.status === 4"
-              size="sm"
-              class="mr-2 mt-2"
-              variant="danger"
-              @click="prepareDeleteOffer(row.item)"
-            >
-              Eliminar
-            </b-button>
-          </div>
-          <div v-else>
+          <b-button
+            v-if="visibleButton(row.item, 'views')"
+            variant="info"
+            size="sm"
+            class="mr-2 mt-2"
+            @click="viewDetails(row.item.uuid, row.item)"
+          >
+            {{ detailsMessage(row.item.status) }}
+          </b-button>
+          <b-button
+            v-if="visibleButton(row.item, 'action')"
+            class="mr-2 mt-2"
+            size="sm"
+            :variant="variantStatus(row.item.status)"
+            @click="prepareChangeStatusOffer(row.item)"
+          >
+            {{ messageButton(row.item.status) }}
+          </b-button>
+          <b-button
+            v-if="visibleButton(row.item, 'cancelar')"
+            class="mr-2 mt-2"
+            size="sm"
+            variant="danger"
+            @click="prepareCancelOffer(row.item)"
+          >
+            Cancelar
+          </b-button>
+          <b-button
+            v-if="visibleButton(row.item, 'eliminar')"
+            size="sm"
+            class="mr-2 mt-2"
+            variant="danger"
+            @click="prepareDeleteOffer(row.item)"
+          >
+            Eliminar
+          </b-button>
+          <div v-if="visibleButton(row.item, 'load')">
             <b-spinner
               style="width: 10px; height: 10px"
               variant="success"
@@ -252,12 +251,38 @@ export default {
     this.textDateM = utils._arrayMonths[date.getMonth()] + '/' + this.textDateY
   },
   methods: {
-    isOwnerUser(row) {
-      const user = row.item.creadopor
-      const status = row.item.status
-      if (status === 0) return user === this.dataUser.correo_user
-      else if (status === 2) return user !== this.dataUser.correo_user
-      else return true
+    visibleButton(dataOffer, typeButton) {
+      const status = dataOffer.status
+      const isOwner = dataOffer.creadopor === this.dataUser.correo_user
+      switch (status) {
+        case 0:
+          if (
+            typeButton === 'views' ||
+            typeButton === 'action' ||
+            typeButton === 'cancelar'
+          )
+            return isOwner
+          else if (typeButton === 'load') return !isOwner
+          else return false
+        case 1:
+          if (typeButton === 'action') return this.tipoUser === 'manager'
+          else if (typeButton === 'views') return true
+          else return false
+        case 2:
+          if (typeButton === 'action') return this.tipoUser === 'manager'
+          else if (typeButton === 'views') return true
+          else return false
+        case 3:
+          if (typeButton === 'views') return true
+          else return false
+        case 4:
+          if (typeButton === 'action' || typeButton === 'eliminar')
+            return isOwner
+          else if (typeButton === 'views') return true
+          else return false
+        default:
+          return false
+      }
     },
     nameSuc(sucursal) {
       const suc = this.options.find((sucF) => sucF.value === sucursal)
