@@ -13,26 +13,27 @@ export const mutations = {
 }
 
 export const actions = {
-  async verifyConexiones({ commit }, sucursal) {
+  async verifyConexiones({ commit }, [sucursal, store]) {
     try {
       const urlBase = process.env.spastore_url_backend
       const sucSplited = sucursal.split(' ')
-      const url =
-        sucSplited[0].trim().toUpperCase() === 'CAASA'
-          ? `${urlBase}api/v1/general/caasa/conexiones/activas`
-          : process.env.spastore_url_conexiones
+      const company =
+        sucSplited[0].trim().toUpperCase() === 'CAASA' ? 'caasa' : 'spa'
+      const url = `${urlBase}api/v1/general/${company}/conexiones/activas`
       const response = await this.$axios({
         url,
         method: 'get',
       })
 
-      if (response.data.success) {
-        commit('setConexiones', response.data)
+      if (response.data.success) commit('setConexiones', response.data)
+      else {
+        commit('setConexiones', [])
+        store.commit('general/showAlertDialog', [response.data.message])
       }
     } catch (error) {
       if (error.response) {
-        // eslint-disable-next-line no-console
-        console.log(error.response)
+        commit('setConexiones', [])
+        store.commit('general/showAlertDialog', [error.response.data.message])
       }
     }
   },

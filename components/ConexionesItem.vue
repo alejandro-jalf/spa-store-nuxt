@@ -8,7 +8,7 @@
     />
 
     <span class="mr-auto">
-      <strong>{{ refactorName(sucursal.conexion) }}</strong>
+      <strong>{{ sucursal.conexion }}</strong>
     </span>
     <b-badge variant="ligth">{{ sucursal.message }}</b-badge>
   </b-list-group-item>

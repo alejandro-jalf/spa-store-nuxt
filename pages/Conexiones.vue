@@ -52,7 +52,7 @@ export default {
     }),
     async loadConexiones() {
       this.setLoading(true)
-      await this.verifyConexiones(this.dataUser.sucursal_user)
+      await this.verifyConexiones([this.dataUser.sucursal_user, this.$store])
       this.setLoading(false)
     },
   },
