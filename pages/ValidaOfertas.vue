@@ -1,5 +1,13 @@
 <template>
   <div class="mt-3">
+    <transition name="fade">
+      <float-button
+        v-if="showFloatButton"
+        icon-float="arrow-up-circle"
+        :click-float="upPage"
+        variant-float="info"
+      ></float-button>
+    </transition>
     <h1 class="text-center mb-3">Validacion de ofertas</h1>
     <b-input-group prepend="Sucursal">
       <b-form-select
@@ -15,21 +23,21 @@
     <b-button-group class="mt-3">
       <b-button
         :pressed="activatedLimit"
-        variant="outline-primary"
+        variant="outline-info"
         @click="setActivateLimit('withLimit')"
       >
         Con limite de fecha
       </b-button>
       <b-button
         :pressed="!activatedLimit && !activatedAll"
-        variant="outline-primary"
+        variant="outline-info"
         @click="setActivateLimit('withoutLimit')"
       >
         Sin limite de fecha
       </b-button>
       <b-button
         :pressed="activatedAll"
-        variant="outline-primary"
+        variant="outline-info"
         @click="setActivateLimit('all')"
       >
         Todas
@@ -47,6 +55,7 @@
     </b-form-checkbox>
 
     <b-table
+      v-if="width > 767"
       id="tableValidaOfertas"
       responsive
       striped
@@ -69,6 +78,15 @@
         </b-button>
       </template>
     </b-table>
+    <div v-else>
+      <ValidaOfertasCard
+        v-for="(article, indexArticle) in dataRefactor"
+        :key="indexArticle"
+        :article="article"
+        :show-details="showDetails"
+        class="mb-2"
+      />
+    </div>
     <ValidaOfertasDetails
       v-if="viewDetails"
       :article-actual="articleActual"
@@ -80,11 +98,13 @@
 <script>
 import { mapMutations, mapActions } from 'vuex'
 import ValidaOfertasDetails from '../components/ValidaOfertasDetails'
+import ValidaOfertasCard from '../components/ValidaOfertasCard'
 import utils from '../modules/utils'
 
 export default {
   components: {
     ValidaOfertasDetails,
+    ValidaOfertasCard,
   },
   data() {
     return {
@@ -121,6 +141,12 @@ export default {
     }
   },
   computed: {
+    width() {
+      return this.$store.state.general.widthWindow
+    },
+    showFloatButton() {
+      return this.$store.state.general.scrollScreenY >= 500
+    },
     activatedLimit() {
       return this.statusLimit === 'withLimit'
     },
@@ -194,6 +220,13 @@ export default {
     ...mapActions({
       changeData: 'validaofertas/changeData',
     }),
+    upPage() {
+      window.scroll({
+        top: 0,
+        left: 0,
+        behavior: 'smooth',
+      })
+    },
     setActivateLimit(statusNew) {
       this.statusLimit = statusNew
     },
@@ -214,8 +247,6 @@ export default {
       this.onliValid = valid
     },
     changeValid(valid) {
-      // eslint-disable-next-line no-console
-      console.log(valid)
       this.setOnlyValid(valid)
     },
     async getValidation() {

@@ -2,6 +2,7 @@
   <div class="bg-container-details">
     <b-card
       class="card-details"
+      :class="variantTheme"
       header="Detalles de oferta"
       header-text-variant="light"
       header-bg-variant="info"
@@ -101,9 +102,16 @@ export default {
       utils,
     }
   },
+  computed: {
+    variantTheme() {
+      const themeCardBody = this.$store.state.general.themesComponents
+        .themeCard2Body
+      return themeCardBody === 'containerCard' ? '' : themeCardBody
+    },
+  },
   methods: {
     UtilidadValida(response) {
-      return response === 'NO' ? 'color-danger' : 'color-success'
+      return response === 'NO' ? `color-danger` : `color-success`
     },
     invierteFecha(date = '00/00/0000') {
       return date.slice(6) + '-' + date.slice(3, 5) + '-' + date.slice(0, 2)
@@ -153,9 +161,11 @@ export default {
 
 .color-danger {
   background: rgb(255, 216, 216);
+  color: #000;
 }
 
 .color-success {
   background: rgb(167, 255, 156);
+  color: #000;
 }
 </style>

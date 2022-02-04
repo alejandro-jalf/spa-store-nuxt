@@ -11,6 +11,7 @@ if (!localStorage.getItem('spastore_barra_move_touch'))
   localStorage.setItem('spastore_barra_move_touch', 'true')
 
 export const state = () => ({
+  scrollScreenY: 0,
   alert: {
     show: false,
     title: 'Arvertencia',
@@ -151,6 +152,9 @@ export const state = () => ({
 })
 
 export const mutations = {
+  changeScrollScreenY: (state, scrollScreenY) => {
+    state.scrollScreenY = scrollScreenY
+  },
   showAlertDialogOption: (
     state,
     [

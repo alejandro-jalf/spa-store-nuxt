@@ -237,6 +237,9 @@ export default {
     document.addEventListener('touchstart', this.handleTouchStart, false)
     document.addEventListener('touchmove', this.handleTouchMove, false)
     document.addEventListener('touchend', this.handleEnd, false)
+    window.addEventListener('scroll', () => {
+      this.changeScrollScreenY(window.scrollY)
+    })
     window.addEventListener('resize', () => {
       setMarginPrincipal(window.innerWidth)
       setWidthContainerAll(window.innerWidth)
@@ -248,6 +251,7 @@ export default {
     ...mapMutations({
       setWidthWindow: 'general/setWidthWindow',
       setLoading: 'general/setLoading',
+      changeScrollScreenY: 'general/changeScrollScreenY',
       setSesionInit: 'user/setSesionInit',
     }),
 
