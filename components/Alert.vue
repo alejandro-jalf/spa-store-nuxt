@@ -5,9 +5,13 @@
     :title="alertTitle"
     :header-bg-variant="alertHeaderBg"
     :header-text-variant="alertHeaderText"
+    :header-border-variant="alertHeaderBorder"
     :centered="true"
     :body-bg-variant="bodyBgVariant"
+    :body-text-variant="textBgVariant"
     :footer-bg-variant="bodyBgVariant"
+    :footer-text-variant="textBgVariant"
+    :footer-border-variant="bodyBgVariant"
   >
     <b-container fluid>
       {{ alertMessage }}
@@ -37,11 +41,21 @@ export default {
       if (this.$store.state.general.themePreferences === 'system') {
         const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
           .matches
-        if (systemDark) return 'dark'
+        if (systemDark) return 'secondary'
         return 'light'
       } else if (this.$store.state.general.themePreferences === 'dark')
-        return 'dark'
+        return 'secondary'
       else return 'light'
+    },
+    textBgVariant() {
+      if (this.$store.state.general.themePreferences === 'system') {
+        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
+          .matches
+        if (systemDark) return 'light'
+        return 'dark'
+      } else if (this.$store.state.general.themePreferences === 'dark')
+        return 'light'
+      else return 'dark'
     },
     alertShow() {
       return this.$store.state.general.alert.show
@@ -53,10 +67,38 @@ export default {
       return this.$store.state.general.alert.message
     },
     alertHeaderBg() {
-      return this.$store.state.general.alert.headerBackground
+      const variant = this.$store.state.general.alert.headerBackground
+      if (this.$store.state.general.themePreferences === 'system') {
+        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
+          .matches
+        if (systemDark) return 'dark'
+        return variant
+      } else if (this.$store.state.general.themePreferences === 'dark')
+        return 'dark'
+      return variant
     },
     alertHeaderText() {
-      return this.$store.state.general.alert.headerTexColor
+      const variant = this.$store.state.general.alert.headerBackground
+      if (this.$store.state.general.themePreferences === 'system') {
+        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
+          .matches
+        if (systemDark) return variant
+        return 'dark'
+      } else if (this.$store.state.general.themePreferences === 'dark')
+        return variant
+      else if (variant === 'warning' || variant === 'light') return 'dark'
+      return 'light'
+    },
+    alertHeaderBorder() {
+      const variant = this.$store.state.general.alert.headerBackground
+      if (this.$store.state.general.themePreferences === 'system') {
+        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
+          .matches
+        if (systemDark) return variant
+        return 'light'
+      } else if (this.$store.state.general.themePreferences === 'dark')
+        return variant
+      return 'light'
     },
   },
   mounted() {
