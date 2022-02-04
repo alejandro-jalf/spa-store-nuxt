@@ -1,5 +1,6 @@
 <template>
   <div class="mt-3">
+    <h1 class="text-center mb-3">Validacion de ofertas</h1>
     <b-input-group prepend="Sucursal">
       <b-form-select
         :value="suc"
@@ -10,10 +11,36 @@
         <b-button variant="success" @click="getValidation"> Validar </b-button>
       </template>
     </b-input-group>
+
+    <b-button-group class="mt-3">
+      <b-button
+        :pressed="activatedLimit"
+        variant="outline-primary"
+        @click="setActivateLimit('withLimit')"
+      >
+        Con limite de fecha
+      </b-button>
+      <b-button
+        :pressed="!activatedLimit && !activatedAll"
+        variant="outline-primary"
+        @click="setActivateLimit('withoutLimit')"
+      >
+        Sin limite de fecha
+      </b-button>
+      <b-button
+        :pressed="activatedAll"
+        variant="outline-primary"
+        @click="setActivateLimit('all')"
+      >
+        Todas
+      </b-button>
+    </b-button-group>
+
     <b-form-checkbox
       v-model="onliValid"
       name="only_valid"
       switch
+      class="mt-2 mb-3"
       @change="changeValid"
     >
       Mostrar solo no validos
@@ -29,36 +56,55 @@
       head-variant="dark"
       class="mt-3"
       :class="variantThemeTableBody"
-    ></b-table>
+    >
+      <template #cell(Precio1)="row">
+        {{ row.item.Precio1IVAUV }}
+      </template>
+      <template #cell(PrecioValido)="row">
+        {{ row.item.Precio1Valido }}
+      </template>
+      <template #cell(Acciones)="row">
+        <b-button variant="info" @click="showDetails(row.item)">
+          Detalles
+        </b-button>
+      </template>
+    </b-table>
+    <ValidaOfertasDetails
+      v-if="viewDetails"
+      :article-actual="articleActual"
+      :close-details="closeDetails"
+    />
   </div>
 </template>
 
 <script>
 import { mapMutations, mapActions } from 'vuex'
+import ValidaOfertasDetails from '../components/ValidaOfertasDetails'
 import utils from '../modules/utils'
 
 export default {
+  components: {
+    ValidaOfertasDetails,
+  },
   data() {
     return {
       fields: [
         'Suc',
         'Articulo',
-        'CodigoBarras',
         'Nombre',
+        'PrecioOferta',
         'UtilidadOferta',
         'OfertaValida',
         'Descuento',
         'UltimoCostoNeto',
-        'Precio1IVAUV',
+        'Precio1',
         'UtilidadVenta',
-        'Precio1Valido',
-        'PrecioOferta',
-        'FechaInicial',
-        'FechaFinal',
-        'OfertaCaduca',
+        'PrecioValido',
+        'Acciones',
       ],
       utils,
       onliValid: true,
+      statusLimit: 'all',
       selected: 'ZR',
       options: [
         { value: 'ZR', text: 'SPAZARAGOZA' },
@@ -67,9 +113,20 @@ export default {
         { value: 'JL', text: 'SPAJALTIPAN' },
         { value: 'BO', text: 'SPABODEGA' },
       ],
+      articleActual: {
+        Suc: 'ZR',
+        UtilidadVenta: '15%',
+      },
+      viewDetails: false,
     }
   },
   computed: {
+    activatedLimit() {
+      return this.statusLimit === 'withLimit'
+    },
+    activatedAll() {
+      return this.statusLimit === 'all'
+    },
     variantThemeTableBody() {
       return this.$store.state.general.themesComponents.themeTableBody
     },
@@ -80,6 +137,7 @@ export default {
       const datos = []
       this.$store.state.validaofertas.data.data.forEach((oferta) => {
         const onlyValid = this.$store.state.validaofertas.onlyValid
+        const statusLimit = this.statusLimit
         const data = { ...oferta }
         data.UtilidadOferta =
           utils.parseToPorcent(utils.roundTo(data.UtilidadOferta, 4, true)) +
@@ -94,7 +152,17 @@ export default {
         data.FechaInicial = utils.toDate(data.FechaInicial)
         data.FechaFinal = utils.toDate(data.FechaFinal)
         if (data.OfertaValida === 'NO') data._rowVariant = 'danger'
-        if (onlyValid) {
+        if (statusLimit === 'withLimit') {
+          if (onlyValid) {
+            if (data.OfertaCaduca === 'SI' && data.OfertaValida === 'NO')
+              datos.push(data)
+          } else if (data.OfertaCaduca === 'SI') datos.push(data)
+        } else if (statusLimit === 'withoutLimit') {
+          if (onlyValid) {
+            if (data.OfertaCaduca === 'NO' && data.OfertaValida === 'NO')
+              datos.push(data)
+          } else if (data.OfertaCaduca === 'NO') datos.push(data)
+        } else if (onlyValid) {
           if (data.OfertaValida === 'NO') datos.push(data)
         } else datos.push(data)
       })
@@ -126,9 +194,20 @@ export default {
     ...mapActions({
       changeData: 'validaofertas/changeData',
     }),
+    setActivateLimit(statusNew) {
+      this.statusLimit = statusNew
+    },
     selectSucursal(sucursal) {
       this.selected = sucursal
       this.setSucursal(sucursal)
+    },
+    showDetails(article) {
+      this.viewDetails = true
+      this.articleActual = article
+    },
+    closeDetails() {
+      this.articleActual = {}
+      this.viewDetails = false
     },
     loadOnlyValid() {
       const valid = this.$store.state.validaofertas.onlyValid
