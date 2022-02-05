@@ -45,7 +45,7 @@ export const mutations = {
 }
 
 export const actions = {
-  async changeData({ commit }, [dateStart, dateEnd, sucursal]) {
+  async changeData({ commit }, [dateStart, dateEnd, sucursal, empresa]) {
     try {
       const url =
         process.env.spastore_url_backend +
@@ -54,7 +54,9 @@ export const actions = {
         '?fechaini=' +
         dateStart +
         '&fechafin=' +
-        dateEnd
+        dateEnd +
+        '&empresa=' +
+        empresa
       const response = await this.$axios({
         url,
         method: 'get',

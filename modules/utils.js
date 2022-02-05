@@ -327,8 +327,6 @@ const utils = (() => {
     doc.setFont('helvetica', 'normal')
     doc.text(horaImpresion, 10, 275)
 
-    // eslint-disable-next-line no-console
-    console.log('Compañia', company, preview)
     doc.setFont('helvetica', 'bold')
     if (finalY > 240) {
       doc.addPage()

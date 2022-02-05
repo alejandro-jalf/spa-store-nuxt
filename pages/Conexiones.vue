@@ -41,7 +41,7 @@ export default {
   },
   mounted() {
     // eslint-disable-next-line no-console
-    console.log(this.dataUser)
+    // console.log(this.dataUser)
   },
   methods: {
     ...mapActions({

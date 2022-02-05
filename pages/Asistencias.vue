@@ -27,11 +27,7 @@
         ></b-form-datepicker>
       </b-input-group>
     </div>
-    <b-button
-      variant="info"
-      :block="width < 992"
-      @click="updateConsolidaciones"
-    >
+    <b-button variant="info" :block="width < 992" @click="updateAsistencias">
       <b-icon icon="search"></b-icon>
       <span v-if="width < 992">Buscar</span>
     </b-button>
@@ -40,9 +36,17 @@
         {{ fechas }}
       </div>
       <div class="font-weight-bold">{{ sucursalFinded }}</div>
-      <b-button :variant="variantSuccess" class="mt-2" @click="createPdf">
+      <b-button
+        :variant="variantSuccess"
+        class="mt-2"
+        @click="createPdf(false)"
+      >
         <b-icon icon="download"></b-icon>
         Descargar
+      </b-button>
+      <b-button :variant="variantInfo" class="mt-2" @click="createPdf(true)">
+        <b-icon icon="box-arrow-up-right"></b-icon>
+        Vista Previa
       </b-button>
       <b-button :variant="variantClean" class="mt-2" @click="cleanData">
         <b-icon icon="ui-checks" />
@@ -181,6 +185,7 @@
         height="100px"
       ></canvas>
       <img id="imgLogoSpa" class="imgLogo" src="../assets/cesta.png" />
+      <img id="imgLogoCaasa" class="imgLogo" src="../assets/caasa_logo.jpg" />
     </div>
   </div>
 </template>
@@ -216,14 +221,21 @@ export default {
         dias: 5,
         asistencias: {},
       },
+      company: 'SPA',
     }
   },
   computed: {
+    dataUser() {
+      return this.$store.state.user.user
+    },
     variantClean() {
       return this.$store.state.general.themesComponents.themeButtonClean
     },
     variantSuccess() {
       return this.$store.state.general.themesComponents.themeButtonSuccess
+    },
+    variantInfo() {
+      return this.$store.state.general.themesComponents.themeButtonClose
     },
     firstSession() {
       return this.$store.state.asistencia.data.firstSession
@@ -238,7 +250,8 @@ export default {
       return this.$store.state.general.themesComponents.themeTableBody
     },
     sucursalFinded() {
-      return 'SUCURSAL ' + this.$store.state.asistencia.sucursalFind
+      const suc = this.$store.state.asistencia.sucursalFind
+      return 'SUCURSAL ' + this.getNameSucursalByCompany(suc)
     },
     fechas() {
       return (
@@ -305,6 +318,7 @@ export default {
     const sucSel = this.$store.state.asistencia.sucursal
     this.selected = sucSel
     this.setDateInitials()
+    this.setDataForCompany()
 
     if (tableAsistencias) {
       tableAsistencias.addEventListener('touchstart', (evt) => {
@@ -329,10 +343,48 @@ export default {
     ...mapActions({
       changeData: 'asistencia/changeData',
     }),
+    setDataForCompany() {
+      const sucSplited = this.dataUser.sucursal_user.split(' ')
+      this.company =
+        sucSplited[0].trim().toUpperCase() === 'CAASA' ? 'CAASA' : 'SPA'
+      if (this.company === 'SPA') {
+        this.options = [
+          { value: null, text: 'Seleccione una sucursal' },
+          { value: 'SPAZARAGOZA', text: 'Zaragoza' },
+          { value: 'SPAOFICINA', text: 'Oficina' },
+          { value: 'SPAVICTORIA', text: 'Victoria' },
+          { value: 'SPAOLUTA', text: 'Oluta' },
+          { value: 'SPAJALTIPAN', text: 'Jaltipan' },
+          { value: 'SPABODEGA', text: 'Bodega' },
+          { value: 'HUAMUCHL', text: 'Huamuchil', disabled: true },
+        ]
+      } else {
+        this.options = [
+          { value: null, text: 'Seleccione una sucursal' },
+          { value: 'AUTOSERVICIO', text: 'Super' },
+          { value: 'MEDIOMAYOREO', text: 'Mayoreo' },
+          { value: 'OFICINA', text: 'Oficina' },
+          { value: 'BODEGA', text: 'Bodega' },
+          { value: 'ENRIQUEZ', text: 'Enriquez' },
+          { value: 'SAYULA', text: 'Sayula' },
+          {
+            value: 'TORTILLERIASAYULA',
+            text: 'Tortilleria Sayula',
+            disabled: true,
+          },
+        ]
+      }
+    },
     loadDataImage() {
+      const sucSplited = this.dataUser.sucursal_user.split(' ')
+
       const canvas = document.getElementById('canvas')
       const context = canvas.getContext('2d')
-      const imageObject = document.getElementById('imgLogoSpa')
+      const idImage =
+        sucSplited[0].trim().toUpperCase() === 'CAASA'
+          ? 'imgLogoCaasa'
+          : 'imgLogoSpa'
+      const imageObject = document.getElementById(idImage)
       const object2 = new Image()
       object2.src = imageObject.src
       context.drawImage(object2, 0, 0, 100, 100)
@@ -363,8 +415,17 @@ export default {
     closeDetails() {
       this.$refs.modalDetalles.hide()
     },
-    createPdf() {
-      const dataSuc = utils.getDataSucursal('ZR')
+    getNameSucursalByCompany(sucursal) {
+      if (this.company === 'CAASA') {
+        if (sucursal === 'AUTOSERVICIO') return 'SUPER'
+        if (sucursal === 'MEDIOMAYOREO') return 'MAYOREO'
+        if (sucursal === 'TORTILLERIASAYULA') return 'SAYULAT'
+      }
+      return sucursal
+    },
+    createPdf(preview) {
+      const company = this.company === 'CAASA' ? 'CAASA' : 'ZR'
+      const dataSuc = utils.getDataSucursal(company)
       if (dataSuc === null) {
         this.showAlertDialog(['Sucursal no encontrada'])
         return false
@@ -378,14 +439,16 @@ export default {
           : document.getElementById('canvas')
 
       utils.createPdfAsistenciasSpa(
+        company,
         dataSuc.empresa,
         dataSuc.direccion,
         dataSuc.municipio,
         this.fechas,
-        this.sucursalFinded,
+        this.getNameSucursalByCompany(this.sucursalFinded),
         this.dataRefactor,
         fechaActual,
-        logo
+        logo,
+        preview
       )
     },
     setDateInitials() {
@@ -416,13 +479,14 @@ export default {
       }
       return true
     },
-    async updateConsolidaciones() {
+    async updateAsistencias() {
       if (!this.validateData()) return false
       this.setLoading(true)
       const response = await this.changeData([
         this.dateInit.replace(/-/g, ''),
         this.dateEnd.replace(/-/g, ''),
         this.$store.state.asistencia.sucursal,
+        this.company,
       ])
       this.setLoading(false)
       if (!response.success)
