@@ -2,392 +2,374 @@ import moment from 'moment'
 import { jsPDF } from 'jspdf'
 import 'jspdf-autotable'
 
-const _arrayMonths = [
-  'Enero',
-  'Febrero',
-  'Marzo',
-  'Abril',
-  'Mayo',
-  'Junio',
-  'Julio',
-  'Agosto',
-  'Septiembre',
-  'Octubre',
-  'Noviembre',
-  'Diciembre',
-]
-
-const completeDateHour = (number) => {
-  if (!number) return number
-  const numberString = number.toString()
-  if (numberString.length < 2) return '0' + number
-  return number
-}
-
-const refactorHora = (hour) => {
-  if (!hour) return hour
-  const arrayHour = hour.split(':')
-  const amPm = parseInt(arrayHour[0]) < 12 ? 'am' : 'pm'
-  if (parseInt(arrayHour[0]) === 0)
-    return `12:${completeDateHour(arrayHour[1])} ${amPm}`
-  if (parseInt(arrayHour[0]) > 12)
-    return (
-      completeDateHour(parseInt(arrayHour[0]) - 12) +
-      ':' +
-      arrayHour[1] +
-      ' ' +
-      amPm
-    )
-  return arrayHour[0] + ':' + arrayHour[1] + ' ' + amPm
-}
-
-const sucursalesByName = {
-  ZARAGOZA: 'ZR',
-  VICTORIA: 'VC',
-  OLUTA: 'OU',
-  JALTIPAN: 'JL',
-  BODEGA: 'BO',
-  OFICINA: 'ZR',
-}
-
-const getDataSucursal = (sucursal = '') => {
-  if (sucursal === '') return null
-
-  sucursal = sucursal.toUpperCase()
-
-  const dataSucursales = [
-    {
-      sucursal: ['ZR', 'SPAZARAGOZA'],
-      municipio: 'ACAYUCAN, VERACRUZ.',
-      direccion: 'ZARAGOZA No 109 COL. CENTRO CP 96000',
-      empresa: 'SUPER PROMOCIONES DE ACAYUCAN SA DE CV',
-    },
-    {
-      sucursal: ['OF', 'SPAOFICINA'],
-      municipio: 'ACAYUCAN, VERACRUZ.',
-      direccion: 'ZARAGOZA No 109 COL. CENTRO CP 96000',
-      empresa: 'SUPER PROMOCIONES DE ACAYUCAN SA DE CV',
-    },
-    {
-      sucursal: ['VC', 'SPAVICTORIA'],
-      municipio: 'ACAYUCAN, VERACRUZ.',
-      direccion: 'VICTORIA No  COL. CENTRO CP 96000',
-      empresa: 'SUPER PROMOCIONES DE ACAYUCAN SA DE CV',
-    },
-    {
-      sucursal: ['OU', 'SPAOLUTA'],
-      municipio: 'OLUTA, VERACRUZ.',
-      direccion: 'ZARAGOZA No 109 COL. CENTRO CP 96000',
-      empresa: 'SUPER PROMOCIONES DE ACAYUCAN SA DE CV',
-    },
-    {
-      sucursal: ['JL', 'SPAJALTIPAN'],
-      municipio: 'JALTIPAN, VERACRUZ.',
-      direccion: 'MORELOS No 1200 COL. CENTRO CP 96200',
-      empresa: 'SUPER PROMOCIONES DE ACAYUCAN SA DE CV',
-    },
-    {
-      sucursal: ['BO', 'SPABODEGA'],
-      municipio: 'ACAYUCAN, VERACRUZ.',
-      direccion: 'OCAMPO No 109 COL. CENTRO CP 96000',
-      empresa: 'SUPER PROMOCIONES DE ACAYUCAN SA DE CV',
-    },
-    {
-      sucursal: ['HM', 'HUAMUCHIL'],
-      municipio: 'ACAYUCAN, VERACRUZ.',
-      direccion: 'ZARAGOZA No 109 COL. CENTRO CP 96000',
-      empresa: 'SUPER PROMOCIONES DE ACAYUCAN SA DE CV',
-    },
+const utils = (() => {
+  const _arrayMonths = [
+    'Enero',
+    'Febrero',
+    'Marzo',
+    'Abril',
+    'Mayo',
+    'Junio',
+    'Julio',
+    'Agosto',
+    'Septiembre',
+    'Octubre',
+    'Noviembre',
+    'Diciembre',
   ]
 
-  const sucFinded = dataSucursales.find(
-    (suc) => suc.sucursal[0] === sucursal || suc.sucursal[1] === sucursal
-  )
+  const completeDateHour = (number) => {
+    if (!number) return number
+    const numberString = number.toString()
+    if (numberString.length < 2) return '0' + number
+    return number
+  }
 
-  return sucFinded || null
-}
+  const refactorHora = (hour) => {
+    if (!hour) return hour
+    const arrayHour = hour.split(':')
+    const amPm = parseInt(arrayHour[0]) < 12 ? 'am' : 'pm'
+    if (parseInt(arrayHour[0]) === 0)
+      return `12:${completeDateHour(arrayHour[1])} ${amPm}`
+    if (parseInt(arrayHour[0]) > 12)
+      return (
+        completeDateHour(parseInt(arrayHour[0]) - 12) +
+        ':' +
+        arrayHour[1] +
+        ' ' +
+        amPm
+      )
+    return arrayHour[0] + ':' + arrayHour[1] + ' ' + amPm
+  }
 
-const createPdfAsistenciasSpa = (
-  titulo,
-  direccion,
-  mnpo,
-  fechas,
-  sucursal,
-  data,
-  horaImpresion,
-  logo
-) => {
-  // eslint-disable-next-line new-cap
-  const doc = new jsPDF('p', 'mm', 'letter')
+  const sucursalesByName = {
+    ZARAGOZA: 'ZR',
+    VICTORIA: 'VC',
+    OLUTA: 'OU',
+    JALTIPAN: 'JL',
+    BODEGA: 'BO',
+    OFICINA: 'ZR',
+  }
 
-  doc.setFontSize(18)
-  doc.setFont('helvetica', 'bold')
-  if (logo) {
-    doc.text(titulo, 200, 20, 'right')
-    doc.addImage(logo, 'PNG', 10, 15, 23, 23)
-  } else doc.text(titulo, 105, 20, 'center')
+  const getDataSucursal = (sucursal = '') => {
+    if (sucursal === '') return null
 
-  doc.setFontSize(11)
-  doc.setFont('helvetica', 'normal')
-  doc.text(direccion, 200, 29, 'right')
-  doc.text(mnpo, 200, 36, 'right')
+    sucursal = sucursal.toUpperCase()
 
-  doc.setFontSize(9)
-  doc.setFont('helvetica', 'bold')
-  doc.text(fechas, 10, 43)
-  doc.text(sucursal, 200, 43, 'right')
+    const dataSucursales = [
+      {
+        sucursal: ['ZR', 'SPAZARAGOZA'],
+        municipio: 'ACAYUCAN, VERACRUZ.',
+        direccion: 'ZARAGOZA No 109 COL. CENTRO CP 96000',
+        empresa: 'SUPER PROMOCIONES DE ACAYUCAN SA DE CV',
+      },
+      {
+        sucursal: ['SU', 'CAASA'],
+        municipio: 'ACAYUCAN, VERACRUZ.',
+        direccion: 'MNUEL ACUÑA SUR. CP 96049',
+        empresa: 'CENTRAL ABARROTERA DE ACAYUCAN SA DE CV',
+      },
+      {
+        sucursal: ['HM', 'HUAMUCHIL'],
+        municipio: 'ACAYUCAN, VERACRUZ.',
+        direccion: 'ZARAGOZA No 109 COL. CENTRO CP 96000',
+        empresa: 'SUPER PROMOCIONES DE ACAYUCAN SA DE CV',
+      },
+    ]
 
-  const body = data.reduce((acumData, dato) => {
-    if (dato.header) {
+    const sucFinded = dataSucursales.find(
+      (suc) => suc.sucursal[0] === sucursal || suc.sucursal[1] === sucursal
+    )
+
+    return sucFinded || dataSucursales[0]
+  }
+
+  const createPdfValuacionInventarioCierre = (
+    titulo,
+    direccion,
+    mnpo,
+    sucursal,
+    data,
+    horaImpresion,
+    logo
+  ) => {
+    // eslint-disable-next-line new-cap
+    const doc = new jsPDF('p', 'mm', 'letter')
+
+    doc.setFontSize(18)
+    doc.setFont('helvetica', 'bold')
+    if (logo) {
+      doc.text(titulo, 200, 20, 'right')
+      doc.addImage(logo, 'PNG', 10, 15, 23, 23)
+    } else doc.text(titulo, 105, 20, 'center')
+
+    doc.setFontSize(11)
+    doc.setFont('helvetica', 'normal')
+    doc.text(direccion, 200, 29, 'right')
+    doc.text(mnpo, 200, 36, 'right')
+
+    doc.setFontSize(9)
+    doc.setFont('helvetica', 'bold')
+    doc.text(sucursal, 200, 43, 'right')
+
+    doc.setFontSize(11)
+    doc.setFont('helvetica', 'bold')
+    doc.text('Inventario al ' + horaImpresion, 10, 43, 'left')
+
+    const body = data.reduce((acumData, dato) => {
       acumData.push([
+        { content: dato.Articulo },
+        { content: dato.Nombre },
         {
-          content: dato.nombre,
-          rowSpan: dato.dias,
+          content: dato.footer
+            ? ''
+            : utils.aplyFormatNumeric(utils.roundTo(dato.Existencia)),
         },
         {
-          content: 'Dias Asists.',
-          styles: { halign: 'center', fontStyle: 'bold' },
+          content: dato.footer
+            ? dato.UCosto
+            : utils.aplyFormatNumeric(utils.roundTo(dato.UCosto)),
+          styles: dato.footer ? { fontStyle: 'bold' } : undefined,
         },
         {
-          content: dato.dias - 1,
-          styles: {
-            halign: 'center',
-            fontStyle: 'bold',
-            fillColor: [210, 210, 210],
-          },
-        },
-        { content: '' },
-        { content: '' },
-        {
-          content: 'Hrs Total',
-          styles: { halign: 'center', fontStyle: 'bold' },
+          content: utils.aplyFormatNumeric(utils.roundTo(dato.Valuacion)),
+          styles: dato.footer ? { fontStyle: 'bold' } : undefined,
         },
         {
-          content: dato.sumaHoras,
-          colSpan: 2,
-          styles: {
-            halign: 'center',
-            fontStyle: 'bold',
-            fillColor: [210, 210, 210],
-          },
-        },
-        { content: '' },
-      ])
-    } else {
-      acumData.push([
-        {
-          content: dato.fecha,
-          styles: { fontStyle: 'bold' },
-        },
-        { content: 'SI', halign: 'left' },
-        { content: dato.entrada },
-        { content: dato.scomida },
-        { content: dato.ecomida },
-        { content: dato.salida },
-        {
-          content: dato.trabajo,
-          styles: {
-            halign: 'center',
-            fontStyle: 'bold',
-          },
+          content: utils.aplyFormatNumeric(utils.roundTo(dato.Ieps)),
+          styles: dato.footer ? { fontStyle: 'bold' } : undefined,
         },
         {
-          content: dato.comida,
-          styles: {
-            halign: 'center',
-            fontStyle: 'bold',
-          },
+          content: utils.aplyFormatNumeric(utils.roundTo(dato.Iva)),
+          styles: dato.footer ? { fontStyle: 'bold' } : undefined,
+        },
+        {
+          content: utils.aplyFormatNumeric(utils.roundTo(dato.ValuacionNeta)),
+          styles: dato.footer ? { fontStyle: 'bold' } : undefined,
         },
       ])
-    }
-    return acumData
-  }, [])
+      return acumData
+    }, [])
 
-  doc.autoTable({
-    startY: 47,
-    tableWidth: 190,
-    margin: {
-      left: 10,
-    },
-    styles: { fontSize: 7 },
-    headStyles: {
-      fontStyle: 'bold',
-      halign: 'center',
-      fillColor: [255, 255, 255],
-      textColor: [0, 0, 0],
-    },
-    bodyStyles: { textColor: [0, 0, 0] },
-    head: [
-      [
-        'Nombre',
-        'Fecha ',
-        'Asist.',
-        'Entrada',
-        'S. Comida',
-        'E. Comida',
-        'Salida',
-        'Trabajo',
-        'Comida',
+    doc.autoTable({
+      startY: 49,
+      tableWidth: 190,
+      margin: {
+        left: 10,
+      },
+      styles: { fontSize: 9 },
+      headStyles: {
+        fontStyle: 'bold',
+        halign: 'center',
+        fillColor: [255, 255, 255],
+        textColor: [0, 0, 0],
+      },
+      bodyStyles: { textColor: [0, 0, 0] },
+      head: [
+        [
+          'Articulo',
+          'Nombre',
+          'Exist.',
+          'U Costo',
+          'Valuacion',
+          'Ieps',
+          'va',
+          'Valuacion Neta',
+        ],
       ],
-    ],
-    body,
-  })
-
-  const finalY = doc.lastAutoTable.finalY
-  doc.setDrawColor(0, 0, 0)
-
-  doc.setFontSize(9)
-  doc.setFont('helvetica', 'normal')
-  doc.text(horaImpresion, 10, 275)
-
-  doc.setFont('helvetica', 'bold')
-  if (finalY > 240) {
-    doc.addPage()
-    doc.line(25, 50, 85, 50)
-    doc.text('ENCARGADO', 45, 55)
-    doc.line(131, 50, 191, 50)
-    doc.text('LC ARTEMIO PEREZ MORATILLA', 136, 55)
+      body,
+    })
 
     doc.setFontSize(9)
     doc.setFont('helvetica', 'normal')
     doc.text(horaImpresion, 10, 275)
-  } else {
-    doc.line(25, 260, 85, 260)
-    doc.text('ENCARGADO', 45, 265)
-    doc.line(131, 260, 191, 260)
-    doc.text('LC ARTEMIO PEREZ MORATILLA', 136, 265)
+
+    const fecha = horaImpresion.split(' ')
+    const fechaSplit = fecha[0].split('/')
+    doc.save(
+      `${fechaSplit[2]} ${fechaSplit[1]}${fechaSplit[0]} - Valuacion Inventario - ${sucursal}.pdf`
+    )
+    // doc.output('dataurlnewwindow')
   }
 
-  doc.save(`ASISTENCIAS ${sucursal}.pdf`)
-  // doc.output('dataurlnewwindow')
-}
+  const createPdfAsistenciasSpa = (
+    company,
+    titulo,
+    direccion,
+    mnpo,
+    fechas,
+    sucursal,
+    data,
+    horaImpresion,
+    logo,
+    preview = false
+  ) => {
+    // eslint-disable-next-line new-cap
+    const doc = new jsPDF('p', 'mm', 'letter')
 
-const createPdfValuacionInventarioCierre = (
-  titulo,
-  direccion,
-  mnpo,
-  sucursal,
-  data,
-  horaImpresion,
-  logo
-) => {
-  // eslint-disable-next-line new-cap
-  const doc = new jsPDF('p', 'mm', 'letter')
+    doc.setFontSize(18)
+    doc.setFont('helvetica', 'bold')
+    if (logo) {
+      doc.text(titulo, 200, 20, 'right')
+      doc.addImage(logo, 'PNG', 10, 15, 23, 23)
+    } else doc.text(titulo, 105, 20, 'center')
 
-  doc.setFontSize(18)
-  doc.setFont('helvetica', 'bold')
-  if (logo) {
-    doc.text(titulo, 200, 20, 'right')
-    doc.addImage(logo, 'PNG', 10, 15, 23, 23)
-  } else doc.text(titulo, 105, 20, 'center')
+    doc.setFontSize(11)
+    doc.setFont('helvetica', 'normal')
+    doc.text(direccion, 200, 29, 'right')
+    doc.text(mnpo, 200, 36, 'right')
 
-  doc.setFontSize(11)
-  doc.setFont('helvetica', 'normal')
-  doc.text(direccion, 200, 29, 'right')
-  doc.text(mnpo, 200, 36, 'right')
+    doc.setFontSize(9)
+    doc.setFont('helvetica', 'bold')
+    doc.text(fechas, 10, 43)
+    doc.text(sucursal, 200, 43, 'right')
 
-  doc.setFontSize(9)
-  doc.setFont('helvetica', 'bold')
-  doc.text(sucursal, 200, 43, 'right')
+    const body = data.reduce((acumData, dato) => {
+      if (dato.header) {
+        acumData.push([
+          {
+            content: dato.nombre,
+            rowSpan: dato.dias,
+          },
+          {
+            content: 'Dias Asists.',
+            styles: { halign: 'center', fontStyle: 'bold' },
+          },
+          {
+            content: dato.dias - 1,
+            styles: {
+              halign: 'center',
+              fontStyle: 'bold',
+              fillColor: [210, 210, 210],
+            },
+          },
+          { content: '' },
+          { content: '' },
+          {
+            content: 'Hrs Total',
+            styles: { halign: 'center', fontStyle: 'bold' },
+          },
+          {
+            content: dato.sumaHoras,
+            colSpan: 2,
+            styles: {
+              halign: 'center',
+              fontStyle: 'bold',
+              fillColor: [210, 210, 210],
+            },
+          },
+          { content: '' },
+        ])
+      } else {
+        acumData.push([
+          {
+            content: dato.fecha,
+            styles: { fontStyle: 'bold' },
+          },
+          { content: 'SI', halign: 'left' },
+          { content: dato.entrada },
+          { content: dato.scomida },
+          { content: dato.ecomida },
+          { content: dato.salida },
+          {
+            content: dato.trabajo,
+            styles: {
+              halign: 'center',
+              fontStyle: 'bold',
+            },
+          },
+          {
+            content: dato.comida,
+            styles: {
+              halign: 'center',
+              fontStyle: 'bold',
+            },
+          },
+        ])
+      }
+      return acumData
+    }, [])
 
-  doc.setFontSize(11)
-  doc.setFont('helvetica', 'bold')
-  doc.text('Inventario al ' + horaImpresion, 10, 43, 'left')
-
-  const body = data.reduce((acumData, dato) => {
-    acumData.push([
-      { content: dato.Articulo },
-      { content: dato.Nombre },
-      {
-        content: dato.footer
-          ? ''
-          : utils.aplyFormatNumeric(utils.roundTo(dato.Existencia)),
+    doc.autoTable({
+      startY: 47,
+      tableWidth: 190,
+      margin: {
+        left: 10,
       },
-      {
-        content: dato.footer
-          ? dato.UCosto
-          : utils.aplyFormatNumeric(utils.roundTo(dato.UCosto)),
-        styles: dato.footer ? { fontStyle: 'bold' } : undefined,
+      styles: { fontSize: 7 },
+      headStyles: {
+        fontStyle: 'bold',
+        halign: 'center',
+        fillColor: [255, 255, 255],
+        textColor: [0, 0, 0],
       },
-      {
-        content: utils.aplyFormatNumeric(utils.roundTo(dato.Valuacion)),
-        styles: dato.footer ? { fontStyle: 'bold' } : undefined,
-      },
-      {
-        content: utils.aplyFormatNumeric(utils.roundTo(dato.Ieps)),
-        styles: dato.footer ? { fontStyle: 'bold' } : undefined,
-      },
-      {
-        content: utils.aplyFormatNumeric(utils.roundTo(dato.Iva)),
-        styles: dato.footer ? { fontStyle: 'bold' } : undefined,
-      },
-      {
-        content: utils.aplyFormatNumeric(utils.roundTo(dato.ValuacionNeta)),
-        styles: dato.footer ? { fontStyle: 'bold' } : undefined,
-      },
-    ])
-    return acumData
-  }, [])
-
-  doc.autoTable({
-    startY: 49,
-    tableWidth: 190,
-    margin: {
-      left: 10,
-    },
-    styles: { fontSize: 9 },
-    headStyles: {
-      fontStyle: 'bold',
-      halign: 'center',
-      fillColor: [255, 255, 255],
-      textColor: [0, 0, 0],
-    },
-    bodyStyles: { textColor: [0, 0, 0] },
-    head: [
-      [
-        'Articulo',
-        'Nombre',
-        'Exist.',
-        'U Costo',
-        'Valuacion',
-        'Ieps',
-        'va',
-        'Valuacion Neta',
+      bodyStyles: { textColor: [0, 0, 0] },
+      head: [
+        [
+          'Nombre',
+          'Fecha ',
+          'Asist.',
+          'Entrada',
+          'S. Comida',
+          'E. Comida',
+          'Salida',
+          'Trabajo',
+          'Comida',
+        ],
       ],
-    ],
-    body,
-  })
+      body,
+    })
 
-  doc.setFontSize(9)
-  doc.setFont('helvetica', 'normal')
-  doc.text(horaImpresion, 10, 275)
+    const finalY = doc.lastAutoTable.finalY
+    doc.setDrawColor(0, 0, 0)
 
-  const fecha = horaImpresion.split(' ')
-  const fechaSplit = fecha[0].split('/')
-  doc.save(
-    `${fechaSplit[2]} ${fechaSplit[1]}${fechaSplit[0]} - Valuacion Inventario - ${sucursal}.pdf`
-  )
-  // doc.output('dataurlnewwindow')
-}
+    doc.setFontSize(9)
+    doc.setFont('helvetica', 'normal')
+    doc.text(horaImpresion, 10, 275)
 
-const utils = {
-  getSucursalByName: (sucursal = 'zaragoza') => {
+    // eslint-disable-next-line no-console
+    console.log('Compañia', company, preview)
+    doc.setFont('helvetica', 'bold')
+    if (finalY > 240) {
+      doc.addPage()
+      doc.line(25, 50, 85, 50)
+      doc.text('ENCARGADO', 45, 55)
+      doc.line(131, 50, 191, 50)
+      if (company === 'CAASA') doc.text('RECURSOS HUMANOS', 145, 55)
+      else doc.text('LC ARTEMIO PEREZ MORATILLA', 136, 55)
+
+      doc.setFontSize(9)
+      doc.setFont('helvetica', 'normal')
+      doc.text(horaImpresion, 10, 275)
+    } else {
+      doc.line(25, 260, 85, 260)
+      doc.text('ENCARGADO', 45, 265)
+      doc.line(131, 260, 191, 260)
+      if (company === 'CAASA') doc.text('RECURSOS HUMANOS', 145, 265)
+      else doc.text('LC ARTEMIO PEREZ MORATILLA', 136, 265)
+    }
+
+    if (preview) doc.output('dataurlnewwindow')
+    else doc.save(`ASISTENCIAS ${sucursal}.pdf`)
+  }
+
+  const getSucursalByName = (sucursal = 'zaragoza') => {
     const sucursalFinded = sucursalesByName[`${sucursal.toUpperCase()}`]
     if (sucursalFinded) return sucursalFinded
     return 'ZR'
-  },
+  }
 
-  toDate: (stringDate = '2021-08-24T00:00:00') => {
+  const toDate = (stringDate = '2021-08-24T00:00:00') => {
     const splitDate = stringDate.split('-')
     return `${splitDate[2].slice(0, 2)}/${splitDate[1]}/${splitDate[0]}`
-  },
+  }
 
-  toHour: (stringDate = '1900-01-01T09:15:45') => {
+  const toHour = (stringDate = '1900-01-01T09:15:45') => {
     const splitDate = stringDate.split('T')
     return refactorHora(splitDate[1])
-  },
+  }
 
-  parseFecha: (stringFecha, withHour = false) => {
+  const parseFecha = (stringFecha, withHour = false) => {
     if (typeof stringFecha === 'undefined') return '00/00/0000'
     const fecha = new Date(stringFecha)
     let newFormat = `${stringFecha.slice(8, 10)} de ${
@@ -397,9 +379,9 @@ const utils = {
       newFormat += ` a las ${fecha.getHours()}:${fecha.getMinutes()}`
     }
     return newFormat
-  },
+  }
 
-  aplyFormatNumeric: (numberString) => {
+  const aplyFormatNumeric = (numberString) => {
     if (numberString === null || typeof numberString === 'undefined') {
       return true
     }
@@ -430,9 +412,9 @@ const utils = {
       numberFormated += `.${arrayDivision[1]}`
     }
     return numberFormated
-  },
+  }
 
-  roundTo: (number, digits = 2, autoComplete = true) => {
+  const roundTo = (number, digits = 2, autoComplete = true) => {
     const stringNumber =
       number === null || number === undefined ? '0' : number.toString()
     const arrayDivision = stringNumber.split('.')
@@ -479,9 +461,9 @@ const utils = {
     if (lengthDigits > 0)
       for (let index = 0; index < lengthDigits; index++) rounded += '0'
     return rounded
-  },
+  }
 
-  parseToPorcent: (value) => {
+  const parseToPorcent = (value) => {
     // example: 0.45
     const stringValue = value.toString()
     const arrayValue = stringValue.split('.')
@@ -491,9 +473,9 @@ const utils = {
       return signo + parseFloat(arrayValue[1])
     }
     return signo + parseInt(arrayValue[1])
-  },
+  }
 
-  difHours: (dateStart = '', dateEnd = '') => {
+  const difHours = (dateStart = '', dateEnd = '') => {
     if (dateStart === '' || dateEnd === '') return ''
 
     const dateInit = moment(dateStart)
@@ -501,16 +483,19 @@ const utils = {
     const diff = dateFinal.diff(dateInit, 'minutes')
     const time = `${parseInt(diff / 60)} Hrs ${diff % 60} Min`
     return time
-  },
+  }
 
-  formatWithMoment: (date = '', format = '') => {
+  const formatWithMoment = (date = '', format = '') => {
     if (date === '' || format === '') return ''
     const formatResult = moment(date).format(format)
     if (formatResult === 'Invalid date') return ''
     return formatResult
-  },
+  }
 
-  sumHours: (hoursFirst = '0 Hrs 0 Min', hoursSecond = '0 Hrs 0 Min') => {
+  const sumHours = (
+    hoursFirst = '0 Hrs 0 Min',
+    hoursSecond = '0 Hrs 0 Min'
+  ) => {
     if (hoursFirst === '0 Hrs 0 Min' && hoursSecond === '0 Hrs 0 Min')
       return '0 Hrs 0 Min'
     if (hoursFirst === '0 Hrs 0 Min') return hoursSecond
@@ -522,24 +507,36 @@ const utils = {
     if (totalMin > 59) totalHrs += parseInt(totalMin / 60)
     totalMin = totalMin % 60
     return `${totalHrs} Hrs ${totalMin} Min`
-  },
+  }
 
-  getDateNow: () => moment().local(true),
+  const getDateNow = () => moment().local(true)
 
   // eslint-disable-next-line new-cap
-  toMoment: (cadena) => new moment(cadena),
+  const toMoment = (cadena) => new moment(cadena)
 
-  _arrayMonths,
+  return {
+    _arrayMonths,
+    sucursalesByName,
+    toDate,
+    toHour,
+    roundTo,
+    toMoment,
+    sumHours,
+    difHours,
+    getDateNow,
+    parseFecha,
+    refactorHora,
+    parseToPorcent,
+    getDataSucursal,
+    completeDateHour,
+    formatWithMoment,
+    aplyFormatNumeric,
+    getSucursalByName,
+    createPdfAsistenciasSpa,
+    createPdfValuacionInventarioCierre,
+  }
+})()
 
-  completeDateHour,
-
-  refactorHora,
-
-  createPdfAsistenciasSpa,
-
-  createPdfValuacionInventarioCierre,
-
-  getDataSucursal,
-}
+// const utilsOld = {}
 
 export default utils
