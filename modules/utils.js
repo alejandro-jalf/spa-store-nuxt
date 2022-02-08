@@ -211,8 +211,9 @@ const utils = (() => {
     doc.setFont('helvetica', 'bold')
     if (logo) {
       doc.text(titulo, 200, 20, 'right')
-      if (company === 'CAASA') doc.addImage(logo, 'JPG', 10, 15, 23, 23)
-      else doc.addImage(logo, 'PNG', 10, 15, 23, 23)
+      // if (company === 'CAASA') doc.addImage(logo, 'JPG', 10, 15, 23, 23)
+      // else doc.addImage(logo, 'PNG', 10, 15, 23, 23)
+      doc.addImage(logo, 'PNG', 10, 15, 23, 23)
     } else doc.text(titulo, 105, 20, 'center')
 
     doc.setFontSize(11)
