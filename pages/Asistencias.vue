@@ -31,25 +31,20 @@
       <b-icon icon="search"></b-icon>
       <span v-if="width < 992">Buscar</span>
     </b-button>
-    <div v-if="!firstSession" class="mb-3 mt-3">
-      <div class="content-titles">
-        <img
-          v-if="companyUser !== 'CAASA'"
-          id="imgLogoSpa"
-          class="imgLogo"
-          src="@/assets/cesta.png"
-        />
-        <img
-          v-else
-          id="imgLogoCaasa"
-          class="imgLogo"
-          src="@/assets/caasa_logo.jpg"
-        />
-        <div class="font-weight-bold mt-2">
-          {{ fechas }}
-        </div>
-        <div class="font-weight-bold">{{ sucursalFinded }}</div>
+    <div class="content-titles">
+      <img
+        v-if="logoByCompany === 'CAASA'"
+        id="imgLogoSpa"
+        class="imgLogo"
+        src="@/assets/caasa_logo_1.png"
+      />
+      <img v-else id="imgLogoSpa" class="imgLogo" src="@/assets/cesta.png" />
+      <div class="font-weight-bold mt-2">
+        {{ fechas }}
       </div>
+      <div class="font-weight-bold">{{ sucursalFinded }}</div>
+    </div>
+    <div v-if="!firstSession" class="mb-3 mt-3">
       <b-button
         :variant="variantSuccess"
         :block="width < 528"
@@ -246,7 +241,7 @@ export default {
     }
   },
   computed: {
-    companyUser() {
+    logoByCompany() {
       const sucSplited = this.dataUser.sucursal_user
         ? this.dataUser.sucursal_user.split(' ')
         : ['']
@@ -401,17 +396,13 @@ export default {
           },
         ]
       }
+      const sucFinded = this.options.find((suc) => suc.value === this.selected)
+      if (!sucFinded) this.selected = null
     },
     loadDataImage() {
-      const sucSplited = this.dataUser.sucursal_user.split(' ')
-
       const canvas = document.getElementById('canvas')
       const context = canvas.getContext('2d')
-      const idImage =
-        sucSplited[0].trim().toUpperCase() === 'CAASA'
-          ? 'imgLogoCaasa'
-          : 'imgLogoSpa'
-      const imageObject = document.getElementById(idImage)
+      const imageObject = document.getElementById('imgLogoSpa')
       const object2 = new Image()
       object2.src = imageObject.src
       context.drawImage(object2, 0, 0, 100, 100)
@@ -464,9 +455,6 @@ export default {
         this.selected === 'HUAMUCHL'
           ? undefined
           : document.getElementById('canvas')
-
-      // eslint-disable-next-line no-console
-      console.log(logo)
 
       utils.createPdfAsistenciasSpa(
         company,

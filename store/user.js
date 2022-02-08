@@ -98,6 +98,7 @@ export const actions = {
     store.commit('conexiones/setConexiones', {})
     store.commit('existenciasarticulo/setListArticulos', { data: [] })
     store.commit('existenciasarticulo/setArticulosFinded', 0)
+    store.commit('asistencia/cleanData')
     store.commit('existenciasarticulo/setArticuloDetails', {})
     route.replace({ name: 'Login' })
   },
