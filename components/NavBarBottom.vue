@@ -133,7 +133,9 @@ export default {
     tabsAccess() {
       const user = this.$store.state.user.user
       const tabsPermission = this.tabs.filter((tab) => {
-        const arrayTabs = user.access_to_user.trim().split(',')
+        const arrayTabs = user.access_to_user
+          ? user.access_to_user.trim().split(',')
+          : []
         const findTab = arrayTabs.find(
           (ftab) => tab.name.trim().toLowerCase() === ftab.trim().toLowerCase()
         )

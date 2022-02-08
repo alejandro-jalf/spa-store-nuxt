@@ -31,24 +31,49 @@
       <b-icon icon="search"></b-icon>
       <span v-if="width < 992">Buscar</span>
     </b-button>
-    <div v-if="!firstSession">
-      <div class="font-weight-bold mt-2">
-        {{ fechas }}
+    <div v-if="!firstSession" class="mb-3 mt-3">
+      <div class="content-titles">
+        <img
+          v-if="companyUser !== 'CAASA'"
+          id="imgLogoSpa"
+          class="imgLogo"
+          src="@/assets/cesta.png"
+        />
+        <img
+          v-else
+          id="imgLogoCaasa"
+          class="imgLogo"
+          src="@/assets/caasa_logo.jpg"
+        />
+        <div class="font-weight-bold mt-2">
+          {{ fechas }}
+        </div>
+        <div class="font-weight-bold">{{ sucursalFinded }}</div>
       </div>
-      <div class="font-weight-bold">{{ sucursalFinded }}</div>
       <b-button
         :variant="variantSuccess"
+        :block="width < 528"
         class="mt-2"
         @click="createPdf(false)"
       >
         <b-icon icon="download"></b-icon>
         Descargar
       </b-button>
-      <b-button :variant="variantInfo" class="mt-2" @click="createPdf(true)">
+      <b-button
+        :variant="variantInfo"
+        :block="width < 528"
+        class="mt-2"
+        @click="createPdf(true)"
+      >
         <b-icon icon="box-arrow-up-right"></b-icon>
         Vista Previa
       </b-button>
-      <b-button :variant="variantClean" class="mt-2" @click="cleanData">
+      <b-button
+        :variant="variantClean"
+        :block="width < 528"
+        class="mt-2"
+        @click="cleanData"
+      >
         <b-icon icon="ui-checks" />
         Limpiar lista de asistencias
       </b-button>
@@ -177,16 +202,12 @@
         <b-button variant="info" @click="closeDetails">Cerrar</b-button>
       </template>
     </b-modal>
-    <div class="imageLogo">
-      <canvas
-        id="canvas"
-        class="canvasLogo"
-        width="100px"
-        height="100px"
-      ></canvas>
-      <img id="imgLogoSpa" class="imgLogo" src="../assets/cesta.png" />
-      <img id="imgLogoCaasa" class="imgLogo" src="../assets/caasa_logo.jpg" />
-    </div>
+    <canvas
+      id="canvas"
+      class="canvasLogo"
+      width="100px"
+      height="100px"
+    ></canvas>
   </div>
 </template>
 
@@ -225,6 +246,12 @@ export default {
     }
   },
   computed: {
+    companyUser() {
+      const sucSplited = this.dataUser.sucursal_user
+        ? this.dataUser.sucursal_user.split(' ')
+        : ['']
+      return sucSplited[0].trim().toUpperCase()
+    },
     dataUser() {
       return this.$store.state.user.user
     },
@@ -438,6 +465,9 @@ export default {
           ? undefined
           : document.getElementById('canvas')
 
+      // eslint-disable-next-line no-console
+      console.log(logo)
+
       utils.createPdfAsistenciasSpa(
         company,
         dataSuc.empresa,
@@ -497,14 +527,23 @@ export default {
 </script>
 
 <style scoped>
-.canvasLogo,
+.content-titles {
+  text-align: right;
+  height: max-content;
+  min-height: 100px;
+}
+
 .imgLogo {
   width: 100px;
   height: 100px;
-  visibility: hidden;
-  position: absolute;
-  bottom: 10px;
-  left: 10px;
+  float: left;
+  margin-right: 10px;
+}
+
+.canvasLogo {
+  position: fixed;
+  top: 200px;
+  left: -350px;
 }
 
 .headerTitle {
