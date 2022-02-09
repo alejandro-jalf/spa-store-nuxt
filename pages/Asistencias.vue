@@ -36,7 +36,7 @@
         v-if="logoByCompany === 'CAASA'"
         id="imgLogoSpa"
         class="imgLogo"
-        src="@/assets/caasa_logo_1.png"
+        src="@/assets/logo_caasa.png"
       />
       <img v-else id="imgLogoSpa" class="imgLogo" src="@/assets/cesta.png" />
       <div class="font-weight-bold mt-2">
@@ -530,8 +530,9 @@ export default {
 
 .canvasLogo {
   position: fixed;
-  top: 200px;
-  left: -350px;
+  top: 100px;
+  left: -250px;
+  z-index: 11;
 }
 
 .headerTitle {
