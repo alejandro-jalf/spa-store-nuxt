@@ -336,6 +336,7 @@ export default {
     },
   },
   mounted() {
+    this.loadDataImage()
     const tableAsistencias = document.getElementById('tableAsistencias')
     const sucSel = this.$store.state.asistencia.sucursal
     this.selected = sucSel
@@ -350,7 +351,6 @@ export default {
         this.setMoveTouch(true)
       })
     }
-    this.loadDataImage()
   },
   methods: {
     ...mapMutations({
@@ -403,9 +403,7 @@ export default {
       const canvas = document.getElementById('canvas')
       const context = canvas.getContext('2d')
       const imageObject = document.getElementById('imgLogoSpa')
-      const object2 = new Image()
-      object2.src = imageObject.src
-      context.drawImage(object2, 0, 0, 100, 100)
+      context.drawImage(imageObject, 0, 0, 100, 100)
     },
     openDetails(trabajador) {
       const asistencias = this.dataRefactor.reduce((acumDetails, t) => {
@@ -500,6 +498,7 @@ export default {
     async updateAsistencias() {
       if (!this.validateData()) return false
       this.setLoading(true)
+      this.loadDataImage()
       const response = await this.changeData([
         this.dateInit.replace(/-/g, ''),
         this.dateEnd.replace(/-/g, ''),
