@@ -91,6 +91,12 @@ export const state = () => ({
       icon: 'patch-check',
     },
     {
+      path: '/stocks',
+      name: 'stocks',
+      nickname: 'Stocks',
+      icon: 'cart-check-fill',
+    },
+    {
       path: '/checadorprecios',
       name: 'checadorprecios',
       nickname: 'Checador Precios',
