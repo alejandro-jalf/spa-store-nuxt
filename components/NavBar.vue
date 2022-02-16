@@ -29,7 +29,7 @@
       <b-collapse id="nav-collapse" is-nav>
         <b-navbar-nav>
           <b-nav-item
-            v-for="(tab, index) in tabsAccess"
+            v-for="(tab, index) in tabsComplete"
             :key="index"
             :to="tab.path"
             :active="isActive(tab.nickname)"
@@ -38,6 +38,27 @@
             {{ tab.nickname }}
           </b-nav-item>
         </b-navbar-nav>
+
+        <b-dropdown
+          v-if="tabsSplit.length > 0"
+          size="lg"
+          :variant="variantLigth"
+          no-caret
+          right
+        >
+          <template #button-content>
+            <b-icon icon="list-stars" />
+          </template>
+          <b-dropdown-item
+            v-for="(tab, indexSplit) in tabsSplit"
+            :key="indexSplit"
+            :to="tab.path"
+            :active="isActive(tab.nickname)"
+            replace
+          >
+            {{ tab.nickname }}
+          </b-dropdown-item>
+        </b-dropdown>
 
         <b-navbar-nav class="ml-auto">
           <b-nav-item-dropdown ref="submenu" right menu-class="p-0">
@@ -142,6 +163,29 @@ export default {
     }
   },
   computed: {
+    variantLigth() {
+      if (this.$store.state.general.themePreferences === 'sepia')
+        return 'outline-dark'
+      else return 'outline-light'
+    },
+    tabsComplete() {
+      const totalTabs =
+        this.$store.state.general.widthWindow < 1200
+          ? 7
+          : this.$store.state.general.widthWindow < 1370
+          ? 8
+          : 9
+      return this.tabsAccess.filter((tab, indexTab) => indexTab <= totalTabs)
+    },
+    tabsSplit() {
+      const totalTabs =
+        this.$store.state.general.widthWindow < 1200
+          ? 7
+          : this.$store.state.general.widthWindow < 1370
+          ? 8
+          : 9
+      return this.tabsAccess.filter((tab, indexTab) => indexTab > totalTabs)
+    },
     variantTheme() {
       return this.$store.state.general.themesComponents.themeMenuBackground
     },
