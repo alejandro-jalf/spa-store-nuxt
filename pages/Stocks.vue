@@ -20,6 +20,15 @@
     </b-alert>
 
     <div v-else>
+      <b-button :variant="variantSuccess" class="mb-3">
+        <b-icon icon="arrow-counterclockwise" />
+        Actualizar Stocks
+      </b-button>
+      <b-button :variant="variantWarning" class="mb-3" @click="cleanData">
+        <b-icon icon="file-earmark" />
+        Limpiar datos
+      </b-button>
+
       <b-container fluid="xl">
         <b-row cols="1" cols-sm="2">
           <b-col sm="3" md="2" class="mb-2">
@@ -72,17 +81,12 @@ import utils from '../modules/utils'
 export default {
   data() {
     return {
-      options: [
-        { value: 'ZR', text: 'SPAZARAGOZA' },
-        { value: 'VC', text: 'SPAVICTORIA' },
-        { value: 'OU', text: 'SPAOLUTA' },
-        { value: 'JL', text: 'SPAJALTIPAN' },
-        { value: 'BO', text: 'SPABODEGA' },
-      ],
+      options: [],
       perPage: 15,
       pageOptions: [5, 10, 15, 20, 50, 100],
       currentPage: 1,
       company: 'SPA',
+      selected: null,
       fields: [
         'Sucursal',
         'Articulo',
@@ -99,7 +103,7 @@ export default {
   },
   computed: {
     suc() {
-      return this.$store.state.validaofertas.sucursal
+      return this.$store.state.stocks.sucursal
     },
     rows() {
       return this.$store.state.stocks.data.data.length
@@ -109,6 +113,12 @@ export default {
     },
     dataUser() {
       return this.$store.state.user.user
+    },
+    variantSuccess() {
+      return this.$store.state.general.themesComponents.themeButtonSuccess
+    },
+    variantWarning() {
+      return this.$store.state.general.themesComponents.themeButtonClean
     },
     variantThemeTableBody() {
       if (this.$store.state.general.themePreferences === 'system') {
@@ -147,6 +157,8 @@ export default {
     },
   },
   mounted() {
+    const sucSel = this.$store.state.stocks.sucursal
+    this.selected = sucSel
     this.setDataForCompany()
   },
   methods: {
@@ -160,6 +172,9 @@ export default {
     ...mapActions({
       changeData: 'stocks/changeData',
     }),
+    cleanData() {
+      this.setData({ data: [] })
+    },
     selectSucursal(sucursal) {
       this.selected = sucursal
       this.setSucursal(sucursal)
@@ -192,13 +207,11 @@ export default {
       if (!sucFinded) this.selected = null
     },
     async calculateStocks() {
-      // eslint-disable-next-line no-console
-      console.log('Ejecuta')
-      if (this.selected === null)
+      const sucursal = this.$store.state.stocks.sucursal
+      if (sucursal === null)
         this.showAlertDialog(['Falta seleccionar sucursal'])
       else {
         this.setLoading(true)
-        const sucursal = this.$store.state.stocks.sucursal
         const response = await this.changeData([sucursal, this.company])
         this.setLoading(false)
         if (!response.success)
