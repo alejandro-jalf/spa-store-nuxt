@@ -20,9 +20,14 @@
     </b-alert>
 
     <div v-else>
-      <b-button :variant="variantSuccess" class="mb-3">
+      <b-button
+        :variant="variantSuccess"
+        class="mb-3"
+        @click="prepareUpdateStocks"
+      >
         <b-icon icon="arrow-counterclockwise" />
         Actualizar Stocks
+        <b-badge variant="light">{{ countArticles }}</b-badge>
       </b-button>
       <b-button :variant="variantWarning" class="mb-3" @click="cleanData">
         <b-icon icon="file-earmark" />
@@ -57,7 +62,7 @@
       </b-container>
 
       <b-table
-        id="tableInventarioValuacion"
+        id="tableActualizaStocks"
         responsive
         outlined
         hover
@@ -132,6 +137,9 @@ export default {
         return 'sepiaThemeItemList'
       else return ''
     },
+    countArticles() {
+      return this.$store.state.stocks.data.data.length
+    },
     listArticulos() {
       const data = []
       this.$store.state.stocks.data.data.forEach((article, indexA) => {
@@ -157,9 +165,19 @@ export default {
     },
   },
   mounted() {
+    const tableActualizaStocks = document.getElementById('tableActualizaStocks')
     const sucSel = this.$store.state.stocks.sucursal
     this.selected = sucSel
     this.setDataForCompany()
+
+    if (tableActualizaStocks) {
+      tableActualizaStocks.addEventListener('touchstart', (evt) => {
+        this.setMoveTouch(false)
+      })
+      tableActualizaStocks.addEventListener('touchend', (evt) => {
+        this.setMoveTouch(true)
+      })
+    }
   },
   methods: {
     ...mapMutations({
@@ -168,6 +186,8 @@ export default {
       showAlertDialog: 'general/showAlertDialog',
       setSucursal: 'stocks/setSucursal',
       setData: 'stocks/setData',
+      showAlertDialogOption: 'general/showAlertDialogOption',
+      hideAlertDialogOption: 'general/hideAlertDialogOption',
     }),
     ...mapActions({
       changeData: 'stocks/changeData',
@@ -216,13 +236,27 @@ export default {
         this.setLoading(false)
         if (!response.success)
           this.showAlertDialog([response.message, 'Error inesperado'])
-        // else {
-        //   this.setSucursalData(sucursal)
-        //   this.setHoraConsulta(
-        //     utils.getDateNow().format('DD/MM/YYYY hh:mm:ss a')
-        //   )
-        // }
       }
+    },
+    prepareUpdateStocks() {
+      this.showAlertDialogOption([
+        `¿Quiere actualizar los stocks de los ${this.countArticles} articulos encontrados?`,
+        'Actualizando stocks',
+        () => {
+          this.hideAlertDialogOption()
+          this.updateStocks()
+        },
+        'warning',
+        'light',
+        this.hideAlertDialogOption,
+      ])
+    },
+    updateStocks() {
+      this.showAlertDialog([
+        'Por el momento esta accion esta deshabilitada',
+        'Informacion',
+        'info',
+      ])
     },
   },
 }

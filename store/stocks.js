@@ -2,8 +2,8 @@ if (!localStorage.getItem('spastore_stocks_sucursal'))
   localStorage.setItem('spastore_stocks_sucursal', 'ZR')
 
 export const state = () => ({
-  data: localStorage.getItem('spastore_stocks_data')
-    ? JSON.parse(localStorage.getItem('spastore_stocks_data'))
+  data: sessionStorage.getItem('spastore_stocks_data')
+    ? JSON.parse(sessionStorage.getItem('spastore_stocks_data'))
     : { data: [] },
   sucursal: localStorage.getItem('spastore_stocks_sucursal'),
 })
@@ -11,7 +11,7 @@ export const state = () => ({
 export const mutations = {
   setData(state, data) {
     state.data = data
-    localStorage.setItem('spastore_stocks_data', JSON.stringify(data))
+    sessionStorage.setItem('spastore_stocks_data', JSON.stringify(data))
   },
   setSucursal(state, sucursal) {
     state.sucursal = sucursal
