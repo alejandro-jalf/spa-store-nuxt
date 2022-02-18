@@ -211,8 +211,6 @@ const utils = (() => {
     doc.setFont('helvetica', 'bold')
     if (logo) {
       doc.text(titulo, 200, 20, 'right')
-      // if (company === 'CAASA') doc.addImage(logo, 'JPG', 10, 15, 23, 23)
-      // else doc.addImage(logo, 'PNG', 10, 15, 23, 23)
       doc.addImage(logo, 'PNG', 10, 15, 23, 23)
     } else doc.text(titulo, 105, 20, 'center')
 
@@ -325,10 +323,6 @@ const utils = (() => {
     const finalY = doc.lastAutoTable.finalY
     doc.setDrawColor(0, 0, 0)
 
-    doc.setFontSize(9)
-    doc.setFont('helvetica', 'normal')
-    doc.text(horaImpresion, 10, 275)
-
     doc.setFont('helvetica', 'bold')
     if (finalY > 240) {
       doc.addPage()
@@ -337,16 +331,23 @@ const utils = (() => {
       doc.line(131, 50, 191, 50)
       if (company === 'CAASA') doc.text('RECURSOS HUMANOS', 145, 55)
       else doc.text('LC ARTEMIO PEREZ MORATILLA', 136, 55)
-
-      doc.setFontSize(9)
-      doc.setFont('helvetica', 'normal')
-      doc.text(horaImpresion, 10, 275)
     } else {
       doc.line(25, 260, 85, 260)
       doc.text('ENCARGADO', 45, 265)
       doc.line(131, 260, 191, 260)
       if (company === 'CAASA') doc.text('RECURSOS HUMANOS', 145, 265)
       else doc.text('LC ARTEMIO PEREZ MORATILLA', 136, 265)
+    }
+
+    const countPages = doc.getNumberOfPages()
+    let pageCurrent = 0
+    doc.setFontSize(9)
+    doc.setFont('helvetica', 'italic')
+    for (let page = 0; page < countPages; page++) {
+      doc.setPage(page)
+      pageCurrent = doc.internal.getCurrentPageInfo().pageNumber
+      doc.text(`Pagina ${pageCurrent} de ${countPages}`, 207, 275, 'right')
+      doc.text(horaImpresion, 8, 275)
     }
 
     if (preview) doc.output('dataurlnewwindow')

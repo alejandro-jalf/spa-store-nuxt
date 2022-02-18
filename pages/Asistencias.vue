@@ -51,7 +51,7 @@
         class="mt-2"
         @click="createPdf(false)"
       >
-        <b-icon icon="download"></b-icon>
+        <b-icon icon="download" />
         Descargar
       </b-button>
       <b-button
@@ -60,7 +60,7 @@
         class="mt-2"
         @click="createPdf(true)"
       >
-        <b-icon icon="box-arrow-up-right"></b-icon>
+        <b-icon icon="printer-fill" />
         Vista Previa
       </b-button>
       <b-button
@@ -218,16 +218,7 @@ export default {
   data() {
     return {
       selected: null,
-      options: [
-        { value: null, text: 'Seleccione una sucursal' },
-        { value: 'SPAZARAGOZA', text: 'Zaragoza' },
-        { value: 'SPAOFICINA', text: 'Oficina' },
-        { value: 'SPAVICTORIA', text: 'Victoria' },
-        { value: 'SPAOLUTA', text: 'Oluta' },
-        { value: 'SPAJALTIPAN', text: 'Jaltipan' },
-        { value: 'SPABODEGA', text: 'Bodega' },
-        { value: 'HUAMUCHL', text: 'Huamuchil', disabled: true },
-      ],
+      options: [],
       dateInit: '',
       dateEnd: '',
       utils,
@@ -389,11 +380,7 @@ export default {
           { value: 'BODEGA', text: 'Bodega' },
           { value: 'ENRIQUEZ', text: 'Enriquez' },
           { value: 'SAYULA', text: 'Sayula' },
-          {
-            value: 'TORTILLERIASAYULA',
-            text: 'Tortilleria Sayula',
-            disabled: true,
-          },
+          { value: 'TSAYULA', text: 'Tortilleria Sayula' },
         ]
       }
       const sucFinded = this.options.find((suc) => suc.value === this.selected)
@@ -435,7 +422,7 @@ export default {
       if (this.company === 'CAASA') {
         if (sucursal === 'AUTOSERVICIO') return 'SUPER'
         if (sucursal === 'MEDIOMAYOREO') return 'MAYOREO'
-        if (sucursal === 'TORTILLERIASAYULA') return 'SAYULAT'
+        if (sucursal === 'TSAYULA') return 'TORTILLERIASAYULA'
       }
       return sucursal
     },
