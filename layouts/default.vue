@@ -49,6 +49,7 @@ export default {
       xDown: null,
       yDown: null,
       moveTouch: null,
+      barCodeCodificador: '',
     }
   },
   computed: {
@@ -218,11 +219,17 @@ export default {
       document.querySelector('.slider').style.left = widthWindow + 30 + 'px'
     }
 
-    const checadorPrecios = (evt) => {
+    const eventKeyUp = (evt) => {
       if (this.$store.state.general.tabActual.trim() === 'Checador Precios') {
         if (parseInt(evt.key) >= 0 && parseInt(evt.key) <= 9)
           this.barCode += evt.key
         else if (evt.key === 'Enter') this.getArticleByCodeOrArticle()
+      } else if (
+        this.$store.state.general.tabActual.trim() === 'Codificador Articulos'
+      ) {
+        if (parseInt(evt.key) >= 0 && parseInt(evt.key) <= 9)
+          this.barCodeCodificador += evt.key
+        else if (evt.key === 'Enter') this.getArticleCodificador()
       }
     }
 
@@ -233,7 +240,7 @@ export default {
     setMarginPrincipal(window.innerWidth)
     setWidthContainerAll(window.innerWidth)
 
-    window.addEventListener('keyup', checadorPrecios)
+    window.addEventListener('keyup', eventKeyUp)
     document.addEventListener('touchstart', this.handleTouchStart, false)
     document.addEventListener('touchmove', this.handleTouchMove, false)
     document.addEventListener('touchend', this.handleEnd, false)
@@ -258,6 +265,7 @@ export default {
     ...mapActions({
       refreshDataUser: 'user/refreshDataUser',
       updateArticle: 'checadorprecios/updateArticle',
+      updateArticleCodificador: 'codificadorarticulos/updateArticle',
     }),
 
     async getArticleByCodeOrArticle() {
@@ -268,6 +276,17 @@ export default {
       ])
 
       this.barCode = ''
+      this.setLoading(false)
+    },
+
+    async getArticleCodificador() {
+      this.setLoading(true)
+      await this.updateArticleCodificador([
+        this.$store.state.codificadorarticulos.sucursal,
+        this.barCodeCodificador,
+      ])
+
+      this.barCodeCodificador = ''
       this.setLoading(false)
     },
 

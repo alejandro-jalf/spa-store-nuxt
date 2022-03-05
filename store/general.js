@@ -103,6 +103,12 @@ export const state = () => ({
       icon: 'upc-scan',
     },
     {
+      path: '/codificadorarticulos',
+      name: 'codificadorarticulos',
+      nickname: 'Codificador Articulos',
+      icon: 'code',
+    },
+    {
       path: '/proveedores',
       name: 'proveedores',
       nickname: 'Proveedores',

@@ -49,6 +49,13 @@ const utils = (() => {
     JALTIPAN: 'JL',
     BODEGA: 'BO',
     OFICINA: 'ZR',
+    'CAASA ENRIQUEZ': 'EN',
+    'CAASA SAYULA': 'SA',
+    'CAASA SAYULAB': 'SB',
+    'CAASA MAYOREO': 'MA',
+    'CAASA SUPER': 'SU',
+    'CAASA BODEGA': 'RE',
+    'CAASA OFICINA': 'CO',
   }
 
   const getDataSucursal = (sucursal = '') => {
