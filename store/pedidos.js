@@ -2,10 +2,13 @@ if (!localStorage.getItem('spa_store_pedidos_sucursal'))
   localStorage.setItem('spa_store_pedidos_sucursal', 'ZR')
 if (!localStorage.getItem('spa_store_pedidos_num_pedido'))
   localStorage.setItem('spa_store_pedidos_num_pedido', 0)
+if (!localStorage.getItem('spa_store_pedidos_view_details'))
+  localStorage.setItem('spa_store_pedidos_view_details', false)
 
 export const state = () => ({
   sucursal: localStorage.getItem('spa_store_pedidos_sucursal'),
   pedido: localStorage.getItem('spa_store_pedidos_num_pedido'),
+  viewDetails: localStorage.getItem('spa_store_pedidos_view_details'),
   dataPedidos: localStorage.getItem('spa_store_pedidos_data_pedidos')
     ? JSON.parse(localStorage.getItem('spa_store_pedidos_data_pedidos'))
     : { data: [] },
@@ -16,19 +19,23 @@ export const state = () => ({
 
 export const mutations = {
   setSucursal(state, sucursal) {
-    state.dataPedidos = sucursal
+    state.sucursal = sucursal
     localStorage.setItem('spa_store_pedidos_sucursal', sucursal)
   },
   setPedido(state, pedido) {
-    state.dataPedidos = pedido
+    state.pedido = pedido
     localStorage.setItem('spa_store_pedidos_num_pedido', pedido)
+  },
+  showDetails(state, viewDetails) {
+    state.viewDetails = viewDetails
+    localStorage.setItem('spa_store_pedidos_view_details', viewDetails)
   },
   changeDataPedidos(state, data) {
     state.dataPedidos = data
     localStorage.setItem('spa_store_pedidos_data_pedidos', JSON.stringify(data))
   },
   changeDataArticulos(state, data) {
-    state.dataPedidos = data
+    state.dataArticulos = data
     localStorage.setItem(
       'spa_store_pedidos_data_articulos',
       JSON.stringify(data)
@@ -42,10 +49,12 @@ export const actions = {
     [database, source, sucursal, isBodega = false]
   ) {
     try {
+      const base = database === undefined ? '' : `database=${database}&`
+      const origin = source === undefined ? '' : `source=${source}`
       const from = isBodega ? '' : `/${sucursal}`
       const url =
         process.env.spastore_url_backend +
-        `api/v1/pedidos${from}?database=${database}&source=${source}`
+        `api/v1/pedidos/maestros${from}?${base}${origin}`
       const response = await this.$axios({
         url,
         method: 'get',
