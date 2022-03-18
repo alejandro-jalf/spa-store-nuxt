@@ -15,6 +15,7 @@
       </b-button>
     </div>
 
+    <div class="titleScan">Pase el escaner y espere hasta oir el pitido</div>
     <div v-if="dataUser.tipo_user === 'manager'" id="scanner">
       <b-button
         v-if="scannerVisible"
@@ -43,11 +44,22 @@
         <canvas v-if="!scannerVisible" class="canvas-scan"></canvas>
       </div>
     </div>
+    <div v-else id="scanner">
+      <div id="container-escaner" class="text-center">
+        <div id="lector">
+          <div id="laserImage"></div>
+        </div>
+        <div id="imageCodigo"></div>
+        <div id="escaner">
+          <div class="laser"></div>
+        </div>
+      </div>
+    </div>
 
     <b-card
       v-if="!scannerVisible"
       no-body
-      class="containerCard"
+      class="containerCard mt-3"
       :class="variantTheme"
     >
       <div class="nameArticle">{{ article.Nombre }}</div>
@@ -321,11 +333,20 @@ export default {
 </script>
 
 <style scoped>
+.titleScan {
+  text-align: center;
+  font-size: 20px;
+  margin-bottom: 15px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-style: italic;
+}
+
 #scanner {
   width: 300px;
   height: 300px;
   border-radius: 3%;
   margin-bottom: 30px;
+  margin: auto;
 }
 
 #container-escaner {

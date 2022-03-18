@@ -13,6 +13,21 @@
       ></b-form-select>
     </b-input-group>
 
+    <div class="container-indicator-scan">
+      <div class="titleScan">Pase el escaner y espere hasta oir el pitido</div>
+      <div id="scanner">
+        <div id="container-escaner" class="text-center">
+          <div id="lector">
+            <div id="laserImage"></div>
+          </div>
+          <div id="imageCodigo"></div>
+          <div id="escaner">
+            <div class="laser"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <b-card
       class="containerCard p-1 pb-4 mt-5"
       :class="variantTheme"
@@ -118,3 +133,83 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+.container-indicator-scan {
+  text-align: center;
+}
+
+.titleScan {
+  font-size: 20px;
+  margin-bottom: 15px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-style: italic;
+}
+
+#scanner {
+  width: 200px;
+  height: 200px;
+  border-radius: 3%;
+  margin-bottom: 30px;
+  margin: auto;
+}
+
+#container-escaner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 3%;
+}
+
+#imageCodigo {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-image: url('../assets/codigo1.jpg');
+  background-size: 100% 100%;
+  border-radius: 3%;
+  z-index: 2;
+}
+
+#lector {
+  position: absolute;
+  max-width: 200px;
+  max-height: 200px;
+  width: 100%;
+  height: 100%;
+  border-radius: 3%;
+  left: 0px;
+  top: 0px;
+  background: #464545;
+}
+
+#escaner {
+  background: rgba(255, 0, 0, 0.507);
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: 3;
+  border-radius: 3%;
+  border: 3px solid #505050;
+}
+
+.laser,
+#laserImage {
+  position: absolute;
+  top: 50%;
+  left: 5%;
+  width: 90%;
+  background: rgb(255, 195, 195);
+  height: 4px;
+  box-shadow: 0px 0px 9px 5px #ff0000;
+}
+
+#laserImage {
+  z-index: 3;
+  box-shadow: 0px 0px 7px 3px #ff0000;
+  height: 1px;
+  top: 50%;
+  width: 96%;
+  left: 2%;
+}
+</style>
