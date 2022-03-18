@@ -1,8 +1,14 @@
 if (!localStorage.getItem('spastore_codificador_sucursal'))
   localStorage.setItem('spastore_codificador_sucursal', 'ZR')
+if (!localStorage.getItem('spastore_codificador_barcode'))
+  localStorage.setItem('spastore_codificador_barcode', '')
+if (!localStorage.getItem('spastore_codificador_codesend'))
+  localStorage.setItem('spastore_codificador_codesend', '')
 
 export const state = () => ({
   sucursal: localStorage.getItem('spastore_codificador_sucursal'),
+  barCode: localStorage.getItem('spastore_codificador_barcode'),
+  codeSend: localStorage.getItem('spastore_codificador_codesend'),
   article: sessionStorage.getItem('spastore_codificador_article_data')
     ? JSON.parse(sessionStorage.getItem('spastore_codificador_article_data'))
     : {
@@ -23,6 +29,14 @@ export const mutations = {
   setSucursal(state, sucursal) {
     state.sucursal = sucursal
     localStorage.setItem('spastore_codificador_sucursal', sucursal)
+  },
+  setBarCode(state, barCode) {
+    state.barCode = barCode
+    localStorage.setItem('spastore_codificador_barcode', barCode)
+  },
+  setCodeSend(state, codeSend) {
+    state.codeSend = codeSend
+    localStorage.setItem('spastore_codificador_codeSend', codeSend)
   },
   setArticle(state, article) {
     state.article = article

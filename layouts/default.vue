@@ -49,10 +49,12 @@ export default {
       xDown: null,
       yDown: null,
       moveTouch: null,
-      barCodeCodificador: '',
     }
   },
   computed: {
+    barCodeCodificador() {
+      return this.$store.state.codificadorarticulos.barCode
+    },
     width() {
       return this.$store.state.general.widthWindow
     },
@@ -227,9 +229,10 @@ export default {
       } else if (
         this.$store.state.general.tabActual.trim() === 'Codificador Articulos'
       ) {
-        if (parseInt(evt.key) >= 0 && parseInt(evt.key) <= 9)
-          this.barCodeCodificador += evt.key
-        else if (evt.key === 'Enter') this.getArticleCodificador()
+        if (parseInt(evt.key) >= 0 && parseInt(evt.key) <= 9) {
+          const code = this.barCodeCodificador + evt.key
+          this.setBarCode(code)
+        } else if (evt.key === 'Enter') this.getArticleCodificador()
       }
     }
 
@@ -260,6 +263,8 @@ export default {
       setLoading: 'general/setLoading',
       changeScrollScreenY: 'general/changeScrollScreenY',
       setSesionInit: 'user/setSesionInit',
+      setBarCode: 'codificadorarticulos/setBarCode',
+      setCodeSend: 'codificadorarticulos/setCodeSend',
     }),
 
     ...mapActions({
@@ -286,7 +291,9 @@ export default {
         this.barCodeCodificador,
       ])
 
-      this.barCodeCodificador = ''
+      const codeSend = this.barCodeCodificador
+      this.setCodeSend(codeSend)
+      this.setBarCode('')
       this.setLoading(false)
     },
 

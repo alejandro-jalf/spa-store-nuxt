@@ -20,6 +20,7 @@
           <div id="lector">
             <div id="laserImage"></div>
           </div>
+          <div id="codeSend">{{ barcode }}</div>
           <div id="imageCodigo"></div>
           <div id="escaner">
             <div class="laser"></div>
@@ -75,6 +76,11 @@ export default {
     }
   },
   computed: {
+    barcode() {
+      const code = this.$store.state.codificadorarticulos.barCode
+      const codeSend = this.$store.state.codificadorarticulos.codeSend
+      return code.trim() === '' ? codeSend : code
+    },
     suc() {
       return this.$store.state.codificadorarticulos.sucursal
     },
@@ -161,8 +167,21 @@ export default {
   border-radius: 3%;
 }
 
+#codeSend {
+  position: absolute;
+  left: 0px;
+  bottom: 32px;
+  width: 100%;
+  font-weight: bold;
+  font-size: 13px;
+  text-align: center;
+  color: black;
+  z-index: 3;
+}
+
 #imageCodigo {
   position: absolute;
+  color: black;
   width: 100%;
   height: 100%;
   background-image: url('../assets/codigo1.jpg');
