@@ -51,8 +51,17 @@
         <Divider />
       </div>
       <div class="mt-3">
-        <span class="font-weight-bold">Existencia:</span>
-        {{ article.ExistenciaActualRegular }}
+        <span class="font-weight-bold">Existencia UV:</span>
+        {{
+          utils.aplyFormatNumeric(
+            utils.roundTo(article.ExistenciaActualRegular)
+          )
+        }}
+        <Divider />
+      </div>
+      <div class="mt-3">
+        <span class="font-weight-bold">Existencia UC:</span>
+        {{ utils.aplyFormatNumeric(utils.roundTo(article.ExistenciaActualUC)) }}
         <Divider />
       </div>
     </b-card>
