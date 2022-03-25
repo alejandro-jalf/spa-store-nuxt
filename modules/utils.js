@@ -58,6 +58,22 @@ const utils = (() => {
     'CAASA OFICINA': 'CO',
   }
 
+  const sucursalesData = [
+    { name: 'ZARAGOZA', alias: 'ZR' },
+    { name: 'VICTORIA', alias: 'VC' },
+    { name: 'OLUTA', alias: 'OU' },
+    { name: 'JALTIPAN', alias: 'JL' },
+    { name: 'BODEGA', alias: 'BO' },
+    { name: 'OFICINA', alias: 'ZR' },
+    { name: 'CAASA ENRIQUEZ', alias: 'EN' },
+    { name: 'CAASA SAYULA', alias: 'SA' },
+    { name: 'CAASA SAYULAB', alias: 'SB' },
+    { name: 'CAASA MAYOREO', alias: 'MA' },
+    { name: 'CAASA SUPER', alias: 'SU' },
+    { name: 'CAASA BODEGA', alias: 'RE' },
+    { name: 'CAASA OFICINA', alias: 'CO' },
+  ]
+
   const getDataSucursal = (sucursal = '') => {
     if (sucursal === '') return null
 
@@ -525,6 +541,7 @@ const utils = (() => {
   return {
     _arrayMonths,
     sucursalesByName,
+    sucursalesData,
     toDate,
     toHour,
     roundTo,
