@@ -97,6 +97,12 @@ export const state = () => ({
       icon: 'cart-check-fill',
     },
     {
+      path: '/folios',
+      name: 'folios',
+      nickname: 'Folios',
+      icon: 'card-heading',
+    },
+    {
       path: '/checadorprecios',
       name: 'checadorprecios',
       nickname: 'Checador Precios',
