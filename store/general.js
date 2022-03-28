@@ -85,6 +85,12 @@ export const state = () => ({
       icon: 'collection',
     },
     {
+      path: '/pedidos',
+      name: 'pedidos',
+      nickname: 'Monitor Pedidos',
+      icon: 'display',
+    },
+    {
       path: '/valuacioninventario',
       name: 'ValuacionInventario',
       nickname: 'Valuacion Inventario',
@@ -164,6 +170,8 @@ export const state = () => ({
         themeVariantAlert: 'info',
         themeButtonClean: 'warning',
         themeButtonSuccess: 'success',
+        themeButtonLight: 'light',
+        themeButtonPrimary: 'primary',
         themeHR: '',
         backgroundVariantBody: 'light',
       },
@@ -354,6 +362,13 @@ export const actions = {
         'success',
         'outline-success',
         'success'
+      ),
+      themeButtonLight: filterOption(themes, 'light', 'outline-light', 'light'),
+      themeButtonPrimary: filterOption(
+        themes,
+        'primary',
+        'outline-primary',
+        'primary'
       ),
       themeHR: filterOption(themes, '', 'bg-white', ''),
       backgroundVariantBody: filterOption(themes),
