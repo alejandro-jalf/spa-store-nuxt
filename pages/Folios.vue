@@ -3,20 +3,39 @@
     <div class="h2 my-3">Folios de facturas</div>
     <b-input-group
       v-if="dataUser.tipo_user === 'manager'"
-      prepend="Sucursal"
-      class="mb-3"
+      prepend="Suc"
+      class="mb-3 w-100"
     >
       <b-form-select
         :value="suc"
         :options="options"
+        class="w-150"
         @change="selectSucursal"
       ></b-form-select>
+      <template #append>
+        <b-form-input
+          id="input-promedio"
+          v-model="promedio"
+          :value="promMensual"
+          placeholder="Promedio"
+          type="number"
+          size="sm"
+          min="1"
+          class="h-100"
+          :class="backgroundInputTheme"
+          @keydown="verifyData"
+          @keyup.enter="calculateFolioBySuc"
+        ></b-form-input>
+        <b-button variant="success" @click="calculateFolioBySuc">
+          Calcular
+        </b-button>
+      </template>
     </b-input-group>
 
     <b-card
       class="containerCard p-1 pb-4 mt-5"
       :class="variantTheme"
-      :title="folio.Serie"
+      :title="'Sucursal: ' + folio.Serie"
     >
       <div class="mt-3">
         <span class="font-weight-bold">Tienda:</span>
@@ -36,6 +55,11 @@
       <div class="mt-3">
         <span class="font-weight-bold">Folio Final:</span>
         {{ utils.aplyFormatNumeric(folio.FolioFinal) }}
+        <Divider />
+      </div>
+      <div class="mt-3">
+        <span class="font-weight-bold">Folio Actual:</span>
+        {{ utils.aplyFormatNumeric(folio.FolioActual) }}
         <Divider />
       </div>
       <div class="mt-3">
@@ -94,6 +118,8 @@
               v-model="formFolio.incremento"
               placeholder="Incremento"
               class="w-100"
+              type="number"
+              min="1"
               :class="backgroundInputTheme"
               @keydown="verifyData"
               @keyup="calculaFolioFinal"
@@ -111,7 +137,7 @@
             ></b-form-input>
           </b-form-group>
         </b-form>
-        <b-button variant="primary" class="mb-2">
+        <b-button :block="width < 767" variant="primary" class="mb-2">
           <b-icon icon="arrow-up-right-circle-fill" />
           Actualizar Folios
         </b-button>
@@ -121,7 +147,7 @@
 </template>
 
 <script>
-import { mapMutations } from 'vuex'
+import { mapMutations, mapActions } from 'vuex'
 import utils from '../modules/utils'
 import Divider from '../components/Divider'
 
@@ -133,6 +159,7 @@ export default {
     return {
       utils,
       options: [],
+      promedio: 0,
       formFolio: {
         final: 0,
         actual: 0,
@@ -153,6 +180,12 @@ export default {
     suc() {
       return this.$store.state.folios.sucursal
     },
+    promMensual() {
+      return this.$store.state.folios.promMensual
+    },
+    width() {
+      return this.$store.state.general.widthWindow
+    },
     variantTheme() {
       return this.$store.state.general.themesComponents.themeCardBody
     },
@@ -161,19 +194,59 @@ export default {
     },
   },
   mounted() {
-    if (this.dataUser.tipo_user !== 'manager') {
-      const sucursal = this.utils.getSucursalByName(this.dataUser.sucursal_user)
-      this.setSucursal(sucursal)
-    }
+    console.log(this.folio)
+    const prom = this.promMensual
+    this.promedio = prom
     this.setDataForCompany()
+    this.setDataForm()
   },
   methods: {
     ...mapMutations({
-      setSucursal: 'codificadorarticulos/setSucursal',
+      setSucursal: 'folios/setSucursal',
+      setPromedioMensual: 'folios/setPromedioMensual',
+      setDataFolio: 'folios/setDataFolio',
+      setLoading: 'general/setLoading',
+      showAlertDialog: 'general/showAlertDialog',
     }),
+    ...mapActions({
+      updateDataFolio: 'folios/updateDataFolio',
+    }),
+    async calculateFolioBySuc() {
+      console.log(this.suc, this.promedio)
+      if (this.suc === null)
+        this.showAlertDialog(['No ha seleccionado una sucursal'])
+      else if (this.promedio <= 0)
+        this.showAlertDialog(['El promedio no puede ser menor que 1'])
+      else if (this.promedio.trim() === '')
+        this.showAlertDialog(['El promedio no puede quedar vacio'])
+      else {
+        this.setLoading(true)
+        const response = await this.updateDataFolio([this.suc, this.promedio])
+        this.setLoading(false)
+        if (!response.success) this.showAlertDialog([response.message])
+      }
+    },
     selectSucursal(sucursal) {
       this.selected = sucursal
       this.setSucursal(sucursal)
+    },
+    setDataForm() {
+      const folioFinalOld = this.$store.state.folios.folio.data[0].FolioFinal
+      const folioActual = this.$store.state.folios.folio.data[0].FolioActual
+      const disponibles = this.$store.state.folios.folio.data[0].FolioDisponible
+      const incremento = this.$store.state.folios.folio.data[0]
+        .INCREMENTODEFOLIO
+      const finalNew = this.$store.state.folios.folio.data[0].FOLIOFINC
+
+      this.formFolio = {
+        final: folioFinalOld,
+        actual: folioActual,
+        disponible: disponibles,
+        incremento,
+        nuevoFinal: finalNew,
+      }
+      if (finalNew <= folioFinalOld) this.statusFinalNew = false
+      else this.statusFinalNew = true
     },
     setDataForCompany() {
       const sucSplited = this.dataUser.sucursal_user.split(' ')
@@ -204,18 +277,28 @@ export default {
     },
     verifyData(evt) {
       if (
-        evt.keyCode !== 190 &&
         evt.keyCode !== 13 &&
         evt.keyCode !== 8 &&
         evt.keyCode !== 37 &&
+        evt.keyCode !== 38 &&
         evt.keyCode !== 39 &&
-        evt.keyCode !== 110
+        evt.keyCode !== 40
       ) {
         if (isNaN(parseInt(evt.key))) evt.preventDefault()
       }
     },
     calculaFolioFinal() {
-      this.statusFinalNew = true
+      const disponibles = this.$store.state.folios.folio.data[0].FolioDisponible
+      const folioActual = this.$store.state.folios.folio.data[0].FolioActual
+      const folioFinalOld = this.$store.state.folios.folio.data[0].FolioFinal
+      const finalNuevo =
+        parseInt(folioActual) +
+        parseInt(disponibles) +
+        parseInt(this.formFolio.incremento)
+      this.formFolio.nuevoFinal = finalNuevo
+      if (isNaN(finalNuevo)) this.statusFinalNew = false
+      else if (finalNuevo <= folioFinalOld) this.statusFinalNew = false
+      else this.statusFinalNew = true
     },
     actualizaFolio() {},
   },

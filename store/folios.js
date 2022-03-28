@@ -1,8 +1,11 @@
 if (!localStorage.getItem('spastore_folios_sucursal'))
   localStorage.setItem('spastore_folios_sucursal', 'ZR')
+if (!localStorage.getItem('spastore_folios_promedio'))
+  localStorage.setItem('spastore_folios_promedio', '200')
 
 export const state = () => ({
   sucursal: localStorage.getItem('spastore_folios_sucursal'),
+  promMensual: localStorage.getItem('spastore_folios_promedio'),
   folio: sessionStorage.getItem('spastore_folios_data')
     ? JSON.parse(sessionStorage.getItem('spastore_folios_data'))
     : {
@@ -25,6 +28,10 @@ export const mutations = {
     state.sucursal = sucursal
     localStorage.setItem('spastore_folios_sucursal', sucursal)
   },
+  setPromedioMensual(state, promMensual) {
+    state.promMensual = promMensual
+    localStorage.setItem('spastore_folios_promedio', promMensual)
+  },
   setDataFolio(state, data) {
     state.data = data
     sessionStorage.setItem('spastore_folios_data', JSON.stringify(data))
@@ -33,9 +40,9 @@ export const mutations = {
 
 export const actions = {
   async updateDataFolio({ commit }, [sucursal, promedio]) {
-    const dataArticle = {
+    const dataFolios = {
       Tienda: 0,
-      Serie: 0,
+      Serie: '',
       FolioInicial: 1,
       FolioFinal: 0,
       FolioDisponible: 0,
@@ -53,11 +60,11 @@ export const actions = {
 
       if (response.data.success) {
         commit('setDataFolio', { data: response.data.data })
-      } else commit('setDataFolio', { data: [dataArticle] })
+      } else commit('setDataFolio', { data: [dataFolios] })
 
       return response.data
     } catch (error) {
-      commit('setDataFolio', { data: [dataArticle] })
+      commit('setDataFolio', { data: [dataFolios] })
       if (error.response) {
         return error.response.data
       }
