@@ -63,7 +63,7 @@
         {{ utils.aplyFormatNumeric(folio.FolioActual) }}
         <Divider />
       </div>
-      <div class="mt-3">
+      <div class="mt-3" :class="colorStatusDisponibles">
         <span class="font-weight-bold">Folios Disponibles:</span>
         {{ utils.aplyFormatNumeric(folio.FolioDisponible) }}
         <Divider />
@@ -80,9 +80,9 @@
       </div>
       <div class="mt-3">
         <b-card-text class="font-weight-bold mb-1 mt-5">
-          Actualizacion de Folio
+          Incremento de Folios
         </b-card-text>
-        <divider class="mb-2"></divider>
+        <divider class="mb-2 bg-info"></divider>
         <b-form inline class="mt-2 mb-2">
           <b-form-group label="Final" class="input-form-folio">
             <b-form-input
@@ -145,9 +145,10 @@
           @click="actualizaFolio"
         >
           <b-icon icon="arrow-up-right-circle-fill" />
-          Actualizar Folios
+          Incrementar Folios
         </b-button>
       </div>
+      <div class="dateConsult">Consultado el {{ dateConsult }}</div>
     </b-card>
   </div>
 </template>
@@ -189,6 +190,9 @@ export default {
     promMensual() {
       return this.$store.state.folios.promMensual
     },
+    dateConsult() {
+      return this.$store.state.folios.dateConsult
+    },
     width() {
       return this.$store.state.general.widthWindow
     },
@@ -197,6 +201,14 @@ export default {
     },
     backgroundInputTheme() {
       return this.$store.state.general.themesComponents.themeInputBackground
+    },
+    colorStatusDisponibles() {
+      const disponibles = this.$store.state.folios.folio.data[0].FolioDisponible
+      return disponibles < 30
+        ? 'color-danger'
+        : disponibles < 60
+        ? 'color-warning'
+        : 'color-success'
     },
   },
   mounted() {
@@ -210,6 +222,7 @@ export default {
       setSucursal: 'folios/setSucursal',
       setPromedioMensual: 'folios/setPromedioMensual',
       setDataFolio: 'folios/setDataFolio',
+      setDateConsult: 'folios/setDateConsult',
       setLoading: 'general/setLoading',
       showAlertDialog: 'general/showAlertDialog',
     }),
@@ -228,7 +241,10 @@ export default {
         const response = await this.updateDataFolio([this.suc, this.promedio])
         this.setLoading(false)
         if (!response.success) this.showAlertDialog([response.message])
-        else this.setDataForm()
+        else {
+          this.setDataForm()
+          this.setDateConsult(utils.getDateNow().format('DD/MM/YYYY'))
+        }
       }
     },
     selectSucursal(sucursal) {
@@ -312,6 +328,11 @@ export default {
         ])
       else if (sucursal === null || sucursal === 'null')
         this.showAlertDialog(['Falta seleccionar sucursal'])
+      else if (this.dateConsult !== utils.getDateNow().format('DD/MM/YYYY'))
+        this.showAlertDialog([
+          'La fecha de consulta no es actual, se recomienda volver a consultar folios y posteriormente enviar el incremento de folios',
+          'Datos antiguos',
+        ])
       else {
         try {
           this.setLoading(true)
@@ -349,6 +370,28 @@ export default {
   width: calc(20% - 5px);
   margin-bottom: 5px;
   margin-right: 5px;
+}
+
+.color-danger {
+  background: rgb(255, 216, 216);
+  color: #000;
+}
+
+.color-success {
+  background: rgb(167, 255, 156);
+  color: #000;
+}
+
+.color-warning {
+  background: rgb(255, 248, 156);
+  color: #000;
+}
+
+.dateConsult {
+  position: absolute;
+  right: 15px;
+  bottom: 10px;
+  font-style: italic;
 }
 
 @media screen and (max-width: 767px) {

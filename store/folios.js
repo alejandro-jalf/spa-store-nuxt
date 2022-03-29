@@ -2,12 +2,15 @@ if (!localStorage.getItem('spastore_folios_sucursal'))
   localStorage.setItem('spastore_folios_sucursal', 'ZR')
 if (!localStorage.getItem('spastore_folios_promedio'))
   localStorage.setItem('spastore_folios_promedio', '200')
+if (!localStorage.getItem('spastore_folios_date_consult'))
+  localStorage.setItem('spastore_folios_date_consult', '00/00/0000')
 
 export const state = () => ({
   sucursal: localStorage.getItem('spastore_folios_sucursal'),
   promMensual: localStorage.getItem('spastore_folios_promedio'),
-  folio: sessionStorage.getItem('spastore_folios_data')
-    ? JSON.parse(sessionStorage.getItem('spastore_folios_data'))
+  dateConsult: localStorage.getItem('spastore_folios_date_consult'),
+  folio: localStorage.getItem('spastore_folios_data')
+    ? JSON.parse(localStorage.getItem('spastore_folios_data'))
     : {
         data: [
           {
@@ -32,9 +35,13 @@ export const mutations = {
     state.promMensual = promMensual
     localStorage.setItem('spastore_folios_promedio', promMensual)
   },
+  setDateConsult(state, dateConsult) {
+    state.dateConsult = dateConsult
+    localStorage.setItem('spastore_folios_date_consult', dateConsult)
+  },
   setDataFolio(state, folio) {
     state.folio = folio
-    sessionStorage.setItem('spastore_folios_data', JSON.stringify(folio))
+    localStorage.setItem('spastore_folios_data', JSON.stringify(folio))
   },
 }
 
