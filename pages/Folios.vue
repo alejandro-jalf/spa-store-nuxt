@@ -24,6 +24,7 @@
           class="h-100"
           :class="backgroundInputTheme"
           @keydown="verifyData"
+          @change="savePromedio"
           @keyup.enter="calculateFolioBySuc"
         ></b-form-input>
         <b-button variant="success" @click="calculateFolioBySuc">
@@ -137,7 +138,12 @@
             ></b-form-input>
           </b-form-group>
         </b-form>
-        <b-button :block="width < 767" variant="primary" class="mb-2">
+        <b-button
+          :block="width < 767"
+          variant="primary"
+          class="mb-2"
+          @click="actualizaFolio"
+        >
           <b-icon icon="arrow-up-right-circle-fill" />
           Actualizar Folios
         </b-button>
@@ -194,7 +200,6 @@ export default {
     },
   },
   mounted() {
-    console.log(this.folio)
     const prom = this.promMensual
     this.promedio = prom
     this.setDataForCompany()
@@ -212,7 +217,6 @@ export default {
       updateDataFolio: 'folios/updateDataFolio',
     }),
     async calculateFolioBySuc() {
-      console.log(this.suc, this.promedio)
       if (this.suc === null)
         this.showAlertDialog(['No ha seleccionado una sucursal'])
       else if (this.promedio <= 0)
@@ -224,6 +228,7 @@ export default {
         const response = await this.updateDataFolio([this.suc, this.promedio])
         this.setLoading(false)
         if (!response.success) this.showAlertDialog([response.message])
+        else this.setDataForm()
       }
     },
     selectSucursal(sucursal) {
@@ -238,13 +243,12 @@ export default {
         .INCREMENTODEFOLIO
       const finalNew = this.$store.state.folios.folio.data[0].FOLIOFINC
 
-      this.formFolio = {
-        final: folioFinalOld,
-        actual: folioActual,
-        disponible: disponibles,
-        incremento,
-        nuevoFinal: finalNew,
-      }
+      this.formFolio.final = folioFinalOld
+      this.formFolio.actual = folioActual
+      this.formFolio.disponible = disponibles
+      this.formFolio.incremento = incremento
+      this.formFolio.nuevoFinal = finalNew
+
       if (finalNew <= folioFinalOld) this.statusFinalNew = false
       else this.statusFinalNew = true
     },
@@ -287,20 +291,55 @@ export default {
         if (isNaN(parseInt(evt.key))) evt.preventDefault()
       }
     },
+    savePromedio(dato) {
+      this.setPromedioMensual(dato)
+    },
     calculaFolioFinal() {
-      const disponibles = this.$store.state.folios.folio.data[0].FolioDisponible
-      const folioActual = this.$store.state.folios.folio.data[0].FolioActual
       const folioFinalOld = this.$store.state.folios.folio.data[0].FolioFinal
       const finalNuevo =
-        parseInt(folioActual) +
-        parseInt(disponibles) +
-        parseInt(this.formFolio.incremento)
+        parseInt(folioFinalOld) + parseInt(this.formFolio.incremento)
       this.formFolio.nuevoFinal = finalNuevo
       if (isNaN(finalNuevo)) this.statusFinalNew = false
       else if (finalNuevo <= folioFinalOld) this.statusFinalNew = false
       else this.statusFinalNew = true
     },
-    actualizaFolio() {},
+    async actualizaFolio() {
+      const sucursal = this.$store.state.folios.folio.data[0].Serie
+      const newFolio = this.formFolio.nuevoFinal
+      if (!this.statusFinalNew)
+        this.showAlertDialog([
+          'Verifique que el incremento sea un numero mayor a 1',
+        ])
+      else if (sucursal === null || sucursal === 'null')
+        this.showAlertDialog(['Falta seleccionar sucursal'])
+      else {
+        try {
+          this.setLoading(true)
+          const url =
+            process.env.spastore_url_backend +
+            `api/v1/general/folios/${sucursal}?newFolio=${newFolio}`
+          const response = await this.$axios({
+            url,
+            method: 'put',
+          })
+
+          if (response.data.success) {
+            this.showAlertDialog(['Folio actualizados'])
+            const result = await this.updateDataFolio([sucursal, this.promedio])
+            this.setDataForm()
+            if (!result.data.success)
+              this.showAlertDialog([result.data.message])
+          } else this.showAlertDialog([response.data.message])
+
+          this.setLoading(false)
+        } catch (error) {
+          this.setLoading(false)
+          if (error.response)
+            this.showAlertDialog([error.response.data.message])
+          else this.showAlertDialog(['Error con el servidor'])
+        }
+      }
+    },
   },
 }
 </script>

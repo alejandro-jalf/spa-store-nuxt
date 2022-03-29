@@ -32,9 +32,9 @@ export const mutations = {
     state.promMensual = promMensual
     localStorage.setItem('spastore_folios_promedio', promMensual)
   },
-  setDataFolio(state, data) {
-    state.data = data
-    sessionStorage.setItem('spastore_folios_data', JSON.stringify(data))
+  setDataFolio(state, folio) {
+    state.folio = folio
+    sessionStorage.setItem('spastore_folios_data', JSON.stringify(folio))
   },
 }
 
