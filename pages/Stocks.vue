@@ -163,6 +163,16 @@ export default {
       })
       return data
     },
+    sucursalData() {
+      return this.$store.state.stocks.data.data[0].Sucursal
+    },
+    updates() {
+      let updates = ''
+      this.$store.state.stocks.data.data.forEach((article) => {
+        updates += article.SQL_QUERY + '; '
+      })
+      return updates
+    },
   },
   mounted() {
     const tableActualizaStocks = document.getElementById('tableActualizaStocks')
@@ -251,12 +261,34 @@ export default {
         this.hideAlertDialogOption,
       ])
     },
-    updateStocks() {
-      this.showAlertDialog([
-        'Por el momento esta accion esta deshabilitada',
-        'Informacion',
-        'info',
-      ])
+    async updateStocks() {
+      try {
+        this.setLoading(true)
+        const url =
+          process.env.spastore_url_backend +
+          'api/v1/articulos/stocks?sucursal=' +
+          this.sucursalData +
+          '&company=' +
+          this.company
+        const response = await this.$axios({
+          url,
+          method: 'put',
+          data: { updates: this.updates },
+        })
+        this.setLoading(false)
+
+        if (response.data.success) {
+          const message =
+            'Se ha actualizado el stock de un total de ' +
+            response.data.data[1] +
+            ' articulos'
+          this.showAlertDialog([message, 'Exito', 'success'])
+        } else this.showAlertDialog([response.data.message])
+      } catch (error) {
+        this.setLoading(true)
+        if (error.response) this.showAlertDialog([error.response.message])
+        else this.showAlertDialog(['Error con el servidor'])
+      }
     },
   },
 }
