@@ -195,10 +195,6 @@
           <b-icon icon="x-circle-fill"></b-icon>
           Cerrar
         </b-button>
-        <b-button variant="primary" class="mb-2">
-          <b-icon icon="arrow-up-right-circle-fill" />
-          Programar
-        </b-button>
         <span v-if="ofertaEditable && statusActual === 0">
           <b-button variant="secondary" class="mb-2" @click="editarDatosOferta">
             <b-icon icon="arrow-left-circle-fill" />
@@ -239,6 +235,16 @@
             Al dar click en "Guardar y enviar" la oferta sera almacenada y
             enviada para su programacion
           </b-toast>
+        </span>
+        <span v-else-if="statusActual != 0">
+          <b-button v-if="statusActual === 2" variant="success" class="mb-2">
+            <b-icon icon="arrow-up-right-circle-fill" />
+            Validar Articulos
+          </b-button>
+          <b-button variant="primary" class="mb-2">
+            <b-icon icon="arrow-up-right-circle-fill" />
+            {{ messageButton }}
+          </b-button>
         </span>
       </div>
     </b-card>
@@ -345,6 +351,20 @@ export default {
     }
   },
   computed: {
+    messageButton() {
+      switch (this.$store.state.ofertas.ofertaActual.status) {
+        case 0:
+          return 'Enviar'
+        case 1:
+          return 'Poner En Proceso'
+        case 2:
+          return 'Programar'
+        case 4:
+          return 'Restaurar'
+        default:
+          return ''
+      }
+    },
     messageButtonAddArticle() {
       return this.editingArticle ? 'Guardar cambios' : 'Agregar a la lista'
     },
@@ -745,7 +765,7 @@ export default {
     },
     prepareCancelOffert() {
       this.showAlertDialogOption([
-        '¿Quiere cancelar la oferta?',
+        '¿Quiere cancelar toda la oferta?',
         'Cancelando oferta',
         () => {
           this.hideAlertDialogOption()
