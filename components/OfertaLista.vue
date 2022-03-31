@@ -56,6 +56,27 @@
           Datos de la oferta para el articulo: {{ articuloActual }}
         </b-card-text>
         <divider class="mb-2"></divider>
+        <b-form class="mt-2">
+          <b-form-group label="Existencia Actual" class="inputs-2-data">
+            <b-form-input
+              id="input-existencia"
+              v-model="formArticulo.existencia"
+              placeholder="Existencia Actual"
+              class="w-100"
+              readonly
+            ></b-form-input>
+          </b-form-group>
+          <b-form-group label="Relacion" class="inputs-2-data">
+            <b-form-input
+              id="input-relacion"
+              v-model="formArticulo.relacion"
+              placeholder="Relacion"
+              class="w-100"
+              readonly
+            ></b-form-input>
+          </b-form-group>
+        </b-form>
+
         <b-form inline class="mt-2 mb-2">
           <b-form-group label="Costo" class="input-resp-dt-ofe">
             <b-form-input
@@ -63,7 +84,6 @@
               v-model="formArticulo.costo"
               placeholder="Costo"
               class="w-100"
-              desc
               readonly
             ></b-form-input>
           </b-form-group>
@@ -293,6 +313,8 @@ export default {
         margen: '',
         oferta: '',
         utilidad: '',
+        existencia: '',
+        relacion: '',
       },
       editableArticulo: true,
       showError: false,
@@ -312,7 +334,8 @@ export default {
         'Articulo',
         'CodigoBarras',
         'Nombre',
-        'Descripcion',
+        'ExistenciaActualRegular',
+        'Relacion',
         'Acciones',
       ],
       articulos: [],
@@ -455,6 +478,8 @@ export default {
         margen: '',
         oferta: '',
         utilidad: '',
+        existencia: '',
+        relacion: '',
       }
       this.editableArticulo = true
       this.editingArticle = false
@@ -833,6 +858,8 @@ export default {
             this.formArticulo.codigobarras = article.CodigoBarras
             this.formArticulo.descripcion = article.Descripcion
             this.formArticulo.nombre = article.Nombre
+            this.formArticulo.existencia = article.ExistenciaActualRegular
+            this.formArticulo.relacion = article.Relacion
             this.formArticulo.costo = utils.roundTo(article.UltimoCosto)
             this.formArticulo.precio = utils.roundTo(article.Precio1IVAUV)
             const operacion = 1 - article.UltimoCosto / article.Precio1IVAUV
@@ -917,6 +944,9 @@ export default {
       this.formArticulo.articulo = article.Articulo
       this.formArticulo.codigobarras = article.CodigoBarras
       this.formArticulo.nombre = article.Nombre
+      this.formArticulo.existencia = article.ExistenciaActualRegular
+      this.formArticulo.relacion = article.Relacion
+      this.formArticulo.descripcion = article.Descripcion
       this.formArticulo.costo = utils.roundTo(article.UltimoCosto)
       this.formArticulo.precio = utils.roundTo(article.Precio1IVAUV)
       const operacion = 1 - article.UltimoCosto / article.Precio1IVAUV
@@ -946,6 +976,13 @@ export default {
 
 .input-resp-dt-ofe {
   width: calc(20% - 5px);
+  margin-bottom: 5px;
+  margin-right: 5px;
+}
+
+.inputs-2-data {
+  display: inline-block;
+  width: calc(50% - 8px);
   margin-bottom: 5px;
   margin-right: 5px;
 }
@@ -992,6 +1029,11 @@ export default {
   }
 
   .input-resp-dt-ofe {
+    width: 100%;
+    margin-right: 0px;
+  }
+
+  .inputs-2-data {
     width: 100%;
     margin-right: 0px;
   }

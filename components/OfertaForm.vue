@@ -477,6 +477,7 @@ export default {
       showAlertDialog: 'general/showAlertDialog',
       setLoading: 'general/setLoading',
       setListaArticulos: 'ofertas/setListaArticulos',
+      setSucursal: 'ofertas/setSucursal',
       showAlertDialogOption: 'general/showAlertDialogOption',
       hideAlertDialogOption: 'general/hideAlertDialogOption',
     }),
