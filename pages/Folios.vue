@@ -345,7 +345,7 @@ export default {
           })
 
           if (response.data.success) {
-            this.showAlertDialog(['Folio actualizados'])
+            this.showAlertDialog(['Folio actualizados', 'Exito', 'success'])
             const result = await this.updateDataFolio([sucursal, this.promedio])
             this.setDataForm()
             if (!result.data.success)
