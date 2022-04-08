@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <b-overlay
-      :show="loading >= 0"
+      :show="loading > 0"
       rounded="sm"
       spinner-variant="primary"
       :class="themeOverlay"
