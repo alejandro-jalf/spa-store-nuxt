@@ -368,6 +368,8 @@ export default {
           { value: 'SPAVICTORIA', text: 'Victoria' },
           { value: 'SPAOLUTA', text: 'Oluta' },
           { value: 'SPAJALTIPAN', text: 'Jaltipan' },
+          { value: 'SPAENRIQUEZ', text: 'Enriquez' },
+          { value: 'SPASAYULA', text: 'Sayula' },
           { value: 'SPABODEGA', text: 'Bodega' },
           { value: 'HUAMUCHL', text: 'Huamuchil', disabled: true },
         ]

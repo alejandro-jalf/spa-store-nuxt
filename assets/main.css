@@ -4,6 +4,10 @@
   border-color: #ddd;
 }
 
+.cursor-pointer {
+  cursor: wait;
+}
+
 .dark-mode {
   color: #ebf4f1;
   /* background: #091a28; */
