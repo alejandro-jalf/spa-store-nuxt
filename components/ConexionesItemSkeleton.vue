@@ -42,7 +42,7 @@ export default {
     const sucSplited = this.dataUser.sucursal_user.split(' ')
     if (sucSplited[0].trim().toUpperCase() === 'CAASA')
       this.conexionesSkeleton = [0, 1, 2]
-    else this.conexionesSkeleton = [0, 1, 2, 3, 4]
+    else this.conexionesSkeleton = [0, 1, 2, 3, 4, 5, 6]
   },
 }
 </script>

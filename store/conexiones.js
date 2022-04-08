@@ -19,7 +19,10 @@ export const actions = {
       const sucSplited = sucursal.split(' ')
       const company =
         sucSplited[0].trim().toUpperCase() === 'CAASA' ? 'caasa' : 'spa'
-      const url = `${urlBase}api/v1/general/${company}/conexiones/activas`
+      const url =
+        company === 'spa'
+          ? process.env.spastore_url_conexiones
+          : `${urlBase}api/v1/general/${company}/conexiones/activas`
       const response = await this.$axios({
         url,
         method: 'get',
