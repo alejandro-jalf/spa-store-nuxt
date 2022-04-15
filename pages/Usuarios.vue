@@ -250,6 +250,7 @@ export default {
 
           return acumUsers
         }, [])
+        users.sort((a, b) => (a.Correo < b.Correo ? -1 : 1))
         return users
       }
       return this.listUsers

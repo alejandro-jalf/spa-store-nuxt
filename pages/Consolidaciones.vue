@@ -162,6 +162,7 @@ export default {
         VC: 'SPAVICTORIA',
         OU: 'SPAOLUTA',
         JL: 'SPAJALTIPAN',
+        ER: 'SPAENRIQUEZ',
         BO: 'SPABODEGA',
       },
       selected: null,
@@ -171,6 +172,7 @@ export default {
         { value: 'VC', text: 'SPAVICTORIA' },
         { value: 'OU', text: 'SPAOLUTA' },
         { value: 'JL', text: 'SPAJALTIPAN' },
+        { value: 'ER', text: 'SPAENRIQUEZ' },
         { value: 'BO', text: 'SPABODEGA' },
       ],
     }
