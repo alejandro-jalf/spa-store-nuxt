@@ -48,10 +48,10 @@
       :class="variantThemeTableBody"
     >
       <template #cell(Fecha)="row">
-        {{ utils.toDate(row.item.CantidadRegular) }}
+        {{ utils.toDate(row.item.Fecha) }}
       </template>
       <template #cell(Hora)="row">
-        {{ utils.toHour(row.item.CantidadRegular) }}
+        {{ utils.toHour(row.item.Hora) }}
       </template>
     </b-table>
     <div v-else>
