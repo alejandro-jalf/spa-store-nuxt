@@ -163,6 +163,7 @@ export default {
         OU: 'SPAOLUTA',
         JL: 'SPAJALTIPAN',
         ER: 'SPAENRIQUEZ',
+        SY: 'SPASAYULA',
         BO: 'SPABODEGA',
       },
       selected: null,
@@ -173,6 +174,7 @@ export default {
         { value: 'OU', text: 'SPAOLUTA' },
         { value: 'JL', text: 'SPAJALTIPAN' },
         { value: 'ER', text: 'SPAENRIQUEZ' },
+        { value: 'SY', text: 'SPASAYULA' },
         { value: 'BO', text: 'SPABODEGA' },
       ],
     }
