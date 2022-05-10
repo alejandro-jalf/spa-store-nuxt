@@ -95,26 +95,28 @@
         class="mb-2"
       />
     </div>
-    <h2>Grafico</h2>
-    <div class="mb-5">
-      <b-button variant="info" @click="changeGrafico('bar')">
-        <b-icon :icon="graficoBar" />
-        Barra
-      </b-button>
-      <b-button variant="info" @click="changeGrafico('line')">
-        <b-icon :icon="graficoLine" />
-        Linea
-      </b-button>
-    </div>
-    <VentasDiariasChart
-      v-if="showGraph"
-      :datos-reactor="dataRefactor"
-      :utils="utils"
-      :tipo="tipoGrafico"
-      class="mb-5"
-    />
-    <div v-else class="spin">
-      <b-spinner variant="primary" label="Spinning"></b-spinner>
+    <div v-if="!emptyData">
+      <h2>Grafico</h2>
+      <div class="mb-5">
+        <b-button variant="info" @click="changeGrafico('bar')">
+          <b-icon :icon="graficoBar" />
+          Barra
+        </b-button>
+        <b-button variant="info" @click="changeGrafico('line')">
+          <b-icon :icon="graficoLine" />
+          Linea
+        </b-button>
+      </div>
+      <VentasDiariasChart
+        v-if="showGraph"
+        :datos-reactor="dataRefactor"
+        :utils="utils"
+        :tipo="tipoGrafico"
+        class="mb-5"
+      />
+      <div v-else class="spin">
+        <b-spinner variant="primary" label="Spinning"></b-spinner>
+      </div>
     </div>
   </div>
 </template>
@@ -184,7 +186,12 @@ export default {
       )
     },
     sucursal() {
-      return this.$store.state.ventasdiarias.data.data[0].Sucursal.toUpperCase()
+      return this.$store.state.ventasdiarias.data.data[0]
+        ? this.$store.state.ventasdiarias.data.data[0].Sucursal.toUpperCase()
+        : ''
+    },
+    emptyData() {
+      return this.$store.state.ventasdiarias.data.data.length <= 0
     },
     graficoBar() {
       return this.$store.state.ventasdiarias.tipo === 'bar'
