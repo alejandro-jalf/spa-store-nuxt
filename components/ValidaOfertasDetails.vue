@@ -74,6 +74,9 @@
               <span class="font-weight-bold">Limite:</span>
               {{ articleActual.Limite }}
               <hr class="p-0" />
+              <span class="font-weight-bold">Nivel de Precio:</span>
+              {{ articleActual.NivelPrecio }}
+              <hr class="p-0" />
             </div>
           </div>
         </div>
