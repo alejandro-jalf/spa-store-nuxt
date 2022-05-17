@@ -169,7 +169,9 @@ export default {
       options: [
         { value: 'ZR', text: 'SPAZARAGOZA' },
         { value: 'VC', text: 'SPAVICTORIA' },
+        { value: 'ER', text: 'SPAENRIQUEZ' },
         { value: 'OU', text: 'SPAOLUTA' },
+        { value: 'SY', text: 'SPASAYULA' },
         { value: 'JL', text: 'SPAJALTIPAN' },
         { value: 'BO', text: 'SPABODEGA' },
         { value: 'BO%TRANSITO', text: 'SPABODEGA - TRANSITO' },
@@ -207,8 +209,12 @@ export default {
         return 'SPAZARAGOZA'
       else if (this.$store.state.valuacioninventario.sucursalData === 'VC')
         return 'SPAVICTORIA'
+      else if (this.$store.state.valuacioninventario.sucursalData === 'ER')
+        return 'SPAENRIQUEZ'
       else if (this.$store.state.valuacioninventario.sucursalData === 'OU')
         return 'SPAOLUTA'
+      else if (this.$store.state.valuacioninventario.sucursalData === 'SY')
+        return 'SPASAYULA'
       else if (this.$store.state.valuacioninventario.sucursalData === 'JL')
         return 'SPAJALTIPAN'
       else if (this.$store.state.valuacioninventario.sucursalData === 'BO')
@@ -351,10 +357,18 @@ export default {
         this.selected = sucursal
         this.setTienda(2)
         this.setAlmacen(3)
+      } else if (sucursal === 'ER') {
+        this.selected = sucursal
+        this.setTienda(3)
+        this.setAlmacen(5)
       } else if (sucursal === 'OU') {
         this.selected = sucursal
         this.setTienda(5)
         this.setAlmacen(19)
+      } else if (sucursal === 'SY') {
+        this.selected = sucursal
+        this.setTienda(9)
+        this.setAlmacen(16)
       } else if (sucursal === 'JL') {
         this.selected = sucursal
         this.setTienda(4)
