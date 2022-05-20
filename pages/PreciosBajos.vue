@@ -102,14 +102,25 @@
         </b-button>
       </template>
     </b-table>
+    <PreciosBajosDetalles
+      v-if="viewDetails"
+      :data-number-for-null="dataNumberForNull"
+      :data-percentage-for-null="dataPercentageForNull"
+      :article-actual="articleActual"
+      :close-details="closeDetails"
+    />
   </div>
 </template>
 
 <script>
 import { mapMutations, mapActions } from 'vuex'
+import PreciosBajosDetalles from '../components/PreciosBajosDetalles'
 import utils from '../modules/utils'
 
 export default {
+  components: {
+    PreciosBajosDetalles,
+  },
   data() {
     return {
       options: [
@@ -208,6 +219,7 @@ export default {
     ...mapMutations({
       setSucursal: 'preciosbajos/setSucursal',
       setLoading: 'general/setLoading',
+      setMoveTouch: 'general/setMoveTouch',
       showAlertDialog: 'general/showAlertDialog',
     }),
     ...mapActions({
@@ -224,6 +236,10 @@ export default {
     showDetails(article) {
       this.viewDetails = true
       this.articleActual = article
+    },
+    closeDetails() {
+      this.articleActual = {}
+      this.viewDetails = false
     },
     isValidUtilitie(utilidad, min) {
       return utilidad !== null && utilidad < min
