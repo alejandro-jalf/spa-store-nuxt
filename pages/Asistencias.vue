@@ -370,6 +370,7 @@ export default {
           { value: 'SPAJALTIPAN', text: 'Jaltipan' },
           { value: 'SPAENRIQUEZ', text: 'Enriquez' },
           { value: 'SPASAYULA', text: 'Sayula' },
+          { value: 'SPASAYULAT', text: 'Sayula Tortilleria' },
           { value: 'SPABODEGA', text: 'Bodega' },
           { value: 'HUAMUCHL', text: 'Huamuchil', disabled: true },
         ]
@@ -380,9 +381,9 @@ export default {
           { value: 'MEDIOMAYOREO', text: 'Mayoreo' },
           { value: 'OFICINA', text: 'Oficina' },
           { value: 'BODEGA', text: 'Bodega' },
-          { value: 'ENRIQUEZ', text: 'Enriquez' },
-          { value: 'SAYULA', text: 'Sayula' },
-          { value: 'TSAYULA', text: 'Tortilleria Sayula' },
+          { value: 'ENRIQUEZ', text: 'Enriquez', disabled: true },
+          { value: 'SAYULA', text: 'Sayula', disabled: true },
+          { value: 'TSAYULA', text: 'Tortilleria Sayula', disabled: true },
         ]
       }
       const sucFinded = this.options.find((suc) => suc.value === this.selected)
