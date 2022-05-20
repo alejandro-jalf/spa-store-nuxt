@@ -4,22 +4,22 @@
       <h5 class="pb-0">{{ article.Nombre }}</h5>
       <div class="text-muted h6">{{ article.Articulo }}</div>
       <span class="font-weight-bold">Costo:</span>
-      {{ dataNumberForNull(article.UltimoCosto) }}
+      {{ '$' + dataNumberForNull(article.UltimoCosto) }}
       <div :class="aplyColor(1)">
         <span class="font-weight-bold">Precio1:</span>
-        {{ dataNumberForNull(article.Precio1IVAUV) }}
+        {{ '$' + dataNumberForNull(article.Precio1IVAUV) }}
         <span class="font-weight-bold">Util1:</span>
         {{ dataPercentageForNull(article.Utilidad1) }}
       </div>
       <div :class="aplyColor(2)">
         <span class="font-weight-bold">Precio2:</span>
-        {{ dataNumberForNull(article.Precio2IVAUV) }}
+        {{ '$' + dataNumberForNull(article.Precio2IVAUV) }}
         <span class="font-weight-bold">Util2:</span>
         {{ dataPercentageForNull(article.Utilidad2) }}
       </div>
       <div :class="aplyColor(3)">
         <span class="font-weight-bold">Precio3:</span>
-        {{ dataNumberForNull(article.Precio3IVAUV) }}
+        {{ '$' + dataNumberForNull(article.Precio3IVAUV) }}
         <span class="font-weight-bold">Util3:</span>
         {{ dataPercentageForNull(article.Utilidad3) }}
       </div>

@@ -41,7 +41,7 @@
         {{ dataNumberForNull(row.item.Exist) }}
       </template>
       <template #cell(Costo)="row">
-        {{ dataNumberForNull(row.item.Costo) }}
+        {{ '$' + dataNumberForNull(row.item.Costo) }}
       </template>
       <template #cell(Precio1)="row">
         <span
@@ -49,7 +49,7 @@
             marcador1: isValidUtilitie(row.item.Util1, row.item.UtilidadMinima),
           }"
         >
-          {{ dataNumberForNull(row.item.Precio1) }}
+          {{ '$' + dataNumberForNull(row.item.Precio1) }}
         </span>
       </template>
       <template #cell(Precio2)="row">
@@ -58,7 +58,7 @@
             marcador2: isValidUtilitie(row.item.Util2, row.item.UtilidadMinima),
           }"
         >
-          {{ dataNumberForNull(row.item.Precio2) }}
+          {{ '$' + dataNumberForNull(row.item.Precio2) }}
         </span>
       </template>
       <template #cell(Precio3)="row">
@@ -67,7 +67,7 @@
             marcador3: isValidUtilitie(row.item.Util3, row.item.UtilidadMinima),
           }"
         >
-          {{ dataNumberForNull(row.item.Precio3) }}
+          {{ '$' + dataNumberForNull(row.item.Precio3) }}
         </span>
       </template>
       <template #cell(Util1)="row">
