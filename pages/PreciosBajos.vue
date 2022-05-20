@@ -26,6 +26,7 @@
     </b-input-group>
 
     <b-table
+      v-if="width > 767"
       id="tablePreciosBajos"
       responsive
       striped
@@ -102,6 +103,17 @@
         </b-button>
       </template>
     </b-table>
+    <div v-else>
+      <PreciosBajosCard
+        v-for="(article, indexArticle) in dataRefactor"
+        :key="indexArticle"
+        :data-number-for-null="dataNumberForNull"
+        :data-percentage-for-null="dataPercentageForNull"
+        :article="article"
+        :show-details="showDetails"
+        class="mb-2"
+      />
+    </div>
     <PreciosBajosDetalles
       v-if="viewDetails"
       :data-number-for-null="dataNumberForNull"
@@ -114,12 +126,14 @@
 
 <script>
 import { mapMutations, mapActions } from 'vuex'
+import PreciosBajosCard from '../components/PreciosBajosCard'
 import PreciosBajosDetalles from '../components/PreciosBajosDetalles'
 import utils from '../modules/utils'
 
 export default {
   components: {
     PreciosBajosDetalles,
+    PreciosBajosCard,
   },
   data() {
     return {
@@ -153,6 +167,9 @@ export default {
     }
   },
   computed: {
+    width() {
+      return this.$store.state.general.widthWindow
+    },
     suc() {
       return this.$store.state.preciosbajos.sucursal
     },
