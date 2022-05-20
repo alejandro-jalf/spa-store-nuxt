@@ -267,7 +267,7 @@ export default {
     },
     dataPercentageForNull(value) {
       if (value === null) return '-'
-      return utils.parseToPorcent(utils.roundTo(value), 4, true) + ' %'
+      return utils.roundTo(value * 100, 2, true) + '%'
     },
     validateData() {
       if (
