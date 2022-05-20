@@ -5,6 +5,7 @@
       <b-form-select
         :value="suc"
         :options="options"
+        :disabled="!accessChangeSucursal"
         @change="selectSucursal"
       ></b-form-select>
       <b-input-group-append>
@@ -20,14 +21,93 @@
           class="h-100 w-25"
           :class="backgroundInputTheme"
         ></b-form-input>
-        <b-button variant="info">Verificar</b-button>
+        <b-button variant="info" @click="verifyArticles">Verificar</b-button>
       </b-input-group-append>
     </b-input-group>
+
+    <b-table
+      id="tablePreciosBajos"
+      responsive
+      striped
+      hover
+      :fields="fields"
+      :items="dataRefactor"
+      head-variant="dark"
+      class="mt-3"
+      :class="variantThemeTableBody"
+    >
+      <template #cell(Exist)="row">
+        {{ dataNumberForNull(row.item.Exist) }}
+      </template>
+      <template #cell(Costo)="row">
+        {{ dataNumberForNull(row.item.Costo) }}
+      </template>
+      <template #cell(Precio1)="row">
+        <span
+          :class="{
+            marcador1: isValidUtilitie(row.item.Util1, row.item.UtilidadMinima),
+          }"
+        >
+          {{ dataNumberForNull(row.item.Precio1) }}
+        </span>
+      </template>
+      <template #cell(Precio2)="row">
+        <span
+          :class="{
+            marcador2: isValidUtilitie(row.item.Util2, row.item.UtilidadMinima),
+          }"
+        >
+          {{ dataNumberForNull(row.item.Precio2) }}
+        </span>
+      </template>
+      <template #cell(Precio3)="row">
+        <span
+          :class="{
+            marcador3: isValidUtilitie(row.item.Util3, row.item.UtilidadMinima),
+          }"
+        >
+          {{ dataNumberForNull(row.item.Precio3) }}
+        </span>
+      </template>
+      <template #cell(Util1)="row">
+        <span
+          :class="{
+            marcador1: isValidUtilitie(row.item.Util1, row.item.UtilidadMinima),
+          }"
+        >
+          {{ dataPercentageForNull(row.item.Util1) }}
+        </span>
+      </template>
+      <template #cell(Util2)="row">
+        <span
+          :class="{
+            marcador2: isValidUtilitie(row.item.Util2, row.item.UtilidadMinima),
+          }"
+        >
+          {{ dataPercentageForNull(row.item.Util2) }}
+        </span>
+      </template>
+      <template #cell(Util3)="row">
+        <span
+          :class="{
+            marcador3: isValidUtilitie(row.item.Util3, row.item.UtilidadMinima),
+          }"
+        >
+          {{ dataPercentageForNull(row.item.Util3) }}
+        </span>
+      </template>
+      <template #cell(Acciones)="row">
+        <b-button variant="info" @click="showDetails(row.item)">
+          Detalles
+        </b-button>
+      </template>
+    </b-table>
   </div>
 </template>
 
 <script>
-import { mapMutations } from 'vuex'
+import { mapMutations, mapActions } from 'vuex'
+import utils from '../modules/utils'
 
 export default {
   data() {
@@ -42,6 +122,23 @@ export default {
         { value: 'BO', text: 'SPABODEGA' },
       ],
       porcentaje: 10,
+      fields: [
+        'Articulo',
+        'Nombre',
+        'Relacion',
+        'Exist',
+        'Costo',
+        'Precio1',
+        'Precio2',
+        'Precio3',
+        'Util1',
+        'Util2',
+        'Util3',
+        'Acciones',
+      ],
+      utils,
+      articleActual: {},
+      viewDetails: false,
     }
   },
   computed: {
@@ -51,15 +148,146 @@ export default {
     backgroundInputTheme() {
       return this.$store.state.general.themesComponents.themeInputBackground
     },
+    variantThemeTableBody() {
+      return this.$store.state.general.themesComponents.themeTableBody
+    },
+    dataRefactor() {
+      const datos = [...this.$store.state.preciosbajos.data.data]
+      datos.forEach((articulo) => {
+        articulo.Exist = articulo.ExistenciaActualRegular
+        articulo.Costo = articulo.UltimoCosto
+        articulo.Precio1 = articulo.Precio1IVAUV
+        articulo.Precio2 = articulo.Precio2IVAUV
+        articulo.Precio3 = articulo.Precio3IVAUV
+        articulo.Util1 = articulo.Utilidad1
+        articulo.Util2 = articulo.Utilidad2
+        articulo.Util3 = articulo.Utilidad3
+        articulo._cellVariants = {}
+        if (
+          articulo.Utilidad1 !== null &&
+          articulo.Utilidad1 < articulo.UtilidadMinima
+        ) {
+          articulo._cellVariants.Util1 = 'danger'
+          articulo._cellVariants.Precio1 = 'danger'
+        }
+        if (
+          articulo.Utilidad2 !== null &&
+          articulo.Utilidad2 < articulo.UtilidadMinima
+        ) {
+          articulo._cellVariants.Util2 = 'danger'
+          articulo._cellVariants.Precio2 = 'danger'
+        }
+        if (
+          articulo.Utilidad3 !== null &&
+          articulo.Utilidad3 < articulo.UtilidadMinima
+        ) {
+          articulo._cellVariants.Util3 = 'danger'
+          articulo._cellVariants.Precio3 = 'danger'
+        }
+      })
+      return datos
+    },
+    accessChangeSucursal() {
+      return this.$store.state.user.user.tipo_user === 'manager'
+    },
+  },
+  mounted() {
+    const tablePreciosBajos = document.getElementById('tablePreciosBajos')
+
+    this.setSucursalForUser()
+    if (tablePreciosBajos) {
+      tablePreciosBajos.addEventListener('touchstart', (evt) => {
+        this.setMoveTouch(false)
+      })
+      tablePreciosBajos.addEventListener('touchend', (evt) => {
+        this.setMoveTouch(true)
+      })
+    }
   },
   methods: {
     ...mapMutations({
       setSucursal: 'preciosbajos/setSucursal',
+      setLoading: 'general/setLoading',
+      showAlertDialog: 'general/showAlertDialog',
     }),
+    ...mapActions({
+      changeData: 'preciosbajos/changeData',
+    }),
+    setSucursalForUser() {
+      if (!this.accessChangeSucursal) {
+        const sucursalUser = utils.getSucursalByName(
+          this.$store.state.user.user.sucursal_user
+        )
+        this.setSucursal(sucursalUser)
+      }
+    },
+    showDetails(article) {
+      this.viewDetails = true
+      this.articleActual = article
+    },
+    isValidUtilitie(utilidad, min) {
+      return utilidad !== null && utilidad < min
+    },
+    dataNumberForNull(value) {
+      if (value === null) return '-'
+      return utils.aplyFormatNumeric(utils.roundTo(value))
+    },
+    dataPercentageForNull(value) {
+      if (value === null) return '-'
+      return utils.parseToPorcent(utils.roundTo(value), 4, true) + ' %'
+    },
+    validateData() {
+      if (
+        this.$store.state.preciosbajos.sucursal === null ||
+        this.$store.state.preciosbajos.sucursal === 'null'
+      ) {
+        this.showAlertDialog(['Necesita seleccionar una sucursal'])
+        return false
+      }
+      if (
+        this.porcentaje === undefined ||
+        this.porcentaje === null ||
+        this.porcentaje.toString().trim() === ''
+      ) {
+        this.showAlertDialog([
+          'Necesita ingresar un valor minimo de porcentaje de utilidad',
+        ])
+        return false
+      }
+      return true
+    },
+    async verifyArticles() {
+      if (!this.validateData()) return false
+      this.setLoading(true)
+      const response = await this.changeData([
+        this.$store.state.preciosbajos.sucursal,
+        this.porcentaje,
+      ])
+      this.setLoading(false)
+      if (!response.success)
+        this.showAlertDialog([response.message, 'Error inesperado'])
+    },
     selectSucursal(sucursal) {
-      console.log(sucursal)
       this.setSucursal(sucursal)
     },
   },
 }
 </script>
+
+<style scoped>
+.container-cell {
+  position: relative;
+}
+
+.marcador1 {
+  border-bottom: 3px solid rgb(57, 189, 1);
+}
+
+.marcador2 {
+  border-bottom: 3px solid rgb(173, 0, 0);
+}
+
+.marcador3 {
+  border-bottom: 3px solid rgb(255, 0, 225);
+}
+</style>

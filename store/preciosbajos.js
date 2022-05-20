@@ -20,7 +20,7 @@ export const mutations = {
 }
 
 export const actions = {
-  async changeData({ commit }, sucursal, procentaje) {
+  async changeData({ commit }, [sucursal, procentaje]) {
     try {
       const url =
         process.env.spastore_url_backend +
