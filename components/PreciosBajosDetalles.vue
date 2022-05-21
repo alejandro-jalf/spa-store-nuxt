@@ -46,7 +46,7 @@
             <div class="col-md">
               <div :class="aplyColor(1) + 'mt-0 pb-3'">
                 <span class="font-weight-bold">Cantidad Para Precio 1:</span>
-                {{ '$' + dataNumberForNull(articleActual.CantidadParaPrecio1) }}
+                {{ dataNumberForNull(articleActual.CantidadParaPrecio1) }}
               </div>
               <Divider />
               <div :class="aplyColor(2)">
@@ -61,7 +61,7 @@
               <Divider />
               <div :class="aplyColor(2)">
                 <span class="font-weight-bold">Cantidad Para Precio 2:</span>
-                {{ '$' + dataNumberForNull(articleActual.CantidadParaPrecio2) }}
+                {{ dataNumberForNull(articleActual.CantidadParaPrecio2) }}
               </div>
               <Divider />
               <div :class="aplyColor(3)">
@@ -76,7 +76,7 @@
               <Divider />
               <div :class="aplyColor(3)">
                 <span class="font-weight-bold">Cantidad Para Precio 3:</span>
-                {{ '$' + dataNumberForNull(articleActual.CantidadParaPrecio3) }}
+                {{ dataNumberForNull(articleActual.CantidadParaPrecio3) }}
               </div>
               <Divider class="mb-3" />
             </div>
