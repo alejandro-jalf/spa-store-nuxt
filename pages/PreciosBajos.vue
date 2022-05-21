@@ -25,6 +25,23 @@
       </b-input-group-append>
     </b-input-group>
 
+    <div v-if="!isCleanData">
+      <b-button
+        :variant="variantClean"
+        :block="width < 528"
+        class="my-4"
+        @click="cleanData"
+      >
+        <b-icon icon="ui-checks" />
+        Limpiar tabla
+      </b-button>
+
+      <div class="h3 mb-3">
+        Articulos de "{{ getNameBySuc(sucConsult) }}" con algun precio menor del
+        {{ montoMinino * 100 }}% utilidad
+      </div>
+    </div>
+
     <b-table
       v-if="width > 767"
       id="tablePreciosBajos"
@@ -34,7 +51,7 @@
       :fields="fields"
       :items="dataRefactor"
       head-variant="dark"
-      class="mt-3"
+      class="my-3"
       :class="variantThemeTableBody"
     >
       <template #cell(Exist)="row">
@@ -103,7 +120,7 @@
         </b-button>
       </template>
     </b-table>
-    <div v-else>
+    <div v-else class="my-3">
       <PreciosBajosCard
         v-for="(article, indexArticle) in dataRefactor"
         :key="indexArticle"
@@ -121,6 +138,11 @@
       :article-actual="articleActual"
       :close-details="closeDetails"
     />
+
+    <div v-if="!isCleanData" class="float-right h5 mb-5">
+      <span class="font-weight-bold">Fecha de consulta:</span>
+      {{ horaConsult }}
+    </div>
   </div>
 </template>
 
@@ -173,11 +195,28 @@ export default {
     suc() {
       return this.$store.state.preciosbajos.sucursal
     },
+    sucConsult() {
+      return this.$store.state.preciosbajos.sucursalConsult
+    },
+    horaConsult() {
+      return this.$store.state.preciosbajos.horaConsult
+    },
     backgroundInputTheme() {
       return this.$store.state.general.themesComponents.themeInputBackground
     },
     variantThemeTableBody() {
       return this.$store.state.general.themesComponents.themeTableBody
+    },
+    variantClean() {
+      return this.$store.state.general.themesComponents.themeButtonClean
+    },
+    isCleanData() {
+      return this.$store.state.preciosbajos.sucursalConsult.trim() === ''
+    },
+    montoMinino() {
+      return this.$store.state.preciosbajos.data.data.length !== 0
+        ? this.$store.state.preciosbajos.data.data[0].UtilidadMinima
+        : 0
     },
     dataRefactor() {
       const datos = [...this.$store.state.preciosbajos.data.data]
@@ -235,6 +274,9 @@ export default {
   methods: {
     ...mapMutations({
       setSucursal: 'preciosbajos/setSucursal',
+      setData: 'preciosbajos/setData',
+      setHoraConsult: 'preciosbajos/setHoraConsult',
+      setSucursalConsult: 'preciosbajos/setSucursalConsult',
       setLoading: 'general/setLoading',
       setMoveTouch: 'general/setMoveTouch',
       showAlertDialog: 'general/showAlertDialog',
@@ -242,6 +284,15 @@ export default {
     ...mapActions({
       changeData: 'preciosbajos/changeData',
     }),
+    getNameBySuc(sucRecived) {
+      const sucFind = this.options.find((suc) => (suc.value = sucRecived))
+      return sucFind ? sucFind.text : ''
+    },
+    cleanData() {
+      this.setData({ data: [] })
+      this.setSucursalConsult('')
+      this.setHoraConsult('')
+    },
     setSucursalForUser() {
       if (!this.accessChangeSucursal) {
         const sucursalUser = utils.getSucursalByName(
@@ -299,6 +350,8 @@ export default {
       this.setLoading(false)
       if (!response.success)
         this.showAlertDialog([response.message, 'Error inesperado'])
+      else
+        this.setHoraConsult(utils.getDateNow().format('DD/MM/YYYY hh:mm:ss a'))
     },
     selectSucursal(sucursal) {
       this.setSucursal(sucursal)
