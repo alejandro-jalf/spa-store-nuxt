@@ -116,7 +116,7 @@ export default {
         'UtilidadOferta',
         'OfertaValida',
         'Descuento',
-        'UltimoCostoNeto',
+        'UltimoCosto',
         'Precio1',
         'UtilidadVenta',
         'PrecioValido',

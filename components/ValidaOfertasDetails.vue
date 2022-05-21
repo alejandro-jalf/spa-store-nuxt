@@ -44,7 +44,7 @@
               {{ articleActual.Descuento }}
               <hr class="p-0" />
               <span class="font-weight-bold">Ultimo Costo:</span>
-              {{ articleActual.UltimoCostoNeto }}
+              {{ articleActual.UltimoCosto }}
               <hr class="p-0" />
             </div>
             <div class="col-md">
