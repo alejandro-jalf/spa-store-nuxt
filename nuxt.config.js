@@ -10,6 +10,12 @@ export default {
     link: [{ rel: 'icon', type: 'image/x-icon', href: '/cesta.png' }],
   },
 
+  pwa: {
+    manifest: {
+      lang: 'es',
+    },
+  },
+
   router: {
     middleware: ['verifyRouters'],
   },
