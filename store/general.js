@@ -115,6 +115,12 @@ export const state = () => ({
       icon: 'sort-down',
     },
     {
+      path: '/pedidosujerido',
+      name: 'pedidosujerido',
+      nickname: 'Pedido Sujerido',
+      icon: 'file-earmark-ruled-fill',
+    },
+    {
       path: '/folios',
       name: 'folios',
       nickname: 'Folios',
@@ -150,7 +156,7 @@ export const state = () => ({
       nickname: 'Cocina',
       icon: 'file-earmark-easel-fill',
     },
-  ],
+  ].sort((a, b) => (a.nickname < b.nickname ? -1 : 1)),
   tabActual: 'Inicio',
   themePreferences: localStorage.getItem('spastore_theme_color'),
   atajoTheme: localStorage.getItem('spastore_atajo_theme'),
