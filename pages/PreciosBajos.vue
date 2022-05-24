@@ -285,7 +285,7 @@ export default {
       changeData: 'preciosbajos/changeData',
     }),
     getNameBySuc(sucRecived) {
-      const sucFind = this.options.find((suc) => (suc.value = sucRecived))
+      const sucFind = this.options.find((suc) => suc.value === sucRecived)
       return sucFind ? sucFind.text : ''
     },
     cleanData() {
