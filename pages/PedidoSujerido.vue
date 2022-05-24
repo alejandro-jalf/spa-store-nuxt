@@ -72,6 +72,15 @@
         {{ dataFormated(row.item.tipoSugerido) }}
       </template>
     </b-table>
+    <div v-else class="my-3">
+      <PedidoSujeridoCard
+        v-for="(article, indexArticle) in dataRefactor"
+        :key="indexArticle"
+        :data-formated="dataFormated"
+        :article="article"
+        class="mb-2"
+      />
+    </div>
 
     <div v-if="!isCleanData" class="float-right h5 mb-5">
       <span class="font-weight-bold">Fecha de consulta:</span>
@@ -82,9 +91,13 @@
 
 <script>
 import { mapMutations, mapActions } from 'vuex'
+import PedidoSujeridoCard from '../components/PedidoSujeridoCard'
 import utils from '../modules/utils'
 
 export default {
+  components: {
+    PedidoSujeridoCard,
+  },
   data() {
     return {
       utils,
