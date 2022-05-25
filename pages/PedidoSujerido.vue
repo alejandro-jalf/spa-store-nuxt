@@ -5,7 +5,7 @@
       <b-form-select
         :value="suc"
         :options="options"
-        :disabled="!accessChangeSucursal"
+        :disabled="!(isManager || isAllowedUser)"
         @change="selectSucursal"
       ></b-form-select>
       <b-input-group-append>
@@ -24,6 +24,7 @@
         Limpiar tabla
       </b-button>
       <b-button
+        v-if="isAllowedUser || isManager"
         :variant="variantSuccess"
         :block="width < 428"
         class="mt-2"
@@ -121,6 +122,7 @@ export default {
         'FacVenta',
         'Sujerido',
       ],
+      allowedUsers: ['Justo Cruz Basurto'],
     }
   },
   computed: {
@@ -142,7 +144,7 @@ export default {
     sucConsult() {
       return this.$store.state.pedidosujerido.sucursalConsult
     },
-    accessChangeSucursal() {
+    isManager() {
       return this.$store.state.user.user.tipo_user === 'manager'
     },
     variantClean() {
@@ -153,6 +155,14 @@ export default {
     },
     dataRefactor() {
       return this.$store.state.pedidosujerido.data.data
+    },
+    isAllowedUser() {
+      const nombreUser = this.$store.state.user.user.nombre_user
+      const apellidoPUser = this.$store.state.user.user.apellido_p_user
+      const apellidoMUser = this.$store.state.user.user.apellido_m_user
+      const nombreCompleto =
+        nombreUser + ' ' + apellidoPUser + ' ' + apellidoMUser
+      return !!this.allowedUsers.find((user) => user === nombreCompleto)
     },
   },
   mounted() {
@@ -182,7 +192,7 @@ export default {
       changeData: 'pedidosujerido/changeData',
     }),
     setSucursalForUser() {
-      if (!this.accessChangeSucursal) {
+      if (!this.isManager) {
         const sucursalUser = utils.getSucursalByName(
           this.$store.state.user.user.sucursal_user
         )
