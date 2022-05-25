@@ -33,6 +33,24 @@
         <b-icon icon="file-earmark-plus-fill" />
         Generar Pedido
       </b-button>
+      <b-button
+        :variant="variantSuccess"
+        :block="width < 428"
+        class="mt-2"
+        @click="createPDF(false)"
+      >
+        <b-icon icon="download" />
+        Descargar
+      </b-button>
+      <b-button
+        :variant="variantInfo"
+        :block="width < 428"
+        class="mt-2"
+        @click="createPDF(true)"
+      >
+        <b-icon icon="printer-fill" />
+        Vista Previa
+      </b-button>
 
       <div class="h3 mb-3 mt-4">
         Articulos sujeridos de "{{ getNameBySuc(sucConsult) }}"
@@ -86,6 +104,16 @@
     <div v-if="!isCleanData" class="float-right h5 mb-5">
       <span class="font-weight-bold">Fecha de consulta:</span>
       {{ horaConsult }}
+    </div>
+
+    <div class="imageLogo">
+      <canvas
+        id="canvas"
+        class="canvasLogo"
+        width="100px"
+        height="100px"
+      ></canvas>
+      <img id="imgLogoSpa" class="imgLogo" src="../assets/cesta.png" />
     </div>
   </div>
 </template>
@@ -141,6 +169,9 @@ export default {
     variantSuccess() {
       return this.$store.state.general.themesComponents.themeButtonSuccess
     },
+    variantInfo() {
+      return this.$store.state.general.themesComponents.themeButtonClose
+    },
     sucConsult() {
       return this.$store.state.pedidosujerido.sucursalConsult
     },
@@ -168,6 +199,7 @@ export default {
   mounted() {
     const tablePedidoSujerido = document.getElementById('tablePedidoSujerido')
 
+    this.loadDataImage()
     this.setSucursalForUser()
     if (tablePedidoSujerido) {
       tablePedidoSujerido.addEventListener('touchstart', (evt) => {
@@ -191,6 +223,26 @@ export default {
     ...mapActions({
       changeData: 'pedidosujerido/changeData',
     }),
+    loadDataImage() {
+      const canvas = document.getElementById('canvas')
+      const context = canvas.getContext('2d')
+      const imageObject = document.getElementById('imgLogoSpa')
+      const object2 = new Image()
+      object2.src = imageObject.src
+      context.drawImage(object2, 0, 0, 100, 100)
+    },
+    createPDF(preview = false) {
+      const logo = document.getElementById('canvas')
+      utils.createPdfPedidoSujerido(
+        'Sugerencias para Pedidos',
+        'SUPER PROMOCIONES DE ACAYUCAN SA DE CV',
+        'SUCURSAL ' + this.getNameBySuc(this.sucConsult),
+        this.dataRefactor,
+        this.horaConsult,
+        logo,
+        preview
+      )
+    },
     setSucursalForUser() {
       if (!this.isManager) {
         const sucursalUser = utils.getSucursalByName(
@@ -247,3 +299,15 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+.canvasLogo,
+.imgLogo {
+  width: 100px;
+  height: 100px;
+  visibility: hidden;
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+}
+</style>

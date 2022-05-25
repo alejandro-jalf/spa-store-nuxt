@@ -219,6 +219,108 @@ const utils = (() => {
     // doc.output('dataurlnewwindow')
   }
 
+  const createPdfPedidoSujerido = (
+    titulo,
+    empresa,
+    sucursal,
+    data,
+    horaImpresion,
+    logo,
+    preview = false
+  ) => {
+    // eslint-disable-next-line new-cap
+    const doc = new jsPDF('p', 'mm', 'letter')
+
+    doc.setFontSize(18)
+    doc.setFont('helvetica', 'bold')
+    if (logo) {
+      doc.text(titulo, 200, 20, 'right')
+      doc.addImage(logo, 'PNG', 10, 15, 23, 23)
+    } else doc.text(titulo, 105, 20, 'center')
+
+    doc.setFontSize(14)
+    doc.setFont('helvetica', 'normal')
+    doc.text(empresa, 200, 29, 'right')
+
+    doc.setFontSize(11)
+    doc.setFont('helvetica', 'bold')
+    doc.text(sucursal, 200, 43, 'right')
+    doc.text('Consultado al ' + horaImpresion, 10, 43, 'left')
+
+    const body = data.reduce((acumData, dato) => {
+      acumData.push([
+        { content: dato.Articulo },
+        { content: dato.Nombre },
+        {
+          content: dato.estatusRotacion.split(' ')[1],
+        },
+        {
+          content: utils.aplyFormatNumeric(utils.roundTo(dato.ExistLoc)),
+        },
+        {
+          content: utils.aplyFormatNumeric(utils.roundTo(dato.ExistExt)),
+        },
+        {
+          content: utils.aplyFormatNumeric(utils.roundTo(dato.CalculoRotacion)),
+        },
+        {
+          content: utils.aplyFormatNumeric(utils.roundTo(dato.FactorCompra)),
+        },
+        {
+          content: utils.aplyFormatNumeric(utils.roundTo(dato.FactorVenta)),
+        },
+        {
+          content: utils.aplyFormatNumeric(utils.roundTo(dato.tipoSugerido)),
+        },
+      ])
+      return acumData
+    }, [])
+
+    doc.autoTable({
+      startY: 49,
+      tableWidth: 190,
+      margin: {
+        left: 10,
+      },
+      styles: { fontSize: 9 },
+      headStyles: {
+        fontStyle: 'bold',
+        halign: 'center',
+        fillColor: [255, 255, 255],
+        textColor: [0, 0, 0],
+      },
+      bodyStyles: { textColor: [0, 0, 0] },
+      head: [
+        [
+          'Articulo',
+          'Nombre',
+          'Tipo Rotacion',
+          'Exist Loc',
+          'Exist Bo',
+          'Rotacion Promedio',
+          'Fac Compra',
+          'Fac Venta',
+          'Sujerido',
+        ],
+      ],
+      body,
+    })
+
+    doc.setFontSize(9)
+    doc.setFont('helvetica', 'normal')
+    doc.text(horaImpresion, 10, 275)
+
+    const fecha = horaImpresion.split(' ')
+    const fechaSplit = fecha[0].split('/')
+
+    if (preview) doc.output('dataurlnewwindow')
+    else
+      doc.save(
+        `${fechaSplit[2]} ${fechaSplit[1]}${fechaSplit[0]} - Pedido Sujerido - ${sucursal}.pdf`
+      )
+    // doc.output('dataurlnewwindow')
+  }
+
   const createPdfAsistenciasSpa = (
     company,
     titulo,
@@ -561,6 +663,7 @@ const utils = (() => {
     formatWithMoment,
     aplyFormatNumeric,
     getSucursalByName,
+    createPdfPedidoSujerido,
     createPdfAsistenciasSpa,
     createPdfValuacionInventarioCierre,
   }
