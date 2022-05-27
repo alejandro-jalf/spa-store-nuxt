@@ -241,7 +241,7 @@
             <b-icon icon="arrow-up-right-circle-fill" />
             Validar Articulos
           </b-button>
-          <b-button variant="primary" class="mb-2">
+          <b-button variant="primary" class="mb-2" @click="changeStatus">
             <b-icon icon="arrow-up-right-circle-fill" />
             {{ messageButton }}
           </b-button>
@@ -294,6 +294,12 @@ export default {
     MessageText,
     // AlertOption,
     OfertaListProducts,
+  },
+  props: {
+    prepareChangeStatusOffer: {
+      type: Function,
+      required: true,
+    },
   },
   data() {
     return {
@@ -442,6 +448,12 @@ export default {
       console.log('cierra')
       this.setProgramandoOferta(false)
       this.setProgramandoLista(false)
+    },
+    async changeStatus() {
+      const result = await this.prepareChangeStatusOffer(
+        this.$store.state.ofertas.ofertaActual
+      )
+      if (result) this.cerrarListaArticulos()
     },
     enterSelect(evt) {
       if (evt.keyCode === 65) {

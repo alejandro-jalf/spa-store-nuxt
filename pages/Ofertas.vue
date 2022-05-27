@@ -53,6 +53,7 @@
     <oferta-lista
       v-if="programandoListaOferta"
       class="pb-2 mb-3"
+      :prepare-change-status-offer="prepareChangeStatusOffer"
     ></oferta-lista>
     <div v-if="viewCrearOferta" class="container-table-ofe">
       <b-table
@@ -353,8 +354,10 @@ export default {
           this.setLoading(true)
           await this.changeListaOfertas(dataOffer.sucursal)
           this.setLoading(false)
+          return true
         } else {
           this.showAlertDialog([response.data.message])
+          return false
         }
       } catch (error) {
         // eslint-disable-next-line no-console
@@ -362,6 +365,7 @@ export default {
         this.setLoading(false)
         if (error.response) this.showAlertDialog([error.response.data.message])
         else this.showAlertDialog(['Error con el servidor'])
+        return false
       }
     },
     prepareDeleteOffer(dataOffer) {
