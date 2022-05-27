@@ -406,7 +406,7 @@ export default {
             urlBase + 'api/v1/ofertas/' + sucursal + '/maestros/' + uuidMaster,
           method: 'put',
           data: {
-            status: this.$store.state.ofertas.ofertaActual.status,
+            status: this.$store.state.ofertas.ofertaActual.estatus,
             editable: this.$store.state.ofertas.ofertaActual.editable,
             tipoOferta: this.form_oferta.tipo,
             fechaInicio: this.form_oferta.fecha_inicio + 'T23:59:59.999z',

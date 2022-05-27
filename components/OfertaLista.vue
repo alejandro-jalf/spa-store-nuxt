@@ -352,7 +352,7 @@ export default {
   },
   computed: {
     messageButton() {
-      switch (this.$store.state.ofertas.ofertaActual.status) {
+      switch (this.$store.state.ofertas.ofertaActual.estatus) {
         case 0:
           return 'Enviar'
         case 1:
@@ -382,21 +382,21 @@ export default {
     },
     ofertaEditable() {
       return (
-        this.$store.state.ofertas.ofertaActual.status === 0 ||
-        this.$store.state.ofertas.ofertaActual.status === 2
+        this.$store.state.ofertas.ofertaActual.estatus === 0 ||
+        this.$store.state.ofertas.ofertaActual.estatus === 2
       )
     },
     status() {
       if (
-        this.$store.state.ofertas.ofertaActual.status === 4 ||
-        this.$store.state.ofertas.ofertaActual.status === 3
+        this.$store.state.ofertas.ofertaActual.estatus === 4 ||
+        this.$store.state.ofertas.ofertaActual.estatus === 3
       ) {
         return false
       }
       return true
     },
     statusActual() {
-      return this.$store.state.ofertas.ofertaActual.status
+      return this.$store.state.ofertas.ofertaActual.estatus
     },
     listaProductos() {
       return this.$store.state.ofertas.listaArticulos.data
@@ -460,7 +460,7 @@ export default {
     },
     rowClass(item, type) {
       if (!item || type !== 'row') return
-      if (item.status === 'selected') return 'table-secondary'
+      if (item.estatus === 'selected') return 'table-secondary'
     },
     handleOk(bvModalEvt) {
       bvModalEvt.preventDefault()

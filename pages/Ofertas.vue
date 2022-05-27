@@ -73,16 +73,16 @@
             class="mr-2 mt-2"
             @click="viewDetails(row.item.uuid, row.item)"
           >
-            {{ detailsMessage(row.item.status) }}
+            {{ detailsMessage(row.item.estatus) }}
           </b-button>
           <b-button
             v-if="visibleButton(row.item, 'action')"
             class="mr-2 mt-2"
             size="sm"
-            :variant="variantStatus(row.item.status)"
+            :variant="variantStatus(row.item.estatus)"
             @click="prepareChangeStatusOffer(row.item)"
           >
-            {{ messageButton(row.item.status) }}
+            {{ messageButton(row.item.estatus) }}
           </b-button>
           <b-button
             v-if="visibleButton(row.item, 'cancelar')"
@@ -133,8 +133,8 @@
         <template #cell(sucursal)="row">
           {{ nameSuc(row.item.sucursal) }}
         </template>
-        <template #cell(status)="row">
-          {{ parseStatusOferta(row.item.status).toUpperCase() }}
+        <template #cell(estatus)="row">
+          {{ parseStatusOferta(row.item.estatus).toUpperCase() }}
         </template>
         <template #cell(fechaInico)="row">
           {{ utils.parseFecha(row.item.fechainicio) }}
@@ -178,7 +178,7 @@ export default {
       utils,
       fields: [
         'sucursal',
-        'status',
+        'estatus',
         'tipoOferta',
         'fechaInico',
         'fechaFin',
@@ -252,7 +252,7 @@ export default {
   },
   methods: {
     visibleButton(dataOffer, typeButton) {
-      const status = dataOffer.status
+      const status = dataOffer.estatus
       const isOwner = dataOffer.creadopor === this.dataUser.correo_user
       switch (status) {
         case 0:
@@ -306,12 +306,12 @@ export default {
     },
     prepareChangeStatusOffer(dataOffer) {
       const offer = { ...dataOffer }
-      const statusIncrement = offer.status + 1
+      const statusIncrement = offer.estatus + 1
       const messageStatus =
-        offer.status === 1
+        offer.estatus === 1
           ? 'poner en proceso'
-          : this.messageButton(offer.status)
-      const newStatus = offer.status === 4 ? 0 : statusIncrement
+          : this.messageButton(offer.estatus)
+      const newStatus = offer.estatus === 4 ? 0 : statusIncrement
 
       this.showAlertDialogOption([
         `¿Quiere "${messageStatus}" la oferta?`,
