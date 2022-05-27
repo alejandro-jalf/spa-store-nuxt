@@ -197,7 +197,7 @@
       </b-button>
       <b-button variant="warning" @click="setProgramandoOferta(false)">
         <b-icon icon="file-earmark-excel-fill" />
-        Cancelar
+        Cerrar
       </b-button>
       <b-button
         v-if="editandoOferta"

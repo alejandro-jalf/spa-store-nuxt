@@ -137,13 +137,13 @@
           {{ parseStatusOferta(row.item.estatus).toUpperCase() }}
         </template>
         <template #cell(fechaInico)="row">
-          {{ utils.parseFecha(row.item.fechainicio) }}
+          {{ utils.parseFecha(row.item.fechaInicio) }}
         </template>
         <template #cell(tipoOferta)="row">
-          {{ row.item.tipooferta }}
+          {{ row.item.tipoOferta }}
         </template>
         <template #cell(fechaFin)="row">
-          {{ utils.parseFecha(row.item.fechafin) }}
+          {{ utils.parseFecha(row.item.fechaFin) }}
         </template>
       </b-table>
     </div>
@@ -210,18 +210,18 @@ export default {
         .filter((offer) => {
           if (viewBy === 'month')
             return (
-              this.utils.toMoment(offer.fechainicio).format('MM/YYYY') ===
+              this.utils.toMoment(offer.fechaInicio).format('MM/YYYY') ===
               dateActual.format('MM/YYYY')
             )
           else if (viewBy === 'year')
             return (
-              this.utils.toMoment(offer.fechainicio).format('YYYY') ===
+              this.utils.toMoment(offer.fechaInicio).format('YYYY') ===
               dateActual.format('YYYY')
             )
           else return true
         })
         .sort((a, b) =>
-          this.utils.toMoment(a.fechainicio).isBefore(b.fechainicio) ? 1 : -1
+          this.utils.toMoment(a.fechaInicio).isBefore(b.fechaInicio) ? 1 : -1
         )
     },
     programandoOferta() {
@@ -253,7 +253,7 @@ export default {
   methods: {
     visibleButton(dataOffer, typeButton) {
       const status = dataOffer.estatus
-      const isOwner = dataOffer.creadopor === this.dataUser.correo_user
+      const isOwner = dataOffer.creadoPor === this.dataUser.correo_user
       switch (status) {
         case 0:
           if (
@@ -489,11 +489,6 @@ export default {
       // eslint-disable-next-line no-console
       console.log(uuid, oferta)
       const ofertaAct = { ...oferta }
-      ofertaAct.fechaAlta = ofertaAct.fechaalta
-      ofertaAct.fechaInicio = ofertaAct.fechainicio
-      ofertaAct.fechaFin = ofertaAct.fechafin
-      ofertaAct.tipoOferta = ofertaAct.tipooferta
-      ofertaAct.modificadoPor = ofertaAct.modificadopor
       // falta ajustar
       this.setLoading(true)
       await this.changeListaArticulos(uuid)
