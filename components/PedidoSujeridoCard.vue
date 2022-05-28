@@ -4,28 +4,28 @@
       <h5 class="pb-0">{{ article.Nombre }}</h5>
       <div class="text-muted h6">{{ article.Articulo }}</div>
       <div class="container-dato">
+        <span class="font-weight-bold">Stock Minimo:</span>
+        {{ dataFormated(article.StockMinimo) }}
+      </div>
+      <div class="container-dato">
         <span class="font-weight-bold">Tipo Rotacion:</span>
         {{ article.estatusRotacion.split(' ')[1] }}
       </div>
       <div class="container-dato">
         <span class="font-weight-bold">Exist Local:</span>
-        {{ dataFormated(article.ExistLoc) }}
+        {{ dataFormated(article.ExitLoc) }}
       </div>
       <div class="container-dato">
         <span class="font-weight-bold">Exist Bodega:</span>
         {{ dataFormated(article.ExistExt) }}
       </div>
       <div class="container-dato">
-        <span class="font-weight-bold">Factor Compra:</span>
-        {{ dataFormated(article.FactorCompra) }}
-      </div>
-      <div class="container-dato">
-        <span class="font-weight-bold">Factor Venta:</span>
-        {{ dataFormated(article.FactorVenta) }}
+        <span class="font-weight-bold">Relacion:</span>
+        {{ article.Relacion }}
       </div>
       <div class="container-dato">
         <span class="font-weight-bold">Sujerido:</span>
-        {{ dataFormated(article.FactorVenta) }}
+        {{ dataFormated(article.CalculoRotacion) }}
       </div>
     </b-card>
   </div>
@@ -45,7 +45,9 @@ export default {
   },
   computed: {
     variantTheme() {
-      return this.$store.state.general.themesComponents.themeCard2Body
+      const themeC =
+        this.article.StockMinimo === null ? ' container-info-warning' : ''
+      return this.$store.state.general.themesComponents.themeCard2Body + themeC
     },
   },
   methods: {
@@ -86,6 +88,12 @@ export default {
   border: 1px solid rgb(0, 151, 154);
   padding: 5px;
   margin: 0px 2px 2px 0px;
+}
+
+.container-info-warning {
+  background: rgba(251, 255, 29, 0.596);
+  /* border-radius: 3px; */
+  color: #000;
 }
 
 @media screen and (max-width: 495px) {

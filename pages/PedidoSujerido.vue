@@ -73,7 +73,7 @@
         {{ row.item.estatusRotacion.split(' ')[1] }}
       </template>
       <template #cell(ExistLoc)="row">
-        {{ dataFormated(row.item.ExistLoc) }}
+        {{ dataFormated(row.item.ExitLoc) }}
       </template>
       <template #cell(ExistBo)="row">
         {{ dataFormated(row.item.ExistExt) }}
@@ -178,7 +178,16 @@ export default {
       return this.$store.state.general.themesComponents.themeTableBody
     },
     dataRefactor() {
-      return this.$store.state.pedidosujerido.data.data
+      const datos = []
+      this.$store.state.pedidosujerido.data.data.forEach((articulo) => {
+        const data = { ...articulo }
+        if (data.StockMinimo === null || data.ExitLoc === null)
+          data._rowVariant = 'warning'
+        if (data.CalculoRotacion === null)
+          data.CalculoRotacion = data.FactorVenta
+        datos.push(data)
+      })
+      return datos
     },
     isAllowedUser() {
       const nombreUser = this.$store.state.user.user.nombre_user

@@ -252,13 +252,19 @@ const utils = (() => {
         { content: dato.Articulo },
         { content: dato.Nombre },
         {
-          content: utils.aplyFormatNumeric(utils.roundTo(dato.StockMinimo)),
+          content:
+            dato.StockMinimo === null
+              ? '-'
+              : utils.aplyFormatNumeric(utils.roundTo(dato.StockMinimo)),
         },
         {
           content: dato.estatusRotacion.split(' ')[1],
         },
         {
-          content: utils.aplyFormatNumeric(utils.roundTo(dato.ExistLoc)),
+          content:
+            dato.ExitLoc === null
+              ? '-'
+              : utils.aplyFormatNumeric(utils.roundTo(dato.ExitLoc)),
         },
         {
           content: utils.aplyFormatNumeric(utils.roundTo(dato.ExistExt)),
@@ -300,19 +306,25 @@ const utils = (() => {
       body,
     })
 
-    doc.setFontSize(9)
-    doc.setFont('helvetica', 'normal')
-    doc.text(horaImpresion, 10, 275)
-
     const fecha = horaImpresion.split(' ')
     const fechaSplit = fecha[0].split('/')
+
+    const countPages = doc.getNumberOfPages()
+    let pageCurrent = 0
+    doc.setFontSize(9)
+    doc.setFont('helvetica', 'italic')
+    for (let page = 0; page < countPages; page++) {
+      doc.setPage(page)
+      pageCurrent = doc.internal.getCurrentPageInfo().pageNumber
+      doc.text(`Pagina ${pageCurrent} de ${countPages}`, 207, 275, 'right')
+      doc.text(horaImpresion, 8, 275)
+    }
 
     if (preview) doc.output('dataurlnewwindow')
     else
       doc.save(
         `${fechaSplit[2]} ${fechaSplit[1]}${fechaSplit[0]} - Pedido Sujerido - ${sucursal}.pdf`
       )
-    // doc.output('dataurlnewwindow')
   }
 
   const createPdfAsistenciasSpa = (
