@@ -252,6 +252,9 @@ const utils = (() => {
         { content: dato.Articulo },
         { content: dato.Nombre },
         {
+          content: utils.aplyFormatNumeric(utils.roundTo(dato.StockMinimo)),
+        },
+        {
           content: dato.estatusRotacion.split(' ')[1],
         },
         {
@@ -260,17 +263,9 @@ const utils = (() => {
         {
           content: utils.aplyFormatNumeric(utils.roundTo(dato.ExistExt)),
         },
+        { content: dato.Relacion },
         {
           content: utils.aplyFormatNumeric(utils.roundTo(dato.CalculoRotacion)),
-        },
-        {
-          content: utils.aplyFormatNumeric(utils.roundTo(dato.FactorCompra)),
-        },
-        {
-          content: utils.aplyFormatNumeric(utils.roundTo(dato.FactorVenta)),
-        },
-        {
-          content: utils.aplyFormatNumeric(utils.roundTo(dato.tipoSugerido)),
         },
       ])
       return acumData
@@ -294,13 +289,12 @@ const utils = (() => {
         [
           'Articulo',
           'Nombre',
+          'Stock Min',
           'Tipo Rotacion',
           'Exist Loc',
           'Exist Bo',
-          'Rotacion Promedio',
-          'Fac Compra',
-          'Fac Venta',
-          'Sujerido',
+          'Relacion',
+          'Sugerido',
         ],
       ],
       body,
