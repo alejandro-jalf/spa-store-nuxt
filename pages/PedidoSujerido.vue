@@ -78,14 +78,8 @@
       <template #cell(ExistBo)="row">
         {{ dataFormated(row.item.ExistExt) }}
       </template>
-      <template #cell(RotacionPromedio)="row">
-        {{ dataFormated(row.item.CalculoRotacion) }}
-      </template>
-      <template #cell(FacCompra)="row">
-        {{ dataFormated(row.item.FactorCompra) }}
-      </template>
-      <template #cell(FacVenta)="row">
-        {{ dataFormated(row.item.FactorVenta) }}
+      <template #cell(StockMin)="row">
+        {{ dataFormated(row.item.StockMinimo) }}
       </template>
       <template #cell(Sugerido)="row">
         {{ dataFormated(row.item.CalculoRotacion) }}
@@ -142,12 +136,11 @@ export default {
       fields: [
         'Articulo',
         'Nombre',
+        'StockMin',
         'TipoRotacion',
         'ExistLoc',
         'ExistBo',
-        'RotacionPromedio',
-        'FacCompra',
-        'FacVenta',
+        'Relacion',
         'Sugerido',
       ],
       allowedUsers: ['Justo Cruz Basurto'],
