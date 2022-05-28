@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1 class="text-center mt-2">Pedido Sujerido</h1>
+    <h1 class="text-center mt-2">Pedido Sugerido</h1>
     <b-input-group prepend="Sucursal" class="mt-3 mb-3">
       <b-form-select
         :value="suc"
@@ -53,7 +53,7 @@
       </b-button>
 
       <div class="h3 mb-3 mt-4">
-        Articulos sujeridos de "{{ getNameBySuc(sucConsult) }}"
+        Articulos sujegidos de "{{ getNameBySuc(sucConsult) }}"
       </div>
     </div>
 
@@ -87,8 +87,8 @@
       <template #cell(FacVenta)="row">
         {{ dataFormated(row.item.FactorVenta) }}
       </template>
-      <template #cell(Sujerido)="row">
-        {{ dataFormated(row.item.tipoSugerido) }}
+      <template #cell(Sugerido)="row">
+        {{ dataFormated(row.item.CalculoRotacion) }}
       </template>
     </b-table>
     <div v-else class="my-3">
@@ -148,7 +148,7 @@ export default {
         'RotacionPromedio',
         'FacCompra',
         'FacVenta',
-        'Sujerido',
+        'Sugerido',
       ],
       allowedUsers: ['Justo Cruz Basurto'],
     }
