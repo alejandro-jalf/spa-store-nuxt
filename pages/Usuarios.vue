@@ -398,8 +398,9 @@ export default {
         `¿Quiere cambiar el estatus del usuario "${user.Correo}" a ${newStatus}`,
         'Cambiando estatus del usuario',
         this.aceptOption,
-        this.hideAlertDialogOption,
         'warning',
+        'white',
+        this.hideAlertDialogOption,
       ])
     },
     aceptOption() {
