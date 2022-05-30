@@ -137,7 +137,9 @@ export default {
     let paddingLeft = 0
 
     const setTheme = () => {
-      if (this.$store.state.general.themePreferences === 'system') {
+      if (this.$store.state.general.tabActual === 'Login') {
+        document.documentElement.classList.add('backgroundGradient')
+      } else if (this.$store.state.general.themePreferences === 'system') {
         const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
           .matches
         if (systemDark) document.documentElement.classList.add('dark-mode')

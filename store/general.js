@@ -185,6 +185,7 @@ export const state = () => ({
         themeButtonClose: 'info',
         themeItemList2: 'light',
         themeTextSlider: 'dark',
+        themeTextUnderlineBlue: 'textUnderlineBlue_TWhite',
         themeVariantAlert: 'info',
         themeButtonClean: 'warning',
         themeButtonSuccess: 'success',
@@ -368,6 +369,12 @@ export const actions = {
       themeButtonClose: filterOption(themes, 'info', 'outline-info', 'info'),
       themeItemList2: filterOption(themes, 'light', 'dark', 'light'),
       themeTextSlider: filterOption(themes, 'dark', 'light', 'dark'),
+      themeTextUnderlineBlue: filterOption(
+        themes,
+        'textUnderlineBlue_TWhite',
+        'textUnderlineBlue_TDark',
+        'textUnderlineBlue_TWhite'
+      ),
       themeVariantAlert: filterOption(themes, 'info', 'info', 'dark'),
       themeButtonClean: filterOption(
         themes,

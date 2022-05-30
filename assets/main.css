@@ -8,6 +8,13 @@
   cursor: wait;
 }
 
+.backgroundGradient {
+  color: #fff;
+  background: -prefix-linear-gradient(to bottom right, #01579B, #0288D1, #4FC3F7);
+  background: linear-gradient(to bottom right, #01579B, #0288D1, #4FC3F7);
+  border-color: #0d2538;
+}
+
 .dark-mode {
   color: #ebf4f1;
   /* background: #091a28; */
@@ -113,4 +120,26 @@ a {
 .fade-enter,
 .fade-leave-to {
   opacity: 0;
+}
+
+.textUnderlineBlue_TWhite {
+  font-size: 15px;
+  color: blue;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.textUnderlineBlue_TWhite:hover {
+  color: rgb(2, 2, 90);
+}
+
+.textUnderlineBlue_TDark {
+  font-size: 15px;
+  color: rgb(102, 237, 254);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.textUnderlineBlue_TDark:hover {
+  color: rgb(0, 195, 255);
 }

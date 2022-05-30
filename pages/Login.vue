@@ -1,25 +1,28 @@
 <template>
   <div class="text-center">
     <h1 class="text-center mt-2 mb-5 title">{{ textTitle }}</h1>
-    <b-avatar class="avatar-login">
-      <b-icon :icon="recoveryPasswordIcon" font-scale="7.5" />
-    </b-avatar>
 
-    <b-form class="text-left">
+    <b-form class="text-left form-design">
+      <img src="../assets/cesta.png" class="logoSpa" />
       <div v-if="!recoveryPassword">
         <b-form-group
           id="input-group-1"
           label="Correo Electronico"
           label-for="input-1"
         >
-          <b-form-input
-            id="input-1"
-            v-model="form.email"
-            type="email"
-            placeholder="Ingrese su correo electronico"
-            required
-            @keyup.enter="focusPassword()"
-          ></b-form-input>
+          <b-input-group>
+            <template #prepend>
+              <b-icon icon="person-fill" class="prepend-form" />
+            </template>
+            <b-form-input
+              id="input-1"
+              v-model="form.email"
+              type="email"
+              placeholder="Ingrese su correo electronico"
+              required
+              @keyup.enter="focusPassword()"
+            ></b-form-input>
+          </b-input-group>
         </b-form-group>
 
         <b-form-group
@@ -27,15 +30,20 @@
           label="Contraseña:"
           label-for="input-2"
         >
-          <b-form-input
-            id="input-2"
-            ref="password"
-            v-model="form.password"
-            :type="form.typePassword"
-            placeholder="Contraseña"
-            required
-            @keyup.enter="iniciaSesion()"
-          ></b-form-input>
+          <b-input-group>
+            <template #prepend>
+              <b-icon icon="lock-fill" class="prepend-form" />
+            </template>
+            <b-form-input
+              id="input-2"
+              ref="password"
+              v-model="form.password"
+              :type="form.typePassword"
+              placeholder="Contraseña"
+              required
+              @keyup.enter="iniciaSesion()"
+            ></b-form-input>
+          </b-input-group>
         </b-form-group>
 
         <b-form-checkbox
@@ -52,50 +60,49 @@
         <b-button
           type="button"
           variant="primary"
-          :block="blockButton"
+          :block="true"
           @click="iniciaSesion()"
         >
           Iniciar Sesion
         </b-button>
+        <div class="lostPassword" @click="recoveryPassword = true">
+          Olvide mi contraseña
+        </div>
       </div>
 
       <div v-else>
+        <div class="back-recovery" @click="recoveryPassword = false">
+          <b-icon icon="arrow-left" />
+          Regresar
+        </div>
         <b-form-group
           id="groupREcovery"
           label="Correo electronico:"
           label-for="inputEmailRecovery"
           description="Escriba el correo con el que entrar normalmente a la aplicacion"
         >
-          <b-form-input
-            id="inputEmailRecovery"
-            v-model="form.emailRecovery"
-            type="email"
-            placeholder="alguien@dominio.subdominio"
-            @keyup.enter="recovery()"
-          ></b-form-input>
+          <b-input-group>
+            <template #prepend>
+              <b-icon icon="person-fill" class="prepend-form" />
+            </template>
+            <b-form-input
+              id="inputEmailRecovery"
+              v-model="form.emailRecovery"
+              type="email"
+              placeholder="alguien@dominio.subdominio"
+              @keyup.enter="recovery()"
+            ></b-form-input>
+          </b-input-group>
         </b-form-group>
 
         <div class="text-right mt-5 mb-5">
-          <b-button
-            variant="secondary"
-            :block="blockButton"
-            @click="recoveryPassword = false"
-          >
-            Cancelar
-          </b-button>
-          <b-button variant="success" :block="blockButton" @click="recovery()">
+          <b-button variant="primary" :block="true" @click="recovery()">
             Recuperar
           </b-button>
         </div>
       </div>
     </b-form>
-    <div
-      v-if="!recoveryPassword"
-      class="lostPassword"
-      @click="recoveryPassword = true"
-    >
-      Olvide mi contraseña
-    </div>
+    <div class="bottom-component"></div>
   </div>
 </template>
 
@@ -117,9 +124,6 @@ export default {
     }
   },
   computed: {
-    recoveryPasswordIcon() {
-      return this.recoveryPassword ? 'person-badge-fill' : 'person-fill'
-    },
     width() {
       return this.$store.state.general.widthWindow
     },
@@ -127,10 +131,11 @@ export default {
       return this.width <= 500
     },
     textTitle() {
-      return this.recoveryPassword
-        ? 'Recuperando contraseña'
-        : 'Iniciando sesion'
+      return this.recoveryPassword ? 'Recuperando contraseña' : 'Login'
     },
+  },
+  mounted() {
+    this.setTabActual('Login')
   },
   methods: {
     focusPassword() {
@@ -140,6 +145,7 @@ export default {
       initSesion: 'user/initSesion',
     }),
     ...mapMutations({
+      setTabActual: 'general/setTabActual',
       setLoading: 'general/setLoading',
       showAlertDialog: 'general/showAlertDialog',
     }),
@@ -238,16 +244,12 @@ export default {
       } catch (error) {
         this.setLoading(false)
         if (error.response) {
-          // eslint-disable-next-line no-console
-          console.log(error.response)
           this.showAlertDialog([
             error.response.data.message,
             'Error al intentar recuperar su cuenta',
             'danger',
           ])
         } else {
-          // eslint-disable-next-line no-console
-          console.log(error)
           this.showAlertDialog([
             'Error inesperado con la api',
             'Error al intentar recuperar su contraseña',
@@ -261,23 +263,68 @@ export default {
 </script>
 
 <style scoped>
-.avatar-login {
+.title {
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  font-style: italic;
+}
+
+.form-design {
+  position: relative;
+  margin: auto;
+  max-width: 700px;
+  color: #000;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 4px 4px 8px 1px rgba(1, 88, 155, 0.478);
+  padding: 8% 5% 4% 5%;
+  margin-bottom: 5%;
+}
+
+.back-recovery {
+  font-weight: 600;
+  font-size: 17px;
+  position: absolute;
+  top: 30px;
+  left: 5%;
+  cursor: pointer;
+}
+
+.back-recovery:hover {
+  color: rgb(3, 1, 169);
+  text-decoration: underline;
+}
+
+.logoSpa {
   width: 200px;
   height: 200px;
-  margin-bottom: 100px;
+  margin-bottom: 50px;
+  margin-left: calc(50% - 100px);
+}
+
+.prepend-form {
+  border-radius: 8px 0px 0px 8px;
+  background: rgba(0, 136, 255, 0.451);
+  height: 38px;
+  width: 35px;
+  padding: 5px 2px;
+  border: 1px solid rgb(199, 199, 199);
 }
 
 .lostPassword {
+  margin-left: 40%;
+  margin-top: 28px;
   font-size: 15px;
-  color: blue;
-  text-decoration: underline;
-  margin-bottom: 50px;
-  margin-top: 30px;
+  color: rgb(33, 3, 157);
   cursor: pointer;
 }
 
 .lostPassword:hover {
-  color: rgb(2, 2, 90);
+  text-decoration: underline;
+  color: rgb(5, 5, 5);
+}
+
+.bottom-component {
+  margin-bottom: 250px;
 }
 
 @media screen and (max-width: 480px) {
