@@ -16,6 +16,7 @@
         placeholder="Direccion de correo"
         required
         :class="backgroundInputTheme"
+        @keyup.enter="$refs.inputName.focus()"
       ></b-form-input>
     </b-form-group>
 
@@ -23,32 +24,39 @@
     <b-form inline>
       <b-form-input
         id="inputName"
+        ref="inputName"
         v-model="userActual.nombre_user"
         placeholder="Nombre(s)"
         class="name-complete"
         :class="backgroundInputTheme"
+        @keyup.enter="$refs.inputAp.focus()"
       ></b-form-input>
       <b-form-input
         id="inputAp"
+        ref="inputAp"
         v-model="userActual.apellido_p_user"
         placeholder="Apellido paterno"
         class="name-complete"
         :class="backgroundInputTheme"
+        @keyup.enter="$refs.inputAm.focus()"
       ></b-form-input>
       <b-form-input
         id="inputAm"
+        ref="inputAm"
         v-model="userActual.apellido_m_user"
         placeholder="Apellido materno"
         class="name-complete"
         :class="backgroundInputTheme"
+        @keyup.enter="$refs.inputAddress.focus()"
       ></b-form-input>
     </b-form>
 
     <b-form-group id="gpDir" label="Direccion:" label-for="inputDireccion">
       <b-form-input
         id="inputDireccion"
+        ref="inputAddress"
         v-model="userActual.direccion_user"
-        type="email"
+        type="text"
         placeholder="Calle, Colonia, Municipio"
         required
         :class="backgroundInputTheme"
@@ -75,6 +83,7 @@
           placeholder="Ingrese su contraseña"
           required
           :class="backgroundInputTheme"
+          @keyup.enter="$refs.inputRPass.focus()"
         ></b-form-input>
         <b-form-invalid-feedback :state="validation">
           Debe ser mayor de 6 caracteres y debe tener al menos una letra y un
@@ -88,6 +97,7 @@
       <b-form-group id="rGpP" label="Repita su contraseña" label-for="rIpPass">
         <b-form-input
           id="rIpPass"
+          ref="inputRPass"
           v-model="userActual.password_user_repeat"
           :state="validationRepeatPassword"
           type="password"
