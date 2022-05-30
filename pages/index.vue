@@ -121,41 +121,42 @@
             Puede cambiar su contraseña en el momento que crea conveniente
           </div>
           <div>
-            <b-form inline>
-              <b-form-input
-                id="inputName"
-                v-model="password.newPassword"
-                :state="password.statePassword"
-                type="password"
-                placeholder="Nueva contraseña"
-                :class="backgroundInputTheme"
-                trim
-                @keyup="veryfyPassword()"
-                @keyup.enter="$refs.passwRep.focus()"
-              ></b-form-input>
-              <b-form-input
-                id="inputAp"
-                ref="passwRep"
-                v-model="password.newPasswordRepeat"
-                type="password"
-                :state="password.statePasswordRepeat"
-                placeholder="Repita su contraseña"
-                :class="backgroundInputTheme"
-                trim
-                @keyup="verifyPasswordRepeat()"
-                @keyup.enter="$refs.passwAct.focus()"
-              ></b-form-input>
-              <b-form-input
-                id="inputAm"
-                ref="passwAct"
-                v-model="password.passwordActual"
-                type="password"
-                placeholder="Contraseña actual"
-                :class="backgroundInputTheme"
-                trim
-                @keyup.enter="questionChangePassword()"
-              ></b-form-input>
-            </b-form>
+            <b-form-input
+              id="inputPassN"
+              v-model="password.newPassword"
+              :state="password.statePassword"
+              type="password"
+              placeholder="Nueva contraseña"
+              class="inputPass"
+              :class="backgroundInputTheme"
+              trim
+              @keyup="veryfyPassword()"
+              @keyup.enter="$refs.passwRep.focus()"
+            ></b-form-input>
+            <b-form-input
+              id="inputPassNR"
+              ref="passwRep"
+              v-model="password.newPasswordRepeat"
+              type="password"
+              :state="password.statePasswordRepeat"
+              placeholder="Repita su contraseña"
+              class="inputPass"
+              :class="backgroundInputTheme"
+              trim
+              @keyup="verifyPasswordRepeat()"
+              @keyup.enter="$refs.passwAct.focus()"
+            ></b-form-input>
+            <b-form-input
+              id="inputPassO"
+              ref="passwAct"
+              v-model="password.passwordActual"
+              type="password"
+              placeholder="Contraseña actual"
+              class="inputPass"
+              :class="backgroundInputTheme"
+              trim
+              @keyup.enter="questionChangePassword()"
+            ></b-form-input>
             <div
               v-if="!password.statePassword || !password.statePasswordRepeat"
               class="description"
@@ -568,6 +569,18 @@ export default {
   margin-left: 2px;
 }
 
+.inputPass {
+  margin: 5px 5px;
+}
+
+@media screen and (max-width: 991px) {
+  #inputPassN,
+  #inputPassNR {
+    width: calc(50% - 13px);
+    display: inline-block;
+  }
+}
+
 @media screen and (max-width: 768px) {
   .title {
     font-size: 30px;
@@ -580,6 +593,13 @@ export default {
     width: 100%;
     margin-left: 0px;
     margin-bottom: 5px;
+  }
+}
+
+@media screen and (max-width: 575px) {
+  #inputPassN,
+  #inputPassNR {
+    width: 100%;
   }
 }
 </style>
