@@ -115,9 +115,9 @@ export const state = () => ({
       icon: 'sort-down',
     },
     {
-      path: '/pedidosujerido',
-      name: 'pedidosujerido',
-      nickname: 'Pedido Sujerido',
+      path: '/pedidosugerido',
+      name: 'pedidosugerido',
+      nickname: 'Pedido Sugerido',
       icon: 'file-earmark-ruled-fill',
     },
     {
