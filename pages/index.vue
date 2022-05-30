@@ -323,8 +323,9 @@ export default {
         `¿Quieres establecer a "${this.principal}" como pantalla principal al iniciar la aplicacion web?`,
         'Cambiando la pantalla principal',
         this.savePrincipal,
-        this.hideAlertDialogOption,
         'warning',
+        'white',
+        this.hideAlertDialogOption,
       ])
     },
     async savePrincipal() {
@@ -476,8 +477,9 @@ export default {
         '¿Quiere cambiar su contraseña?',
         'Cambiando su contraseña',
         this.changePassword,
-        this.hideAlertDialogOption,
         'warning',
+        'white',
+        this.hideAlertDialogOption,
       ])
     },
     async changePassword() {
