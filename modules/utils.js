@@ -650,6 +650,30 @@ const utils = (() => {
   // eslint-disable-next-line new-cap
   const toMoment = (cadena) => new moment(cadena)
 
+  const copyToClipBoard = (text = '', toast) => {
+    text = text.toString()
+    navigator.clipboard.writeText(text).then(
+      () => {
+        toast.toast('Se ha copiado al portapapeles', {
+          title: 'Copiado',
+          toaster: 'b-toaster-top-right',
+          solid: true,
+          variant: 'primary',
+          appendToast: true,
+        })
+      },
+      () => {
+        toast.toast('No se pudo copiar al portapapeles', {
+          title: 'Fallo',
+          toaster: 'b-toaster-top-right',
+          solid: true,
+          variant: 'danger',
+          appendToast: true,
+        })
+      }
+    )
+  }
+
   return {
     _arrayMonths,
     sucursalesByName,
@@ -665,6 +689,7 @@ const utils = (() => {
     refactorHora,
     parseToPorcent,
     getDataSucursal,
+    copyToClipBoard,
     completeDateHour,
     formatWithMoment,
     aplyFormatNumeric,

@@ -84,6 +84,16 @@
       <template #cell(Sugerido)="row">
         {{ dataFormated(row.item.CalculoRotacion) }}
       </template>
+      <template #cell(Acciones)="row">
+        <b-button
+          v-b-tooltip.hover.lefttop="titleTooltip(row.item.Articulo)"
+          variant="info"
+          size="sm"
+          @click="utils.copyToClipBoard(row.item.Articulo, $bvToast)"
+        >
+          <b-icon icon="files" />
+        </b-button>
+      </template>
     </b-table>
     <div v-else class="my-3">
       <PedidoSujeridoCard
@@ -142,6 +152,7 @@ export default {
         'ExistBo',
         'Relacion',
         'Sugerido',
+        'Acciones',
       ],
       allowedUsers: ['Justo Cruz Basurto'],
     }
@@ -225,6 +236,9 @@ export default {
     ...mapActions({
       changeData: 'pedidosujerido/changeData',
     }),
+    titleTooltip(article = '') {
+      return `Copiar codigo de articulo "${article}"`
+    },
     loadDataImage() {
       const canvas = document.getElementById('canvas')
       const context = canvas.getContext('2d')
