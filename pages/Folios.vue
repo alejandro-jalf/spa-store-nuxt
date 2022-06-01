@@ -69,12 +69,12 @@
         <Divider />
       </div>
       <div class="mt-3">
-        <span class="font-weight-bold">Incremento Sujerido:</span>
+        <span class="font-weight-bold">Incremento Sugerido:</span>
         {{ utils.aplyFormatNumeric(folio.INCREMENTODEFOLIO) }}
         <Divider />
       </div>
       <div class="mt-3">
-        <span class="font-weight-bold">Folio Final Sujerido:</span>
+        <span class="font-weight-bold">Folio Final Sugerido:</span>
         {{ utils.aplyFormatNumeric(folio.FOLIOFINC) }}
         <Divider />
       </div>
