@@ -53,7 +53,7 @@
       </b-button>
 
       <div class="h3 mb-3 mt-4">
-        Articulos sujegidos de "{{ getNameBySuc(sucConsult) }}"
+        Articulos sugeridos de "{{ getNameBySuc(sucConsult) }}"
       </div>
     </div>
 
