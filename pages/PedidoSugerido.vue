@@ -52,9 +52,12 @@
         Vista Previa
       </b-button>
 
-      <div class="h3 mb-3 mt-4">
+      <div class="h3 mb-1 mt-4">
         Articulos sugeridos de "{{ getNameBySuc(sucConsult) }}"
       </div>
+      <b-badge pill variant="info" class="chip"
+        >Total: {{ dataRefactor.length }}</b-badge
+      >
     </div>
 
     <b-table
@@ -325,5 +328,10 @@ export default {
   position: absolute;
   bottom: 10px;
   left: 10px;
+}
+
+.chip {
+  padding: 5px 15px;
+  font-size: 15px;
 }
 </style>
