@@ -220,8 +220,8 @@ export default {
           { value: 'VC', text: 'Victoria' },
           { value: 'ER', text: 'Enriquez' },
           { value: 'OU', text: 'Oluta' },
-          { value: 'OU', text: 'Oluta' },
           { value: 'SY', text: 'Sayula' },
+          { value: 'JL', text: 'Jaltipan' },
           { value: 'BO', text: 'Bodega' },
         ]
       } else {
