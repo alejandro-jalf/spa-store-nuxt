@@ -40,6 +40,9 @@
         Articulos de "{{ getNameBySuc(sucConsult) }}" con algun precio menor del
         {{ montoMinino * 100 }}% utilidad
       </div>
+      <b-badge pill variant="info" class="chip">
+        Total: {{ dataRefactor.length }}
+      </b-badge>
     </div>
 
     <b-table
@@ -361,6 +364,11 @@ export default {
 </script>
 
 <style scoped>
+.chip {
+  padding: 5px 15px;
+  font-size: 15px;
+}
+
 .container-cell {
   position: relative;
 }
