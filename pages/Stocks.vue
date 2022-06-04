@@ -167,9 +167,14 @@ export default {
       return this.$store.state.stocks.data.data[0].Sucursal
     },
     updates() {
-      let updates = ''
+      const updates = { data: [], Almacen: 0 }
       this.$store.state.stocks.data.data.forEach((article) => {
-        updates += article.SQL_QUERY + '; '
+        updates.data.push({
+          StockMinimo: article.StockMin,
+          StockMaximo: article.StockMax,
+          Articulo: article.Articulo,
+        })
+        updates.Almacen = article.Almacen
       })
       return updates
     },
@@ -249,17 +254,25 @@ export default {
       }
     },
     prepareUpdateStocks() {
-      this.showAlertDialogOption([
-        `¿Quiere actualizar los stocks de los ${this.countArticles} articulos encontrados?`,
-        'Actualizando stocks',
-        () => {
-          this.hideAlertDialogOption()
-          this.updateStocks()
-        },
-        'warning',
-        'light',
-        this.hideAlertDialogOption,
+      const success = 0
+      this.showAlertDialog([
+        'Funcion deshabilitada por el momento',
+        'Informacion',
+        'info',
       ])
+      if (success !== 0) {
+        this.showAlertDialogOption([
+          `¿Quiere actualizar los stocks de los ${this.countArticles} articulos encontrados?`,
+          'Actualizando stocks',
+          () => {
+            this.hideAlertDialogOption()
+            this.updateStocks()
+          },
+          'warning',
+          'light',
+          this.hideAlertDialogOption,
+        ])
+      }
     },
     async updateStocks() {
       try {
@@ -285,7 +298,7 @@ export default {
           this.showAlertDialog([message, 'Exito', 'success'])
         } else this.showAlertDialog([response.data.message])
       } catch (error) {
-        this.setLoading(true)
+        this.setLoading(false)
         if (error.response) this.showAlertDialog([error.response.message])
         else this.showAlertDialog(['Error con el servidor'])
       }

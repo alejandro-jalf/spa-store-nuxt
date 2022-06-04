@@ -156,6 +156,12 @@ export const state = () => ({
       nickname: 'Cocina',
       icon: 'file-earmark-easel-fill',
     },
+    {
+      path: '/actualizaciones',
+      name: 'actualizaciones',
+      nickname: 'Actualizaciones',
+      icon: 'arrow-counterclockwise',
+    },
   ].sort((a, b) => (a.nickname < b.nickname ? -1 : 1)),
   tabActual: 'Inicio',
   themePreferences: localStorage.getItem('spastore_theme_color'),

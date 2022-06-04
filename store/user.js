@@ -16,6 +16,9 @@ if (!localStorage.getItem('spastore_user_name'))
 if (!localStorage.getItem('spastore_user_actual_view'))
   localStorage.setItem('spastore_user_actual_view', '{}')
 
+if (!localStorage.getItem('spastore_user_version_old'))
+  localStorage.setItem('spastore_user_version_old', '2.0.0')
+
 export const state = () => ({
   login: localStorage.getItem('spastore_login') === 'true',
   user: JSON.parse(localStorage.getItem('spastore_user')),
@@ -24,6 +27,7 @@ export const state = () => ({
   userViewed: 0, // 0 || 1 || 2
   sesionInstancia: sessionStorage.getItem('spastore_sesion_instancia'),
   sesionInit: sessionStorage.getItem('spastore_sesion_init'),
+  versionOld: sessionStorage.getItem('spastore_user_version_old'),
 })
 
 export const mutations = {
@@ -120,7 +124,9 @@ export const actions = {
           commit('setUser', user)
           const arrayName = user.nombre_user.trim().split(' ')
           const firstName =
-            arrayName.length > 1 ? arrayName[1] : user.nombre_user
+            arrayName.length > 1
+              ? arrayName[arrayName.length - 1]
+              : user.nombre_user
           const nameUser = firstName + ' ' + user.apellido_p_user
           commit('setNameUser', nameUser)
         } else dispatch('logout', [store, route])
