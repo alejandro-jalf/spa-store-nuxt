@@ -218,8 +218,10 @@ export default {
           { value: null, text: 'Seleccione una sucursal' },
           { value: 'ZR', text: 'Zaragoza' },
           { value: 'VC', text: 'Victoria' },
+          { value: 'ER', text: 'Enriquez' },
           { value: 'OU', text: 'Oluta' },
-          { value: 'JL', text: 'Jaltipan' },
+          { value: 'OU', text: 'Oluta' },
+          { value: 'SY', text: 'Sayula' },
           { value: 'BO', text: 'Bodega' },
         ]
       } else {
@@ -228,8 +230,6 @@ export default {
           { value: 'SU', text: 'Super' },
           { value: 'MA', text: 'Mayoreo' },
           { value: 'RE', text: 'Reparto' },
-          { value: 'EN', text: 'Enriquez' },
-          { value: 'SA', text: 'Sayula' },
           { value: 'SB', text: 'Sayula Bodega' },
         ]
       }
