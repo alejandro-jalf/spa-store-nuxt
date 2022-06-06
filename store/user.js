@@ -79,7 +79,10 @@ export const actions = {
         commit('setUser', response.data.data)
         const user = response.data.data
         const arrayName = user.nombre_user.trim().split(' ')
-        const firstName = arrayName.length > 1 ? arrayName[1] : user.nombre_user
+        const firstName =
+          arrayName.length > 1
+            ? arrayName[arrayName.length - 1]
+            : user.nombre_user
         const nameUser = firstName + ' ' + user.apellido_p_user
         commit('setNameUser', nameUser)
       }
