@@ -118,8 +118,23 @@
         </span>
       </template>
       <template #cell(Acciones)="row">
-        <b-button variant="info" @click="showDetails(row.item)">
-          Detalles
+        <b-button
+          v-b-tooltip.hover.lefttop="'Ver detalles'"
+          class="mb-2 ml-2"
+          size="sm"
+          variant="info"
+          @click="showDetails(row.item)"
+        >
+          <b-icon icon="eye" />
+        </b-button>
+        <b-button
+          v-b-tooltip.hover.lefttop="titleTooltip(row.item.Articulo)"
+          class="mb-2 ml-2"
+          variant="info"
+          size="sm"
+          @click="utils.copyToClipBoard(row.item.Articulo, $bvToast)"
+        >
+          <b-icon icon="files" />
         </b-button>
       </template>
     </b-table>
@@ -287,6 +302,9 @@ export default {
     ...mapActions({
       changeData: 'preciosbajos/changeData',
     }),
+    titleTooltip(article = '') {
+      return `Copiar codigo de articulo "${article}"`
+    },
     getNameBySuc(sucRecived) {
       const sucFind = this.options.find((suc) => suc.value === sucRecived)
       return sucFind ? sucFind.text : ''
