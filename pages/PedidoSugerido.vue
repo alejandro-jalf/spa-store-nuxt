@@ -55,6 +55,14 @@
       <div class="h3 mb-1 mt-4">
         Articulos sugeridos de "{{ getNameBySuc(sucConsult) }}"
       </div>
+      <b-form-checkbox
+        v-model="onliValid"
+        name="only_valid"
+        switch
+        class="mt-2 mb-3 cursor-pointer font-weight-bold"
+      >
+        <div class="cursor-pointer">Mostrar solo "No manejados"</div>
+      </b-form-checkbox>
       <b-badge pill variant="info" class="chip"
         >Total: {{ dataRefactor.length }}</b-badge
       >
@@ -137,6 +145,7 @@ export default {
   data() {
     return {
       utils,
+      onliValid: false,
       options: [
         { value: 'ZR', text: 'SPAZARAGOZA' },
         { value: 'VC', text: 'SPAVICTORIA' },
@@ -201,7 +210,10 @@ export default {
           data.CalculoRotacion = data.FactorVenta
         datos.push(data)
       })
-      return datos
+      return datos.filter((articulo) => {
+        if (!this.onliValid) return articulo
+        else return articulo.StockMinimo === null || articulo.ExitLoc === null
+      })
     },
     isAllowedUser() {
       const nombreUser = this.$store.state.user.user.nombre_user
