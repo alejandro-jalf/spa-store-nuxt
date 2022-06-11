@@ -293,10 +293,12 @@ export default {
           { value: null, text: 'Seleccione una sucursal' },
           { value: 'ZR', text: 'Zaragoza' },
           { value: 'VC', text: 'Victoria' },
-          { value: 'OU', text: 'Oluta' },
-          { value: 'JL', text: 'Jaltipan' },
           { value: 'ER', text: 'Enriquez' },
+          { value: 'TF', text: 'Tortilleria Acayucan' },
+          { value: 'OU', text: 'Oluta' },
           { value: 'SY', text: 'Sayula' },
+          { value: 'TY', text: 'Sayula Tortilleria' },
+          { value: 'JL', text: 'Jaltipan' },
           { value: 'BO', text: 'Bodega' },
         ]
       } else {
