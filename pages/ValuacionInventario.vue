@@ -167,15 +167,17 @@ export default {
       pageOptions: [5, 10, 15, 20, 50, 100],
       selected: null,
       options: [
-        { value: 'ZR', text: 'SPAZARAGOZA' },
-        { value: 'VC', text: 'SPAVICTORIA' },
-        { value: 'ER', text: 'SPAENRIQUEZ' },
-        { value: 'OU', text: 'SPAOLUTA' },
-        { value: 'SY', text: 'SPASAYULA' },
-        { value: 'JL', text: 'SPAJALTIPAN' },
-        { value: 'BO', text: 'SPABODEGA' },
-        { value: 'BO%TRANSITO', text: 'SPABODEGA - TRANSITO' },
-        { value: 'BO%ESPERANZA', text: 'SPABODEGA - LA ESPERANZA' },
+        { value: 'ZR', text: 'Zaragoza' },
+        { value: 'VC', text: 'Victoria' },
+        { value: 'ER', text: 'Enriquez' },
+        { value: 'TF', text: 'Tortilleria Acayucan' },
+        { value: 'OU', text: 'Oluta' },
+        { value: 'SY', text: 'Sayula' },
+        { value: 'TY', text: 'Sayula Tortilleria' },
+        { value: 'JL', text: 'Jaltipan' },
+        { value: 'BO', text: 'Bodega' },
+        { value: 'BO%TRANSITO', text: 'Bodega - Transito' },
+        { value: 'BO%ESPERANZA', text: 'Bodega - La esperanza' },
       ],
     }
   },
@@ -211,10 +213,14 @@ export default {
         return 'SPAVICTORIA'
       else if (this.$store.state.valuacioninventario.sucursalData === 'ER')
         return 'SPAENRIQUEZ'
+      else if (this.$store.state.valuacioninventario.sucursalData === 'TF')
+        return 'SPATORTILLERIAF'
       else if (this.$store.state.valuacioninventario.sucursalData === 'OU')
         return 'SPAOLUTA'
       else if (this.$store.state.valuacioninventario.sucursalData === 'SY')
         return 'SPASAYULA'
+      else if (this.$store.state.valuacioninventario.sucursalData === 'TY')
+        return 'SPASAYULAT'
       else if (this.$store.state.valuacioninventario.sucursalData === 'JL')
         return 'SPAJALTIPAN'
       else if (this.$store.state.valuacioninventario.sucursalData === 'BO')
@@ -361,6 +367,10 @@ export default {
         this.selected = sucursal
         this.setTienda(3)
         this.setAlmacen(5)
+      } else if (sucursal === 'TF') {
+        this.selected = sucursal
+        this.setTienda(2)
+        this.setAlmacen(9)
       } else if (sucursal === 'OU') {
         this.selected = sucursal
         this.setTienda(5)
@@ -369,6 +379,10 @@ export default {
         this.selected = sucursal
         this.setTienda(9)
         this.setAlmacen(16)
+      } else if (sucursal === 'TY') {
+        this.selected = sucursal
+        this.setTienda(2)
+        this.setAlmacen(9)
       } else if (sucursal === 'JL') {
         this.selected = sucursal
         this.setTienda(4)
