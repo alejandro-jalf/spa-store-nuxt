@@ -93,7 +93,9 @@ export default {
       if (lastVersion.length === 0) return []
       const tabs = []
       lastVersion[0].paginasactualizadas.split(',').forEach((tab) => {
-        const tabFind = accessUser.find((tabU) => tabU === tab)
+        const tabFind = accessUser.find(
+          (tabU) => tabU.trim().toLowerCase() === tab.trim().toLowerCase()
+        )
         if (tabFind) tabs.push(tab)
       })
       return tabs
@@ -114,6 +116,7 @@ export default {
   font-size: 16px;
   display: inline-block;
   padding: 5px 10px;
+  margin: 4px;
   border-radius: 8px;
   border: 1px solid rgb(0, 190, 194);
   background: rgb(0, 138, 159);
