@@ -4,18 +4,18 @@
       <div class="container-col">
         <h6 class="pb-0 mt-3 color-success">
           <span class="font-weight-bold">Venta Total:</span>
-          {{ utils.aplyFormatNumeric(utils.roundTo(sucursal.VentaTotal)) }}
+          {{ dataFormated(sucursal.VentaTotal) }}
           <Divider />
         </h6>
 
         <div class="h6">
           <span class="font-weight-bold">Costo Total:</span>
-          {{ utils.aplyFormatNumeric(utils.roundTo(sucursal.CostoTotal)) }}
+          {{ dataFormated(sucursal.CostoTotal) }}
           <Divider />
         </div>
         <div class="h6">
           <span class="font-weight-bold">Utilidad Total:</span>
-          {{ utils.aplyFormatNumeric(utils.roundTo(sucursal.UtilidadTotal)) }}
+          {{ dataFormated(sucursal.UtilidadTotal) }}
           <Divider />
         </div>
         <div class="h6">
@@ -29,26 +29,31 @@
           }}
           <Divider />
         </div>
+        <div class="h6">
+          <span class="font-weight-bold">Unidades Vendidas:</span>
+          {{ dataFormated(sucursal.UnidadesVendidas) }}
+          <Divider />
+        </div>
       </div>
       <div class="container-col">
         <div class="h6">
           <span class="font-weight-bold">Tickets Totales:</span>
-          {{ utils.aplyFormatNumeric(utils.roundTo(sucursal.TicketsTotales)) }}
+          {{ dataFormated(sucursal.TicketsTotales) }}
           <Divider />
         </div>
         <div class="h6">
           <span class="font-weight-bold">Mejor Ticket:</span>
-          {{ utils.aplyFormatNumeric(utils.roundTo(sucursal.MejorTicket)) }}
+          {{ dataFormated(sucursal.MejorTicket) }}
           <Divider />
         </div>
         <div class="h6">
           <span class="font-weight-bold">Peor Ticket:</span>
-          {{ utils.aplyFormatNumeric(utils.roundTo(sucursal.PeorTicket)) }}
+          {{ dataFormated(sucursal.PeorTicket) }}
           <Divider />
         </div>
         <div class="h6">
           <span class="font-weight-bold">Ticket Promedio:</span>
-          {{ utils.aplyFormatNumeric(utils.roundTo(sucursal.TicketPromedio)) }}
+          {{ dataFormated(sucursal.TicketPromedio) }}
           <Divider />
         </div>
       </div>
@@ -71,6 +76,10 @@ export default {
       type: Object,
     },
     showDetails: {
+      required: true,
+      type: Function,
+    },
+    dataFormated: {
       required: true,
       type: Function,
     },

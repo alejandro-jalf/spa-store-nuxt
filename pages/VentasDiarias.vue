@@ -77,6 +77,9 @@
       <template #cell(TicketsTotales)="row">
         {{ dataFormated(row.item.TicketsTotales) }}
       </template>
+      <template #cell(UnidadesVendidas)="row">
+        {{ dataFormated(row.item.UnidadesVendidas) }}
+      </template>
       <template #cell(MejorTicket)="row">
         {{ dataFormated(row.item.MejorTicket) }}
       </template>
@@ -107,6 +110,9 @@
       <template #foot(TicketsTotales)>{{
         dataFormated(totalesRefactor.TicketsTotales)
       }}</template>
+      <template #foot(UnidadesVendidas)>{{
+        dataFormated(totalesRefactor.UnidadesVendidas)
+      }}</template>
       <template #foot(MejorTicket)>{{
         dataFormated(totalesRefactor.MejorTicket)
       }}</template>
@@ -122,11 +128,13 @@
         v-for="(dia, indexDia) in dataRefactor"
         :key="indexDia"
         :sucursal="dia"
+        :data-formated="dataFormated"
         :show-details="updateVentas"
         class="mb-2"
       />
       <VentasDiariasCard
         :sucursal="totalesRefactor"
+        :data-formated="dataFormated"
         :show-details="updateVentas"
         class="mb-2"
       />
@@ -183,6 +191,7 @@ export default {
         'CostoTotal',
         'UtilidadTotal',
         'UtilidadPorcentual',
+        'UnidadesVendidas',
         'TicketsTotales',
         'MejorTicket',
         'PeorTicket',
@@ -194,6 +203,7 @@ export default {
         CostoTotal: 0,
         UtilidadTotal: 0,
         UtilidadPorcentual: 0,
+        UnidadesVendidas: 0,
         TicketsTotales: 0,
         MejorTicket: 0,
         PeorTicket: 0,
@@ -220,10 +230,12 @@ export default {
           this.totales.CostoTotal = dia.CostoTotal
           this.totales.UtilidadTotal = dia.UtilidadTotal
           this.totales.TicketsTotales = dia.TicketsTotales
+          this.totales.UnidadesVendidas = dia.UnidadesVendidas
           this.totales.TicketPromedio = dia.TicketPromedio
         } else {
           this.totales.VentaTotal += dia.VentaTotal
           this.totales.CostoTotal += dia.CostoTotal
+          this.totales.UnidadesVendidas += dia.UnidadesVendidas
           this.totales.UtilidadTotal += dia.UtilidadTotal
           this.totales.TicketsTotales += dia.TicketsTotales
           this.totales.TicketPromedio += dia.TicketPromedio
@@ -262,6 +274,7 @@ export default {
         CostoTotal: 0,
         UtilidadTotal: 0,
         UtilidadPorcentual: 0,
+        UnidadesVendidas: 0,
         TicketsTotales: 0,
         MejorTicket: 0,
         PeorTicket: 0,
