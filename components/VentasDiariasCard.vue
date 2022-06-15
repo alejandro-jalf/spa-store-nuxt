@@ -52,7 +52,7 @@
           <Divider />
         </div>
       </div>
-      <div class="sucursal">{{ utils.toDate(sucursal.Fecha) }}</div>
+      <div class="sucursal">{{ isResume }}</div>
     </b-card>
   </div>
 </template>
@@ -82,12 +82,18 @@ export default {
   },
   computed: {
     variantTheme() {
-      const valida = this.sucursal.OfertaValida === 'NO' ? 'color-danger' : ''
+      const valida =
+        this.sucursal.Fecha === 'Resumen de Ventas' ? 'color-dark' : ''
       const themeCardBody = this.$store.state.general.themesComponents
         .themeCard2Body
       return themeCardBody === 'containerCard'
         ? valida
         : `${themeCardBody} ${valida}`
+    },
+    isResume() {
+      return this.sucursal.Fecha === 'Resumen de Ventas'
+        ? this.sucursal.Fecha
+        : utils.toDate(this.sucursal.Fecha)
     },
   },
 }
@@ -115,9 +121,9 @@ export default {
   color: #000;
 }
 
-.color-danger {
-  background: rgb(255, 216, 216);
-  color: #000;
+.color-dark {
+  background: rgb(41, 41, 41);
+  color: rgb(255, 255, 255);
 }
 
 @media screen and (max-width: 540px) {

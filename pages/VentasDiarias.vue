@@ -89,32 +89,32 @@
       <template #foot(Sucursal)>{{ '' }}</template>
       <template #foot(Fecha)>{{ 'Totales' }}</template>
       <template #foot(VentaTotal)>{{
-        dataFormated(totales.VentaTotal)
+        dataFormated(totalesRefactor.VentaTotal)
       }}</template>
       <template #foot(CostoTotal)>{{
-        dataFormated(totales.CostoTotal)
+        dataFormated(totalesRefactor.CostoTotal)
       }}</template>
       <template #foot(UtilidadTotal)>{{
-        dataFormated(totales.UtilidadTotal)
+        dataFormated(totalesRefactor.UtilidadTotal)
       }}</template>
       <template #foot(UtilidadPorcentual)>{{
         utils.parseToPorcent(
-          utils.roundTo(totales.UtilidadPorcentual),
+          utils.roundTo(totalesRefactor.UtilidadPorcentual),
           4,
           true
         ) + ' %'
       }}</template>
       <template #foot(TicketsTotales)>{{
-        dataFormated(totales.TicketsTotales)
+        dataFormated(totalesRefactor.TicketsTotales)
       }}</template>
       <template #foot(MejorTicket)>{{
-        dataFormated(totales.MejorTicket)
+        dataFormated(totalesRefactor.MejorTicket)
       }}</template>
       <template #foot(PeorTicket)>{{
-        dataFormated(totales.PeorTicket)
+        dataFormated(totalesRefactor.PeorTicket)
       }}</template>
       <template #foot(TicketPromedio)>{{
-        dataFormated(totales.TicketPromedio)
+        dataFormated(totalesRefactor.TicketPromedio)
       }}</template>
     </b-table>
     <div v-else>
@@ -122,6 +122,11 @@
         v-for="(dia, indexDia) in dataRefactor"
         :key="indexDia"
         :sucursal="dia"
+        :show-details="updateVentas"
+        class="mb-2"
+      />
+      <VentasDiariasCard
+        :sucursal="totalesRefactor"
         :show-details="updateVentas"
         class="mb-2"
       />
@@ -184,6 +189,7 @@ export default {
         'TicketPromedio',
       ],
       totales: {
+        Fecha: 'Resumen de Ventas',
         VentaTotal: 0,
         CostoTotal: 0,
         UtilidadTotal: 0,
@@ -248,6 +254,22 @@ export default {
           : -1
       )
       return datos
+    },
+    totalesRefactor() {
+      const totales = {
+        Fecha: 'Resumen de Ventas',
+        VentaTotal: 0,
+        CostoTotal: 0,
+        UtilidadTotal: 0,
+        UtilidadPorcentual: 0,
+        TicketsTotales: 0,
+        MejorTicket: 0,
+        PeorTicket: 0,
+        TicketPromedio: 0,
+      }
+      return this.$store.state.ventasdiarias.data.data.length !== 0
+        ? this.totales
+        : totales
     },
     leyenda() {
       return (
