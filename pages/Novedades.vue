@@ -3,7 +3,7 @@
     <div class="h1 text-center my-5">Novedades de Spa Store</div>
     <b-card
       v-if="lastVersion"
-      class="containerCard p-1 pb-4 mt-5"
+      class="containerCard p-1 pb-0 mt-5"
       :class="variantTheme"
       :title="'Version ' + lastVersion.numversion"
     >
@@ -22,6 +22,12 @@
           {{ tab }}
         </div>
       </div>
+      <b-alert show class="mt-5">
+        Si todavia no puedes ver las nuevas pestañas o no te aparecen en tu menu
+        de opciones, es muy probable que necesites recargar la pagina, ademas en
+        ocaciones es necesario que preciones el boton: "Actualizar informacion".
+        Por lo general este boton esta siempre cerca de donde esta tu nombre
+      </b-alert>
     </b-card>
     <div class="h4 mt-5 mb-3 text-info">Versiones anteriores</div>
     <b-table
