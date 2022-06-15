@@ -674,6 +674,24 @@ const utils = (() => {
     )
   }
 
+  const showToast = (
+    toast,
+    message = 'Mensaje',
+    title = 'Titulo',
+    variant = 'primary',
+    time = 1000,
+    alignament = 'b-toaster-top-right'
+  ) => {
+    toast.toast(message, {
+      title,
+      toaster: alignament,
+      solid: true,
+      variant,
+      appendToast: true,
+      autoHideDelay: time,
+    })
+  }
+
   return {
     _arrayMonths,
     sucursalesByName,
@@ -684,6 +702,7 @@ const utils = (() => {
     toMoment,
     sumHours,
     difHours,
+    showToast,
     getDateNow,
     parseFecha,
     refactorHora,

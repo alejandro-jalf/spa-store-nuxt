@@ -148,6 +148,7 @@
 
 <script>
 import { mapActions, mapMutations } from 'vuex'
+import utils from '../modules/utils'
 import NavBarSlider from './NavBarSlider'
 
 export default {
@@ -252,7 +253,12 @@ export default {
     }),
     async updateDataUser() {
       this.setLoading(true)
-      await this.refreshDataUser([this.$store, this.$router])
+      await this.refreshDataUser([
+        this.$store,
+        this.$router,
+        this.$bvToast,
+        utils,
+      ])
       this.setLoading(false)
     },
   },

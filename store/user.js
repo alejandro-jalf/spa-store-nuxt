@@ -27,7 +27,7 @@ export const state = () => ({
   userViewed: 0, // 0 || 1 || 2
   sesionInstancia: sessionStorage.getItem('spastore_sesion_instancia'),
   sesionInit: sessionStorage.getItem('spastore_sesion_init'),
-  versionOld: sessionStorage.getItem('spastore_user_version_old'),
+  versionOld: localStorage.getItem('spastore_user_version_old'),
 })
 
 export const mutations = {
@@ -58,10 +58,47 @@ export const mutations = {
     state.sesionInit = sesionInit
     sessionStorage.setItem('spastore_sesion_init', sesionInit)
   },
+  setVersionOld(state, versionOld) {
+    state.versionOld = versionOld
+    localStorage.setItem('spastore_user_version_old', versionOld)
+  },
+}
+
+const verifyVersions = (commit, newDataUser, toast, utils) => {
+  const dataOld = JSON.parse(localStorage.getItem('spastore_user'))
+  const newTabs = newDataUser.access_to_user.split(',').filter((newTab) => {
+    const tabsOld = dataOld.access_to_user.split(',')
+    const tabFinded = tabsOld.find(
+      (oldTab) => oldTab.toLowerCase() === newTab.toLowerCase()
+    )
+    return !tabFinded
+  })
+  if (newTabs.length > 0)
+    utils.showToast(
+      toast,
+      'Se han agredado nueva paginas a spa-store: ' + newTabs.toString(),
+      '!Nuevas herramientas!',
+      'warning',
+      120000
+    )
+  if (newDataUser.novedades.length > 0) {
+    const lastVersion = newDataUser.novedades[0]
+    const oldVersionNum = localStorage.getItem('spastore_user_version_old')
+    if (lastVersion.numversion !== oldVersionNum) {
+      utils.showToast(
+        toast,
+        'Hay novedades en spa-store, una nueva version ha sido subida y ya esta disponible, para ver los detalles ve a la pestaña de "Novedades"',
+        '!Hay novedades!',
+        'primary',
+        120000
+      )
+      commit('setVersionOld', lastVersion.numversion)
+    }
+  }
 }
 
 export const actions = {
-  async initSesion({ commit }, [user, password]) {
+  async initSesion({ commit }, [user, password, toast, utils]) {
     try {
       const response = await this.$axios({
         url: `${process.env.spastore_base_url}api/v1/usuarios/${user}/login`,
@@ -76,6 +113,7 @@ export const actions = {
 
       if (response.data.success) {
         commit('setLogin', true)
+        verifyVersions(commit, response.data.data, toast, utils)
         commit('setUser', response.data.data)
         const user = response.data.data
         const arrayName = user.nombre_user.trim().split(' ')
@@ -109,7 +147,7 @@ export const actions = {
     store.commit('existenciasarticulo/setArticuloDetails', {})
     route.replace({ name: 'Login' })
   },
-  async refreshDataUser({ commit, dispatch }, [store, route]) {
+  async refreshDataUser({ commit, dispatch }, [store, route, toast, utils]) {
     try {
       const response = await this.$axios({
         url: `${process.env.spastore_base_url}api/v1/usuarios/${store.state.user.user.correo_user}`,
@@ -124,6 +162,7 @@ export const actions = {
         delete user.recovery_code_user
         delete user.password_user
         if (user.activo_user) {
+          verifyVersions(commit, user, toast, utils)
           commit('setUser', user)
           const arrayName = user.nombre_user.trim().split(' ')
           const firstName =
