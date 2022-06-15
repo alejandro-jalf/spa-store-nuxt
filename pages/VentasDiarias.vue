@@ -48,6 +48,7 @@
       head-variant="dark"
       class="mt-3"
       :class="variantThemeTableBody"
+      foot-clone
     >
       <template #cell(Sucursal)="row">
         {{ row.item.Sucursal.split(' ')[1] }}
@@ -56,13 +57,13 @@
         {{ utils.toDate(row.item.Fecha) }}
       </template>
       <template #cell(VentaTotal)="row">
-        {{ utils.aplyFormatNumeric(utils.roundTo(row.item.VentaTotal)) }}
+        {{ dataFormated(row.item.VentaTotal) }}
       </template>
       <template #cell(CostoTotal)="row">
-        {{ utils.aplyFormatNumeric(utils.roundTo(row.item.CostoTotal)) }}
+        {{ dataFormated(row.item.CostoTotal) }}
       </template>
       <template #cell(UtilidadTotal)="row">
-        {{ utils.aplyFormatNumeric(utils.roundTo(row.item.UtilidadTotal)) }}
+        {{ dataFormated(row.item.UtilidadTotal) }}
       </template>
       <template #cell(UtilidadPorcentual)="row">
         {{
@@ -74,17 +75,47 @@
         }}
       </template>
       <template #cell(TicketsTotales)="row">
-        {{ utils.aplyFormatNumeric(utils.roundTo(row.item.TicketsTotales)) }}
+        {{ dataFormated(row.item.TicketsTotales) }}
       </template>
       <template #cell(MejorTicket)="row">
-        {{ utils.aplyFormatNumeric(utils.roundTo(row.item.MejorTicket)) }}
+        {{ dataFormated(row.item.MejorTicket) }}
       </template>
       <template #cell(PeorTicket)="row">
-        {{ utils.aplyFormatNumeric(utils.roundTo(row.item.PeorTicket)) }}
+        {{ dataFormated(row.item.PeorTicket) }}
       </template>
       <template #cell(TicketPromedio)="row">
-        {{ utils.aplyFormatNumeric(utils.roundTo(row.item.TicketPromedio)) }}
+        {{ dataFormated(row.item.TicketPromedio) }}
       </template>
+      <template #foot(Sucursal)>{{ '' }}</template>
+      <template #foot(Fecha)>{{ 'Totales' }}</template>
+      <template #foot(VentaTotal)>{{
+        dataFormated(totales.VentaTotal)
+      }}</template>
+      <template #foot(CostoTotal)>{{
+        dataFormated(totales.CostoTotal)
+      }}</template>
+      <template #foot(UtilidadTotal)>{{
+        dataFormated(totales.UtilidadTotal)
+      }}</template>
+      <template #foot(UtilidadPorcentual)>{{
+        utils.parseToPorcent(
+          utils.roundTo(totales.UtilidadPorcentual),
+          4,
+          true
+        ) + ' %'
+      }}</template>
+      <template #foot(TicketsTotales)>{{
+        dataFormated(totales.TicketsTotales)
+      }}</template>
+      <template #foot(MejorTicket)>{{
+        dataFormated(totales.MejorTicket)
+      }}</template>
+      <template #foot(PeorTicket)>{{
+        dataFormated(totales.PeorTicket)
+      }}</template>
+      <template #foot(TicketPromedio)>{{
+        dataFormated(totales.TicketPromedio)
+      }}</template>
     </b-table>
     <div v-else>
       <VentasDiariasCard
@@ -152,6 +183,16 @@ export default {
         'PeorTicket',
         'TicketPromedio',
       ],
+      totales: {
+        VentaTotal: 0,
+        CostoTotal: 0,
+        UtilidadTotal: 0,
+        UtilidadPorcentual: 0,
+        TicketsTotales: 0,
+        MejorTicket: 0,
+        PeorTicket: 0,
+        TicketPromedio: 0,
+      },
       utils,
     }
   },
@@ -167,6 +208,38 @@ export default {
     },
     dataRefactor() {
       const datos = [...this.$store.state.ventasdiarias.data.data]
+      datos.forEach((dia, indexDia) => {
+        if (indexDia === 0) {
+          this.totales.VentaTotal = dia.VentaTotal
+          this.totales.CostoTotal = dia.CostoTotal
+          this.totales.UtilidadTotal = dia.UtilidadTotal
+          this.totales.TicketsTotales = dia.TicketsTotales
+          this.totales.TicketPromedio = dia.TicketPromedio
+        } else {
+          this.totales.VentaTotal += dia.VentaTotal
+          this.totales.CostoTotal += dia.CostoTotal
+          this.totales.UtilidadTotal += dia.UtilidadTotal
+          this.totales.TicketsTotales += dia.TicketsTotales
+          this.totales.TicketPromedio += dia.TicketPromedio
+        }
+        if (indexDia === datos.length - 1) {
+          const bestTickets = datos.reduce((acumDia, dia) => {
+            acumDia.push(dia.MejorTicket)
+            return acumDia
+          }, [])
+          const worseTickets = datos.reduce((acumDia, dia) => {
+            acumDia.push(dia.PeorTicket)
+            return acumDia
+          }, [])
+
+          this.totales.UtilidadPorcentual =
+            1 - this.totales.CostoTotal / this.totales.VentaTotal
+          this.totales.MejorTicket = Math.max(...bestTickets)
+          this.totales.PeorTicket = Math.min(...worseTickets)
+          this.totales.TicketPromedio =
+            this.totales.TicketPromedio / datos.length
+        }
+      })
       datos.sort((a, b) =>
         utils
           .toMoment(a.Fecha.replace('z', ''))
@@ -277,6 +350,10 @@ export default {
       this.setShowGraph(true)
       if (!response.success)
         this.showAlertDialog([response.message, 'Error inesperado'])
+    },
+    dataFormated(value) {
+      if (value === null) return '-'
+      return utils.aplyFormatNumeric(utils.roundTo(value))
     },
     setDateInitials() {
       const dayActual = utils.getDateNow()
