@@ -108,6 +108,7 @@
 
 <script>
 import { mapActions, mapMutations } from 'vuex'
+import utils from '../modules/utils'
 
 export default {
   data() {
@@ -171,6 +172,8 @@ export default {
       const response = await this.initSesion([
         this.form.email,
         this.form.password,
+        this.$bvToast,
+        utils,
       ])
       if (response.case)
         this.showAlertDialog([

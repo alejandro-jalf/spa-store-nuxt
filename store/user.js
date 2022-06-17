@@ -67,7 +67,9 @@ export const mutations = {
 const verifyVersions = (commit, newDataUser, toast, utils) => {
   const dataOld = JSON.parse(localStorage.getItem('spastore_user'))
   const newTabs = newDataUser.access_to_user.split(',').filter((newTab) => {
-    const tabsOld = dataOld.access_to_user.split(',')
+    const tabsOld = dataOld.access_to_user
+      ? dataOld.access_to_user.split(',')
+      : newDataUser.access_to_user.split(',')
     const tabFinded = tabsOld.find(
       (oldTab) => oldTab.toLowerCase() === newTab.toLowerCase()
     )
@@ -139,7 +141,7 @@ export const actions = {
   logout({ commit }, [store, route]) {
     sessionStorage.removeItem('spastore_users_list')
     commit('setLogin', false)
-    commit('setUser', {})
+    // commit('setUser', {})
     store.commit('conexiones/setConexiones', {})
     store.commit('existenciasarticulo/setListArticulos', { data: [] })
     store.commit('existenciasarticulo/setArticulosFinded', 0)
