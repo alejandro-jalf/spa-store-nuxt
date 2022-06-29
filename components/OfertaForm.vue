@@ -19,9 +19,6 @@
         </b-input-group>
 
         <b-input-group prepend="Tipo" class="mb-3 p-0 mr-2">
-          <template #prepend>
-            <b-button disabled>Tipo</b-button>
-          </template>
           <b-form-input
             ref="inputoftipo"
             v-model="form_oferta.tipo"
@@ -59,10 +56,14 @@
         </b-input-group>
 
         <b-input-group prepend="Fecha Inicio" class="mb-0 p-0 mr-2">
-          <template #prepend>
-            <b-button disabled>Fecha Inicio</b-button>
-          </template>
-          <b-form-input
+          <b-form-datepicker
+            id="date-init"
+            v-model="form_oferta.fecha_inicio"
+            locale="es-MX"
+            :state="isValidDateInit && dateStartIsGreater"
+            label-no-date-selected="Fecha no seleccionada"
+          ></b-form-datepicker>
+          <!-- <b-form-input
             id="input-of-fechaini"
             v-model="form_oferta.fecha_inicio_complete"
             type="text"
@@ -101,7 +102,7 @@
                 <b-button block variant="primary">Aceptar</b-button>
               </b-dropdown-item-button>
             </b-dropdown>
-          </b-input-group-append>
+          </b-input-group-append> -->
         </b-input-group>
         <message-text
           :message="textMsgStart"
@@ -115,10 +116,14 @@
           class="mb-0 p-0 mr-2"
           description="We will convert your name to lowercase instantly"
         >
-          <template #prepend>
-            <b-button disabled>Fecha Termino</b-button>
-          </template>
-          <b-form-input
+          <b-form-datepicker
+            id="date-end"
+            v-model="form_oferta.fecha_fin"
+            locale="es-MX"
+            :state="isValidDateEnd && dateStartIsGreater"
+            label-no-date-selected="Fecha no seleccionada"
+          ></b-form-datepicker>
+          <!-- <b-form-input
             id="input-of-fechafin"
             v-model="form_oferta.fecha_fin_complete"
             type="text"
@@ -157,11 +162,10 @@
                 <b-button block variant="primary">Aceptar</b-button>
               </b-dropdown-item-button>
             </b-dropdown>
-          </b-input-group-append>
+          </b-input-group-append> -->
         </b-input-group>
         <message-text
           :message="textMsgEnd"
-          :show-message="messageFechaStart.show"
           :color-text="colorMsgEnd"
           class="mb-3"
         ></message-text>
@@ -279,43 +283,95 @@ export default {
       return this.$store.state.ofertas.editandoOferta
     },
     textMsgStart() {
+      const today = utils.getDateNow()
+      const hora = ' 23:59:59.999'
       if (this.form_oferta.fecha_inicio === '') {
-        return 'Elija una fecha'
+        return 'Elija la fecha de inicio'
       }
-      if (!this.state_date_start) {
-        return 'La fecha no puede ser menor al dia actual'
+      const fechaFin = this.form_oferta.fecha_fin
+      const fechaIni = this.form_oferta.fecha_inicio.split('T')
+      const dateEnd = utils.toMoment(fechaFin[0] + hora)
+      const dateInit = utils.toMoment(fechaIni[0] + hora)
+      if (dateInit < today) {
+        return 'La fecha de inicio no puede ser menor al dia actual'
+      }
+      if (dateInit > dateEnd) {
+        return 'La fecha de inicio no puede ser mayor que la fecha de termino'
       }
       return 'Fecha aprobada'
     },
     textMsgEnd() {
+      const today = utils.getDateNow()
+      const hora = ' 23:59:59.999'
+      const fechaFin = this.form_oferta.fecha_fin.split('T')
+      const fechaIni = this.form_oferta.fecha_inicio.split('T')
+      const dateEnd = utils.toMoment(fechaFin[0] + hora)
+      const dateInit = utils.toMoment(fechaIni[0] + hora)
       if (this.form_oferta.fecha_fin === '') {
-        return 'Elija una fecha'
+        return 'Elija la fecha de termino'
       }
-      if (!this.state_date_end) {
-        return 'La fecha de termino no puede ser menor a la fecha inicio'
+      if (dateEnd < today) {
+        return 'La fecha de termino no puede ser menor que la fecha actual'
+      }
+      if (dateInit > dateEnd) {
+        return 'La fecha de termino no puede ser menor que la fecha de inicio'
       }
       return 'Fecha aprobada'
     },
     colorMsgStart() {
+      const today = utils.getDateNow()
+      const hora = ' 23:59:59.999'
+      const fechaFin = this.form_oferta.fecha_fin.split('T')
+      const fechaIni = this.form_oferta.fecha_inicio.split('T')
+      const dateEnd = utils.toMoment(fechaFin[0] + hora)
+      const dateInit = utils.toMoment(fechaIni[0] + hora)
       if (this.form_oferta.fecha_inicio === '') {
         return 'text-secondary'
       }
-      if (this.state_date_start) {
+      if (dateInit >= today && dateInit <= dateEnd) {
         return 'text-success'
       }
       return 'text-danger'
     },
     colorMsgEnd() {
+      const today = utils.getDateNow()
+      const hora = ' 23:59:59.999'
+      const fechaFin = this.form_oferta.fecha_fin.split('T')
+      const fechaIni = this.form_oferta.fecha_inicio.split('T')
+      const dateEnd = utils.toMoment(fechaFin[0] + hora)
+      const dateInit = utils.toMoment(fechaIni[0] + hora)
       if (this.form_oferta.fecha_fin === '') {
         return 'text-secondary'
       }
-      if (this.state_date_end) {
+      if (dateEnd >= today && dateInit <= dateEnd) {
         return 'text-success'
       }
       return 'text-danger'
     },
     suc() {
       return this.$store.state.ofertas.sucursal
+    },
+    isValidDateInit() {
+      const hora = ' 23:59:59.999'
+      const fechaIni = this.form_oferta.fecha_inicio.split('T')
+      const dateInit = utils.toMoment(fechaIni[0] + hora)
+      const today = utils.getDateNow()
+      return dateInit >= today
+    },
+    isValidDateEnd() {
+      const hora = ' 23:59:59.999'
+      const fechaFin = this.form_oferta.fecha_fin.split('T')
+      const dateEnd = utils.toMoment(fechaFin[0] + hora)
+      const today = utils.getDateNow()
+      return dateEnd > today
+    },
+    dateStartIsGreater() {
+      const hora = ' 23:59:59.999'
+      const fechaFin = this.form_oferta.fecha_fin.split('T')
+      const fechaIni = this.form_oferta.fecha_inicio.split('T')
+      const dateEnd = utils.toMoment(fechaFin[0] + hora)
+      const dateInit = utils.toMoment(fechaIni[0] + hora)
+      return dateEnd >= dateInit
     },
   },
   mounted() {
@@ -364,16 +420,19 @@ export default {
         ])
         return false
       }
-      const dateStart = new Date(this.form_oferta.contextIni.activeDate)
-      const today = this.getDateWithTime0()
-      if (dateStart < today) {
+      const today = utils.getDateNow()
+      const hora = ' 23:59:59.999'
+      const fechaFin = this.form_oferta.fecha_fin.split('T')
+      const fechaIni = this.form_oferta.fecha_inicio.split('T')
+      const dateEnd = utils.toMoment(fechaFin[0] + hora)
+      const dateInit = utils.toMoment(fechaIni[0] + hora)
+      if (dateInit < today) {
         this.showAlertDialog([
           'La fecha de inicio no puede ser menor que la fecha actual',
         ])
         return false
       }
-      const dateEnd = new Date(this.form_oferta.contextFin.activeDate)
-      if (dateStart > dateEnd) {
+      if (dateInit > dateEnd) {
         this.showAlertDialog([
           'La fecha de termino no puede ser menor que la fecha de inicio',
         ])
@@ -461,6 +520,7 @@ export default {
       this.setLoading(false)
       this.showAlertDialog([response.message, 'Informacion', 'success'])
       if (response.success) {
+        response.data.newOffer.estatus = 0
         this.setLoading(true)
         await this.changeListaOfertas(sucursal)
         this.setLoading(false)
@@ -485,62 +545,63 @@ export default {
       createMasterOffer: 'ofertas/createMasterOffer',
       changeListaOfertas: 'ofertas/changeListaOfertas',
     }),
-    getDateWithTime0() {
-      const fecha = new Date()
-      let mes = (fecha.getMonth() + 1).toString()
-      mes = mes.length < 2 ? '0' + mes : mes
+    // getDateWithTime0() {
+    //   const fecha = new Date()
+    //   let mes = (fecha.getMonth() + 1).toString()
+    //   mes = mes.length < 2 ? '0' + mes : mes
 
-      let dia = fecha.getDate().toString()
-      dia = dia.length < 2 ? '0' + dia : dia
+    //   let dia = fecha.getDate().toString()
+    //   dia = dia.length < 2 ? '0' + dia : dia
 
-      const newDate =
-        fecha.getFullYear() + '-' + mes + '-' + dia + 'T05:00:00.000Z'
-      return new Date(newDate)
-    },
-    setStateDateStart() {
-      const dateStart = new Date(this.form_oferta.contextIni.activeDate)
-      const today = this.getDateWithTime0()
-      const dateEnd = new Date(this.form_oferta.contextFin.activeDate)
-      if (dateStart === 'Invalid Date') {
-        this.state_date_start = false
-        return true
-      }
-      if (dateStart < today) {
-        this.state_date_start = false
-      } else {
-        this.state_date_start = true
-      }
-      if (dateEnd !== 'Invalid Date' && dateEnd < dateStart) {
-        // eslint-disable-next-line no-console
-        console.log('Entra')
-        this.state_date_end = false
-      } else {
-        this.state_date_end = true
-      }
-    },
-    setStateDateEnd() {
-      const fechaInicio = new Date(this.form_oferta.contextIni.activeDate)
-      const fechaFin = new Date(this.form_oferta.contextFin.activeDate)
-      if (fechaFin === 'Invalid Date') {
-        this.state_date_start = false
-        return true
-      }
-      if (fechaInicio > fechaFin) {
-        this.state_date_end = false
-      } else {
-        this.state_date_end = true
-      }
-    },
-    setContextIni(ctx) {
-      this.form_oferta.contextIni = ctx
-      this.form_oferta.fecha_inicio_complete = ctx.selectedFormatted
-      this.setStateDateStart()
-    },
-    setContextFin(ctx) {
-      this.form_oferta.contextFin = ctx
-      this.form_oferta.fecha_fin_complete = ctx.selectedFormatted
-      this.setStateDateEnd()
-    },
+    //   const newDate =
+    //     fecha.getFullYear() + '-' + mes + '-' + dia + 'T05:00:00.000Z'
+    //   return new Date(newDate)
+    // },
+    // setStateDateStart() {
+    //   const dateStart = new Date(this.form_oferta.contextIni.activeDate)
+    //   const today = this.getDateWithTime0()
+    //   const dateEnd = new Date(this.form_oferta.contextFin.activeDate)
+    //   console.log(dateStart, today, dateEnd)
+    //   if (dateStart === 'Invalid Date') {
+    //     this.state_date_start = false
+    //     return true
+    //   }
+    //   if (dateStart < today) {
+    //     this.state_date_start = false
+    //   } else {
+    //     this.state_date_start = true
+    //   }
+    //   if (dateEnd !== 'Invalid Date' && dateEnd < dateStart) {
+    //     // eslint-disable-next-line no-console
+    //     console.log('Entra')
+    //     this.state_date_end = false
+    //   } else {
+    //     this.state_date_end = true
+    //   }
+    // },
+    // setStateDateEnd() {
+    //   const fechaInicio = new Date(this.form_oferta.contextIni.activeDate)
+    //   const fechaFin = new Date(this.form_oferta.contextFin.activeDate)
+    //   if (fechaFin === 'Invalid Date') {
+    //     this.state_date_start = false
+    //     return true
+    //   }
+    //   if (fechaInicio > fechaFin) {
+    //     this.state_date_end = false
+    //   } else {
+    //     this.state_date_end = true
+    //   }
+    // },
+    // setContextIni(ctx) {
+    //   this.form_oferta.contextIni = ctx
+    //   this.form_oferta.fecha_inicio_complete = ctx.selectedFormatted
+    //   this.setStateDateStart()
+    // },
+    // setContextFin(ctx) {
+    //   this.form_oferta.contextFin = ctx
+    //   this.form_oferta.fecha_fin_complete = ctx.selectedFormatted
+    //   this.setStateDateEnd()
+    // },
     clickInputTipo() {
       if (this.disabled_tipo) {
         if (!this.form_oferta.isVisibleTipo) {
