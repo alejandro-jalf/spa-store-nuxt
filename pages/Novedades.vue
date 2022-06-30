@@ -29,7 +29,7 @@
         Por lo general este boton esta siempre cerca de donde esta tu nombre
       </b-alert>
     </b-card>
-    <div class="h4 mt-5 mb-3 text-info">Versiones anteriores</div>
+    <div class="h4 mt-5 mb-3 text-info">Versiones anteriores.</div>
     <b-table
       hover
       head-variant="dark"
