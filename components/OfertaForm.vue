@@ -285,67 +285,77 @@ export default {
     textMsgStart() {
       const today = utils.getDateNow()
       const hora = ' 23:59:59.999'
-      if (this.form_oferta.fecha_inicio === '') {
+      if (
+        !this.form_oferta.fecha_inicio ||
+        this.form_oferta.fecha_inicio === null ||
+        this.form_oferta.fecha_inicio === ''
+      )
         return 'Elija la fecha de inicio'
-      }
       const fechaFin = this.form_oferta.fecha_fin
       const fechaIni = this.form_oferta.fecha_inicio.split('T')
       const dateEnd = utils.toMoment(fechaFin[0] + hora)
       const dateInit = utils.toMoment(fechaIni[0] + hora)
-      if (dateInit < today) {
+      if (dateInit < today)
         return 'La fecha de inicio no puede ser menor al dia actual'
-      }
-      if (dateInit > dateEnd) {
+      if (dateInit > dateEnd)
         return 'La fecha de inicio no puede ser mayor que la fecha de termino'
-      }
       return 'Fecha aprobada'
     },
     textMsgEnd() {
+      if (
+        !this.form_oferta.fecha_fin ||
+        this.form_oferta.fecha_fin === null ||
+        this.form_oferta.fecha_fin === ''
+      )
+        return 'Elija la fecha de termino'
       const today = utils.getDateNow()
       const hora = ' 23:59:59.999'
       const fechaFin = this.form_oferta.fecha_fin.split('T')
-      const fechaIni = this.form_oferta.fecha_inicio.split('T')
+      const fechaIni = this.form_oferta.fecha_inicio
+        ? this.form_oferta.fecha_inicio.split('T')
+        : '2000-01-01'
       const dateEnd = utils.toMoment(fechaFin[0] + hora)
       const dateInit = utils.toMoment(fechaIni[0] + hora)
-      if (this.form_oferta.fecha_fin === '') {
-        return 'Elija la fecha de termino'
-      }
-      if (dateEnd < today) {
+      if (dateEnd < today)
         return 'La fecha de termino no puede ser menor que la fecha actual'
-      }
-      if (dateInit > dateEnd) {
+      if (dateInit > dateEnd)
         return 'La fecha de termino no puede ser menor que la fecha de inicio'
-      }
       return 'Fecha aprobada'
     },
     colorMsgStart() {
+      if (
+        !this.form_oferta.fecha_inicio ||
+        this.form_oferta.fecha_inicio === null ||
+        this.form_oferta.fecha_inicio === ''
+      )
+        return 'text-secondary'
       const today = utils.getDateNow()
       const hora = ' 23:59:59.999'
-      const fechaFin = this.form_oferta.fecha_fin.split('T')
+      const fechaFin = this.form_oferta.fecha_fin
+        ? this.form_oferta.fecha_fin.split('T')
+        : '2000-01-01'
       const fechaIni = this.form_oferta.fecha_inicio.split('T')
       const dateEnd = utils.toMoment(fechaFin[0] + hora)
       const dateInit = utils.toMoment(fechaIni[0] + hora)
-      if (this.form_oferta.fecha_inicio === '') {
-        return 'text-secondary'
-      }
-      if (dateInit >= today && dateInit <= dateEnd) {
-        return 'text-success'
-      }
+      if (dateInit >= today && dateInit <= dateEnd) return 'text-success'
       return 'text-danger'
     },
     colorMsgEnd() {
+      if (
+        !this.form_oferta.fecha_fin ||
+        this.form_oferta.fecha_fin === null ||
+        this.form_oferta.fecha_fin === ''
+      )
+        return 'text-secondary'
       const today = utils.getDateNow()
       const hora = ' 23:59:59.999'
       const fechaFin = this.form_oferta.fecha_fin.split('T')
-      const fechaIni = this.form_oferta.fecha_inicio.split('T')
+      const fechaIni = this.form_oferta.fecha_inicio
+        ? this.form_oferta.fecha_inicio.split('T')
+        : '2000-01-01'
       const dateEnd = utils.toMoment(fechaFin[0] + hora)
       const dateInit = utils.toMoment(fechaIni[0] + hora)
-      if (this.form_oferta.fecha_fin === '') {
-        return 'text-secondary'
-      }
-      if (dateEnd >= today && dateInit <= dateEnd) {
-        return 'text-success'
-      }
+      if (dateEnd >= today && dateInit <= dateEnd) return 'text-success'
       return 'text-danger'
     },
     suc() {
@@ -353,6 +363,11 @@ export default {
     },
     isValidDateInit() {
       const hora = ' 23:59:59.999'
+      if (
+        !this.form_oferta.fecha_inicio ||
+        this.form_oferta.fecha_inicio.trim() === ''
+      )
+        return false
       const fechaIni = this.form_oferta.fecha_inicio.split('T')
       const dateInit = utils.toMoment(fechaIni[0] + hora)
       const today = utils.getDateNow()
