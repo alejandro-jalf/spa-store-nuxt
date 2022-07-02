@@ -174,6 +174,15 @@ export const actions = {
           const nameUser = firstName + ' ' + user.apellido_p_user
           commit('setNameUser', nameUser)
         } else dispatch('logout', [store, route])
+      } else if (
+        response.data.message ===
+        `El usuario ${store.state.user.user.correo_user} no esta registrado`
+      ) {
+        store.commit('general/showAlertDialog', [
+          `El usuario ${store.state.user.user.correo_user}, esta dado de baja temporalmente, comunicate con el administrador de sistemas`,
+          'Advertencia',
+        ])
+        dispatch('logout', [store, route])
       }
 
       return response.data
