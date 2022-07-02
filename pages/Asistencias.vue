@@ -5,6 +5,7 @@
         <b-form-select
           v-model="selected"
           :options="options"
+          :disabled="!accessChangeSucursal"
           @change="changeSuc"
         ></b-form-select>
       </b-input-group>
@@ -232,6 +233,9 @@ export default {
     }
   },
   computed: {
+    accessChangeSucursal() {
+      return this.$store.state.user.user.tipo_user === 'manager'
+    },
     logoByCompany() {
       const sucSplited = this.dataUser.sucursal_user
         ? this.dataUser.sucursal_user.split(' ')
@@ -333,6 +337,7 @@ export default {
     this.selected = sucSel
     this.setDateInitials()
     this.setDataForCompany()
+    this.setSucursalForUser()
 
     if (tableAsistencias) {
       tableAsistencias.addEventListener('touchstart', (evt) => {
@@ -356,6 +361,33 @@ export default {
     ...mapActions({
       changeData: 'asistencia/changeData',
     }),
+    setSucursalForUser() {
+      if (!this.accessChangeSucursal) {
+        const sucursalUser = this.getOptionBySucursal(
+          this.$store.state.user.user.sucursal_user
+        )
+        this.setSucursal(sucursalUser)
+      }
+    },
+    getOptionBySucursal(sucursal = 'Zaragoza') {
+      sucursal = sucursal.trim().toUpperCase()
+      if (sucursal === 'ZARAGOZA') return 'SPAZARAGOZA'
+      if (sucursal === 'OFICINA') return 'SPAOFICINA'
+      if (sucursal === 'VICTORIA') return 'SPAVICTORIA'
+      if (sucursal === 'ENRIQUEZ') return 'SPAENRIQUEZ'
+      if (sucursal === 'TORTILLERIAF') return 'SPATORTILLERIAF'
+      if (sucursal === 'OLUTA') return 'SPAOLUTA'
+      if (sucursal === 'SAYULA') return 'SPASAYULA'
+      if (sucursal === 'SAYULAT') return 'SPASAYULAT'
+      if (sucursal === 'JALTIPAN') return 'SPAJALTIPAN'
+      if (sucursal === 'BODEGA') return 'SPABODEGA'
+      if (sucursal === 'HUAMUCHL') return 'HUAMUCHL'
+      if (sucursal === 'CAASA SUPER') return 'AUTOSERVICIO'
+      if (sucursal === 'CAASA MAYOREO') return 'MEDIOMAYOREO'
+      if (sucursal === 'CAASA OFICINA') return 'OFICINA'
+      if (sucursal === 'CAASA BODEGA') return 'BODEGA'
+      return 'SPAZARAGOZA'
+    },
     setDataForCompany() {
       const sucSplited = this.dataUser.sucursal_user.split(' ')
       this.company =
