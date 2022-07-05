@@ -21,7 +21,7 @@
             id="codigo-articulo"
             ref="articulo"
             v-model="formArticulo.articulo"
-            :class="backgroundInputTheme"
+            :class="backgroundInputTheme + { 'text-dark': !editableArticulo }"
             :readonly="!editableArticulo"
             placeholder="Codigo de articulo"
             @keyup.enter="getDetailsArticleByArticle"
@@ -40,7 +40,7 @@
             id="nombre-articulo"
             v-model="formArticulo.nombre"
             placeholder="*Nombre articulo*"
-            :class="backgroundInputTheme"
+            :class="backgroundInputTheme + { 'text-dark': !editableArticulo }"
             :readonly="!editableArticulo"
             @keyup.enter="getArticleByName"
             @keyup.esc="clearFormArticulo"
@@ -237,11 +237,23 @@
           </b-toast>
         </span>
         <span v-else-if="statusActual != 0">
-          <b-button v-if="statusActual === 2" variant="success" class="mb-2">
-            <b-icon icon="arrow-up-right-circle-fill" />
+          <b-button
+            v-if="visibleButton($store.state.ofertas.ofertaActual, 'validate')"
+            variant="success"
+            class="mb-2"
+            @click="
+              validateArticlesForProgram($store.state.ofertas.ofertaActual)
+            "
+          >
+            <b-icon icon="info-circle-fill" />
             Validar Articulos
           </b-button>
-          <b-button variant="primary" class="mb-2" @click="changeStatus">
+          <b-button
+            v-if="visibleButton($store.state.ofertas.ofertaActual, 'action')"
+            variant="primary"
+            class="mb-2"
+            @click="changeStatus"
+          >
             <b-icon icon="arrow-up-right-circle-fill" />
             {{ messageButton }}
           </b-button>
@@ -297,6 +309,14 @@ export default {
   },
   props: {
     prepareChangeStatusOffer: {
+      type: Function,
+      required: true,
+    },
+    visibleButton: {
+      type: Function,
+      required: true,
+    },
+    validateArticlesForProgram: {
       type: Function,
       required: true,
     },
@@ -387,9 +407,11 @@ export default {
       return this.$store.state.general.themesComponents.themeCard2Body
     },
     ofertaEditable() {
+      const tipoUser = this.$store.state.user.user.tipo_user
       return (
         this.$store.state.ofertas.ofertaActual.estatus === 0 ||
-        this.$store.state.ofertas.ofertaActual.estatus === 2
+        (this.$store.state.ofertas.ofertaActual.estatus === 2 &&
+          tipoUser === 'manager')
       )
     },
     status() {
@@ -449,11 +471,8 @@ export default {
       this.setProgramandoOferta(false)
       this.setProgramandoLista(false)
     },
-    async changeStatus() {
-      const result = await this.prepareChangeStatusOffer(
-        this.$store.state.ofertas.ofertaActual
-      )
-      if (result) this.cerrarListaArticulos()
+    changeStatus() {
+      this.prepareChangeStatusOffer(this.$store.state.ofertas.ofertaActual)
     },
     enterSelect(evt) {
       if (evt.keyCode === 65) {
@@ -515,6 +534,7 @@ export default {
       }
       this.editableArticulo = true
       this.editingArticle = false
+      this.$refs.articulo.focus()
     },
     validaArticulo() {
       // eslint-disable-next-line no-console
@@ -538,7 +558,7 @@ export default {
         return false
       }
       if (!this.status_utulidad) {
-        this.showAlertDialog(['La utilidad no puede ser menor que el 8%'])
+        this.showAlertDialog(['La utilidad no puede ser menor que el 10%'])
         return false
       }
       return true
@@ -578,9 +598,8 @@ export default {
           this.setLoading(false)
           this.clearFormArticulo()
           this.editableArticulo = true
-        } else {
-          this.showAlertDialog([response.data.message])
-        }
+          this.$refs.articulo.focus()
+        } else this.showAlertDialog([response.data.message])
       } catch (error) {
         // eslint-disable-next-line no-console
         console.log(error, error.response)
@@ -706,17 +725,14 @@ export default {
         utils.roundTo(1 - this.formArticulo.costo / this.formArticulo.oferta, 4)
       )
       this.formArticulo.utilidad = `${porcentaje}%`
-      if (porcentaje < 8) {
+      if (porcentaje < 10) {
         this.status_utulidad = false
       } else {
         this.status_utulidad = true
       }
     },
     getCalculaUtilidad(costo, precio) {
-      const porcentaje = utils.parseToPorcent(
-        utils.roundTo(1 - costo / precio, 4)
-      )
-      return `${porcentaje}%`
+      return utils.roundTo((1 - costo / precio) * 100, 4) + '%'
     },
     editarDatosOferta() {
       this.setEditandoOferta(true)
@@ -863,9 +879,7 @@ export default {
       this.formArticulo.costo = utils.roundTo(articulofinded.costo)
       this.formArticulo.precio = utils.roundTo(articulofinded.precio)
       const operacion = 1 - articulofinded.costo / articulofinded.precio
-      const rounded = utils.roundTo(operacion, 4)
-      const porcentaje = utils.parseToPorcent(rounded)
-      this.formArticulo.margen = `${porcentaje}%`
+      this.formArticulo.margen = `${utils.roundTo(operacion * 100, 4)}%`
       this.$refs.oferta.focus()
     },
     async getDetailsArticleByArticle() {

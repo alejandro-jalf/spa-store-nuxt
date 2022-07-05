@@ -54,6 +54,8 @@
       v-if="programandoListaOferta"
       class="pb-2 mb-3"
       :prepare-change-status-offer="prepareChangeStatusOffer"
+      :visible-button="visibleButton"
+      :validate-articles-for-program="validateArticlesForProgram"
     ></oferta-lista>
     <div v-if="viewCrearOferta" class="container-table-ofe">
       <b-table
@@ -75,6 +77,15 @@
             @click="viewDetails(row.item.uuid, row.item)"
           >
             {{ detailsMessage(row.item.estatus) }}
+          </b-button>
+          <b-button
+            v-if="visibleButton(row.item, 'validate')"
+            class="mr-2 mt-2"
+            size="sm"
+            variant="success"
+            @click="validateArticlesForProgram(row.item)"
+          >
+            Validar
           </b-button>
           <b-button
             v-if="visibleButton(row.item, 'action')"
@@ -270,7 +281,8 @@ export default {
           else if (typeButton === 'views') return true
           else return false
         case 2:
-          if (typeButton === 'action') return this.tipoUser === 'manager'
+          if (typeButton === 'action' || typeButton === 'validate')
+            return this.tipoUser === 'manager'
           else if (typeButton === 'views') return true
           else return false
         case 3:
@@ -290,7 +302,44 @@ export default {
       return suc ? suc.text : sucursal
     },
     detailsMessage(status) {
-      return status === 0 || status === 2 ? 'Editar' : 'Detalles'
+      if (status === 0 || (status === 2 && this.tipoUser === 'manager'))
+        return 'Editar'
+      return 'Detalles'
+    },
+    async validateArticlesForProgram(dataOffer) {
+      // eslint-disable-next-line no-console
+      console.log('Datos: ', dataOffer)
+      try {
+        const urlBase = process.env.spastore_url_backend
+        this.setLoading(true)
+        const response = await this.$axios({
+          url:
+            urlBase +
+            'api/v1/ofertas/' +
+            dataOffer.sucursal +
+            '/articulos/validos/' +
+            dataOffer.uuid,
+          method: 'get',
+        })
+        this.setLoading(false)
+        // eslint-disable-next-line no-console
+        console.log(response.data)
+
+        if (response.data.success)
+          this.showAlertDialog([
+            response.data.message,
+            'Validacion correcta',
+            'success',
+          ])
+        else this.showAlertDialog([response.data.message])
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.log(error, error.response)
+        this.setLoading(false)
+        if (error.response) this.showAlertDialog([error.response.data.message])
+        else this.showAlertDialog(['Error con el servidor'])
+        return false
+      }
     },
     prepareCancelOffer(dataOffer) {
       this.showAlertDialogOption([
@@ -353,6 +402,8 @@ export default {
         if (response.data.success) {
           this.setLoading(true)
           await this.changeListaOfertas(dataOffer.sucursal)
+          this.setProgramandoOferta(false)
+          this.setProgramandoLista(false)
           this.setLoading(false)
           return true
         } else {
