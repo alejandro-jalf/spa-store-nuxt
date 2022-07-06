@@ -454,7 +454,7 @@ export default {
         fecha = this.$store.state.ofertas.ofertaActual.fechaModificado
       else fecha = articles[0].fechaModificado
       console.log(fecha)
-      const date = utils.toMoment(fecha.replaceAll('T', ' ').replace('Z', ''))
+      const date = utils.toMoment(fecha.replace('T', ' ').replace('Z', ''))
       return date.format('DD/MM/YYYY hh:mm:ss a')
     },
     uuid() {
