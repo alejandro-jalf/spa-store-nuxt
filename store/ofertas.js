@@ -1,5 +1,7 @@
 if (!localStorage.getItem('spastore_ofertas_sucursal'))
   localStorage.setItem('spastore_ofertas_sucursal', 'ZR')
+if (!localStorage.getItem('spastore_ofertas_show_details'))
+  localStorage.setItem('spastore_ofertas_show_details', false)
 
 export const state = () => ({
   programandoOferta: false,
@@ -23,6 +25,15 @@ export const state = () => ({
   listaArticulos: localStorage.getItem('spastore_ofertas_articulos')
     ? JSON.parse(localStorage.getItem('spastore_ofertas_articulos'))
     : { data: [] },
+  detallesValidacion: {
+    show:
+      typeof localStorage.getItem('spastore_ofertas_show_details') === 'boolean'
+        ? localStorage.getItem('spastore_ofertas_show_details')
+        : localStorage.getItem('spastore_ofertas_show_details') === 'true',
+    articles: localStorage.getItem('spastore_ofertas_articles_details')
+      ? JSON.parse(localStorage.getItem('spastore_ofertas_articles_details'))
+      : { data: [] },
+  },
 })
 
 export const mutations = {
@@ -45,6 +56,17 @@ export const mutations = {
   setSucursal(state, sucursal) {
     state.sucursal = sucursal
     localStorage.setItem('spastore_ofertas_sucursal', sucursal)
+  },
+  setShowDetails(state, show) {
+    state.detallesValidacion.show = show
+    localStorage.setItem('spastore_ofertas_show_details', show)
+  },
+  setArticlesDetails(state, articles) {
+    state.detallesValidacion.articles = articles
+    localStorage.setItem(
+      'spastore_ofertas_articles_details',
+      JSON.stringify(articles)
+    )
   },
 
   // old

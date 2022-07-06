@@ -159,16 +159,19 @@
         </template>
       </b-table>
     </div>
+    <OfertaArticulosValidados v-if="showDetails" />
     <float-button
       v-if="tipoUser !== 'manager'"
       :click-float="reloadListaOfertas"
     ></float-button>
   </div>
 </template>
+
 <script>
 import { mapMutations, mapActions } from 'vuex'
 import OfertaForm from '../components/OfertaForm'
 import OfertaLista from '../components/OfertaLista'
+import OfertaArticulosValidados from '../components/OfertaArticulosValidados'
 import FloatButton from '../components/FloatButton'
 import utils from '../modules/utils'
 
@@ -177,6 +180,7 @@ export default {
     OfertaForm,
     OfertaLista,
     FloatButton,
+    OfertaArticulosValidados,
   },
   data() {
     return {
@@ -209,6 +213,9 @@ export default {
     }
   },
   computed: {
+    showDetails() {
+      return this.$store.state.ofertas.detallesValidacion.show
+    },
     tipoUser() {
       return this.$store.state.user.user.tipo_user
     },
@@ -325,13 +332,12 @@ export default {
         // eslint-disable-next-line no-console
         console.log(response.data)
 
-        if (response.data.success)
-          this.showAlertDialog([
-            response.data.message,
-            'Validacion correcta',
-            'success',
-          ])
-        else this.showAlertDialog([response.data.message])
+        if (response.data.success) this.setArticlesDetails({ data: [] })
+        else {
+          this.showAlertDialog([response.data.message])
+          this.setArticlesDetails({ data: response.data.error })
+        }
+        this.setShowDetails(true)
       } catch (error) {
         // eslint-disable-next-line no-console
         console.log(error, error.response)
@@ -407,6 +413,13 @@ export default {
           this.setLoading(false)
           return true
         } else {
+          if (
+            response.data.message ===
+            'Hay articulos con detalles, Verifica los detalles para poder programar las ofertas'
+          ) {
+            this.setArticlesDetails({ data: response.data.error })
+            this.setShowDetails(true)
+          }
           this.showAlertDialog([response.data.message])
           return false
         }
@@ -523,6 +536,8 @@ export default {
       cleanOfertaActual: 'ofertas/cleanOfertaActual',
       openOferta: 'ofertas/openOferta',
       setEditable: 'ofertas/setEditable',
+      setArticlesDetails: 'ofertas/setArticlesDetails',
+      setShowDetails: 'ofertas/setShowDetails',
       setProgramandoLista: 'ofertas/setProgramandoLista',
       setLoading: 'general/setLoading', // nuevas
       showAlertDialog: 'general/showAlertDialog',

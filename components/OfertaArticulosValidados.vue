@@ -13,10 +13,37 @@
           ref="tableSelectProduct"
           head-variant="dark"
           hover
+          striped
           :fields="fields"
           :items="articles"
           responsive="sm"
         >
+          <template #cell(UtilidadOferta)="row">
+            {{ porcentage(row.item.UtilidadOferta) }}
+          </template>
+          <template #cell(Precio1)="row">
+            {{ utils.aplyFormatNumeric(utils.roundTo(row.item.Precio1IVAUV)) }}
+          </template>
+          <template #cell(Oferta)="row">
+            {{ utils.aplyFormatNumeric(utils.roundTo(row.item.Oferta)) }}
+          </template>
+          <template #cell(UltimoCosto)="row">
+            {{ utils.aplyFormatNumeric(utils.roundTo(row.item.UltimoCosto)) }}
+          </template>
+          <template #cell(Detalles)="row">
+            <div class="font-weight-bold">
+              {{ getDetailsForArticle(row.item) }}
+            </div>
+            <div class="ml-3">
+              {{ getDetailsOfUtilitie(row.item.OfertaValida) }}
+            </div>
+            <div class="ml-3">
+              {{ getDetailsOfCaducidad(row.item.OfertaCaduca) }}
+            </div>
+            <div class="ml-3">
+              {{ getDetailsOfVigencia(row.item) }}
+            </div>
+          </template>
         </b-table>
       </b-card-text>
       <b-button variant="primary" class="mt-2" @click="setShowDetails(false)">
@@ -28,6 +55,7 @@
 
 <script>
 import { mapMutations } from 'vuex'
+import utils from '../modules/utils'
 
 export default {
   data() {
@@ -35,14 +63,13 @@ export default {
       fields: [
         'Articulo',
         'Nombre',
-        'Precio1IVAUV',
+        'Precio1',
         'Oferta',
         'UltimoCosto',
         'UtilidadOferta',
-        'OfertaValida',
-        'OfertaCaduca',
-        'OfertaFechaVigente',
+        'Detalles',
       ],
+      utils,
     }
   },
   computed: {
@@ -70,6 +97,33 @@ export default {
           this.formModalProductos.position
         )
       }
+    },
+    porcentage(value) {
+      return utils.roundTo(value, 4, true) * 100 + '%'
+    },
+    getDetailsForArticle(article) {
+      if (
+        article.OfertaValida === 'NO' ||
+        article.OfertaCaduca === 'NO' ||
+        article.OfertaFechaVigente === 'SI'
+      )
+        return 'No se puede programar la oferta para este articulo por los siguientes detalles:'
+      return ''
+    },
+    getDetailsOfUtilitie(ofertaValida) {
+      if (ofertaValida === 'NO')
+        return `- La utilidad de oferta esta por debajo del 10% que se pide como minimo.`
+      return ''
+    },
+    getDetailsOfCaducidad(ofertaCaduca) {
+      if (ofertaCaduca === 'NO')
+        return `- Se encontro una oferta del mismo articulo que es por tiempo indefinido(No caduca).`
+      return ''
+    },
+    getDetailsOfVigencia(article) {
+      if (article.OfertaFechaVigente === 'SI' && article.OfertaCaduca === 'SI')
+        return `- Se encontro una oferta del mismo articulo y que esta dentro de las mismas fechas.`
+      return ''
     },
     upSelect() {
       if (this.formModalProductos.position > 0) {
