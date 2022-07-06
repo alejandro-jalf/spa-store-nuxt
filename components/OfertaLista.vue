@@ -5,7 +5,15 @@
       header-bg-variant="primary"
       header-text-variant="white"
       :header="'Oferta abierta: ' + uuid"
-      :title="tipoOferta + ' Del ' + fechaInicio + ' al ' + fechaFin"
+      :title="
+        tipoOferta +
+        ' Del ' +
+        fechaInicio +
+        ' al ' +
+        fechaFin +
+        ', Suc ' +
+        sucursal()
+      "
       :class="variantTheme"
     >
       <b-alert v-if="!ofertaEditable" variant="warning">
@@ -141,6 +149,9 @@
       </div>
       <b-card-text class="font-weight-bold mb-1">
         Articulos incluidos
+        <b-badge pill variant="info" class="chip">
+          Total: {{ cantidadArticulos }}
+        </b-badge>
       </b-card-text>
       <divider class="mb-2"></divider>
       <div>
@@ -259,6 +270,10 @@
           </b-button>
         </span>
       </div>
+      <b-card-text class="font-weight-bold mb-1">
+        Ultima Actualizacion:
+        {{ ultimaActualizacion }}
+      </b-card-text>
     </b-card>
     <OfertaListProducts
       :form-modal-productos="formModalProductos"
@@ -429,6 +444,19 @@ export default {
     listaProductos() {
       return this.$store.state.ofertas.listaArticulos.data
     },
+    cantidadArticulos() {
+      return this.$store.state.ofertas.listaArticulos.data.length
+    },
+    ultimaActualizacion() {
+      const articles = this.$store.state.ofertas.listaArticulos.data
+      let fecha = null
+      if (articles.length === 0)
+        fecha = this.$store.state.ofertas.ofertaActual.fechaModificado
+      else fecha = articles[0].fechaModificado
+      console.log(fecha)
+      const date = utils.toMoment(fecha.replaceAll('T', ' ').replace('Z', ''))
+      return date.format('DD/MM/YYYY hh:mm:ss a')
+    },
     uuid() {
       return this.$store.state.ofertas.ofertaActual.uuid
     },
@@ -465,6 +493,16 @@ export default {
       changeListaArticulos: 'ofertas/changeListaArticulos', // nuevas
       changeListaOfertas: 'ofertas/changeListaOfertas', // nuevas
     }),
+    sucursal() {
+      const suc = this.$store.state.ofertas.ofertaActual.sucursal
+      if (suc.toUpperCase() === 'ZR') return 'SPAZARAGOZA'
+      if (suc.toUpperCase() === 'VC') return 'SPAVICTORIA'
+      if (suc.toUpperCase() === 'ER') return 'SPAENRIQUEZ'
+      if (suc.toUpperCase() === 'OU') return 'SPAOLUTA'
+      if (suc.toUpperCase() === 'SY') return 'SPASAYULA'
+      if (suc.toUpperCase() === 'JL') return 'SPAJALTIPAN'
+      return 'SPA'
+    },
     cerrarListaArticulos() {
       // eslint-disable-next-line no-console
       console.log('cierra')

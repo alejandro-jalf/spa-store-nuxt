@@ -206,9 +206,10 @@ export default {
         { value: 'ALL', text: 'TODAS' },
         { value: 'ZR', text: 'SPAZARAGOZA' },
         { value: 'VC', text: 'SPAVICTORIA' },
+        { value: 'ER', text: 'SPAENRIQUEZ' },
         { value: 'OU', text: 'SPAOLUTA' },
+        { value: 'SY', text: 'SPASAYULA' },
         { value: 'JL', text: 'SPAJALTIPAN' },
-        { value: 'BO', text: 'SPABODEGA' },
       ],
     }
   },
@@ -561,11 +562,13 @@ export default {
       const ofertaAct = { ...oferta }
       // falta ajustar
       this.setLoading(true)
-      await this.changeListaArticulos(uuid)
+      const response = await this.changeListaArticulos(uuid)
+      if (response.success) {
+        this.openOferta(ofertaAct)
+        this.setProgramandoLista(true)
+        this.setEditable(false)
+      } else this.showAlertDialog([response.message])
       this.setLoading(false)
-      this.openOferta(ofertaAct)
-      this.setProgramandoLista(true)
-      this.setEditable(false)
     },
     async reloadListaOfertas() {
       const sucursal = this.$store.state.ofertas.sucursal
