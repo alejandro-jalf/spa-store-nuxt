@@ -183,9 +183,10 @@ export default {
       options: [
         { value: 'ZR', text: 'SPAZARAGOZA' },
         { value: 'VC', text: 'SPAVICTORIA' },
+        { value: 'ER', text: 'SPAENRIQUEZ' },
         { value: 'OU', text: 'SPAOLUTA' },
+        { value: 'SY', text: 'SPASAYULA' },
         { value: 'JL', text: 'SPAJALTIPAN' },
-        { value: 'BO', text: 'SPABODEGA' },
       ],
     }
   },
