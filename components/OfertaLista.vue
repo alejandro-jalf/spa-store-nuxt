@@ -451,9 +451,10 @@ export default {
       const articles = this.$store.state.ofertas.listaArticulos.data
       let fecha = null
       if (articles.length === 0)
-        fecha = this.$store.state.ofertas.ofertaActual.fechaModificado
+        fecha =
+          this.$store.state.ofertas.ofertaActual.fechaModificado ||
+          utils.getDateNow().format('YYYY-MM-DD HH:mm:ss.SSS')
       else fecha = articles[0].fechaModificado
-      console.log(fecha)
       const date = utils.toMoment(fecha.replace('T', ' ').replace('Z', ''))
       return date.format('DD/MM/YYYY hh:mm:ss a')
     },
