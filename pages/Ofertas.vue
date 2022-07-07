@@ -68,6 +68,16 @@
         :fields="fields"
         :class="variantThemeTableBody"
       >
+        <template #cell(Articulos)="row">
+          <b-badge
+            pill
+            variant="info"
+            class="py-1 px-2"
+            style="font-size: 14px"
+          >
+            {{ row.item.Articulos }}
+          </b-badge>
+        </template>
         <template #cell(Acciones)="row">
           <b-button
             v-if="visibleButton(row.item, 'views')"
@@ -76,6 +86,7 @@
             class="mr-2 mt-2"
             @click="viewDetails(row.item.uuid, row.item)"
           >
+            <b-icon :icon="getIconDetail(row.item.estatus)" />
             {{ detailsMessage(row.item.estatus) }}
           </b-button>
           <b-button
@@ -85,6 +96,7 @@
             variant="success"
             @click="validateArticlesForProgram(row.item)"
           >
+            <b-icon icon="info-circle-fill" />
             Validar
           </b-button>
           <b-button
@@ -94,6 +106,7 @@
             variant="success"
             @click="verifyArticlesOffered(row.item)"
           >
+            <b-icon icon="binoculars-fill" />
             Verificar
           </b-button>
           <b-button
@@ -103,6 +116,7 @@
             :variant="variantStatus(row.item.estatus)"
             @click="prepareChangeStatusOffer(row.item)"
           >
+            <b-icon icon="folder-symlink-fill" />
             {{ messageButton(row.item.estatus) }}
           </b-button>
           <b-button
@@ -112,6 +126,7 @@
             variant="danger"
             @click="prepareCancelOffer(row.item)"
           >
+            <b-icon icon="x-circle-fill" />
             Cancelar
           </b-button>
           <b-button
@@ -121,6 +136,7 @@
             variant="danger"
             @click="prepareDeleteOffer(row.item)"
           >
+            <b-icon icon="trash-fill" />
             Eliminar
           </b-button>
           <b-button
@@ -205,6 +221,7 @@ export default {
       utils,
       fields: [
         'sucursal',
+        'Articulos',
         'estatus',
         'tipoOferta',
         'fechaInico',
@@ -334,6 +351,11 @@ export default {
       if (status === 0 || (status === 2 && this.tipoUser === 'manager'))
         return 'Editar'
       return 'Detalles'
+    },
+    getIconDetail(status) {
+      if (status === 0 || (status === 2 && this.tipoUser === 'manager'))
+        return 'pencil-fill'
+      return 'folder-fill'
     },
     async validateArticlesForProgram(dataOffer) {
       // eslint-disable-next-line no-console

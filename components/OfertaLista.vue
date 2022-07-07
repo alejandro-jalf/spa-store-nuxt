@@ -265,7 +265,7 @@
             class="mb-2"
             @click="changeStatus"
           >
-            <b-icon icon="arrow-up-right-circle-fill" />
+            <b-icon icon="folder-symlink-fill" />
             {{ messageButton }}
           </b-button>
         </span>
