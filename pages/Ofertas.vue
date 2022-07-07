@@ -408,7 +408,7 @@ export default {
 
         if (response.data.success) {
           this.setLoading(true)
-          await this.changeListaOfertas(dataOffer.sucursal)
+          await this.changeListaOfertas(this.suc)
           this.setProgramandoOferta(false)
           this.setProgramandoLista(false)
           this.setLoading(false)
@@ -465,7 +465,7 @@ export default {
 
         if (response.data.success) {
           this.setLoading(true)
-          await this.changeListaOfertas(dataOffer.sucursal)
+          await this.changeListaOfertas(this.suc)
           this.setLoading(false)
         } else {
           this.showAlertDialog([response.data.message])
