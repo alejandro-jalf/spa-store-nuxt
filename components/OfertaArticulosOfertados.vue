@@ -23,7 +23,7 @@
             {{ utils.aplyFormatNumeric(utils.roundTo(row.item.PrecioActual)) }}
           </template>
           <template #cell(Oferta)="row">
-            {{ utils.aplyFormatNumeric(utils.roundTo(row.item.Oferta)) }}
+            {{ utils.aplyFormatNumeric(utils.roundTo(row.item.oferta)) }}
           </template>
           <template #cell(Descuento)="row">
             {{ utils.aplyFormatNumeric(utils.roundTo(row.item.Descuento)) }}
