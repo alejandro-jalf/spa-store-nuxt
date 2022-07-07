@@ -771,7 +771,7 @@ export default {
       }
     },
     getCalculaUtilidad(costo, precio) {
-      return utils.roundTo((1 - costo / precio) * 100, 4) + '%'
+      return utils.roundTo((1 - costo / precio) * 100) + '%'
     },
     editarDatosOferta() {
       this.setEditandoOferta(true)

@@ -25,7 +25,7 @@
             {{ utils.aplyFormatNumeric(utils.roundTo(row.item.Precio1IVAUV)) }}
           </template>
           <template #cell(Oferta)="row">
-            {{ utils.aplyFormatNumeric(utils.roundTo(row.item.Oferta)) }}
+            {{ utils.aplyFormatNumeric(utils.roundTo(row.item.oferta)) }}
           </template>
           <template #cell(UltimoCosto)="row">
             {{ utils.aplyFormatNumeric(utils.roundTo(row.item.UltimoCosto)) }}
