@@ -1,6 +1,6 @@
 <template>
-  <div class="container-articles-not-valid">
-    <b-card class="m-1 card-settings">
+  <div class="container-articles-not-valid card-settings">
+    <b-card class="m-1">
       <h4 class="text-dark my-2">Detalles de articulos</h4>
       <b-alert :show="isEmptyDetails">
         <h5>
@@ -89,15 +89,6 @@ export default {
     ...mapMutations({
       setShowDetails: 'ofertas/setShowDetails',
     }),
-    downSelect() {
-      const tam = this.formModalProductos.products.length
-      if (this.formModalProductos.position < tam - 1) {
-        this.formModalProductos.position++
-        this.$refs.tableSelectProduct.selectRow(
-          this.formModalProductos.position
-        )
-      }
-    },
     porcentage(value) {
       return utils.roundTo(value, 4, true) * 100 + '%'
     },
@@ -124,14 +115,6 @@ export default {
       if (article.OfertaFechaVigente === 'SI' && article.OfertaCaduca === 'SI')
         return `- Se encontro una oferta del mismo articulo y que esta dentro de las mismas fechas.`
       return ''
-    },
-    upSelect() {
-      if (this.formModalProductos.position > 0) {
-        this.formModalProductos.position--
-        this.$refs.tableSelectProduct.selectRow(
-          this.formModalProductos.position
-        )
-      }
     },
   },
 }
