@@ -88,6 +88,15 @@
             Validar
           </b-button>
           <b-button
+            v-if="visibleButton(row.item, 'check')"
+            class="mr-2 mt-2"
+            size="sm"
+            variant="success"
+            @click="verifyArticlesOffered(row.item)"
+          >
+            Verificar
+          </b-button>
+          <b-button
             v-if="visibleButton(row.item, 'action')"
             class="mr-2 mt-2"
             size="sm"
@@ -114,29 +123,28 @@
           >
             Eliminar
           </b-button>
+          <b-button
+            v-if="visibleButton(row.item, 'excel')"
+            class="mr-2 mt-2"
+            size="sm"
+            variant="light"
+          >
+            <b-icon icon="download" />
+          </b-button>
+          <b-button
+            v-if="visibleButton(row.item, 'excel')"
+            class="mr-2 mt-2"
+            size="sm"
+            variant="light"
+          >
+            <b-icon icon="printer-fill" />
+          </b-button>
           <div v-if="visibleButton(row.item, 'load')">
             <b-spinner
-              style="width: 10px; height: 10px"
-              variant="success"
-              type="grow"
-            ></b-spinner>
-            <b-spinner
-              style="width: 10px; height: 10px"
-              variant="success"
-              type="grow"
-            ></b-spinner>
-            <b-spinner
-              style="width: 10px; height: 10px"
-              variant="success"
-              type="grow"
-            ></b-spinner>
-            <b-spinner
-              style="width: 10px; height: 10px"
-              variant="success"
-              type="grow"
-            ></b-spinner>
-            <b-spinner
-              style="width: 10px; height: 10px"
+              v-for="(canti, position) in 9"
+              :key="position"
+              style="width: 6px; height: 6px"
+              class="ml-1"
               variant="success"
               type="grow"
             ></b-spinner>
@@ -160,6 +168,7 @@
       </b-table>
     </div>
     <OfertaArticulosValidados v-if="showDetails" />
+    <OfertaArticulosOfertados v-if="showOffered" />
     <float-button
       v-if="tipoUser !== 'manager'"
       :click-float="reloadListaOfertas"
@@ -172,6 +181,7 @@ import { mapMutations, mapActions } from 'vuex'
 import OfertaForm from '../components/OfertaForm'
 import OfertaLista from '../components/OfertaLista'
 import OfertaArticulosValidados from '../components/OfertaArticulosValidados'
+import OfertaArticulosOfertados from '../components/OfertaArticulosOfertados'
 import FloatButton from '../components/FloatButton'
 import utils from '../modules/utils'
 
@@ -181,6 +191,7 @@ export default {
     OfertaLista,
     FloatButton,
     OfertaArticulosValidados,
+    OfertaArticulosOfertados,
   },
   data() {
     return {
@@ -216,6 +227,9 @@ export default {
   computed: {
     showDetails() {
       return this.$store.state.ofertas.detallesValidacion.show
+    },
+    showOffered() {
+      return this.$store.state.ofertas.detallesVerify.show
     },
     tipoUser() {
       return this.$store.state.user.user.tipo_user
@@ -285,16 +299,23 @@ export default {
           else if (typeButton === 'load') return !isOwner
           else return false
         case 1:
-          if (typeButton === 'action') return this.tipoUser === 'manager'
+          if (typeButton === 'action' || typeButton === 'excel')
+            return this.tipoUser === 'manager'
           else if (typeButton === 'views') return true
           else return false
         case 2:
-          if (typeButton === 'action' || typeButton === 'validate')
+          if (
+            typeButton === 'action' ||
+            typeButton === 'validate' ||
+            typeButton === 'excel'
+          )
             return this.tipoUser === 'manager'
           else if (typeButton === 'views') return true
           else return false
         case 3:
           if (typeButton === 'views') return true
+          if (typeButton === 'check' || typeButton === 'excel')
+            return this.tipoUser === 'manager'
           else return false
         case 4:
           if (typeButton === 'action' || typeButton === 'eliminar')
@@ -339,6 +360,39 @@ export default {
           this.setArticlesDetails({ data: response.data.error })
         }
         this.setShowDetails(true)
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.log(error, error.response)
+        this.setLoading(false)
+        if (error.response) this.showAlertDialog([error.response.data.message])
+        else this.showAlertDialog(['Error con el servidor'])
+        return false
+      }
+    },
+    async verifyArticlesOffered(dataOffer) {
+      // eslint-disable-next-line no-console
+      console.log('Datos: ', dataOffer)
+      try {
+        const urlBase = process.env.spastore_url_backend
+        this.setLoading(true)
+        const response = await this.$axios({
+          url:
+            urlBase +
+            'api/v1/ofertas/' +
+            dataOffer.sucursal +
+            '/articulos/' +
+            dataOffer.uuid +
+            '/check',
+          method: 'get',
+        })
+        this.setLoading(false)
+        // eslint-disable-next-line no-console
+        console.log(response.data)
+
+        if (response.data.success) {
+          this.setShowVerify(true)
+          this.setArticlesVerify({ data: response.data.data })
+        } else this.showAlertDialog([response.data.message])
       } catch (error) {
         // eslint-disable-next-line no-console
         console.log(error, error.response)
@@ -538,7 +592,9 @@ export default {
       openOferta: 'ofertas/openOferta',
       setEditable: 'ofertas/setEditable',
       setArticlesDetails: 'ofertas/setArticlesDetails',
+      setArticlesVerify: 'ofertas/setArticlesVerify',
       setShowDetails: 'ofertas/setShowDetails',
+      setShowVerify: 'ofertas/setShowVerify',
       setProgramandoLista: 'ofertas/setProgramandoLista',
       setLoading: 'general/setLoading', // nuevas
       showAlertDialog: 'general/showAlertDialog',
