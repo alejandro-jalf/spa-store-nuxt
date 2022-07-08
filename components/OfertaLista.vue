@@ -505,7 +505,6 @@ export default {
       return 'SPA'
     },
     cerrarListaArticulos() {
-      // eslint-disable-next-line no-console
       console.log('cierra')
       this.setProgramandoOferta(false)
       this.setProgramandoLista(false)
@@ -544,7 +543,6 @@ export default {
     editArticle(articuloRe) {
       const editArtiicle = { ...articuloRe.item }
 
-      // eslint-disable-next-line no-console
       console.log(editArtiicle)
       this.formArticulo = editArtiicle
       this.formArticulo.codigobarras = editArtiicle.articulo
@@ -576,7 +574,6 @@ export default {
       this.$refs.articulo.focus()
     },
     validaArticulo() {
-      // eslint-disable-next-line no-console
       console.log(this.formArticulo)
       if (!this.editingArticle) {
         if (this.formArticulo.costo.trim() === '') {
@@ -594,6 +591,12 @@ export default {
       }
       if (this.formArticulo.oferta.trim() === '') {
         this.showAlertDialog(['Falta ingresar el precio de oferta'])
+        return false
+      }
+      if (this.formArticulo.precio - this.formArticulo.oferta <= 0) {
+        this.showAlertDialog([
+          'El precio de oferta tiene que ser menor que el precio de venta',
+        ])
         return false
       }
       if (!this.status_utulidad) {
@@ -628,7 +631,6 @@ export default {
         })
         this.setLoading(false)
         this.showError = false
-        // eslint-disable-next-line no-console
         console.log(response.data)
 
         if (response.data.success) {
@@ -640,7 +642,6 @@ export default {
           this.$refs.articulo.focus()
         } else this.showAlertDialog([response.data.message])
       } catch (error) {
-        // eslint-disable-next-line no-console
         console.log(error, error.response)
         this.setLoading(false)
         if (error.response) this.showAlertDialog([error.response.data.message])
@@ -674,7 +675,6 @@ export default {
         })
         this.setLoading(false)
         this.showError = false
-        // eslint-disable-next-line no-console
         console.log(response.data)
 
         if (response.data.success) {
@@ -688,7 +688,6 @@ export default {
           this.showAlertDialog([response.data.message])
         }
       } catch (error) {
-        // eslint-disable-next-line no-console
         console.log(error, error.response)
         this.setLoading(false)
         if (error.response) this.showAlertDialog([error.response.data.message])
@@ -726,7 +725,6 @@ export default {
         })
         this.setLoading(false)
         this.showError = false
-        // eslint-disable-next-line no-console
         console.log(response.data)
 
         if (response.data.success) {
@@ -740,7 +738,6 @@ export default {
           this.showAlertDialog([response.data.message])
         }
       } catch (error) {
-        // eslint-disable-next-line no-console
         console.log(error, error.response)
         this.setLoading(false)
         if (error.response) this.showAlertDialog([error.response.data.message])
@@ -811,7 +808,6 @@ export default {
           },
         })
         this.setLoading(false)
-        // eslint-disable-next-line no-console
         console.log(response.data)
 
         if (response.data.success) {
@@ -823,7 +819,6 @@ export default {
           this.showAlertDialog([response.data.message])
         }
       } catch (error) {
-        // eslint-disable-next-line no-console
         console.log(error, error.response)
         this.setLoading(false)
         if (error.response) this.showAlertDialog([error.response.data.message])
@@ -864,7 +859,6 @@ export default {
         })
         this.setLoading(false)
         this.showError = false
-        // eslint-disable-next-line no-console
         console.log(response.data)
 
         if (response.data.success) {
@@ -876,7 +870,6 @@ export default {
           this.showAlertDialog([response.data.message])
         }
       } catch (error) {
-        // eslint-disable-next-line no-console
         console.log(error, error.response)
         this.setLoading(false)
         if (error.response) this.showAlertDialog([error.response.data.message])
@@ -966,7 +959,6 @@ export default {
           this.editableArticulo = true
         }
       } catch (error) {
-        // eslint-disable-next-line no-console
         console.log(error, error.response)
         this.editableArticulo = true
         this.setLoading(false)
@@ -1012,7 +1004,6 @@ export default {
           this.clearFormArticulo()
         }
       } catch (error) {
-        // eslint-disable-next-line no-console
         console.log(error, error.response)
         this.setLoading(false)
         this.showError = true
@@ -1022,7 +1013,6 @@ export default {
       }
     },
     selectProduct(article) {
-      // eslint-disable-next-line no-console
       console.log(article)
       this.searchProducts = false
       this.showError = false

@@ -35,6 +35,9 @@
               {{ getDetailsForArticle(row.item) }}
             </div>
             <div class="ml-3">
+              {{ getDetailsOfPrice(row.item.OfertaMayor) }}
+            </div>
+            <div class="ml-3">
               {{ getDetailsOfUtilitie(row.item.OfertaValida) }}
             </div>
             <div class="ml-3">
@@ -96,6 +99,7 @@ export default {
       if (
         article.OfertaValida === 'NO' ||
         article.OfertaCaduca === 'NO' ||
+        article.OfertaMayor === 'NO' ||
         article.OfertaFechaVigente === 'SI'
       )
         return 'No se puede programar la oferta para este articulo por los siguientes detalles:'
@@ -104,6 +108,11 @@ export default {
     getDetailsOfUtilitie(ofertaValida) {
       if (ofertaValida === 'NO')
         return `- La utilidad de oferta esta por debajo del 10% que se pide como minimo.`
+      return ''
+    },
+    getDetailsOfPrice(ofertaMayor) {
+      if (ofertaMayor === 'NO')
+        return `- El precio de oferta que envio es mayor o igual que el precio de venta actual.`
       return ''
     },
     getDetailsOfCaducidad(ofertaCaduca) {
