@@ -144,16 +144,10 @@
             class="mr-2 mt-2"
             size="sm"
             variant="light"
+            @click="generateExcel(row.item)"
           >
             <b-icon icon="download" />
-          </b-button>
-          <b-button
-            v-if="visibleButton(row.item, 'excel')"
-            class="mr-2 mt-2"
-            size="sm"
-            variant="light"
-          >
-            <b-icon icon="printer-fill" />
+            EXCEL
           </b-button>
           <div v-if="visibleButton(row.item, 'load')">
             <b-spinner
@@ -194,6 +188,8 @@
 
 <script>
 import { mapMutations, mapActions } from 'vuex'
+import XLSX from 'xlsx'
+import FileSaver from 'file-saver'
 import OfertaForm from '../components/OfertaForm'
 import OfertaLista from '../components/OfertaLista'
 import OfertaArticulosValidados from '../components/OfertaArticulosValidados'
@@ -657,6 +653,99 @@ export default {
     },
     selectSucursal(sucursal) {
       this.setSucursal(sucursal)
+    },
+    getNameSucursal(suc) {
+      if (suc.toUpperCase() === 'ZR') return 'SPAZARAGOZA'
+      if (suc.toUpperCase() === 'VC') return 'SPAVICTORIA'
+      if (suc.toUpperCase() === 'ER') return 'SPAENRIQUEZ'
+      if (suc.toUpperCase() === 'OU') return 'SPAOLUTA'
+      if (suc.toUpperCase() === 'SY') return 'SPASAYULA'
+      if (suc.toUpperCase() === 'JL') return 'SPAJALTIPAN'
+      return 'SPA'
+    },
+    async generateExcel(master) {
+      const fechaInicio = utils.parseFecha(master.fechaInicio)
+      const fechaFin = utils.parseFecha(master.fechaFin)
+      const fechas = `Del ${fechaInicio} AL ${fechaFin}`
+      const sucursal = this.getNameSucursal(master.sucursal)
+      this.setLoading(true)
+      const response = await this.changeListaArticulos(master.uuid)
+      if (response.success) this.createExcel(sucursal, fechas, response.data)
+      else this.showAlertDialog([response.message])
+      this.setLoading(false)
+    },
+    createExcel(sucursal, fechas, dataArticles) {
+      const wb = XLSX.utils.book_new()
+      wb.Props = {
+        Title: 'Ofertas ' + fechas + ' - ' + sucursal,
+        Subject: 'Ofertas',
+        Author: this.$store.state.user.name,
+      }
+      wb.SheetNames.push('Hoja')
+
+      const header = [
+        'Sucursal',
+        'Num',
+        'Articulo',
+        'Descripcion',
+        'Costo',
+        'Precio',
+        'Margen',
+        'Oferta',
+        'Utilidad',
+      ]
+
+      const listRefactor = []
+      let consecutivo = 1
+
+      dataArticles.forEach((article) => {
+        listRefactor.push({
+          Sucursal: sucursal,
+          Num: consecutivo,
+          Articulo: article.articulo,
+          Descripcion: article.nombre,
+          Costo: article.costo,
+          Precio: article.precio,
+          Margen: 1 - article.costo / article.precio,
+          Oferta: article.oferta,
+          Utilidad: 1 - article.costo / article.oferta,
+        })
+        consecutivo++
+      })
+
+      const data = XLSX.utils.json_to_sheet(listRefactor, {
+        header,
+        skipHeader: false,
+        origin: 'A1',
+      })
+
+      wb.Sheets.Hoja = data
+      wb.Sheets.Hoja['!cols'] = [
+        { wpx: 90 },
+        { wpx: 40 },
+        { wpx: 70 },
+        { wpx: 250 },
+        { wpx: 60 },
+        { wpx: 60 },
+        { wpx: 90 },
+        { wpx: 60 },
+        { wpx: 90 },
+      ]
+
+      const fechaImpresion = utils.getDateNow().format('YYYYMMDD')
+      const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'binary' })
+
+      FileSaver.saveAs(
+        new Blob([this.s2ab(wbout)], { type: 'application/octet-stream' }),
+        fechaImpresion + ' -  Ofertas ' + fechas + ' Suc ' + sucursal + '.xlsx'
+      )
+    },
+    s2ab(s) {
+      const buf = new ArrayBuffer(s.length)
+      const view = new Uint8Array(buf)
+      // eslint-disable-next-line prettier/prettier
+      for (let i = 0; i < s.length; i++) view[i] = s.charCodeAt(i) & 0xFF
+      return buf
     },
   },
 }
