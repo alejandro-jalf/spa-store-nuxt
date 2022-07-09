@@ -47,11 +47,21 @@
       class="mt-3"
       :class="variantThemeTableBody"
     >
+      <template #cell(Articulos)="row">
+        <b-badge pill variant="info" class="py-1 px-2" style="font-size: 14px">
+          {{ row.item.Articulos }}
+        </b-badge>
+      </template>
       <template #cell(Fecha)="row">
         {{ utils.toDate(row.item.Fecha) }}
       </template>
       <template #cell(Hora)="row">
         {{ utils.toHour(row.item.Hora) }}
+      </template>
+      <template #cell(Detalles)="row">
+        <b-button variant="info" size="sm" @click="viewDetails(row.item)">
+          Detalles
+        </b-button>
       </template>
     </b-table>
     <div v-else>
@@ -133,14 +143,23 @@
         </div>
       </template>
     </b-modal>
+
+    <ConsolidacionesDetails
+      v-if="showDetails"
+      :transferencia-actual="transferenciaActual"
+    />
   </div>
 </template>
 
 <script>
 import { mapMutations, mapActions } from 'vuex'
+import ConsolidacionesDetails from '../components/ConsolidacionesDetails'
 import utils from '../modules/utils'
 
 export default {
+  components: {
+    ConsolidacionesDetails,
+  },
   data() {
     return {
       alertShow: false,
@@ -150,11 +169,13 @@ export default {
         'Fecha',
         'Hora',
         'Transferencia',
+        'Articulos',
         'Entrada',
         'Referencia',
         'AlmacenDestino',
         'Observaciones',
         'Estatus',
+        'Detalles',
       ],
       utils,
       sucursales: {
@@ -177,6 +198,7 @@ export default {
         { value: 'SY', text: 'SPASAYULA' },
         { value: 'BO', text: 'SPABODEGA' },
       ],
+      transferenciaActual: {},
     }
   },
   computed: {
@@ -185,6 +207,9 @@ export default {
     },
     variantTheme() {
       return this.$store.state.general.themesComponents.themeCardBody
+    },
+    showDetails() {
+      return this.$store.state.consolidaciones.showDetails
     },
     dataRefactor() {
       const datos = []
@@ -249,11 +274,23 @@ export default {
     }),
     ...mapActions({
       changeData: 'consolidaciones/changeData',
+      loadDetails: 'consolidaciones/loadDetails',
     }),
     getColorClass(estatus) {
       if (estatus === 'Fallo') return 'container-info-warning'
       else if (estatus === 'Exito') return 'container-info'
       else return 'container-info-danger'
+    },
+    async viewDetails(data) {
+      this.setLoading(true)
+      const response = await this.loadDetails([
+        this.$store.state.consolidaciones.sucursal,
+        data.Transferencia,
+      ])
+      this.setLoading(false)
+      this.transferenciaActual = data
+      if (!response.success)
+        this.showAlertDialog([response.message, 'Error inesperado'])
     },
     async updateConsolidaciones() {
       this.setLoading(true)

@@ -1,10 +1,21 @@
 if (!localStorage.getItem('spastore_consolidaciones_sucursal'))
   localStorage.setItem('spastore_consolidaciones_sucursal', 'ZR')
+if (!localStorage.getItem('spastore_consolidaciones_show_details'))
+  localStorage.setItem('spastore_consolidaciones_show_details', false)
 
 export const state = () => ({
   data: localStorage.getItem('spastore_consolidaciones_data')
     ? JSON.parse(localStorage.getItem('spastore_consolidaciones_data'))
     : { data: [] },
+  details: localStorage.getItem('spastore_consolidaciones_details')
+    ? JSON.parse(localStorage.getItem('spastore_consolidaciones_details'))
+    : { data: [] },
+  showDetails:
+    typeof localStorage.getItem('spastore_consolidaciones_show_details') ===
+    'boolean'
+      ? localStorage.getItem('spastore_consolidaciones_show_details')
+      : localStorage.getItem('spastore_consolidaciones_show_details') ===
+        'true',
   sucursal: localStorage.getItem('spastore_consolidaciones_sucursal'),
 })
 
@@ -13,9 +24,20 @@ export const mutations = {
     state.data = data
     localStorage.setItem('spastore_consolidaciones_data', JSON.stringify(data))
   },
+  setDetails(state, details) {
+    state.details = details
+    localStorage.setItem(
+      'spastore_consolidaciones_details',
+      JSON.stringify(details)
+    )
+  },
   setSucursal(state, sucursal) {
     state.sucursal = sucursal
     localStorage.setItem('spastore_consolidaciones_sucursal', sucursal)
+  },
+  setShowDetails(state, showDetails) {
+    state.showDetails = showDetails
+    localStorage.setItem('spastore_consolidaciones_show_details', showDetails)
   },
 }
 
@@ -40,6 +62,36 @@ export const actions = {
       }
 
       return response.data.response
+    } catch (error) {
+      if (error.response) {
+        return error.response.data
+      }
+      return {
+        success: false,
+        message: 'Error con el servidor',
+        error,
+      }
+    }
+  },
+  async loadDetails({ commit }, [sucursal, documento]) {
+    try {
+      const url =
+        process.env.spastore_url_backend +
+        'api/v1/consolidaciones/' +
+        sucursal +
+        '/articulos/' +
+        documento
+      const response = await this.$axios({
+        url,
+        method: 'get',
+      })
+
+      if (response.data.success) {
+        commit('setDetails', { data: response.data.data })
+        commit('setShowDetails', true)
+      }
+
+      return response.data
     } catch (error) {
       if (error.response) {
         return error.response.data
