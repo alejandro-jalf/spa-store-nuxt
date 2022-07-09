@@ -27,8 +27,11 @@
           <template #cell(CantidadUC)="row">
             {{ formatNumber(row.item.CantidadRegularUC) }}
           </template>
-          <template #cell(CostoUnitario)="row">
+          <template #cell(CostoUV)="row">
             {{ formatNumber(row.item.CostoUnitarioNeto) }}
+          </template>
+          <template #cell(CostoUC)="row">
+            {{ formatNumber(row.item.CostoUnitarioNetoUC) }}
           </template>
           <template #cell(CostoTotal)="row">
             {{ formatNumber(row.item.CostoValorNeto) }}
@@ -61,7 +64,8 @@ export default {
         'Descripcion',
         'Relacion',
         'CantidadUV',
-        'CostoUnitario',
+        'CostoUV',
+        'CostoUC',
         'CantidadUC',
         'CostoTotal',
       ],
