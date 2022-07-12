@@ -154,7 +154,11 @@
         </b-badge>
       </b-card-text>
       <divider class="mb-2"></divider>
-      <b-overlay :show="loadingTable" variant="dark" spinner-variant="info">
+      <b-overlay
+        :show="loadingTable"
+        variant="secondary"
+        spinner-variant="info"
+      >
         <span class="font-weight-bold text-info">
           {{ messageTable }}
         </span>
