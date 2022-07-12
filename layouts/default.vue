@@ -223,7 +223,11 @@ export default {
     }
 
     const eventKeyUp = (evt) => {
-      if (this.$store.state.general.tabActual.trim() === 'Checador Precios') {
+      if (this.$store.state.general.alert.show) {
+        if (evt.key === 'Enter') this.hideAlertDialog()
+      } else if (
+        this.$store.state.general.tabActual.trim() === 'Checador Precios'
+      ) {
         if (parseInt(evt.key) >= 0 && parseInt(evt.key) <= 9)
           this.barCode += evt.key
         else if (evt.key === 'Enter') this.getArticleByCodeOrArticle()
@@ -260,6 +264,7 @@ export default {
   },
   methods: {
     ...mapMutations({
+      hideAlertDialog: 'general/hideAlertDialog',
       setWidthWindow: 'general/setWidthWindow',
       setLoading: 'general/setLoading',
       changeScrollScreenY: 'general/changeScrollScreenY',
