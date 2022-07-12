@@ -154,7 +154,19 @@
         </b-badge>
       </b-card-text>
       <divider class="mb-2"></divider>
-      <div>
+      <b-overlay :show="loadingTable" variant="dark" spinner-variant="info">
+        <span class="font-weight-bold text-info">
+          {{ messageTable }}
+        </span>
+        <b-button
+          size="sm"
+          :variant="themeButtonDark"
+          class="mb-2 float-right"
+          @click="refreshTableArticles"
+        >
+          <b-icon icon="arrow-clockwise" />
+          Actualizar
+        </b-button>
         <b-table
           hover
           head-variant="dark"
@@ -196,7 +208,7 @@
             </b-button>
           </template>
         </b-table>
-      </div>
+      </b-overlay>
       <div class="text-right mt-3 buttons-end">
         <b-button
           variant="secondary"
@@ -312,14 +324,12 @@ import { mapMutations, mapActions } from 'vuex'
 import utils from '../modules/utils'
 import Divider from './Divider'
 import MessageText from './MessageText'
-// import AlertOption from './AlertOption'
 import OfertaListProducts from './OfertaListaProducts'
 
 export default {
   components: {
     Divider,
     MessageText,
-    // AlertOption,
     OfertaListProducts,
   },
   props: {
@@ -389,6 +399,8 @@ export default {
       articuloActual: '',
       productsNames: [],
       searchProducts: false,
+      loadingTable: false,
+      messageTable: 'Actualizada',
     }
   },
   computed: {
@@ -411,6 +423,9 @@ export default {
     },
     dataUser() {
       return this.$store.state.user.user
+    },
+    themeButtonDark() {
+      return this.$store.state.general.themesComponents.themeButtonDark
     },
     variantThemeTableBody() {
       return this.$store.state.general.themesComponents.themeTableBody
@@ -634,12 +649,10 @@ export default {
         console.log(response.data)
 
         if (response.data.success) {
-          this.setLoading(true)
-          await this.changeListaArticulos(this.uuid)
-          this.setLoading(false)
           this.clearFormArticulo()
           this.editableArticulo = true
           this.$refs.articulo.focus()
+          this.refreshTableArticles()
         } else this.showAlertDialog([response.data.message])
       } catch (error) {
         console.log(error, error.response)
@@ -647,6 +660,14 @@ export default {
         if (error.response) this.showAlertDialog([error.response.data.message])
         else this.showAlertDialog(['Error con el servidor'])
       }
+    },
+    async refreshTableArticles() {
+      this.loadingTable = true
+      const response = await this.changeListaArticulos(this.uuid)
+      if (!response.success)
+        this.messageTable = 'Advertencia: ' + response.message
+      else this.messageTable = 'Actualizada'
+      this.loadingTable = false
     },
     async actualizaArticulo() {
       try {
@@ -678,12 +699,10 @@ export default {
         console.log(response.data)
 
         if (response.data.success) {
-          this.setLoading(true)
-          await this.changeListaArticulos(this.uuid)
-          this.setLoading(false)
           this.clearFormArticulo()
           this.editableArticulo = true
           this.editingArticle = false
+          this.refreshTableArticles()
         } else {
           this.showAlertDialog([response.data.message])
         }
@@ -728,12 +747,10 @@ export default {
         console.log(response.data)
 
         if (response.data.success) {
-          this.setLoading(true)
-          await this.changeListaArticulos(this.uuid)
-          this.setLoading(false)
           this.clearFormArticulo()
           this.editableArticulo = true
           this.editingArticle = false
+          this.refreshTableArticles()
         } else {
           this.showAlertDialog([response.data.message])
         }

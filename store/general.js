@@ -196,9 +196,11 @@ export const state = () => ({
         themeButtonClean: 'warning',
         themeButtonSuccess: 'success',
         themeButtonLight: 'light',
+        themeButtonDark: 'dark',
         themeButtonPrimary: 'primary',
         themeHR: '',
         backgroundVariantBody: 'light',
+        themeOverlay: '',
       },
 })
 
@@ -395,6 +397,7 @@ export const actions = {
         'success'
       ),
       themeButtonLight: filterOption(themes, 'light', 'outline-light', 'light'),
+      themeButtonDark: filterOption(themes, 'dark', 'light', 'light'),
       themeButtonPrimary: filterOption(
         themes,
         'primary',
@@ -403,6 +406,12 @@ export const actions = {
       ),
       themeHR: filterOption(themes, '', 'bg-white', ''),
       backgroundVariantBody: filterOption(themes),
+      themeOverlay: filterOption(
+        themes,
+        '',
+        ' darkThemeOverlay',
+        'sepiaThemeOverlay'
+      ),
     }
     commit('setThemesComponents', themesComponents)
   },

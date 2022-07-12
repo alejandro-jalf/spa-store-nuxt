@@ -36,6 +36,13 @@
   color: #271601;
 }
 
+.darkThemeOverlay {
+  background: rgba(139, 139, 139, 0.63);
+}
+.sepiaThemeOverlay {
+  background: #fbf1d6a2;
+}
+
 .container-gen {
   cursor: pointer;
   position: relative;

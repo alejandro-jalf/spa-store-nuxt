@@ -483,10 +483,4 @@ export default {
 .settingApp {
   margin-top: 80px;
 }
-.darkThemeOverlay {
-  background: rgba(139, 139, 139, 0.63);
-}
-.sepiaThemeOverlay {
-  background: #fbf1d6a2;
-}
 </style>
