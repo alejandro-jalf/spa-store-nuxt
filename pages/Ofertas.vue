@@ -693,12 +693,38 @@ export default {
         'Margen',
         'Oferta',
         'Utilidad',
+        'Empty',
+        'Image',
+        'Descrip',
+        'Entero',
+        'Fraccion',
+        'FraccionReducida',
       ]
 
       const listRefactor = []
       let consecutivo = 1
 
+      listRefactor.push({
+        Sucursal: 'Sucursal',
+        Num: 'Num',
+        Articulo: 'Articulo',
+        Descripcion: 'Descripcion',
+        Costo: 'Costo',
+        Precio: 'Precio',
+        Margen: 'Margen',
+        Oferta: 'Oferta',
+        Utilidad: 'Utilidad',
+        Empty: '',
+        Image: '',
+        Descrip: '',
+        Entero: '',
+        Fraccion: '',
+        FraccionReducida: '',
+      })
+
       dataArticles.forEach((article) => {
+        const arrayOffer = utils.roundTo(article.oferta.toString()).split('.')
+        const fraccion = arrayOffer.length > 1 ? arrayOffer[1] : '00'
         listRefactor.push({
           Sucursal: sucursal,
           Num: consecutivo,
@@ -709,13 +735,19 @@ export default {
           Margen: 1 - article.costo / article.precio,
           Oferta: article.oferta,
           Utilidad: 1 - article.costo / article.oferta,
+          Empty: '',
+          Image: '',
+          Descrip: article.nombre,
+          Entero: parseInt(article.oferta),
+          Fraccion: fraccion,
+          FraccionReducida: parseInt(fraccion),
         })
         consecutivo++
       })
 
       const data = XLSX.utils.json_to_sheet(listRefactor, {
         header,
-        skipHeader: false,
+        skipHeader: true,
         origin: 'A1',
       })
 
@@ -730,6 +762,12 @@ export default {
         { wpx: 90 },
         { wpx: 60 },
         { wpx: 90 },
+        { wpx: 20 },
+        { wpx: 200 },
+        { wpx: 250 },
+        { wpx: 30 },
+        { wpx: 30 },
+        { wpx: 30 },
       ]
 
       const fechaImpresion = utils.getDateNow().format('YYYYMMDD')
