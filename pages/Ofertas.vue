@@ -253,7 +253,7 @@ export default {
     listaOfertas() {
       const viewBy = this.active
       const dateActual = this.utils.getDateNow()
-      return this.$store.state.ofertas.listaOfertas.data
+      const offersFiltered = this.$store.state.ofertas.listaOfertas.data
         .filter((offer) => {
           if (viewBy === 'month')
             return (
@@ -270,6 +270,16 @@ export default {
         .sort((a, b) =>
           this.utils.toMoment(a.fechaInicio).isBefore(b.fechaInicio) ? 1 : -1
         )
+      const listOffers = [...offersFiltered]
+      listOffers.forEach((offer) => {
+        const status = offer.estatus
+        if (status === 4) offer._rowVariant = 'danger'
+        else if (status === 3) offer._rowVariant = 'success'
+        else if (status === 2) offer._rowVariant = 'info'
+        else if (status === 1) offer._rowVariant = 'warning'
+      })
+
+      return listOffers
     },
     programandoOferta() {
       return this.$store.state.ofertas.programandoOferta

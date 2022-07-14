@@ -154,65 +154,60 @@
         </b-badge>
       </b-card-text>
       <divider class="mb-2"></divider>
-      <b-overlay
-        :show="loadingTable"
-        variant="secondary"
-        spinner-variant="info"
+      <b-button
+        size="sm"
+        :variant="themeButtonDark"
+        class="mb-2 float-right"
+        :disabled="loadingTable"
+        @click="refreshTableArticles"
       >
-        <span class="font-weight-bold text-info">
-          {{ messageTable }}
-        </span>
-        <b-button
-          size="sm"
-          :variant="themeButtonDark"
-          class="mb-2 float-right"
-          @click="refreshTableArticles"
-        >
-          <b-icon icon="arrow-clockwise" />
-          Actualizar
-        </b-button>
-        <b-table
-          hover
-          head-variant="dark"
-          fixed
-          outlined
-          :items="listaProductos"
-          :fields="fields"
-          responsive=""
-          :class="variantThemeTableBody"
-        >
-          <template #cell(margen)="row">
-            {{ getCalculaUtilidad(row.item.costo, row.item.precio) }}
-          </template>
-          <template #cell(utilidad)="row">
-            {{ getCalculaUtilidad(row.item.costo, row.item.oferta) }}
-          </template>
-          <template #cell(precio)="row">
-            {{ utils.roundTo(row.item.precio) }}
-          </template>
-          <template #cell(oferta)="row">
-            {{ utils.roundTo(row.item.oferta) }}
-          </template>
-          <template v-if="ofertaEditable" #cell(Acciones)="row">
-            <b-button
-              variant="warning"
-              size="sm"
-              class="mb-1"
-              @click="editArticle(row)"
-            >
-              <b-icon icon="pencil-square" />
-            </b-button>
-            <b-button
-              variant="danger"
-              size="sm"
-              class="mb-1"
-              @click="prepareDeleteArticle(row.item.articulo, row.item.nombre)"
-            >
-              <b-icon icon="trash" />
-            </b-button>
-          </template>
-        </b-table>
-      </b-overlay>
+        <b-icon icon="arrow-clockwise" :animation="animationTable" />
+        Actualizar
+      </b-button>
+      <span class="font-weight-bold text-info">
+        {{ messageTable }}
+      </span>
+      <b-table
+        hover
+        head-variant="dark"
+        fixed
+        outlined
+        :items="listaProductos"
+        :fields="fields"
+        responsive=""
+        :class="variantThemeTableBody"
+      >
+        <template #cell(margen)="row">
+          {{ getCalculaUtilidad(row.item.costo, row.item.precio) }}
+        </template>
+        <template #cell(utilidad)="row">
+          {{ getCalculaUtilidad(row.item.costo, row.item.oferta) }}
+        </template>
+        <template #cell(precio)="row">
+          {{ utils.roundTo(row.item.precio) }}
+        </template>
+        <template #cell(oferta)="row">
+          {{ utils.roundTo(row.item.oferta) }}
+        </template>
+        <template v-if="ofertaEditable" #cell(Acciones)="row">
+          <b-button
+            variant="warning"
+            size="sm"
+            class="mb-1"
+            @click="editArticle(row)"
+          >
+            <b-icon icon="pencil-square" />
+          </b-button>
+          <b-button
+            variant="danger"
+            size="sm"
+            class="mb-1"
+            @click="prepareDeleteArticle(row.item.articulo, row.item.nombre)"
+          >
+            <b-icon icon="trash" />
+          </b-button>
+        </template>
+      </b-table>
       <div class="text-right mt-3 buttons-end">
         <b-button
           variant="secondary"
@@ -428,6 +423,9 @@ export default {
     dataUser() {
       return this.$store.state.user.user
     },
+    animationTable() {
+      return this.loadingTable ? 'spin-pulse' : ''
+    },
     themeButtonDark() {
       return this.$store.state.general.themesComponents.themeButtonDark
     },
@@ -524,7 +522,6 @@ export default {
       return 'SPA'
     },
     cerrarListaArticulos() {
-      console.log('cierra')
       this.setProgramandoOferta(false)
       this.setProgramandoLista(false)
     },
