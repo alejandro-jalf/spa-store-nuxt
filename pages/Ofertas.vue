@@ -49,6 +49,16 @@
         </b-button>
       </b-button-group>
     </div>
+    <div class="groupDate">
+      <b-button
+        :pressed="onlyIcons"
+        :variant="themeButtonClose"
+        @click="setOnlyIcons(!onlyIcons)"
+      >
+        <b-icon :icon="iconOnlyIcons"></b-icon>
+        Solo Iconos En Acciones
+      </b-button>
+    </div>
     <oferta-form v-if="programandoOferta" class="pt-2 pb-2 mb-3"></oferta-form>
     <oferta-lista
       v-if="programandoListaOferta"
@@ -81,6 +91,8 @@
         <template #cell(Acciones)="row">
           <b-button
             v-if="visibleButton(row.item, 'views')"
+            v-b-tooltip.hover
+            :title="msgTooltipDetails(row.item.estatus)"
             variant="info"
             size="sm"
             class="mr-2 mt-2"
@@ -91,26 +103,32 @@
           </b-button>
           <b-button
             v-if="visibleButton(row.item, 'validate')"
+            v-b-tooltip.hover
+            :title="tooltipMessage('Validar')"
             class="mr-2 mt-2"
             size="sm"
             variant="success"
             @click="validateArticlesForProgram(row.item)"
           >
             <b-icon icon="info-circle-fill" />
-            Validar
+            {{ messageButtonIcons('Validar') }}
           </b-button>
           <b-button
             v-if="visibleButton(row.item, 'check')"
+            v-b-tooltip.hover
+            :title="tooltipMessage('Verificar')"
             class="mr-2 mt-2"
             size="sm"
             variant="success"
             @click="verifyArticlesOffered(row.item)"
           >
             <b-icon icon="binoculars-fill" />
-            Verificar
+            {{ messageButtonIcons('Verificar') }}
           </b-button>
           <b-button
             v-if="visibleButton(row.item, 'action')"
+            v-b-tooltip.hover
+            :title="msgTooltipAction(row.item.estatus)"
             class="mr-2 mt-2"
             size="sm"
             :variant="variantStatus(row.item.estatus)"
@@ -121,33 +139,39 @@
           </b-button>
           <b-button
             v-if="visibleButton(row.item, 'cancelar')"
+            v-b-tooltip.hover
+            :title="tooltipMessage('Cancelar')"
             class="mr-2 mt-2"
             size="sm"
             variant="danger"
             @click="prepareCancelOffer(row.item)"
           >
             <b-icon icon="x-circle-fill" />
-            Cancelar
+            {{ messageButtonIcons('Cancelar') }}
           </b-button>
           <b-button
             v-if="visibleButton(row.item, 'eliminar')"
+            v-b-tooltip.hover
+            :title="tooltipMessage('Eliminar')"
             size="sm"
             class="mr-2 mt-2"
             variant="danger"
             @click="prepareDeleteOffer(row.item)"
           >
             <b-icon icon="trash-fill" />
-            Eliminar
+            {{ messageButtonIcons('Eliminar') }}
           </b-button>
           <b-button
             v-if="visibleButton(row.item, 'excel')"
+            v-b-tooltip.hover
+            :title="tooltipMessage('Descargar Excel')"
             class="mr-2 mt-2"
             size="sm"
             variant="light"
             @click="generateExcel(row.item)"
           >
             <b-icon icon="download" />
-            EXCEL
+            {{ messageButtonIcons('EXCEL') }}
           </b-button>
           <div v-if="visibleButton(row.item, 'load')">
             <b-spinner
@@ -238,8 +262,17 @@ export default {
     }
   },
   computed: {
+    onlyIcons() {
+      return this.$store.state.ofertas.onlyIcons
+    },
     showDetails() {
       return this.$store.state.ofertas.detallesValidacion.show
+    },
+    themeButtonClose() {
+      return this.$store.state.general.themesComponents.themeButtonClose
+    },
+    iconOnlyIcons() {
+      return this.onlyIcons ? 'check-square' : 'square'
     },
     showOffered() {
       return this.$store.state.ofertas.detallesVerify.show
@@ -257,18 +290,24 @@ export default {
         .filter((offer) => {
           if (viewBy === 'month')
             return (
-              this.utils.toMoment(offer.fechaInicio).format('MM/YYYY') ===
-              dateActual.format('MM/YYYY')
+              this.utils
+                .toMoment(offer.fechaInicio.replace('T', ' ').replace('Z', ''))
+                .format('MM/YYYY') === dateActual.format('MM/YYYY')
             )
           else if (viewBy === 'year')
             return (
-              this.utils.toMoment(offer.fechaInicio).format('YYYY') ===
-              dateActual.format('YYYY')
+              this.utils
+                .toMoment(offer.fechaInicio.replace('T', ' ').replace('Z', ''))
+                .format('YYYY') === dateActual.format('YYYY')
             )
           else return true
         })
         .sort((a, b) =>
-          this.utils.toMoment(a.fechaInicio).isBefore(b.fechaInicio) ? 1 : -1
+          this.utils
+            .toMoment(a.fechaAlta.replace('T', ' ').replace('Z', ''))
+            .isBefore(b.fechaAlta.replace('T', ' ').replace('Z', ''))
+            ? 1
+            : -1
         )
       const listOffers = [...offersFiltered]
       listOffers.forEach((offer) => {
@@ -354,9 +393,24 @@ export default {
       return suc ? suc.text : sucursal
     },
     detailsMessage(status) {
+      if (this.onlyIcons) return ''
       if (status === 0 || (status === 2 && this.tipoUser === 'manager'))
         return 'Editar'
       return 'Detalles'
+    },
+    msgTooltipDetails(status) {
+      if (!this.onlyIcons) return null
+      if (status === 0 || (status === 2 && this.tipoUser === 'manager'))
+        return 'Editar'
+      return 'Detalles'
+    },
+    tooltipMessage(message) {
+      if (!this.onlyIcons) return null
+      return message
+    },
+    messageButtonIcons(message) {
+      if (this.onlyIcons) return ''
+      return message
     },
     getIconDetail(status) {
       if (status === 0 || (status === 2 && this.tipoUser === 'manager'))
@@ -561,6 +615,7 @@ export default {
       }
     },
     messageButton(status) {
+      if (this.onlyIcons) return ''
       switch (status) {
         case 0:
           return 'Enviar'
@@ -573,6 +628,13 @@ export default {
         default:
           return ''
       }
+    },
+    msgTooltipAction(status) {
+      if (!this.onlyIcons) return null
+      else if (status === 0) return 'Enviar'
+      else if (status === 1) return 'Poner En Proceso'
+      else if (status === 2) return 'Programar'
+      else if (status === 4) return 'Restaurar'
     },
     variantStatus(status) {
       switch (status) {
@@ -614,6 +676,7 @@ export default {
       if (this.active === 'all') this.activeDateA = true
     },
     ...mapMutations({
+      setOnlyIcons: 'ofertas/setOnlyIcons',
       setProgramandoOferta: 'ofertas/setProgramandoOferta',
       setEditandoOferta: 'ofertas/setEditandoOferta',
       cleanOfertaActual: 'ofertas/cleanOfertaActual',
@@ -805,14 +868,24 @@ export default {
   margin-bottom: 30px;
 }
 
-#groupDate {
+#groupDate,
+.groupDate {
   float: right;
 }
 
+.groupDate {
+  margin-right: 10px;
+}
+
 @media screen and (max-width: 480px) {
-  #groupDate {
+  #groupDate,
+  .groupDate {
     float: none;
     margin-bottom: 5px;
+  }
+
+  .groupDate {
+    margin-right: 0px;
   }
 }
 </style>

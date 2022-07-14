@@ -4,6 +4,8 @@ if (!localStorage.getItem('spastore_ofertas_show_details'))
   localStorage.setItem('spastore_ofertas_show_details', false)
 if (!localStorage.getItem('spastore_ofertas_show_verify'))
   localStorage.setItem('spastore_ofertas_show_verify', false)
+if (!localStorage.getItem('spastore_ofertas_only_icons'))
+  localStorage.setItem('spastore_ofertas_only_icons', false)
 
 export const state = () => ({
   programandoOferta: false,
@@ -45,6 +47,10 @@ export const state = () => ({
       ? JSON.parse(localStorage.getItem('spastore_ofertas_articles_verify'))
       : { data: [] },
   },
+  onlyIcons:
+    typeof localStorage.getItem('spastore_ofertas_only_icons') === 'boolean'
+      ? localStorage.getItem('spastore_ofertas_only_icons')
+      : localStorage.getItem('spastore_ofertas_only_icons') === 'true',
 })
 
 export const mutations = {
@@ -89,6 +95,10 @@ export const mutations = {
       'spastore_ofertas_articles_verify',
       JSON.stringify(articles)
     )
+  },
+  setOnlyIcons(state, onlyIcons) {
+    state.onlyIcons = onlyIcons
+    localStorage.setItem('spastore_ofertas_only_icons', onlyIcons)
   },
 
   // old
