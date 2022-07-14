@@ -10,6 +10,9 @@ export const state = () => ({
   details: localStorage.getItem('spastore_consolidaciones_details')
     ? JSON.parse(localStorage.getItem('spastore_consolidaciones_details'))
     : { data: [] },
+  consolidacionActual: localStorage.getItem('spastore_consolidaciones_actual')
+    ? JSON.parse(localStorage.getItem('spastore_consolidaciones_actual'))
+    : { data: [] },
   showDetails:
     typeof localStorage.getItem('spastore_consolidaciones_show_details') ===
     'boolean'
@@ -20,6 +23,13 @@ export const state = () => ({
 })
 
 export const mutations = {
+  setConsolidacionActual(state, consolidacionActual) {
+    state.consolidacionActual = consolidacionActual
+    localStorage.setItem(
+      'spastore_consolidaciones_actual',
+      JSON.stringify(consolidacionActual)
+    )
+  },
   setData(state, data) {
     state.data = data
     localStorage.setItem('spastore_consolidaciones_data', JSON.stringify(data))
@@ -73,7 +83,7 @@ export const actions = {
       }
     }
   },
-  async loadDetails({ commit }, [sucursal, documento]) {
+  async loadDetails({ commit }, [sucursal, documento, data]) {
     try {
       const url =
         process.env.spastore_url_backend +
@@ -89,6 +99,7 @@ export const actions = {
       if (response.data.success) {
         commit('setDetails', { data: response.data.data })
         commit('setShowDetails', true)
+        commit('setConsolidacionActual', { data })
       }
 
       return response.data

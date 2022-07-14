@@ -35,76 +35,108 @@
       Buscar
     </b-button>
 
-    <b-table
-      v-if="width > 991"
-      id="tableConsolidaciones"
-      responsive
-      striped
-      hover
-      :fields="fields"
-      :items="dataRefactor"
-      head-variant="dark"
-      class="mt-3"
-      :class="variantThemeTableBody"
-    >
-      <template #cell(Articulos)="row">
-        <b-badge pill variant="info" class="py-1 px-2" style="font-size: 14px">
-          {{ row.item.Articulos }}
-        </b-badge>
-      </template>
-      <template #cell(Fecha)="row">
-        {{ utils.toDate(row.item.Fecha) }}
-      </template>
-      <template #cell(Hora)="row">
-        {{ utils.toHour(row.item.Hora) }}
-      </template>
-      <template #cell(Detalles)="row">
-        <b-button variant="info" size="sm" @click="viewDetails(row.item)">
-          Detalles
-        </b-button>
-      </template>
-    </b-table>
-    <div v-else>
-      <b-card
-        v-for="(consolidacion, indexConsolidacion) in dataRefactor"
-        :key="indexConsolidacion"
-        no-body
-        class="containerCard"
-        :class="variantTheme"
+    <div></div>
+
+    <b-button-group size="md mt-4">
+      <b-button
+        :pressed="!showDetails"
+        variant="outline-info"
+        @click="setShowDetails(false)"
       >
-        <div :class="getColorClass(consolidacion.Estatus)">
-          <span class="float-right">
-            {{ consolidacion.Estatus }}
-          </span>
-          <div class="container-transferencia">
-            <span class="font-weight-bold">Transferencia:</span>
-            {{ consolidacion.Transferencia }}
-          </div>
-          <div class="container-transferencia">
-            <span class="font-weight-bold">Entrada:</span>
-            {{ consolidacion.Entrada }}
-          </div>
-          <div class="container-transferencia">
-            <span class="font-weight-bold">Referencia:</span>
-            {{ consolidacion.Referencia }}
-          </div>
-          <div class="container-transferencia">
-            <span class="font-weight-bold">Destino:</span>
-            {{ consolidacion.AlmacenDestino }}
-          </div>
-          <div class="container-transferencia">
-            <span class="font-weight-bold">Observaciones:</span>
-            {{ consolidacion.Observaciones }}
-          </div>
-          <div class="d-block">
-            <span class="font-italic float-right">
-              {{ utils.toDate(consolidacion.Fecha) }}
-              {{ utils.toHour(consolidacion.Hora) }}
+        Lista De Consolidaciones
+      </b-button>
+      <b-button
+        :pressed="showDetails"
+        variant="outline-info"
+        @click="setShowDetails(true)"
+      >
+        Detalles de consolidacion
+      </b-button>
+    </b-button-group>
+    <div class="line-buttons bg-info"></div>
+
+    <div v-if="!showDetails">
+      <b-table
+        v-if="width > 991"
+        id="tableConsolidaciones"
+        responsive
+        striped
+        hover
+        :fields="fields"
+        :items="dataRefactor"
+        head-variant="dark"
+        class="mt-3"
+        :class="variantThemeTableBody"
+      >
+        <template #cell(Articulos)="row">
+          <b-badge
+            pill
+            variant="info"
+            class="py-1 px-2"
+            style="font-size: 14px"
+          >
+            {{ row.item.Articulos }}
+          </b-badge>
+        </template>
+        <template #cell(Fecha)="row">
+          {{ utils.toDate(row.item.Fecha) }}
+        </template>
+        <template #cell(Hora)="row">
+          {{ utils.toHour(row.item.Hora) }}
+        </template>
+        <template #cell(Detalles)="row">
+          <b-button variant="info" size="sm" @click="viewDetails(row.item)">
+            Detalles
+          </b-button>
+        </template>
+      </b-table>
+      <div v-else>
+        <b-card
+          v-for="(consolidacion, indexConsolidacion) in dataRefactor"
+          :key="indexConsolidacion"
+          no-body
+          class="containerCard"
+          :class="variantTheme"
+        >
+          <div :class="getColorClass(consolidacion.Estatus)">
+            <span class="float-right">
+              {{ consolidacion.Estatus }}
             </span>
+            <div class="container-transferencia">
+              <span class="font-weight-bold">Transferencia:</span>
+              {{ consolidacion.Transferencia }}
+            </div>
+            <div class="container-transferencia">
+              <span class="font-weight-bold">Entrada:</span>
+              {{ consolidacion.Entrada }}
+            </div>
+            <div class="container-transferencia">
+              <span class="font-weight-bold">Referencia:</span>
+              {{ consolidacion.Referencia }}
+            </div>
+            <div class="container-transferencia">
+              <span class="font-weight-bold">Destino:</span>
+              {{ consolidacion.AlmacenDestino }}
+            </div>
+            <div class="container-transferencia">
+              <span class="font-weight-bold">Observaciones:</span>
+              {{ consolidacion.Observaciones }}
+            </div>
+            <div class="d-block">
+              <span class="font-italic float-right">
+                {{ utils.toDate(consolidacion.Fecha) }}
+                {{ utils.toHour(consolidacion.Hora) }}
+              </span>
+            </div>
           </div>
-        </div>
-      </b-card>
+        </b-card>
+      </div>
     </div>
+    <ConsolidacionesDetails
+      v-else
+      :transferencia-actual="transferenciaActual"
+      :sucursales="sucursales"
+    />
 
     <b-modal
       id="alertSucursal"
@@ -143,11 +175,6 @@
         </div>
       </template>
     </b-modal>
-
-    <ConsolidacionesDetails
-      v-if="showDetails"
-      :transferencia-actual="transferenciaActual"
-    />
   </div>
 </template>
 
@@ -271,11 +298,21 @@ export default {
       setLoading: 'general/setLoading',
       showAlertDialog: 'general/showAlertDialog',
       setSucursal: 'consolidaciones/setSucursal',
+      setShowDetails: 'consolidaciones/setShowDetails',
     }),
     ...mapActions({
       changeData: 'consolidaciones/changeData',
       loadDetails: 'consolidaciones/loadDetails',
     }),
+    stateBtn(from) {
+      if (from === 'list') {
+        this.stateList = true
+        this.stateDetails = false
+      } else {
+        this.stateList = false
+        this.stateDetails = true
+      }
+    },
     getColorClass(estatus) {
       if (estatus === 'Fallo') return 'container-info-warning'
       else if (estatus === 'Exito') return 'container-info'
@@ -286,6 +323,7 @@ export default {
       const response = await this.loadDetails([
         this.$store.state.consolidaciones.sucursal,
         data.Transferencia,
+        data,
       ])
       this.setLoading(false)
       this.transferenciaActual = data
@@ -331,6 +369,14 @@ export default {
 </script>
 
 <style scoped>
+.line-buttons {
+  margin-bottom: 20px;
+  width: calc(100% - 5px);
+  margin-left: 5px;
+  height: 1px;
+  margin-top: -1px;
+}
+
 .container-transferencia {
   display: inline-block;
   max-width: 320px;
