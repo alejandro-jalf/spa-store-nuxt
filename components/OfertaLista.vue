@@ -493,9 +493,7 @@ export default {
       return this.$store.state.ofertas.ofertaActual.descripcion
     },
   },
-  mounted() {
-    // console.log(this.$store.state.ofertas.ofertaActual.listaProductos)
-  },
+  mounted() {},
   methods: {
     ...mapMutations({
       setProgramandoLista: 'ofertas/setProgramandoLista',
@@ -559,7 +557,6 @@ export default {
     editArticle(articuloRe) {
       const editArtiicle = { ...articuloRe.item }
 
-      console.log(editArtiicle)
       this.formArticulo = editArtiicle
       this.formArticulo.codigobarras = editArtiicle.articulo
       this.editableArticulo = false
@@ -590,7 +587,6 @@ export default {
       this.$refs.articulo.focus()
     },
     validaArticulo() {
-      console.log(this.formArticulo)
       if (!this.editingArticle) {
         if (this.formArticulo.costo.trim() === '') {
           this.showAlertDialog(['No a seleccionado algun producto'])
@@ -647,7 +643,6 @@ export default {
         })
         this.setLoading(false)
         this.showError = false
-        console.log(response.data)
 
         if (response.data.success) {
           this.clearFormArticulo()
@@ -656,7 +651,6 @@ export default {
           this.refreshTableArticles()
         } else this.showAlertDialog([response.data.message])
       } catch (error) {
-        console.log(error, error.response)
         this.setLoading(false)
         if (error.response) this.showAlertDialog([error.response.data.message])
         else this.showAlertDialog(['Error con el servidor'])
@@ -697,7 +691,6 @@ export default {
         })
         this.setLoading(false)
         this.showError = false
-        console.log(response.data)
 
         if (response.data.success) {
           this.clearFormArticulo()
@@ -708,7 +701,6 @@ export default {
           this.showAlertDialog([response.data.message])
         }
       } catch (error) {
-        console.log(error, error.response)
         this.setLoading(false)
         if (error.response) this.showAlertDialog([error.response.data.message])
         else this.showAlertDialog(['Error con el servidor'])
@@ -745,7 +737,6 @@ export default {
         })
         this.setLoading(false)
         this.showError = false
-        console.log(response.data)
 
         if (response.data.success) {
           this.clearFormArticulo()
@@ -756,7 +747,6 @@ export default {
           this.showAlertDialog([response.data.message])
         }
       } catch (error) {
-        console.log(error, error.response)
         this.setLoading(false)
         if (error.response) this.showAlertDialog([error.response.data.message])
         else this.showAlertDialog(['Error con el servidor'])
@@ -826,7 +816,6 @@ export default {
           },
         })
         this.setLoading(false)
-        console.log(response.data)
 
         if (response.data.success) {
           this.setLoading(true)
@@ -837,7 +826,6 @@ export default {
           this.showAlertDialog([response.data.message])
         }
       } catch (error) {
-        console.log(error, error.response)
         this.setLoading(false)
         if (error.response) this.showAlertDialog([error.response.data.message])
         else this.showAlertDialog(['Error con el servidor'])
@@ -877,7 +865,6 @@ export default {
         })
         this.setLoading(false)
         this.showError = false
-        console.log(response.data)
 
         if (response.data.success) {
           this.setLoading(true)
@@ -888,7 +875,6 @@ export default {
           this.showAlertDialog([response.data.message])
         }
       } catch (error) {
-        console.log(error, error.response)
         this.setLoading(false)
         if (error.response) this.showAlertDialog([error.response.data.message])
         else this.showAlertDialog(['Error con el servidor'])
@@ -977,7 +963,6 @@ export default {
           this.editableArticulo = true
         }
       } catch (error) {
-        console.log(error, error.response)
         this.editableArticulo = true
         this.setLoading(false)
         this.showError = true
@@ -1022,7 +1007,6 @@ export default {
           this.clearFormArticulo()
         }
       } catch (error) {
-        console.log(error, error.response)
         this.setLoading(false)
         this.showError = true
         this.clearFormArticulo()
@@ -1031,7 +1015,6 @@ export default {
       }
     },
     selectProduct(article) {
-      console.log(article)
       this.searchProducts = false
       this.showError = false
       this.formArticulo.articulo = article.Articulo
