@@ -291,13 +291,13 @@ export default {
           if (viewBy === 'month')
             return (
               this.utils
-                .toMoment(offer.fechaInicio.replace('T', ' ').replace('Z', ''))
+                .toMoment(offer.fechaAlta.replace('T', ' ').replace('Z', ''))
                 .format('MM/YYYY') === dateActual.format('MM/YYYY')
             )
           else if (viewBy === 'year')
             return (
               this.utils
-                .toMoment(offer.fechaInicio.replace('T', ' ').replace('Z', ''))
+                .toMoment(offer.fechaAlta.replace('T', ' ').replace('Z', ''))
                 .format('YYYY') === dateActual.format('YYYY')
             )
           else return true
