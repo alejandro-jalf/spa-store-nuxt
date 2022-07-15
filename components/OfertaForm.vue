@@ -425,13 +425,12 @@ export default {
         this.showAlertDialog([response.data.message, 'Informacion', 'success'])
         if (response.data.success) {
           this.setLoading(true)
-          await this.changeListaOfertas(sucursal)
+          await this.changeListaOfertas([sucursal, 100])
           this.setLoading(false)
           this.setProgramandoLista(false)
           this.setProgramandoOferta(false)
         }
       } catch (error) {
-        console.log(error, error.response)
         this.setLoading(false)
         if (error.response) this.showAlertDialog([error.response.data.message])
         else this.showAlertDialog(['Error con el servidor'])
@@ -458,13 +457,12 @@ export default {
 
       this.setLoading(true)
       const response = await this.createMasterOffer(newOferta)
-      console.log(response)
       this.setLoading(false)
       this.showAlertDialog([response.message, 'Informacion', 'success'])
       if (response.success) {
         response.data.newOffer.estatus = 0
         this.setLoading(true)
-        await this.changeListaOfertas(sucursal)
+        await this.changeListaOfertas([sucursal, 100])
         this.setLoading(false)
         this.setListaArticulos({ data: [] })
         this.setProgramandoOferta(false)

@@ -12,6 +12,20 @@
         @change="selectSucursal"
       ></b-form-select>
       <b-input-group-append>
+        <b-form-input
+          id="input-limit"
+          v-model="limit"
+          v-b-tooltip.hover
+          title="Limite de ofertas. 0 significa todas"
+          value="100"
+          placeholder="Limite"
+          type="number"
+          size="sm"
+          min="0"
+          class="h-100 w-25"
+          :class="backgroundInputTheme"
+          @keyup.enter="reloadListaOfertas"
+        ></b-form-input>
         <b-button variant="info" @click="reloadListaOfertas">Buscar</b-button>
       </b-input-group-append>
     </b-input-group>
@@ -49,7 +63,7 @@
         </b-button>
       </b-button-group>
     </div>
-    <div class="groupDate">
+    <div v-if="viewCrearOferta" class="groupDate">
       <b-button
         :pressed="onlyIcons"
         :variant="themeButtonClose"
@@ -259,11 +273,15 @@ export default {
         { value: 'SY', text: 'SPASAYULA' },
         { value: 'JL', text: 'SPAJALTIPAN' },
       ],
+      limit: 100,
     }
   },
   computed: {
     onlyIcons() {
       return this.$store.state.ofertas.onlyIcons
+    },
+    backgroundInputTheme() {
+      return this.$store.state.general.themesComponents.themeInputBackground
     },
     showDetails() {
       return this.$store.state.ofertas.detallesValidacion.show
@@ -311,11 +329,17 @@ export default {
         )
       const listOffers = [...offersFiltered]
       listOffers.forEach((offer) => {
+        const fechaFin = utils.toMoment(
+          offer.fechaFin.replace('T', ' ').replace('Z', '')
+        )
         const status = offer.estatus
         if (status === 4) offer._rowVariant = 'danger'
-        else if (status === 3) offer._rowVariant = 'success'
-        else if (status === 2) offer._rowVariant = 'info'
+        else if (status === 3) {
+          if (dateActual.isAfter(fechaFin)) offer._rowVariant = 'secondary'
+          else offer._rowVariant = 'success'
+        } else if (status === 2) offer._rowVariant = 'info'
         else if (status === 1) offer._rowVariant = 'warning'
+        else offer._rowVariant = 'light'
       })
 
       return listOffers
@@ -418,8 +442,6 @@ export default {
       return 'folder-fill'
     },
     async validateArticlesForProgram(dataOffer) {
-      // eslint-disable-next-line no-console
-      console.log('Datos: ', dataOffer)
       try {
         const urlBase = process.env.spastore_url_backend
         this.setLoading(true)
@@ -433,8 +455,6 @@ export default {
           method: 'get',
         })
         this.setLoading(false)
-        // eslint-disable-next-line no-console
-        console.log(response.data)
 
         if (response.data.success) this.setArticlesDetails({ data: [] })
         else {
@@ -443,8 +463,6 @@ export default {
         }
         this.setShowDetails(true)
       } catch (error) {
-        // eslint-disable-next-line no-console
-        console.log(error, error.response)
         this.setLoading(false)
         if (error.response) this.showAlertDialog([error.response.data.message])
         else this.showAlertDialog(['Error con el servidor'])
@@ -452,8 +470,6 @@ export default {
       }
     },
     async verifyArticlesOffered(dataOffer) {
-      // eslint-disable-next-line no-console
-      console.log('Datos: ', dataOffer)
       try {
         const urlBase = process.env.spastore_url_backend
         this.setLoading(true)
@@ -468,16 +484,12 @@ export default {
           method: 'get',
         })
         this.setLoading(false)
-        // eslint-disable-next-line no-console
-        console.log(response.data)
 
         if (response.data.success) {
           this.setShowVerify(true)
           this.setArticlesVerify({ data: response.data.data })
         } else this.showAlertDialog([response.data.message])
       } catch (error) {
-        // eslint-disable-next-line no-console
-        console.log(error, error.response)
         this.setLoading(false)
         if (error.response) this.showAlertDialog([error.response.data.message])
         else this.showAlertDialog(['Error con el servidor'])
@@ -519,8 +531,6 @@ export default {
       ])
     },
     async changeStatusOffer(dataOffer, newStatus) {
-      // eslint-disable-next-line no-console
-      console.log(dataOffer)
       try {
         const urlBase = process.env.spastore_url_backend
         this.setLoading(true)
@@ -539,12 +549,10 @@ export default {
           },
         })
         this.setLoading(false)
-        // eslint-disable-next-line no-console
-        console.log(response.data)
 
         if (response.data.success) {
           this.setLoading(true)
-          await this.changeListaOfertas(this.suc)
+          await this.changeListaOfertas([this.suc, this.limit])
           this.setProgramandoOferta(false)
           this.setProgramandoLista(false)
           this.setLoading(false)
@@ -561,8 +569,6 @@ export default {
           return false
         }
       } catch (error) {
-        // eslint-disable-next-line no-console
-        console.log(error, error.response)
         this.setLoading(false)
         if (error.response) this.showAlertDialog([error.response.data.message])
         else this.showAlertDialog(['Error con el servidor'])
@@ -596,19 +602,15 @@ export default {
           method: 'delete',
         })
         this.setLoading(false)
-        // eslint-disable-next-line no-console
-        console.log(response.data)
 
         if (response.data.success) {
           this.setLoading(true)
-          await this.changeListaOfertas(this.suc)
+          await this.changeListaOfertas([this.suc, this.limit])
           this.setLoading(false)
         } else {
           this.showAlertDialog([response.data.message])
         }
       } catch (error) {
-        // eslint-disable-next-line no-console
-        console.log(error, error.response)
         this.setLoading(false)
         if (error.response) this.showAlertDialog([error.response.data.message])
         else this.showAlertDialog(['Error con el servidor'])
@@ -704,8 +706,6 @@ export default {
       this.cleanOfertaActual()
     },
     async viewDetails(uuid, oferta) {
-      // eslint-disable-next-line no-console
-      console.log(uuid, oferta)
       const ofertaAct = { ...oferta }
       // falta ajustar
       this.setLoading(true)
@@ -719,8 +719,18 @@ export default {
     },
     async reloadListaOfertas() {
       const sucursal = this.$store.state.ofertas.sucursal
+      if (this.tipoUser === 'manager') {
+        if (this.limit === '') {
+          this.showAlertDialog(['Limite de ofertas no puede ser vacio'])
+          return false
+        } else if (typeof this.limit < 0) {
+          this.showAlertDialog(['Limite de ofertas no puede ser menor que 0'])
+          return false
+        }
+      }
+      if (this.limit === '' || typeof this.limit < 0) this.limit = 100
       this.setLoading(true)
-      const response = await this.changeListaOfertas(sucursal)
+      const response = await this.changeListaOfertas([sucursal, this.limit])
       if (!response.success) this.showAlertDialog([response.message])
       this.setLoading(false)
     },

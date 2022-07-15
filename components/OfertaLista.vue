@@ -819,7 +819,7 @@ export default {
 
         if (response.data.success) {
           this.setLoading(true)
-          await this.changeListaOfertas(sucursal)
+          await this.changeListaOfertas([sucursal, 100])
           this.setLoading(false)
           this.setProgramandoLista(false)
         } else {
@@ -868,7 +868,7 @@ export default {
 
         if (response.data.success) {
           this.setLoading(true)
-          await this.changeListaOfertas(sucursal)
+          await this.changeListaOfertas([sucursal, 100])
           this.setLoading(false)
           this.setProgramandoLista(false)
         } else {

@@ -173,13 +173,14 @@ export const mutations = {
 }
 
 export const actions = {
-  async changeListaOfertas({ commit }, sucursal) {
+  async changeListaOfertas({ commit }, [sucursal, limit = 100]) {
     try {
       const url =
         process.env.spastore_url_backend +
         'api/v1/ofertas/' +
         sucursal +
-        '/maestros'
+        '/maestros?limit=' +
+        limit
       const response = await this.$axios({
         url,
         method: 'get',
