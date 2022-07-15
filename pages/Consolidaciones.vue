@@ -340,6 +340,7 @@ export default {
       this.setLoading(false)
       if (!response.success)
         this.showAlertDialog([response.message, 'Error inesperado'])
+      else this.setShowDetails(false)
     },
     selectSucursal(sucursal) {
       this.selected = sucursal

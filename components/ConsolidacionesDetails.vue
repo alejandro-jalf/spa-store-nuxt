@@ -4,6 +4,35 @@
       No hay detalles que mostrar
     </b-alert>
     <div v-if="!isEmptyDetails" class="mb-5">
+      <div class="mb-3 mt-3">
+        <b-button
+          :variant="variantSuccess"
+          :block="width < 528"
+          class="mt-2"
+          @click="createPdf(false)"
+        >
+          <b-icon icon="download" />
+          PDF
+        </b-button>
+        <b-button
+          :variant="variantInfo"
+          :block="width < 528"
+          class="mt-2"
+          @click="createPdf(true)"
+        >
+          <b-icon icon="printer-fill" />
+          PDF
+        </b-button>
+        <b-button
+          :variant="variantClean"
+          :block="width < 528"
+          class="mt-2"
+          @click="setConsolidacionActual({ data: [] })"
+        >
+          <b-icon icon="ui-checks" />
+          Limpiar detalles
+        </b-button>
+      </div>
       <div class="text-center mb-2">
         Envia:
         <span class="font-weight-bold">
@@ -136,7 +165,9 @@
 
 <script>
 import { mapMutations } from 'vuex'
+import { jsPDF } from 'jspdf'
 import utils from '../modules/utils'
+import 'jspdf-autotable'
 
 export default {
   props: {
@@ -164,12 +195,24 @@ export default {
     }
   },
   computed: {
+    width() {
+      return this.$store.state.general.widthWindow
+    },
     sucursal() {
       const sucursales = this.sucursales
       return sucursales[`${this.$store.state.consolidaciones.sucursal}`]
     },
     variantThemeTableBody() {
       return this.$store.state.general.themesComponents.themeTableBody
+    },
+    variantClean() {
+      return this.$store.state.general.themesComponents.themeButtonClean
+    },
+    variantSuccess() {
+      return this.$store.state.general.themesComponents.themeButtonSuccess
+    },
+    variantInfo() {
+      return this.$store.state.general.themesComponents.themeButtonClose
     },
     consolidacionActual() {
       return this.$store.state.consolidaciones.consolidacionActual.data
@@ -218,6 +261,7 @@ export default {
   methods: {
     ...mapMutations({
       setShowDetails: 'consolidaciones/setShowDetails',
+      setConsolidacionActual: 'consolidaciones/setConsolidacionActual',
     }),
     formatNumber(value) {
       return utils.aplyFormatNumeric(utils.roundTo(value))
@@ -225,6 +269,141 @@ export default {
     formatNumberWithFooter(value, footer) {
       if (footer) return ''
       return utils.aplyFormatNumeric(utils.roundTo(value))
+    },
+    createPdf(preview) {
+      this.createPdfTransferencias(
+        'SPA',
+        this.sucursal,
+        this.$store.state.consolidaciones.details.data,
+        this.consolidacionActual,
+        '2022-07-14',
+        preview
+      )
+    },
+    createPdfTransferencias(
+      company,
+      sucursal,
+      data,
+      dataConsolidacion,
+      horaImpresion,
+      preview = false
+    ) {
+      // eslint-disable-next-line new-cap
+      const doc = new jsPDF('p', 'mm', 'letter')
+
+      doc.setFontSize(11)
+      doc.setFont('helvetica', 'normal')
+      doc.text('SUPER PROMOCIONES DE ACAYUCAN', 105, 18, 'center')
+
+      doc.setFontSize(10)
+      doc.text('Fecha: ', 182, 30, 'right')
+
+      doc.text('Origen: ', 10, 30)
+      doc.text('Documento: ', 10, 36)
+      doc.text('Destino: ', 10, 43)
+
+      doc.setFont('helvetica', 'bold')
+      doc.text('Envia: ' + this.sucursal, 105, 25, 'center')
+      doc.text(utils.toDate(dataConsolidacion.Fecha), 200, 30, 'right')
+      doc.text(
+        'Destino: ' + dataConsolidacion.Referencia.toUpperCase(),
+        200,
+        36,
+        'right'
+      )
+      doc.text(
+        'Transfirio: ' + dataConsolidacion.NombreCajero.toUpperCase(),
+        200,
+        43,
+        'right'
+      )
+
+      doc.text(dataConsolidacion.AlmacenOrigen, 24, 30)
+      doc.text(dataConsolidacion.Transferencia, 30, 36)
+      doc.text(dataConsolidacion.AlmacenDestino, 24, 43)
+
+      const body = data.reduce((acumData, dato) => {
+        acumData.push([
+          { content: dato.Articulo },
+          {
+            content: this.formatNumber(dato.CantidadRegular),
+          },
+          { content: dato.Nombre },
+          {
+            content: this.formatNumber(dato.CantidadRegularUC),
+          },
+          { content: dato.UnidadCompra },
+          { content: dato.Rel },
+          {
+            content: this.formatNumber(dato.CostoConIva),
+          },
+          { content: dato.Tasa },
+        ])
+        return acumData
+      }, [])
+
+      doc.autoTable({
+        startY: 49,
+        tableWidth: 190,
+        margin: {
+          left: 10,
+        },
+        styles: { fontSize: 9 },
+        headStyles: {
+          fontStyle: 'bold',
+          halign: 'left',
+          fillColor: [255, 255, 255],
+          textColor: [0, 0, 0],
+        },
+        bodyStyles: { textColor: [0, 0, 0] },
+        head: [
+          [
+            'Articulo',
+            'PZAS',
+            'Nombre',
+            'CANT',
+            'UNIDAD',
+            'RELACION',
+            'IMPORTE + IVA',
+            'TASA',
+          ],
+        ],
+        body,
+      })
+
+      const finalY = doc.lastAutoTable.finalY
+      doc.setDrawColor(0, 0, 0)
+      doc.line(10, 56, 200, 56)
+
+      doc.setFont('helvetica', 'bold')
+      if (finalY > 240) {
+        doc.addPage()
+        doc.line(25, 50, 85, 50)
+        doc.text('ENCARGADO', 45, 55)
+        doc.line(131, 50, 191, 50)
+        if (company === 'CAASA') doc.text('RECURSOS HUMANOS', 145, 55)
+        else doc.text('LC ARTEMIO PEREZ MORATILLA', 136, 55)
+      } else {
+        doc.line(25, 260, 85, 260)
+        doc.text('ENCARGADO', 45, 265)
+        doc.line(131, 260, 191, 260)
+        if (company === 'CAASA') doc.text('RECURSOS HUMANOS', 145, 265)
+        else doc.text('LC ARTEMIO PEREZ MORATILLA', 136, 265)
+      }
+
+      const countPages = doc.getNumberOfPages()
+      let pageCurrent = 0
+      doc.setFontSize(9)
+      doc.setFont('helvetica', 'italic')
+      for (let page = 0; page < countPages; page++) {
+        doc.setPage(page)
+        pageCurrent = doc.internal.getCurrentPageInfo().pageNumber
+        doc.text(`Pagina ${pageCurrent} de ${countPages}`, 207, 275, 'right')
+        doc.text(horaImpresion, 8, 275)
+      }
+
+      if (preview) doc.output('dataurlnewwindow')
+      else doc.save(`ASISTENCIAS ${sucursal}.pdf`)
     },
   },
 }
