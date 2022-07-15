@@ -515,7 +515,7 @@ export default {
       const messageStatus =
         offer.estatus === 1
           ? 'poner en proceso'
-          : this.messageButton(offer.estatus)
+          : this.messageButton(offer.estatus, true)
       const newStatus = offer.estatus === 4 ? 0 : statusIncrement
 
       this.showAlertDialogOption([
@@ -616,8 +616,8 @@ export default {
         else this.showAlertDialog(['Error con el servidor'])
       }
     },
-    messageButton(status) {
-      if (this.onlyIcons) return ''
+    messageButton(status, isText = false) {
+      if (!isText && this.onlyIcons) return ''
       switch (status) {
         case 0:
           return 'Enviar'
