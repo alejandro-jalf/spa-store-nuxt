@@ -56,6 +56,19 @@
     <div class="line-buttons bg-info"></div>
 
     <div v-if="!showDetails">
+      <b-alert variant="info" :show="isEmptyConsolidaciones">
+        Lista de consolidaciones esta vacia
+      </b-alert>
+      <b-button
+        v-if="!isEmptyConsolidaciones"
+        :variant="variantClean"
+        :block="width < 528"
+        class="mt-2"
+        @click="setData({ data: [] })"
+      >
+        <b-icon icon="arrow-left-right" />
+        Limpiar lista de consolidaciones
+      </b-button>
       <b-table
         v-if="width > 991"
         id="tableConsolidaciones"
@@ -255,6 +268,12 @@ export default {
     variantThemeTableBody() {
       return this.$store.state.general.themesComponents.themeTableBody
     },
+    variantClean() {
+      return this.$store.state.general.themesComponents.themeButtonClean
+    },
+    isEmptyConsolidaciones() {
+      return this.$store.state.consolidaciones.data.data.length === 0
+    },
     suc() {
       return this.$store.state.consolidaciones.sucursal
     },
@@ -299,6 +318,7 @@ export default {
       showAlertDialog: 'general/showAlertDialog',
       setSucursal: 'consolidaciones/setSucursal',
       setShowDetails: 'consolidaciones/setShowDetails',
+      setData: 'consolidaciones/setData',
     }),
     ...mapActions({
       changeData: 'consolidaciones/changeData',

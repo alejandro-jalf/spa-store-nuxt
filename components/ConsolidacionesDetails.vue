@@ -29,7 +29,7 @@
           class="mt-2"
           @click="setConsolidacionActual({ data: [] })"
         >
-          <b-icon icon="ui-checks" />
+          <b-icon icon="arrow-left-right" />
           Limpiar detalles
         </b-button>
       </div>
@@ -143,6 +143,11 @@
         </template>
       </b-table>
       <Divider class="my-3" />
+      <div>
+        (
+        {{ utils.numeroALetras(total, {}, false) }}
+        )
+      </div>
       <div class="float-right text-right">
         <span class="font-weight-bold d-inline"> Subtotal: </span>
         <div class="rectangle">
@@ -272,55 +277,64 @@ export default {
     },
     createPdf(preview) {
       this.createPdfTransferencias(
-        'SPA',
         this.sucursal,
         this.$store.state.consolidaciones.details.data,
         this.consolidacionActual,
-        '2022-07-14',
         preview
       )
     },
     createPdfTransferencias(
-      company,
       sucursal,
       data,
       dataConsolidacion,
-      horaImpresion,
       preview = false
     ) {
       // eslint-disable-next-line new-cap
       const doc = new jsPDF('p', 'mm', 'letter')
 
-      doc.setFontSize(11)
-      doc.setFont('helvetica', 'normal')
-      doc.text('SUPER PROMOCIONES DE ACAYUCAN', 105, 18, 'center')
+      const headerPage = () => {
+        doc.setFontSize(10)
+        doc.setFont('helvetica', 'normal')
+        doc.text('SUPER PROMOCIONES DE ACAYUCAN', 105, 15, 'center')
+        doc.setFont('helvetica', 'bold')
+        doc.text('Envia: ' + sucursal, 105, 22, 'center')
+        doc.setFont('helvetica', 'normal')
 
-      doc.setFontSize(10)
-      doc.text('Fecha: ', 182, 30, 'right')
+        doc.setFontSize(9)
+        doc.text('Fecha: ', 182, 27, 'right')
 
-      doc.text('Origen: ', 10, 30)
-      doc.text('Documento: ', 10, 36)
-      doc.text('Destino: ', 10, 43)
+        doc.text('Origen: ', 10, 27)
+        doc.text('Documento: ', 10, 33)
+        doc.text('Destino: ', 10, 39)
 
-      doc.setFont('helvetica', 'bold')
-      doc.text('Envia: ' + this.sucursal, 105, 25, 'center')
-      doc.text(utils.toDate(dataConsolidacion.Fecha), 200, 30, 'right')
-      doc.text(
-        'Destino: ' + dataConsolidacion.Referencia.toUpperCase(),
-        200,
-        36,
-        'right'
-      )
-      doc.text(
-        'Transfirio: ' + dataConsolidacion.NombreCajero.toUpperCase(),
-        200,
-        43,
-        'right'
-      )
+        doc.text(
+          'Observaciones: ' + dataConsolidacion.Observaciones.toUpperCase(),
+          105,
+          46,
+          'center'
+        )
 
-      doc.text(dataConsolidacion.AlmacenOrigen, 24, 30)
-      doc.text(dataConsolidacion.Transferencia, 30, 36)
-      doc.text(dataConsolidacion.AlmacenDestino, 24, 43)
+        doc.setFont('helvetica', 'bold')
+        doc.text(utils.toDate(dataConsolidacion.Fecha), 200, 27, 'right')
+        doc.text(
+          'Destino: ' + dataConsolidacion.Referencia.toUpperCase(),
+          200,
+          33,
+          'right'
+        )
+        doc.text(
+          'Transfirio: ' + dataConsolidacion.NombreCajero.toUpperCase(),
+          200,
+          39,
+          'right'
+        )
+
+        doc.text(dataConsolidacion.AlmacenOrigen, 24, 27)
+        doc.text(dataConsolidacion.Transferencia, 30, 33)
+        doc.text(dataConsolidacion.AlmacenDestino, 24, 39)
+      }
+
+      headerPage()
 
       const body = data.reduce((acumData, dato) => {
         acumData.push([
@@ -372,23 +386,58 @@ export default {
       })
 
       const finalY = doc.lastAutoTable.finalY
-      doc.setDrawColor(0, 0, 0)
-      doc.line(10, 56, 200, 56)
-
       doc.setFont('helvetica', 'bold')
-      if (finalY > 240) {
+      doc.setDrawColor(0, 0, 0)
+      if (finalY > 230) {
         doc.addPage()
-        doc.line(25, 50, 85, 50)
-        doc.text('ENCARGADO', 45, 55)
-        doc.line(131, 50, 191, 50)
-        if (company === 'CAASA') doc.text('RECURSOS HUMANOS', 145, 55)
-        else doc.text('LC ARTEMIO PEREZ MORATILLA', 136, 55)
+        headerPage()
+
+        doc.line(10, 70, 200, 70)
+        doc.text('Subtotal:', 165, 75, 'right')
+        doc.text('Iva:', 165, 80, 'right')
+        doc.text('Total:', 165, 85, 'right')
+
+        doc.setFont('helvetica', 'normal')
+        doc.text('(' + utils.numeroALetras(this.total, {}, false) + ')', 12, 75)
+        doc.text(this.formatNumber(this.subTotal), 195, 75, 'right')
+        doc.text(this.formatNumber(this.iva), 195, 80, 'right')
+        doc.text(this.formatNumber(this.total), 195, 85, 'right')
+
+        doc.text('Entrego:', 15, 117)
+        doc.line(30, 117, 75, 117)
+        doc.text('Nombre y Firma', 52, 121, 'center')
+        doc.text('Recibio:', 85, 117)
+        doc.line(100, 117, 145, 117)
+        doc.text('Nombre y Firma', 122, 121, 'center')
+
+        doc.text('FOLIO INTERNO', 75, 127, 'center')
+        doc.line(150, 125, 195, 125)
+        doc.text('Vo.Bo.', 172, 128, 'center')
       } else {
-        doc.line(25, 260, 85, 260)
-        doc.text('ENCARGADO', 45, 265)
-        doc.line(131, 260, 191, 260)
-        if (company === 'CAASA') doc.text('RECURSOS HUMANOS', 145, 265)
-        else doc.text('LC ARTEMIO PEREZ MORATILLA', 136, 265)
+        doc.line(10, 230, 200, 230)
+        doc.text('Subtotal:', 165, 235, 'right')
+        doc.text('Iva:', 165, 240, 'right')
+        doc.text('Total:', 165, 245, 'right')
+
+        doc.setFont('helvetica', 'normal')
+        doc.text(
+          '(' + utils.numeroALetras(this.total, {}, false) + ')',
+          12,
+          235
+        )
+        doc.text(this.formatNumber(this.subTotal), 195, 235, 'right')
+        doc.text(this.formatNumber(this.iva), 195, 240, 'right')
+        doc.text(this.formatNumber(this.total), 195, 245, 'right')
+        doc.text('Entrego:', 15, 257)
+        doc.line(30, 257, 75, 257)
+        doc.text('Nombre y Firma', 52, 261, 'center')
+        doc.text('Recibio:', 85, 257)
+        doc.line(100, 257, 145, 257)
+        doc.text('Nombre y Firma', 122, 261, 'center')
+
+        doc.text('FOLIO INTERNO', 75, 267, 'center')
+        doc.line(150, 265, 195, 265)
+        doc.text('Vo.Bo.', 172, 268, 'center')
       }
 
       const countPages = doc.getNumberOfPages()
@@ -399,11 +448,15 @@ export default {
         doc.setPage(page)
         pageCurrent = doc.internal.getCurrentPageInfo().pageNumber
         doc.text(`Pagina ${pageCurrent} de ${countPages}`, 207, 275, 'right')
-        doc.text(horaImpresion, 8, 275)
+        doc.text('Tranferencia: ' + dataConsolidacion.Transferencia, 8, 275)
+        if (pageCurrent === 1) doc.line(10, 56, 200, 56)
       }
 
       if (preview) doc.output('dataurlnewwindow')
-      else doc.save(`ASISTENCIAS ${sucursal}.pdf`)
+      else
+        doc.save(
+          `${sucursal} - Transferencia ${dataConsolidacion.Transferencia}.pdf`
+        )
     },
   },
 }
