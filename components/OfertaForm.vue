@@ -405,6 +405,12 @@ export default {
         const urlBase = process.env.spastore_url_backend
         const sucursal = this.$store.state.ofertas.sucursal
         const uuidMaster = this.$store.state.ofertas.ofertaActual.uuid
+        const dateStart = this.form_oferta.fecha_inicio.includes('T')
+          ? this.form_oferta.fecha_inicio.replace('Z', 'z')
+          : this.form_oferta.fecha_inicio + 'T23:59:59.999z'
+        const dateEnd = this.form_oferta.fecha_fin.includes('T')
+          ? this.form_oferta.fecha_fin.replace('Z', 'z')
+          : this.form_oferta.fecha_fin + 'T23:59:59.999z'
         this.setLoading(true)
         const response = await this.$axios({
           url:
@@ -414,8 +420,8 @@ export default {
             status: this.$store.state.ofertas.ofertaActual.estatus,
             editable: this.$store.state.ofertas.ofertaActual.editable,
             tipoOferta: this.form_oferta.tipo,
-            fechaInicio: this.form_oferta.fecha_inicio.replace('Z', 'z'),
-            fechaFin: this.form_oferta.fecha_fin.replace('Z', 'z'),
+            fechaInicio: dateStart,
+            fechaFin: dateEnd,
             descripcion: this.form_oferta.descripcion,
             modificadoPor: this.dataUser.correo_user,
           },
