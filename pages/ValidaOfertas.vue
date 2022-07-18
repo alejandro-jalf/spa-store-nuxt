@@ -12,6 +12,7 @@
     <b-input-group prepend="Sucursal">
       <b-form-select
         :value="suc"
+        :disabled="!accessChangeSucursal"
         :options="options"
         @change="selectSucursal"
       ></b-form-select>
@@ -143,6 +144,9 @@ export default {
     }
   },
   computed: {
+    accessChangeSucursal() {
+      return this.$store.state.user.user.tipo_user === 'manager'
+    },
     width() {
       return this.$store.state.general.widthWindow
     },
@@ -201,6 +205,7 @@ export default {
     const tableValidaOfertas = document.getElementById('tableValidaOfertas')
 
     this.loadOnlyValid()
+    this.setSucursalForUser()
 
     if (tableValidaOfertas) {
       tableValidaOfertas.addEventListener('touchstart', (evt) => {
@@ -222,6 +227,14 @@ export default {
     ...mapActions({
       changeData: 'validaofertas/changeData',
     }),
+    setSucursalForUser() {
+      if (!this.accessChangeSucursal) {
+        const sucursalUser = utils.getSucursalByName(
+          this.$store.state.user.user.sucursal_user
+        )
+        this.setSucursal(sucursalUser)
+      }
+    },
     upPage() {
       window.scroll({
         top: 0,
