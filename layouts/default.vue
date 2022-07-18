@@ -223,11 +223,7 @@ export default {
     }
 
     const eventKeyUp = (evt) => {
-      if (this.$store.state.general.alert.show) {
-        if (evt.key === 'Enter') this.hideAlertDialog()
-      } else if (
-        this.$store.state.general.tabActual.trim() === 'Checador Precios'
-      ) {
+      if (this.$store.state.general.tabActual.trim() === 'Checador Precios') {
         if (parseInt(evt.key) >= 0 && parseInt(evt.key) <= 9)
           this.barCode += evt.key
         else if (evt.key === 'Enter') this.getArticleByCodeOrArticle()
@@ -241,6 +237,12 @@ export default {
       }
     }
 
+    const eventKeyDown = (evt) => {
+      if (this.$store.state.general.alert.show) {
+        if (evt.key === 'Enter') this.hideAlertDialog()
+      }
+    }
+
     this.setWidthWindow(window.innerWidth)
     setTheme()
     updateDataUser()
@@ -249,6 +251,7 @@ export default {
     setWidthContainerAll(window.innerWidth)
 
     window.addEventListener('keyup', eventKeyUp)
+    window.addEventListener('keydown', eventKeyDown)
     document.addEventListener('touchstart', this.handleTouchStart, false)
     document.addEventListener('touchmove', this.handleTouchMove, false)
     document.addEventListener('touchend', this.handleEnd, false)
