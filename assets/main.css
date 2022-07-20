@@ -4,6 +4,12 @@
   border-color: #ddd;
 }
 
+.white-mode {
+  color: #243746;
+  background: #f3f5f4;
+  border-color: #ddd;
+}
+
 .cursor-pointer {
   cursor: pointer;
 }

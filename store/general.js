@@ -201,6 +201,7 @@ export const state = () => ({
         themeHR: '',
         backgroundVariantBody: 'light',
         themeOverlay: '',
+        themeGeneral: 'whiteTheme',
       },
 })
 
@@ -411,6 +412,12 @@ export const actions = {
         '',
         ' darkThemeOverlay',
         'sepiaThemeOverlay'
+      ),
+      themeGeneral: filterOption(
+        themes,
+        'white-mode',
+        'dark-mode',
+        'sepia-mode'
       ),
     }
     commit('setThemesComponents', themesComponents)

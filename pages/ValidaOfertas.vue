@@ -21,39 +21,136 @@
       </template>
     </b-input-group>
 
-    <b-button-group class="mt-3">
+    <div class="container-filters">
+      <span class="title-container" :class="themeTitle">Filtros</span>
       <b-button
-        :pressed="activatedLimit"
-        variant="outline-info"
-        @click="setActivateLimit('withLimit')"
+        class="float-right btn-help"
+        variant="info"
+        size="sm"
+        @click="showHelpFilters"
       >
-        Con limite de fecha
+        <b-icon icon="question-circle-fill"></b-icon>
       </b-button>
-      <b-button
-        :pressed="!activatedLimit && !activatedAll"
-        variant="outline-info"
-        @click="setActivateLimit('withoutLimit')"
-      >
-        Sin limite de fecha
-      </b-button>
-      <b-button
-        :pressed="activatedAll"
-        variant="outline-info"
-        @click="setActivateLimit('all')"
-      >
-        Todas
-      </b-button>
-    </b-button-group>
+      <b-button-group class="mt-3">
+        <b-button
+          :pressed="activatedLimit"
+          variant="outline-info"
+          @click="setActivateLimit('withLimit')"
+        >
+          Con limite de fecha
+        </b-button>
+        <b-button
+          :pressed="!activatedLimit && !activatedAll"
+          variant="outline-info"
+          @click="setActivateLimit('withoutLimit')"
+        >
+          Sin limite de fecha
+        </b-button>
+        <b-button
+          :pressed="activatedAll"
+          variant="outline-info"
+          @click="setActivateLimit('all')"
+        >
+          Todas
+        </b-button>
+      </b-button-group>
 
-    <b-form-checkbox
-      v-model="onliValid"
-      name="only_valid"
-      switch
-      class="mt-2 mb-3"
-      @change="changeValid"
-    >
-      Mostrar solo no validos
-    </b-form-checkbox>
+      <Divider class="my-2" />
+
+      <b-form-checkbox
+        v-model="filterByDates"
+        name="filter_by_dates"
+        switch
+        class="mb-2 d-inline"
+        @change="changeFilterByDate"
+      >
+        Fecha de inicio y Fecha de termino especifica
+      </b-form-checkbox>
+      <b-button variant="info" size="sm" @click="showHelpDatesSE">
+        <b-icon icon="question-circle-fill"></b-icon>
+      </b-button>
+
+      <br />
+
+      <div class="inputs mt-2">
+        <b-input-group prepend="Del">
+          <b-form-datepicker
+            id="date-init"
+            v-model="dateInit"
+            label-no-date-selected="Fecha no seleccionada"
+            label-help="Fecha de Inicio"
+            label-current-month="Mes Actual"
+            label-next-month="Mes Siguiente"
+            label-next-year="Año Siguiente"
+            label-prev-month="Mes Anterior"
+            label-prev-year="Año Anterior"
+            label-reset-button="Resetear"
+            label-today-button="Hoy"
+            :reset-button="true"
+            :today-button="true"
+          ></b-form-datepicker>
+          <b-input-group-append>
+            <b-button variant="info" size="sm" @click="showHelpDatesS">
+              <b-icon icon="question-circle-fill"></b-icon>
+            </b-button>
+          </b-input-group-append>
+        </b-input-group>
+      </div>
+
+      <div class="inputs">
+        <b-input-group prepend="Al">
+          <b-form-datepicker
+            id="date-end"
+            v-model="dateEnd"
+            label-no-date-selected="Fecha no seleccionada"
+            label-help="Fecha de Termino"
+            label-current-month="Mes Actual"
+            label-next-month="Mes Siguiente"
+            label-next-year="Año Siguiente"
+            label-prev-month="Mes Anterior"
+            label-prev-year="Año Anterior"
+            label-reset-button="Resetear"
+            label-today-button="Hoy"
+            :reset-button="true"
+            :today-button="true"
+          ></b-form-datepicker>
+          <b-input-group-append>
+            <b-button variant="info" size="sm" @click="showHelpDatesE">
+              <b-icon icon="question-circle-fill"></b-icon>
+            </b-button>
+          </b-input-group-append>
+        </b-input-group>
+      </div>
+
+      <b-form-checkbox
+        v-model="onliValid"
+        name="only_valid"
+        switch
+        class="mt-2 mb-3"
+        @change="changeValid"
+      >
+        Mostrar solo no validos
+      </b-form-checkbox>
+
+      <Divider class="my-2" />
+      <div class="h6">Ordernar tabla por:</div>
+      <b-form-select
+        v-model="orderBy"
+        :options="optionsOrder"
+        class="select-order"
+      ></b-form-select>
+      <b-form-select
+        v-model="descAsc"
+        :options="optionsDescAsc"
+        class="select-order"
+      ></b-form-select>
+    </div>
+
+    <h5>
+      <b-badge pill variant="info" class="chip mt-3 mb-1">
+        Total: {{ dataRefactor.length }}
+      </b-badge>
+    </h5>
 
     <b-table
       v-if="width > 767"
@@ -64,7 +161,6 @@
       :fields="fields"
       :items="dataRefactor"
       head-variant="dark"
-      class="mt-3"
       :class="variantThemeTableBody"
     >
       <template #cell(Precio1)="row">
@@ -141,6 +237,26 @@ export default {
         UtilidadVenta: '15%',
       },
       viewDetails: false,
+      filterByDates: true,
+      dateInit: '',
+      dateEnd: '',
+      orderBy: 'Articulo',
+      optionsOrder: [
+        { value: 'Articulo', text: 'Articulo' },
+        { value: 'Nombre', text: 'Nombre' },
+        { value: 'Precio', text: 'Precio de Venta' },
+        { value: 'UtilidadPrecio', text: 'Utilidad de Venta' },
+        { value: 'Oferta', text: 'Precio de Oferta' },
+        { value: 'UtilidadOferta', text: 'Utilidad de Oferta' },
+        { value: 'Costo', text: 'Costo' },
+        { value: 'FechaInicio', text: 'Fecha de Inicio' },
+        { value: 'FechaTermino', text: 'Fecha de Termino' },
+      ],
+      descAsc: 'Descendente',
+      optionsDescAsc: [
+        { value: 'Descendente', text: 'Descendente' },
+        { value: 'Ascendente', text: 'Ascendente' },
+      ],
     }
   },
   computed: {
@@ -162,10 +278,19 @@ export default {
     variantThemeTableBody() {
       return this.$store.state.general.themesComponents.themeTableBody
     },
+    themeTitle() {
+      return this.$store.state.general.themesComponents.themeGeneral
+    },
     suc() {
       return this.$store.state.validaofertas.sucursal
     },
+    isFilterByDates() {
+      return this.$store.state.validaofertas.filterByDates
+    },
     dataRefactor() {
+      const dateIS = this.dateInit
+      const dateES = this.dateEnd
+      const orderBy = this.orderBy
       const datos = []
       this.$store.state.validaofertas.data.data.forEach((oferta) => {
         const onlyValid = this.$store.state.validaofertas.onlyValid
@@ -181,6 +306,9 @@ export default {
           utils.parseToPorcent(utils.roundTo(data.UtilidadVenta, 4, true)) +
           ' %'
         data.PrecioOferta = utils.roundTo(data.PrecioOferta)
+        data.UltimoCosto = utils.roundTo(data.UltimoCosto)
+        data.FechaInicialO = data.FechaInicial
+        data.FechaFinalO = data.FechaFinal
         data.FechaInicial = utils.toDate(data.FechaInicial)
         data.FechaFinal = utils.toDate(data.FechaFinal)
         if (data.OfertaValida === 'NO') data._rowVariant = 'danger'
@@ -198,13 +326,145 @@ export default {
           if (data.OfertaValida === 'NO') datos.push(data)
         } else datos.push(data)
       })
-      return datos
+
+      const datosFiltered = datos.filter((data) => {
+        // Filtros para fechas
+        const dateStartOffer = utils.toMoment(
+          data.FechaInicialO.replace('T', ' ').replace('Z', '')
+        )
+        const dateEndOffer = utils.toMoment(
+          data.FechaFinalO.replace('T', ' ').replace('Z', '')
+        )
+
+        if (this.filterByDates) {
+          if (dateIS !== '' && dateES !== '') {
+            const dateInitSelected = utils.toMoment(dateIS)
+            const dateEndSelected = utils.toMoment(dateES)
+            return (
+              dateInitSelected.format('YYYY-MM-DD') ===
+                dateStartOffer.format('YYYY-MM-DD') &&
+              dateEndSelected.format('YYYY-MM-DD') ===
+                dateEndOffer.format('YYYY-MM-DD')
+            )
+          } else if (dateIS !== '' && dateES === '') {
+            const dateInitSelected = utils.toMoment(dateIS)
+            return (
+              dateInitSelected.format('YYYY-MM-DD') ===
+              dateStartOffer.format('YYYY-MM-DD')
+            )
+          } else if (dateIS === '' && dateES !== '') {
+            const dateEndSelected = utils.toMoment(dateES)
+            return (
+              dateEndSelected.format('YYYY-MM-DD') ===
+              dateEndOffer.format('YYYY-MM-DD')
+            )
+          }
+          return true
+        } else {
+          if (dateIS !== '' && dateES !== '') {
+            const dateInitSelected = utils.toMoment(dateIS)
+            const dateEndSelected = utils.toMoment(dateES)
+            return (
+              dateStartOffer.isBetween(
+                dateInitSelected,
+                dateEndSelected,
+                'day',
+                '[]'
+              ) &&
+              dateEndOffer.isBetween(
+                dateInitSelected,
+                dateEndSelected,
+                'day',
+                '[]'
+              )
+            )
+          } else if (dateIS !== '' && dateES === '') {
+            const dateInitSelected = utils.toMoment(dateIS)
+            return (
+              dateInitSelected.format('YYYY-MM-DD') ===
+                dateStartOffer.format('YYYY-MM-DD') ||
+              dateInitSelected.format('YYYY-MM-DD') ===
+                dateEndOffer.format('YYYY-MM-DD') ||
+              dateStartOffer.isAfter(dateInitSelected, 'day') ||
+              dateEndOffer.isAfter(dateInitSelected, 'day')
+            )
+          } else if (dateIS === '' && dateES !== '') {
+            const dateEndSelected = utils.toMoment(dateES)
+            return (
+              dateEndSelected.format('YYYY-MM-DD') ===
+                dateEndOffer.format('YYYY-MM-DD') ||
+              dateEndSelected.format('YYYY-MM-DD') ===
+                dateStartOffer.format('YYYY-MM-DD') ||
+              dateEndOffer.isBefore(dateEndSelected, 'day') ||
+              dateStartOffer.isBefore(dateEndSelected, 'day')
+            )
+          }
+          return true
+        }
+      })
+
+      const min = this.descAsc === 'Descendente' ? -1 : 1
+      const max = this.descAsc === 'Descendente' ? 1 : -1
+      switch (orderBy) {
+        case 'Articulo':
+          return datosFiltered.sort((a, b) =>
+            a.Articulo < b.Articulo ? min : max
+          )
+        case 'Nombre':
+          return datosFiltered.sort((a, b) => (a.Nombre < b.Nombre ? min : max))
+        case 'Precio':
+          return datosFiltered.sort((a, b) =>
+            a.Precio1IVAUV < b.Precio1IVAUV ? min : max
+          )
+        case 'UtilidadPrecio':
+          return datosFiltered.sort((a, b) =>
+            a.UtilidadVenta < b.UtilidadVenta ? min : max
+          )
+        case 'Oferta':
+          return datosFiltered.sort((a, b) =>
+            a.PrecioOferta < b.PrecioOferta ? min : max
+          )
+        case 'UtilidadOferta':
+          return datosFiltered.sort((a, b) =>
+            a.UtilidadOferta < b.UtilidadOferta ? min : max
+          )
+        case 'Costo':
+          return datosFiltered.sort((a, b) =>
+            a.UltimoCosto < b.UltimoCosto ? min : max
+          )
+        case 'FechaInicio':
+          return datosFiltered.sort((a, b) =>
+            utils
+              .toMoment(a.FechaInicialO.replace('T', ' ').replace('Z', ''))
+              .isBefore(
+                utils.toMoment(
+                  b.FechaInicialO.replace('T', ' ').replace('Z', '')
+                )
+              )
+              ? min
+              : max
+          )
+        case 'FechaTermino':
+          return datosFiltered.sort((a, b) =>
+            utils
+              .toMoment(a.FechaFinalO.replace('T', ' ').replace('Z', ''))
+              .isBefore(
+                utils.toMoment(b.FechaFinalO.replace('T', ' ').replace('Z', ''))
+              )
+              ? min
+              : max
+          )
+
+        default:
+          return datosFiltered
+      }
     },
   },
   mounted() {
     const tableValidaOfertas = document.getElementById('tableValidaOfertas')
 
     this.loadOnlyValid()
+    this.loadFilterByDate()
     this.setSucursalForUser()
 
     if (tableValidaOfertas) {
@@ -223,10 +483,39 @@ export default {
       showAlertDialog: 'general/showAlertDialog',
       setSucursal: 'validaofertas/setSucursal',
       setOnlyValid: 'validaofertas/setOnlyValid',
+      setFilterByDates: 'validaofertas/setFilterByDates',
     }),
     ...mapActions({
       changeData: 'validaofertas/changeData',
     }),
+    showHelpFilters() {
+      this.showAlertDialog([
+        'En esta apartatado podra filtrar las ofertas vigentes por los diferentes filtros que se presentan. <br/>Los filtros se aplican despues de realizar la busquedas; <br/>esto quiero decir que primero debe realizar la validacion y posteriormente jugar con los filtros para mostrar la informacion que usted requiera',
+        'Ayuda',
+        'info',
+      ])
+    },
+    showHelpDatesSE() {
+      this.showAlertDialog([
+        'Activar este filtro permite solo obtener las ofertas que comiencen y terminen en fechas especificas. <br/>Por ejemplo: <br/>Si quiere buscar una oferta que comenzo un dia determinado y que termina en una fecha especifica; el filtro evalua unicamente la fecha de Inicio y la Fecha de termino de la Oferta. <br/><br/>Si se mantiene desactivado busca ofertas vigentes entre las fechas determinadas',
+        'Ayuda',
+        'info',
+      ])
+    },
+    showHelpDatesS() {
+      this.showAlertDialog([
+        'Si se deja sin seleccionar se considera la fecha de inicio como indeterminada, en este sentido el filtro no considera una fecha de inicio',
+        'Ayuda, Fecha de Inicio',
+        'info',
+      ])
+    },
+    showHelpDatesE() {
+      this.showAlertDialog([
+        'Si se deja sin seleccionar se considera la fecha de termino como indeterminada, en este sentido el filtro no considera una fecha de termino',
+        'Ayuda, Fecha de Termino',
+        'info',
+      ])
+    },
     setSucursalForUser() {
       if (!this.accessChangeSucursal) {
         const sucursalUser = utils.getSucursalByName(
@@ -264,6 +553,13 @@ export default {
     changeValid(valid) {
       this.setOnlyValid(valid)
     },
+    loadFilterByDate() {
+      const filter = this.$store.state.validaofertas.filterByDates
+      this.filterByDates = filter
+    },
+    changeFilterByDate(filterByDate) {
+      this.setFilterByDates(filterByDate)
+    },
     async getValidation() {
       this.setLoading(true)
       const response = await this.changeData([
@@ -278,11 +574,68 @@ export default {
 </script>
 
 <style scoped>
+.select-order {
+  width: calc(49% - 5px);
+  margin-bottom: 5px;
+  margin-right: 5px;
+}
+
 .footerConexiones {
   background: rgba(196, 167, 167, 0.411);
   width: 100%;
   padding: 10px;
   padding-right: 10px;
   margin-bottom: 30px;
+}
+
+.title-container,
+.btn-help {
+  position: absolute;
+  top: -15px;
+  left: 10px;
+  padding: 2px 10px;
+  font-weight: bold;
+}
+
+.btn-help {
+  padding: 1px 3px;
+  left: 75px;
+}
+
+.container-filters {
+  position: relative;
+  margin-top: 20px;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid rgb(0, 208, 255);
+}
+
+.inputs {
+  width: (33% - 8px);
+  margin-bottom: 10px;
+  display: inline-block;
+}
+
+@media screen and (max-width: 1199px) {
+  .inputs {
+    width: calc(49% - 19px);
+  }
+}
+
+@media screen and (max-width: 991px) {
+  .inputs {
+    width: calc(49% + 2px);
+  }
+}
+
+@media screen and (max-width: 767px) {
+  .inputs {
+    width: 100%;
+  }
+
+  .select-order {
+    width: 100%;
+    margin-right: 0px;
+  }
 }
 </style>

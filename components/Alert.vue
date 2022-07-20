@@ -14,7 +14,9 @@
     :footer-border-variant="bodyBgVariant"
   >
     <b-container fluid>
-      {{ alertMessage }}
+      <div v-for="(parrafo, indexP) in alertMessage" :key="indexP">
+        {{ parrafo }}
+      </div>
     </b-container>
 
     <template #modal-footer>
@@ -64,7 +66,8 @@ export default {
       return this.$store.state.general.alert.title
     },
     alertMessage() {
-      return this.$store.state.general.alert.message
+      const parrafos = this.$store.state.general.alert.message.split('<br/>')
+      return parrafos
     },
     alertHeaderBg() {
       const variant = this.$store.state.general.alert.headerBackground
