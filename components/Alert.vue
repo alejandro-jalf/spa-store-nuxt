@@ -15,6 +15,7 @@
   >
     <b-container fluid>
       <div v-for="(parrafo, indexP) in alertMessage" :key="indexP">
+        <br />
         {{ parrafo }}
       </div>
     </b-container>
