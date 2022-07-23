@@ -36,7 +36,11 @@
       @click="programarOferta()"
     >
       <b-icon icon="folder-plus" />
-      Programar nueva oferta
+      Crear Lista de Ofertas
+    </b-button>
+    <b-button variant="info" class="mb-3" @click="showStepper = true">
+      <b-icon icon="question-circle-fill"></b-icon>
+      Ayuda
     </b-button>
     <div v-if="viewCrearOferta" id="groupDate">
       <b-button-group>
@@ -221,6 +225,11 @@
       v-if="tipoUser !== 'manager'"
       :click-float="reloadListaOfertas"
     ></float-button>
+    <Stepper
+      v-if="showStepper"
+      :steppers="steppers"
+      :close-stepper="closeStepper"
+    />
   </div>
 </template>
 
@@ -233,10 +242,12 @@ import OfertaLista from '../components/OfertaLista'
 import OfertaArticulosValidados from '../components/OfertaArticulosValidados'
 import OfertaArticulosOfertados from '../components/OfertaArticulosOfertados'
 import FloatButton from '../components/FloatButton'
+import Stepper from '../components/Stepper'
 import utils from '../modules/utils'
 
 export default {
   components: {
+    Stepper,
     OfertaForm,
     OfertaLista,
     FloatButton,
@@ -274,6 +285,21 @@ export default {
         { value: 'JL', text: 'SPAJALTIPAN' },
       ],
       limit: 100,
+      showStepper: false,
+      steppers: [
+        {
+          title: '¿Como actualizar la lista de ofertas?',
+          image: 'tool.png',
+          content:
+            'Para actualizar la lista de ofertas, precione el boton de refrescar, que por lo general se encuentra ubicado en la parte inferior derecha. Con lo cual al dar click comenzara el proceso de busqueda.',
+        },
+        {
+          title: '¿Como crear una nueva lista de ofertas?',
+          image: 'cesta.png',
+          content:
+            'Para actualizar la lista de ofertas, precione el boton de refrescar, que por lo general se encuentra ubicado en la parte inferior derecha. Con lo cual al dar click comenzara el proceso de busqueda.',
+        },
+      ],
     }
   },
   computed: {
@@ -371,6 +397,9 @@ export default {
     this.textDateM = utils._arrayMonths[date.getMonth()] + '/' + this.textDateY
   },
   methods: {
+    closeStepper() {
+      this.showStepper = false
+    },
     visibleButton(dataOffer, typeButton) {
       const status = dataOffer.estatus
       const isOwner = dataOffer.creadoPor === this.dataUser.correo_user
