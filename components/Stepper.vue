@@ -141,5 +141,6 @@ export default {
   border-radius: 5px;
   border: 1px solid #fff;
   box-shadow: 1px 1px 2px 2px rgb(202, 202, 202);
+  margin-bottom: 15px;
 }
 </style>

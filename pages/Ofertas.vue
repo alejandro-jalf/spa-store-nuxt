@@ -289,15 +289,22 @@ export default {
       steppers: [
         {
           title: '¿Como actualizar la lista de ofertas?',
-          image: 'tool.png',
+          image: 'h-ofertas-reloadoffers.png',
           content:
-            'Para actualizar la lista de ofertas, precione el boton de refrescar, que por lo general se encuentra ubicado en la parte inferior derecha. Con lo cual al dar click comenzara el proceso de busqueda.',
+            'Para actualizar la lista de ofertas, precione el boton de refrescar, que por lo general se encuentra ubicado en la parte inferior derecha. <br/>Con lo cual al dar click comenzara el proceso de busqueda.',
+          sizeImage: 300,
         },
         {
           title: '¿Como crear una nueva lista de ofertas?',
-          image: 'cesta.png',
+          image: 'h-ofertas-createlist.png',
           content:
-            'Para actualizar la lista de ofertas, precione el boton de refrescar, que por lo general se encuentra ubicado en la parte inferior derecha. Con lo cual al dar click comenzara el proceso de busqueda.',
+            'Para crear una lista de ofertas, solo se tiene que dar click en el boton de "Crear lista de ofertas". <br/>Posteriormente se debe rellenar los campos que se solicitan para crear la lista de ofertas',
+        },
+        {
+          title: '¿Para que sirve el boton de "Solo Iconos  En Acciones"?',
+          image: 'h-ofertas-onlyicons.png',
+          content:
+            'Este boton sirve para ocultar las letras de los botones de acciones, de manera que en la tabla de datos se reduzcan el tamaño de las filas',
         },
       ],
     }
