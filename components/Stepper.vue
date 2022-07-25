@@ -27,12 +27,17 @@
             >
               <b-card class="card-step">
                 <img
-                  :src="getImgUrl(help.image)"
+                  :src="utils.getImgUrl(help.image)"
                   alt="Ayuda"
                   class="image-help"
+                  :width="defaultWidth(help.sizeImage)"
                 />
-                <p class="text-dark text-left">
-                  {{ help.content }}
+                <p
+                  v-for="(section, indexSection) in sections(help.content)"
+                  :key="indexSection"
+                  class="text-dark text-left"
+                >
+                  {{ section }}
                 </p>
               </b-card>
             </b-collapse>
@@ -47,6 +52,8 @@
 </template>
 
 <script>
+import utils from '../modules/utils'
+
 export default {
   name: 'Stepper',
   props: {
@@ -59,10 +66,17 @@ export default {
       required: true,
     },
   },
+  data() {
+    return {
+      utils,
+    }
+  },
   methods: {
-    getImgUrl(image) {
-      const images = require.context('../assets/', false)
-      return images('./' + image)
+    defaultWidth(size) {
+      return size || 300
+    },
+    sections(content) {
+      return content.split('<br/>')
     },
   },
 }
