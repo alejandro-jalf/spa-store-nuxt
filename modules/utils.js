@@ -851,6 +851,11 @@ const utils = (() => {
   // eslint-disable-next-line new-cap
   const toMoment = (cadena) => new moment(cadena)
 
+  const getImgUrl = (image) => {
+    const images = require.context('../assets/', false)
+    return images('./' + image)
+  }
+
   const copyToClipBoard = (text = '', toast) => {
     text = text.toString()
     navigator.clipboard.writeText(text).then(
@@ -918,6 +923,7 @@ const utils = (() => {
     createPdfAsistenciasSpa,
     createPdfValuacionInventarioCierre,
     numeroALetras,
+    getImgUrl,
   }
 })()
 
