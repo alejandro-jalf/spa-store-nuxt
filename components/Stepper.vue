@@ -1,6 +1,8 @@
+<!-- eslint-disable vue/no-v-html -->
 <template>
   <div class="container-prin">
     <b-card class="h-100">
+      <h4 class="text-dark text-center font-weight-bold">{{ title }}</h4>
       <div class="container-scroll">
         <div class="container-stepps" role="tablist">
           <div
@@ -32,13 +34,10 @@
                   class="image-help"
                   :width="defaultWidth(help.sizeImage)"
                 />
-                <p
-                  v-for="(section, indexSection) in sections(help.content)"
-                  :key="indexSection"
+                <div
                   class="text-dark text-left"
-                >
-                  {{ section }}
-                </p>
+                  v-html="$md.render(help.content)"
+                />
               </b-card>
             </b-collapse>
           </div>
@@ -57,6 +56,11 @@ import utils from '../modules/utils'
 export default {
   name: 'Stepper',
   props: {
+    title: {
+      type: String,
+      required: false,
+      default: 'Preguntas frecuentes',
+    },
     steppers: {
       type: Array,
       required: true,
@@ -74,9 +78,6 @@ export default {
   methods: {
     defaultWidth(size) {
       return size || 300
-    },
-    sections(content) {
-      return content.split('<br/>')
     },
   },
 }

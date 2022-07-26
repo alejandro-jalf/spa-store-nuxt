@@ -38,7 +38,12 @@
       <b-icon icon="folder-plus" />
       Crear Lista de Ofertas
     </b-button>
-    <b-button variant="info" class="mb-3" @click="showStepper = true">
+    <b-button
+      v-if="viewCrearOferta"
+      variant="info"
+      class="mb-3"
+      @click="showStepper = true"
+    >
       <b-icon icon="question-circle-fill"></b-icon>
       Ayuda
     </b-button>
@@ -290,21 +295,74 @@ export default {
         {
           title: '¿Como actualizar la lista de ofertas?',
           image: 'h-ofertas-reloadoffers.png',
-          content:
-            'Para actualizar la lista de ofertas, precione el boton de refrescar, que por lo general se encuentra ubicado en la parte inferior derecha. <br/>Con lo cual al dar click comenzara el proceso de busqueda.',
+          content: `Para actualizar la lista de ofertas, precione el boton de refrescar, que por lo general se encuentra ubicado en la parte inferior derecha.
+            Con lo cual al dar click comenzara el proceso de busqueda.`,
           sizeImage: 300,
         },
         {
           title: '¿Como crear una nueva lista de ofertas?',
           image: 'h-ofertas-createlist.png',
-          content:
-            'Para crear una lista de ofertas, solo se tiene que dar click en el boton de "Crear lista de ofertas". <br/>Posteriormente se debe rellenar los campos que se solicitan para crear la lista de ofertas',
+          content: `Para crear una lista de ofertas, solo se tiene que dar click en el boton de "Crear lista de ofertas".
+            Posteriormente se debe rellenar los campos que se solicitan para continuar con el proceso`,
         },
         {
           title: '¿Para que sirve el boton de "Solo Iconos  En Acciones"?',
           image: 'h-ofertas-onlyicons.png',
-          content:
-            'Este boton sirve para ocultar las letras de los botones de acciones, de manera que en la tabla de datos se reduzcan el tamaño de las filas',
+          content: `Este boton sirve para ocultar las letras de los botones de acciones, de manera que en la tabla de datos se reduzcan el tamaño de las filas`,
+        },
+        {
+          title: '¿Como filtrar las listas de ofertas?',
+          image: 'h-ofertas-filters.png',
+          content: `
+Para filtrar la lista de ofertas, solo se tiene que seleccionar entre las tres opciones:
+
+- El primero muestra todas las listas de ofertas que se crearon en el mes actual.
+- La segunda opcion muestra las listas de ofertas que se crearon en el año actual.
+- La tercera opcion muestra todas las listas de ofertas.
+
+*Nota*: El filtro va en base a la fecha de creacion, ademas como limite cualquiera solo puede mostrar como maximo 100 filas.`,
+        },
+        {
+          title: '¿Que significa cada "Estatus"?',
+          image: 'h-ofertas-estatus.png',
+          content: `
+En estatus que aparece en la tabla de ofertas dice lo siguiente de cada oferta:
+- **CREADA**: Quiere decir que la oferta ha sido creada y que todavia se encuentra en la sucursal, por lo tanto todavia se pueden editar los articulos y agregar nuevo o quitar articulos si fuera el caso.
+- **ENVIADA**: Este estatus indica La oferta ya fue enviada para su programacion, en esta parte ya no se pueden editar ni agrega articulos.
+- **EN PROCESO**: La oferta ya esta siendo atendida y validada para su posterior programacion. Si hubiera algun detalle con algun articulo, el encargado de programar la oferta se comunicara para corroborar la informacion, de caso contrario la lista de oferta pasaria a ser programada.
+- **PROGRAMADA**: La oferta ya fue prograda para las fechas especificas.
+- **CANCELADA**: La oferta fue cancelada y hay dos cosas por hacer con ella, la primera seria restaurar; lo cual hace que la lista se vuelva a habilitar para seguir editando y enviar, o lo segundo seria eliminarla, lo cual borraria de manera permanente la oferta`,
+        },
+        {
+          title: '¿Como ver los articulos de mis ofertas ya enviadas?',
+          image: 'h-ofertas-details.png',
+          content: `Para ver los articulos que contiene cada lista de ofertas solo se tiene que dar click sobre el boton que tiene el icono de una carpeta. En seguida se consultara la lista de articulos y se mostrara en pantalla.`,
+        },
+        {
+          title: '¿Como editar mi lista de articulos?',
+          image: 'h-ofertas-edit.png',
+          content: `Para seguir editando solo se da click sobre el boton editar, postoriormente se abrira la ventana de captura de articulos.
+          **_Nota_**: La lista de articulos solo se puede editar mientras el estatus siga como **CREADA**, una vez enviada no se podra edita la lista articulos`,
+        },
+        {
+          title: '¿Como enviar mi lista de articulos para ofertar?',
+          image: 'h-ofertas-send.png',
+          content: `Para enviar la lista de articulos, solo hay que dar click sobre el boton de enviar. Una vez enviado se esperara para ser programados`,
+        },
+        {
+          title: '¿Puedo cancelar una lista de ofertas?',
+          image: 'h-ofertas-cancel.png',
+          content: `Al cancelar una oferta sigue apareciendo pero con estatus cancelada. En este punto se puede restaurar la lista de ofertas o eliminar de forma permanente`,
+        },
+        {
+          title: '¿Que pasa se elimino una lista de ofertas?',
+          image: 'h-ofertas-delete.png',
+          content: `Al dar click sobre el boton de eliminar, la oferta se borrara por completo, y ya no aparecera mas en su lista. Por lo cual una vez eliminada no podra ser ser restaurada`,
+        },
+        {
+          title: '¿Como restaurar una lista cancelada?',
+          image: 'h-ofertas-restore.png',
+          content: `Para restaurar una lista de articulos solo hay que dar click sobre el boton de restaurar en automatico podra seguir editando`,
         },
       ],
     }
