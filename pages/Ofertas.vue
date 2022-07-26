@@ -331,7 +331,7 @@ En estatus que aparece en la tabla de ofertas dice lo siguiente de cada oferta:
 - **ENVIADA**: Este estatus indica La oferta ya fue enviada para su programacion, en esta parte ya no se pueden editar ni agrega articulos.
 - **EN PROCESO**: La oferta ya esta siendo atendida y validada para su posterior programacion. Si hubiera algun detalle con algun articulo, el encargado de programar la oferta se comunicara para corroborar la informacion, de caso contrario la lista de oferta pasaria a ser programada.
 - **PROGRAMADA**: La oferta ya fue prograda para las fechas especificas.
-- **CANCELADA**: La oferta fue cancelada y hay dos cosas por hacer con ella, la primera seria restaurar; lo cual hace que la lista se vuelva a habilitar para seguir editando y enviar, o lo segundo seria eliminarla, lo cual borraria de manera permanente la oferta`,
+- **CANCELADA**: La oferta fue cancelada y hay dos cosas por hacer con ella, la primera seria restaurar; lo cual hace que la lista se vuelva a habilitar para seguir editando y enviar, o lo segundo seria eliminarla, lo cual borraria de manera permanente la oferta.`,
         },
         {
           title: '¿Como ver los articulos de mis ofertas ya enviadas?',
