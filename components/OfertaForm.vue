@@ -319,9 +319,11 @@ export default {
   mounted() {
     this.form_oferta.uuid = this.$store.state.ofertas.ofertaActual.tipo
     this.form_oferta.tipo = this.$store.state.ofertas.ofertaActual.tipoOferta
-    this.form_oferta.fecha_inicio = this.$store.state.ofertas.ofertaActual.fechaInicio
+    this.form_oferta.fecha_inicio =
+      this.$store.state.ofertas.ofertaActual.fechaInicio
     this.form_oferta.fecha_fin = this.$store.state.ofertas.ofertaActual.fechaFin
-    this.form_oferta.descripcion = this.$store.state.ofertas.ofertaActual.descripcion
+    this.form_oferta.descripcion =
+      this.$store.state.ofertas.ofertaActual.descripcion
 
     if (this.tipoUser !== 'manager')
       this.setSucursal(utils.getSucursalByName(this.dataUser.sucursal_user))

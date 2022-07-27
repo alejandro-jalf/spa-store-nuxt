@@ -120,8 +120,9 @@ export default {
     },
     themeOverlay() {
       if (this.$store.state.general.themePreferences === 'system') {
-        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
-          .matches
+        const systemDark = window.matchMedia(
+          '(prefers-color-scheme: dark)'
+        ).matches
         if (systemDark) return 'darkThemeOverlay'
         return ''
       } else if (this.$store.state.general.themePreferences === 'dark')
@@ -138,8 +139,9 @@ export default {
 
     const setTheme = () => {
       if (this.$store.state.general.themePreferences === 'system') {
-        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
-          .matches
+        const systemDark = window.matchMedia(
+          '(prefers-color-scheme: dark)'
+        ).matches
         if (systemDark) document.documentElement.classList.add('dark-mode')
       } else if (this.$store.state.general.themePreferences === 'dark')
         document.documentElement.classList.add('dark-mode')

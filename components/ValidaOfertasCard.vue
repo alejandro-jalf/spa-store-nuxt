@@ -31,8 +31,8 @@ export default {
   computed: {
     variantTheme() {
       const valida = this.article.OfertaValida === 'NO' ? 'color-danger' : ''
-      const themeCardBody = this.$store.state.general.themesComponents
-        .themeCard2Body
+      const themeCardBody =
+        this.$store.state.general.themesComponents.themeCard2Body
       return themeCardBody === 'containerCard'
         ? valida
         : `${themeCardBody} ${valida}`

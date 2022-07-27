@@ -187,8 +187,9 @@ export default {
     },
     variantAlert() {
       if (this.$store.state.general.themePreferences === 'system') {
-        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
-          .matches
+        const systemDark = window.matchMedia(
+          '(prefers-color-scheme: dark)'
+        ).matches
         if (systemDark) return 'warning'
         return 'info'
       } else if (this.$store.state.general.themePreferences === 'dark')
@@ -202,8 +203,9 @@ export default {
     },
     variantThemeLine() {
       if (this.$store.state.general.themePreferences === 'system') {
-        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
-          .matches
+        const systemDark = window.matchMedia(
+          '(prefers-color-scheme: dark)'
+        ).matches
         if (systemDark) return 'lineBorder lineBorderDark'
         return 'lineBorder'
       } else if (this.$store.state.general.themePreferences === 'dark')
@@ -212,8 +214,9 @@ export default {
     },
     variantTheme() {
       if (this.$store.state.general.themePreferences === 'system') {
-        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
-          .matches
+        const systemDark = window.matchMedia(
+          '(prefers-color-scheme: dark)'
+        ).matches
         if (systemDark) return 'darkBodyCard containerCarDark'
         return 'containerCard'
       } else if (this.$store.state.general.themePreferences === 'dark')
@@ -224,8 +227,9 @@ export default {
     },
     variantThemeTableBody() {
       if (this.$store.state.general.themePreferences === 'system') {
-        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
-          .matches
+        const systemDark = window.matchMedia(
+          '(prefers-color-scheme: dark)'
+        ).matches
         if (systemDark) return 'darkThemeTableBody'
         return ''
       } else if (this.$store.state.general.themePreferences === 'dark')

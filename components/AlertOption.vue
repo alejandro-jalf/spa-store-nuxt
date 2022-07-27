@@ -47,8 +47,9 @@ export default {
   computed: {
     bodyBgVariant() {
       if (this.$store.state.general.themePreferences === 'system') {
-        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
-          .matches
+        const systemDark = window.matchMedia(
+          '(prefers-color-scheme: dark)'
+        ).matches
         if (systemDark) return 'secondary'
         return 'light'
       } else if (this.$store.state.general.themePreferences === 'dark')
@@ -57,8 +58,9 @@ export default {
     },
     textBgVariant() {
       if (this.$store.state.general.themePreferences === 'system') {
-        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
-          .matches
+        const systemDark = window.matchMedia(
+          '(prefers-color-scheme: dark)'
+        ).matches
         if (systemDark) return 'light'
         return 'dark'
       } else if (this.$store.state.general.themePreferences === 'dark')
@@ -77,8 +79,9 @@ export default {
     alertOptionHeaderBg() {
       const variant = this.$store.state.general.alertOption.headerBg
       if (this.$store.state.general.themePreferences === 'system') {
-        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
-          .matches
+        const systemDark = window.matchMedia(
+          '(prefers-color-scheme: dark)'
+        ).matches
         if (systemDark) return 'dark'
         return variant
       } else if (this.$store.state.general.themePreferences === 'dark')
@@ -88,8 +91,9 @@ export default {
     alertOptionHeaderText() {
       const variant = this.$store.state.general.alertOption.headerBg
       if (this.$store.state.general.themePreferences === 'system') {
-        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
-          .matches
+        const systemDark = window.matchMedia(
+          '(prefers-color-scheme: dark)'
+        ).matches
         if (systemDark) return variant
         return 'dark'
       } else if (this.$store.state.general.themePreferences === 'dark')
@@ -100,8 +104,9 @@ export default {
     alertOptionHeaderBorder() {
       const variant = this.$store.state.general.alertOption.headerBg
       if (this.$store.state.general.themePreferences === 'system') {
-        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
-          .matches
+        const systemDark = window.matchMedia(
+          '(prefers-color-scheme: dark)'
+        ).matches
         if (systemDark) return variant
         return 'light'
       } else if (this.$store.state.general.themePreferences === 'dark')
@@ -114,8 +119,9 @@ export default {
     variantCancel() {
       const variant = this.$store.state.general.alertOption.headerBg
       if (this.$store.state.general.themePreferences === 'system') {
-        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
-          .matches
+        const systemDark = window.matchMedia(
+          '(prefers-color-scheme: dark)'
+        ).matches
         if (systemDark) return 'dark'
         return variant === 'primary' ? 'secondary' : 'primary'
       } else if (this.$store.state.general.themePreferences === 'dark')

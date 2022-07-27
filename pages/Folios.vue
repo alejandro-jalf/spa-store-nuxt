@@ -255,8 +255,8 @@ export default {
       const folioFinalOld = this.$store.state.folios.folio.data[0].FolioFinal
       const folioActual = this.$store.state.folios.folio.data[0].FolioActual
       const disponibles = this.$store.state.folios.folio.data[0].FolioDisponible
-      const incremento = this.$store.state.folios.folio.data[0]
-        .INCREMENTODEFOLIO
+      const incremento =
+        this.$store.state.folios.folio.data[0].INCREMENTODEFOLIO
       const finalNew = this.$store.state.folios.folio.data[0].FOLIOFINC
 
       this.formFolio.final = folioFinalOld

@@ -380,8 +380,9 @@ export default {
     },
     borderTheme() {
       if (this.$store.state.general.themePreferences === 'system') {
-        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
-          .matches
+        const systemDark = window.matchMedia(
+          '(prefers-color-scheme: dark)'
+        ).matches
         if (systemDark) return 'secondary'
         return 'light'
       } else if (this.$store.state.general.themePreferences === 'dark')
@@ -392,8 +393,9 @@ export default {
       if (status !== 'Online') return 'danger'
       if (!articulo) return 'warning'
       else if (this.$store.state.general.themePreferences === 'system') {
-        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
-          .matches
+        const systemDark = window.matchMedia(
+          '(prefers-color-scheme: dark)'
+        ).matches
         if (systemDark) return 'dark'
         return 'info'
       } else if (this.$store.state.general.themePreferences === 'dark')

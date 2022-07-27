@@ -135,15 +135,13 @@ export default {
                 Mes: [item.Mes],
                 Year: item.Year,
               }
-              newSuc[
-                `${item.MesMovimientoLetra}`
-              ] = this.utils.aplyFormatNumeric(this.utils.roundTo(item.Venta))
+              newSuc[`${item.MesMovimientoLetra}`] =
+                this.utils.aplyFormatNumeric(this.utils.roundTo(item.Venta))
               newSuc[`Venta${item.MesMovimientoLetra}`] = item.Venta
               datos.push(newSuc)
             } else {
-              datos[mesFinded][
-                `${item.MesMovimientoLetra}`
-              ] = this.utils.aplyFormatNumeric(this.utils.roundTo(item.Venta))
+              datos[mesFinded][`${item.MesMovimientoLetra}`] =
+                this.utils.aplyFormatNumeric(this.utils.roundTo(item.Venta))
               datos[mesFinded][`Venta${item.MesMovimientoLetra}`] = item.Venta
               const monthFinded = datos[mesFinded].Mes.find(
                 (mes) => mes === item.Mes
@@ -165,20 +163,16 @@ export default {
               Mes: [sucursal.Mes],
               Year: sucursal.Year,
             }
-            newSuc[
-              `${sucursal.MesMovimientoLetra}`
-            ] = this.utils.aplyFormatNumeric(this.utils.roundTo(sucursal.Venta))
+            newSuc[`${sucursal.MesMovimientoLetra}`] =
+              this.utils.aplyFormatNumeric(this.utils.roundTo(sucursal.Venta))
             newSuc[`Venta${sucursal.MesMovimientoLetra}`] = sucursal.Venta
             datos.push(newSuc)
           } else {
             const mesFinded =
               datos[diaFinded][`Venta${sucursal.MesMovimientoLetra}`]
             if (!mesFinded) {
-              datos[diaFinded][
-                `${sucursal.MesMovimientoLetra}`
-              ] = this.utils.aplyFormatNumeric(
-                this.utils.roundTo(sucursal.Venta)
-              )
+              datos[diaFinded][`${sucursal.MesMovimientoLetra}`] =
+                this.utils.aplyFormatNumeric(this.utils.roundTo(sucursal.Venta))
               datos[diaFinded][`Venta${sucursal.MesMovimientoLetra}`] =
                 sucursal.Venta
             } else {
@@ -187,9 +181,8 @@ export default {
                   sucursal.Venta
               )
               datos[diaFinded][`Venta${sucursal.MesMovimientoLetra}`] = suma
-              datos[diaFinded][
-                `${sucursal.MesMovimientoLetra}`
-              ] = this.utils.aplyFormatNumeric(this.utils.roundTo(suma))
+              datos[diaFinded][`${sucursal.MesMovimientoLetra}`] =
+                this.utils.aplyFormatNumeric(this.utils.roundTo(suma))
             }
             const monthFinded = datos[diaFinded].Mes.find(
               (mes) => mes === sucursal.Mes

@@ -188,18 +188,16 @@ export default {
             CrecimientoDiario: '-100.00 %',
             _cellVariants: { CrecimientoDiario: 'danger' },
           }
-          newSuc[
-            `${sucursal.MesMovimientoLetra}`
-          ] = this.utils.aplyFormatNumeric(this.utils.roundTo(sucursal.Venta))
+          newSuc[`${sucursal.MesMovimientoLetra}`] =
+            this.utils.aplyFormatNumeric(this.utils.roundTo(sucursal.Venta))
           newSuc[`Venta${sucursal.MesMovimientoLetra}`] = sucursal.Venta
           datos.push(newSuc)
         } else {
           const mesFinded =
             datos[diaFinded][`Venta${sucursal.MesMovimientoLetra}`]
           if (!mesFinded) {
-            datos[diaFinded][
-              `${sucursal.MesMovimientoLetra}`
-            ] = this.utils.aplyFormatNumeric(this.utils.roundTo(sucursal.Venta))
+            datos[diaFinded][`${sucursal.MesMovimientoLetra}`] =
+              this.utils.aplyFormatNumeric(this.utils.roundTo(sucursal.Venta))
             datos[diaFinded][`Venta${sucursal.MesMovimientoLetra}`] =
               sucursal.Venta
           } else {
@@ -208,9 +206,8 @@ export default {
                 sucursal.Venta
             )
             datos[diaFinded][`Venta${sucursal.MesMovimientoLetra}`] = suma
-            datos[diaFinded][
-              `${sucursal.MesMovimientoLetra}`
-            ] = this.utils.aplyFormatNumeric(this.utils.roundTo(suma))
+            datos[diaFinded][`${sucursal.MesMovimientoLetra}`] =
+              this.utils.aplyFormatNumeric(this.utils.roundTo(suma))
           }
           porcentaje = this.porcentaje(
             datos[diaFinded][`Venta${this.fields[1]}`],

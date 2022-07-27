@@ -265,8 +265,9 @@ export const mutations = {
   },
   setThemePreferences(state, theme) {
     if (theme !== state.themePreferences) {
-      const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
-        .matches
+      const systemDark = window.matchMedia(
+        '(prefers-color-scheme: dark)'
+      ).matches
 
       if (state.themePreferences === 'dark')
         document.documentElement.classList.remove('dark-mode')
@@ -312,8 +313,9 @@ export const actions = {
       optionSepia = 'sepia'
     ) => {
       if (theme === 'system') {
-        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
-          .matches
+        const systemDark = window.matchMedia(
+          '(prefers-color-scheme: dark)'
+        ).matches
         if (systemDark) return optionDark
         return optionLight
       } else if (theme === 'dark') return optionDark

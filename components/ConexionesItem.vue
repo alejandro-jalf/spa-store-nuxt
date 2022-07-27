@@ -31,8 +31,9 @@ export default {
   computed: {
     variantItem() {
       if (this.$store.state.general.themePreferences === 'system') {
-        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
-          .matches
+        const systemDark = window.matchMedia(
+          '(prefers-color-scheme: dark)'
+        ).matches
         if (systemDark) return 'darkThemeItemList'
         return ''
       } else if (this.$store.state.general.themePreferences === 'dark')

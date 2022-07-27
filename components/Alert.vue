@@ -42,8 +42,9 @@ export default {
   computed: {
     bodyBgVariant() {
       if (this.$store.state.general.themePreferences === 'system') {
-        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
-          .matches
+        const systemDark = window.matchMedia(
+          '(prefers-color-scheme: dark)'
+        ).matches
         if (systemDark) return 'secondary'
         return 'light'
       } else if (this.$store.state.general.themePreferences === 'dark')
@@ -52,8 +53,9 @@ export default {
     },
     textBgVariant() {
       if (this.$store.state.general.themePreferences === 'system') {
-        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
-          .matches
+        const systemDark = window.matchMedia(
+          '(prefers-color-scheme: dark)'
+        ).matches
         if (systemDark) return 'light'
         return 'dark'
       } else if (this.$store.state.general.themePreferences === 'dark')
@@ -73,8 +75,9 @@ export default {
     alertHeaderBg() {
       const variant = this.$store.state.general.alert.headerBackground
       if (this.$store.state.general.themePreferences === 'system') {
-        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
-          .matches
+        const systemDark = window.matchMedia(
+          '(prefers-color-scheme: dark)'
+        ).matches
         if (systemDark) return 'dark'
         return variant
       } else if (this.$store.state.general.themePreferences === 'dark')
@@ -84,8 +87,9 @@ export default {
     alertHeaderText() {
       const variant = this.$store.state.general.alert.headerBackground
       if (this.$store.state.general.themePreferences === 'system') {
-        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
-          .matches
+        const systemDark = window.matchMedia(
+          '(prefers-color-scheme: dark)'
+        ).matches
         if (systemDark) return variant
         return 'dark'
       } else if (this.$store.state.general.themePreferences === 'dark')
@@ -96,8 +100,9 @@ export default {
     alertHeaderBorder() {
       const variant = this.$store.state.general.alert.headerBackground
       if (this.$store.state.general.themePreferences === 'system') {
-        const systemDark = window.matchMedia('(prefers-color-scheme: dark)')
-          .matches
+        const systemDark = window.matchMedia(
+          '(prefers-color-scheme: dark)'
+        ).matches
         if (systemDark) return variant
         return 'light'
       } else if (this.$store.state.general.themePreferences === 'dark')

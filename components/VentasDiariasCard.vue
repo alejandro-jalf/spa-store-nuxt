@@ -93,8 +93,8 @@ export default {
     variantTheme() {
       const valida =
         this.sucursal.Fecha === 'Resumen de Ventas' ? 'color-dark' : ''
-      const themeCardBody = this.$store.state.general.themesComponents
-        .themeCard2Body
+      const themeCardBody =
+        this.$store.state.general.themesComponents.themeCard2Body
       return themeCardBody === 'containerCard'
         ? valida
         : `${themeCardBody} ${valida}`

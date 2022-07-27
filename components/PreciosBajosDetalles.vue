@@ -119,8 +119,8 @@ export default {
   },
   computed: {
     variantTheme() {
-      const themeCardBody = this.$store.state.general.themesComponents
-        .themeCard2Body
+      const themeCardBody =
+        this.$store.state.general.themesComponents.themeCard2Body
       return themeCardBody === 'containerCard' ? '' : themeCardBody
     },
   },

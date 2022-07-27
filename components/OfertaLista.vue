@@ -535,9 +535,10 @@ export default {
     },
     onRowSelected(items) {
       if (items.length > 0) {
-        this.formModalProductos.position = this.formModalProductos.products.findIndex(
-          (product) => product.articulo === items[0].articulo
-        )
+        this.formModalProductos.position =
+          this.formModalProductos.products.findIndex(
+            (product) => product.articulo === items[0].articulo
+          )
       }
       this.formModalProductos.selected = items
     },
@@ -902,9 +903,8 @@ export default {
         this.clearFormArticulo()
         return true
       }
-      const productSelected = this.formModalProductos.products[
-        this.formModalProductos.position
-      ]
+      const productSelected =
+        this.formModalProductos.products[this.formModalProductos.position]
       const articulofinded = this.articulos.find(
         (product) => product.articulo === productSelected.articulo
       )
