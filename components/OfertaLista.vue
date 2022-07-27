@@ -217,6 +217,15 @@
           <b-icon icon="x-circle-fill"></b-icon>
           Cerrar
         </b-button>
+        <b-button
+          v-if="statusActual === 3"
+          class="mb-2"
+          variant="light"
+          @click="createPdf"
+        >
+          <b-icon icon="printer-fill" />
+          Imprimir PDF
+        </b-button>
         <span v-if="ofertaEditable && statusActual === 0">
           <b-button variant="secondary" class="mb-2" @click="editarDatosOferta">
             <b-icon icon="arrow-left-circle-fill" />
@@ -341,6 +350,10 @@ export default {
       required: true,
     },
     validateArticlesForProgram: {
+      type: Function,
+      required: true,
+    },
+    createPdfOffers: {
       type: Function,
       required: true,
     },
@@ -509,6 +522,16 @@ export default {
       changeListaArticulos: 'ofertas/changeListaArticulos', // nuevas
       changeListaOfertas: 'ofertas/changeListaOfertas', // nuevas
     }),
+    createPdf() {
+      const fechas = ' Del ' + this.fechaInicio + ' al ' + this.fechaFin
+      this.createPdfOffers(
+        this.sucursal(),
+        fechas,
+        this.tipoOferta,
+        this.listaProductos,
+        true
+      )
+    },
     sucursal() {
       const suc = this.$store.state.ofertas.ofertaActual.sucursal
       if (suc.toUpperCase() === 'ZR') return 'SPAZARAGOZA'

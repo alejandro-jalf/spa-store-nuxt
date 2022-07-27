@@ -89,6 +89,7 @@
       :prepare-change-status-offer="prepareChangeStatusOffer"
       :visible-button="visibleButton"
       :validate-articles-for-program="validateArticlesForProgram"
+      :create-pdf-offers="createPdfOffers"
     ></oferta-lista>
     <div v-if="viewCrearOferta" class="container-table-ofe">
       <b-table
@@ -196,6 +197,18 @@
             <b-icon icon="download" />
             {{ messageButtonIcons('EXCEL') }}
           </b-button>
+          <b-button
+            v-if="visibleButton(row.item, 'pdf')"
+            v-b-tooltip.hover
+            :title="tooltipMessage('Imprimir PDF')"
+            class="mr-2 mt-2"
+            size="sm"
+            variant="light"
+            @click="createPdf(row.item, true)"
+          >
+            <b-icon icon="printer-fill" />
+            {{ messageButtonIcons('PDF') }}
+          </b-button>
           <div v-if="visibleButton(row.item, 'load')">
             <b-spinner
               v-for="(canti, position) in 9"
@@ -227,7 +240,7 @@
     <OfertaArticulosValidados v-if="showDetails" />
     <OfertaArticulosOfertados v-if="showOffered" />
     <float-button
-      v-if="tipoUser !== 'manager'"
+      v-if="tipoUser !== 'manager' && viewCrearOferta"
       :click-float="reloadListaOfertas"
     ></float-button>
     <Stepper
@@ -242,6 +255,7 @@
 import { mapMutations, mapActions } from 'vuex'
 import XLSX from 'xlsx'
 import FileSaver from 'file-saver'
+import { jsPDF } from 'jspdf'
 import OfertaForm from '../components/OfertaForm'
 import OfertaLista from '../components/OfertaLista'
 import OfertaArticulosValidados from '../components/OfertaArticulosValidados'
@@ -249,6 +263,7 @@ import OfertaArticulosOfertados from '../components/OfertaArticulosOfertados'
 import FloatButton from '../components/FloatButton'
 import Stepper from '../components/Stepper'
 import utils from '../modules/utils'
+import 'jspdf-autotable'
 
 export default {
   components: {
@@ -493,7 +508,7 @@ En estatus que aparece en la tabla de ofertas dice lo siguiente de cada oferta:
           else if (typeButton === 'views') return true
           else return false
         case 3:
-          if (typeButton === 'views') return true
+          if (typeButton === 'views' || typeButton === 'pdf') return true
           if (typeButton === 'check' || typeButton === 'excel')
             return this.tipoUser === 'manager'
           else return false
@@ -961,6 +976,107 @@ En estatus que aparece en la tabla de ofertas dice lo siguiente de cada oferta:
       // eslint-disable-next-line prettier/prettier
       for (let i = 0; i < s.length; i++) view[i] = s.charCodeAt(i) & 0xFF
       return buf
+    },
+    async createPdf(master, preview = false) {
+      const fechaInicio = utils.parseFecha(master.fechaInicio)
+      const fechaFin = utils.parseFecha(master.fechaFin)
+      const fechas = `Del ${fechaInicio} AL ${fechaFin}`
+      const sucursal = this.getNameSucursal(master.sucursal)
+      this.setLoading(true)
+      const response = await this.changeListaArticulos(master.uuid)
+      if (response.success)
+        this.createPdfOffers(
+          sucursal,
+          fechas,
+          master.tipoOferta,
+          response.data,
+          preview
+        )
+      else this.showAlertDialog([response.message])
+      this.setLoading(false)
+    },
+    createPdfOffers(sucursal, fechas, tipo, data, preview = false) {
+      // eslint-disable-next-line new-cap
+      const doc = new jsPDF('p', 'mm', 'letter')
+
+      doc.setFontSize(14)
+      doc.setFont('helvetica', 'bold')
+      doc.text(tipo, 105, 15, 'center')
+      doc.text(fechas + ', Suc ' + sucursal, 105, 22, 'center')
+      doc.setFontSize(9)
+
+      doc.text('Total Articulos: ' + data.length, 10, 27)
+      doc.setFont('helvetica', 'normal')
+
+      const body = data.reduce((acumData, dato) => {
+        acumData.push([
+          { content: dato.articulo },
+          { content: dato.nombre },
+          {
+            content: utils.roundTo(dato.costo),
+          },
+          {
+            content: utils.roundTo(dato.precio),
+          },
+          {
+            content: utils.roundTo((1 - dato.costo / dato.precio) * 100) + '%',
+          },
+          {
+            content: utils.roundTo(dato.oferta),
+          },
+          {
+            content: utils.roundTo((1 - dato.costo / dato.oferta) * 100) + '%',
+          },
+        ])
+        return acumData
+      }, [])
+
+      doc.autoTable({
+        startY: 32,
+        tableWidth: 190,
+        margin: {
+          left: 10,
+        },
+        styles: { fontSize: 9 },
+        headStyles: {
+          fontStyle: 'bold',
+          halign: 'left',
+          fillColor: [255, 255, 255],
+          textColor: [0, 0, 0],
+        },
+        bodyStyles: { textColor: [0, 0, 0] },
+        head: [
+          [
+            'Articulo',
+            'Nombre',
+            'Costo',
+            'Precio',
+            'Margen',
+            'Oferta',
+            'Utilidad',
+          ],
+        ],
+        body,
+      })
+
+      doc.setFont('helvetica', 'bold')
+      doc.setDrawColor(0, 0, 0)
+      const fechaImpresion = utils.getDateNow().format('YYYY-MM-DD HH:mm:ss')
+
+      const countPages = doc.getNumberOfPages()
+      let pageCurrent = 0
+      doc.setFontSize(9)
+      doc.setFont('helvetica', 'italic')
+      for (let page = 0; page < countPages; page++) {
+        doc.setPage(page)
+        pageCurrent = doc.internal.getCurrentPageInfo().pageNumber
+        doc.text(`Pagina ${pageCurrent} de ${countPages}`, 207, 275, 'right')
+        doc.text('Impreso: ' + fechaImpresion, 8, 275)
+        if (pageCurrent === 1) doc.line(10, 39, 200, 39)
+      }
+
+      if (preview) doc.output('dataurlnewwindow')
+      else doc.save(`${fechaImpresion} - Ofertas ${fechas} Suc ${sucursal}.pdf`)
     },
   },
 }
