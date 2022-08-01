@@ -362,14 +362,14 @@ export default {
         margin: {
           left: 10,
         },
-        styles: { fontSize: 7.2 },
+        styles: { fontSize: 8 },
         headStyles: {
           fontStyle: 'bold',
           halign: 'left',
           fillColor: [255, 255, 255],
           textColor: [0, 0, 0],
         },
-        bodyStyles: { textColor: [0, 0, 0] },
+        bodyStyles: { textColor: [0, 0, 0], cellPadding: 1 },
         head: [
           [
             'Articulo',
