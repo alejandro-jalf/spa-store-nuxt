@@ -20,13 +20,17 @@
             {{ row.item.nombre }}
           </template>
           <template #cell(Precio)="row">
-            {{ utils.aplyFormatNumeric(utils.roundTo(row.item.PrecioActual)) }}
+            {{ utils.aplyFormatNumeric(utils.roundTo(row.item.precio)) }}
           </template>
           <template #cell(Oferta)="row">
             {{ utils.aplyFormatNumeric(utils.roundTo(row.item.oferta)) }}
           </template>
           <template #cell(Descuento)="row">
-            {{ utils.aplyFormatNumeric(utils.roundTo(row.item.Descuento)) }}
+            {{
+              utils.aplyFormatNumeric(
+                utils.roundTo(row.item.precio - row.item.oferta)
+              )
+            }}
           </template>
           <template #cell(CreadoPor)="row">
             {{ row.item.creadoPor }}
