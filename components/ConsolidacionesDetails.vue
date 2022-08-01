@@ -362,7 +362,7 @@ export default {
         margin: {
           left: 10,
         },
-        styles: { fontSize: 9 },
+        styles: { fontSize: 8 },
         headStyles: {
           fontStyle: 'bold',
           halign: 'left',
