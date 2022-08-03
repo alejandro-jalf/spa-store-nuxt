@@ -42,7 +42,6 @@
             class="text-dark"
             :class="backgroundInputTheme"
             readonly
-            @keyup.enter="getArticuloByCodigoCarras"
           ></b-form-input>
           <b-form-input
             id="nombre-articulo"
@@ -145,6 +144,15 @@
         <b-button variant="warning" class="mb-3" @click="clearFormArticulo">
           <b-icon icon="backspace-fill" />
           Limpiar campos
+        </b-button>
+        <b-button
+          v-if="editingArticle"
+          variant="info"
+          class="mb-3"
+          @click="updateDataArticleByArticle"
+        >
+          <b-icon icon="arrow-clockwise" />
+          Actualizar datos
         </b-button>
       </div>
       <b-card-text class="font-weight-bold mb-1">
@@ -974,6 +982,61 @@ export default {
             this.$refs.oferta.focus()
             this.articuloActual = article.Articulo
             this.editableArticulo = false
+          } else {
+            this.showError = true
+            this.clearFormArticulo()
+            this.editableArticulo = true
+          }
+        } else {
+          this.showAlertDialog([response.data.message])
+          this.showError = true
+          this.clearFormArticulo()
+          this.editableArticulo = true
+        }
+      } catch (error) {
+        this.editableArticulo = true
+        this.setLoading(false)
+        this.showError = true
+        this.clearFormArticulo()
+        if (error.response) this.showAlertDialog([error.response.data.message])
+        else this.showAlertDialog(['Error con el servidor'])
+      }
+    },
+    async updateDataArticleByArticle() {
+      try {
+        const art = this.formArticulo.articulo
+        if (art.trim() === '') return false
+        const urlBase = process.env.spastore_url_backend
+        const sucursal = this.$store.state.ofertas.ofertaActual.sucursal
+        this.setLoading(true)
+        const response = await this.$axios({
+          url: urlBase + 'api/v1/ofertas/' + sucursal + '/articulos/' + art,
+          method: 'get',
+        })
+        this.setLoading(false)
+
+        if (response.data.success) {
+          if (response.data.data.length !== 0) {
+            const article = response.data.data[0]
+            this.showError = false
+            this.formArticulo.articulo = article.Articulo
+            this.formArticulo.codigobarras = article.CodigoBarras
+            this.formArticulo.descripcion = article.Descripcion
+            this.formArticulo.nombre = article.Nombre
+            this.formArticulo.existencia = article.ExistenciaActualRegular
+            this.formArticulo.relacion = article.Relacion
+            this.formArticulo.costo = utils.roundTo(article.UltimoCosto)
+            this.formArticulo.precio = utils.roundTo(article.Precio1IVAUV)
+            const operacion = 1 - article.UltimoCosto / article.Precio1IVAUV
+            const rounded = utils.roundTo(operacion, 4)
+            const porcentaje = utils.parseToPorcent(rounded)
+            this.formArticulo.margen = `${porcentaje}%`
+            this.$refs.oferta.focus()
+            this.$refs.oferta.select()
+            this.articuloActual = article.Articulo
+            this.editableArticulo = false
+            this.editingArticle = true
+            this.calcUtilidad()
           } else {
             this.showError = true
             this.clearFormArticulo()
