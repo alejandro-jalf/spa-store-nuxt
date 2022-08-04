@@ -94,6 +94,30 @@
         <template #cell(Fecha)="row">
           {{ utils.toDate(row.item.Fecha) }}
         </template>
+        <template #cell(Transferencia)="row">
+          {{ row.item.Transferencia }}
+          <b-button
+            v-b-tooltip.hover.lefttop="'Copiar ' + row.item.Transferencia"
+            class="m-0 p-1"
+            variant="info"
+            size="sm"
+            @click="utils.copyToClipBoard(row.item.Transferencia, $bvToast)"
+          >
+            <b-icon icon="files" />
+          </b-button>
+        </template>
+        <template #cell(Entrada)="row">
+          {{ row.item.Entrada }}
+          <b-button
+            v-b-tooltip.hover.lefttop="'Copiar Entrada ' + row.item.Entrada"
+            class="m-0 p-1"
+            variant="info"
+            size="sm"
+            @click="utils.copyToClipBoard(row.item.Entrada, $bvToast)"
+          >
+            <b-icon icon="files" />
+          </b-button>
+        </template>
         <template #cell(Hora)="row">
           {{ utils.toHour(row.item.Hora) }}
         </template>
