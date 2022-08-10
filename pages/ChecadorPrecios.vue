@@ -41,7 +41,7 @@
         >
           Escanear
         </button>
-        <canvas v-if="!scannerVisible" class="canvas-scan"></canvas>
+        <canvas id="canvas-scan"></canvas>
       </div>
     </div>
     <div v-else id="scanner">
@@ -241,14 +241,18 @@ export default {
     },
     initLector() {
       const stopScanner = this.stopScanner
+      // const lector = document.getElementById('lector')
+      // console.log(lector.clientWidth, lector.clientHeight)
       Quagga.init(
         {
           inputStream: {
             constraints: {
-              // width: 600,
-              // height: 600,
-              width: 1920,
-              height: 1080,
+              width: 300,
+              height: 300,
+              // width: lector.clientWidth,
+              // height: lector.clientHeight,
+              // width: 1920,
+              // height: 1080,
             },
             name: 'Live',
             type: 'LiveStream',
@@ -267,7 +271,7 @@ export default {
           },
           locator: {
             halfSample: true,
-            patchSize: 'medium', // x-small, small, medium, large, x-large
+            patchSize: 'x-large', // x-small, small, medium, large, x-large
           },
         },
         function (err) {
@@ -292,16 +296,33 @@ export default {
       })
 
       Quagga.onProcessed(function (result) {
-        const drawingCtx = Quagga.canvas.ctx.overlay
+        // console.log(
+        //   document.getElementById('canvas-scan').getContext('2d').overlay
+        // )
+        const drawingCtx = document
+          .getElementById('canvas-scan')
+          .getContext('2d')
+        // const drawingCtx = Quagga.canvas.ctx.overlay
         const drawingCanvas = Quagga.canvas.dom.overlay
         if (result) {
+          // console.log(
+          //   drawingCanvas,
+          //   parseInt(drawingCanvas.getAttribute('width')),
+          //   parseInt(drawingCanvas.getAttribute('height')),
+          //   drawingCtx
+          // )
           if (result.boxes) {
             drawingCtx.clearRect(
               0,
               0,
-              parseInt(drawingCanvas.getAttribute('width')),
-              parseInt(drawingCanvas.getAttribute('height'))
+              drawingCanvas.getAttribute('width'),
+              drawingCanvas.getAttribute('height')
             )
+            // console.log(
+            //   parseInt(drawingCanvas.getAttribute('width')),
+            //   parseInt(drawingCanvas.getAttribute('height')),
+            //   drawingCtx
+            // )
             result.boxes
               .filter((box) => box !== result.box)
               .forEach((box) => {
@@ -341,6 +362,14 @@ export default {
   margin-bottom: 15px;
   font-family: Arial, Helvetica, sans-serif;
   font-style: italic;
+}
+
+canvas {
+  position: absolute;
+  width: 200px;
+  height: 200px;
+  left: 0px;
+  top: 0px;
 }
 
 #scanner {
