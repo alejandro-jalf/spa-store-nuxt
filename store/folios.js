@@ -22,6 +22,15 @@ export const state = () => ({
             INCREMENTODEFOLIO: 0,
             FOLIOFINC: 0,
           },
+          {
+            Tienda: 0,
+            Serie: '',
+            FolioInicial: 1,
+            FolioFinal: 0,
+            FolioDisponible: 0,
+            INCREMENTODEFOLIO: 0,
+            FOLIOFINC: 0,
+          },
         ],
       },
 })
@@ -67,11 +76,11 @@ export const actions = {
 
       if (response.data.success) {
         commit('setDataFolio', { data: response.data.data })
-      } else commit('setDataFolio', { data: [dataFolios] })
+      } else commit('setDataFolio', { data: [dataFolios, dataFolios] })
 
       return response.data
     } catch (error) {
-      commit('setDataFolio', { data: [dataFolios] })
+      commit('setDataFolio', { data: [dataFolios, dataFolios] })
       if (error.response) {
         return error.response.data
       }

@@ -34,10 +34,36 @@
     </b-input-group>
 
     <b-card
-      class="containerCard p-1 pb-4 mt-5"
+      class="containerCard p-0 pb-4 mt-5"
       :class="variantTheme"
-      :title="'Sucursal: ' + folio.Serie"
+      :title="'Sucursal: ' + folio.Serie.replace('E', '')"
+      header-class="p-0 pt-3 pl-3 pr-2"
+      header-bg-variant="info"
+      header-border-variant="light"
     >
+      <template #header>
+        <b-button
+          ref="btnE"
+          squared
+          :variant="variantTabEgreso"
+          @click="changeType('E')"
+        >
+          Egresos
+        </b-button>
+        <b-button
+          ref="btnD"
+          squared
+          :variant="variantTabDegreso"
+          @click="changeType('D')"
+        >
+          Degresos
+        </b-button>
+      </template>
+      <div class="mt-3">
+        <span class="font-weight-bold">Serie:</span>
+        {{ folio.Serie }}
+        <Divider />
+      </div>
       <div class="mt-3">
         <span class="font-weight-bold">Tienda:</span>
         {{ folio.Tienda }}
@@ -45,7 +71,7 @@
       </div>
       <div class="mt-3">
         <span class="font-weight-bold">Sucursal:</span>
-        {{ folio.Serie }}
+        {{ folio.Serie.replace('E', '') }}
         <Divider />
       </div>
       <div class="mt-3">
@@ -174,6 +200,7 @@ export default {
         incremento: 0,
         nuevoFinal: 0,
       },
+      type: 'E',
       statusFinalNew: false,
     }
   },
@@ -182,7 +209,9 @@ export default {
       return this.$store.state.user.user
     },
     folio() {
-      return this.$store.state.folios.folio.data[0]
+      const lengthArray = this.$store.state.folios.folio.data.length
+      const position = lengthArray > 1 && this.type === 'D' ? 1 : 0
+      return this.$store.state.folios.folio.data[position]
     },
     suc() {
       return this.$store.state.folios.sucursal
@@ -196,6 +225,12 @@ export default {
     width() {
       return this.$store.state.general.widthWindow
     },
+    variantTabEgreso() {
+      return this.type === 'E' ? 'light' : 'info'
+    },
+    variantTabDegreso() {
+      return this.type === 'D' ? 'light' : 'info'
+    },
     variantTheme() {
       return this.$store.state.general.themesComponents.themeCardBody
     },
@@ -203,7 +238,7 @@ export default {
       return this.$store.state.general.themesComponents.themeInputBackground
     },
     colorStatusDisponibles() {
-      const disponibles = this.$store.state.folios.folio.data[0].FolioDisponible
+      const disponibles = this.folio.FolioDisponible
       return disponibles < 30
         ? 'color-danger'
         : disponibles < 60
@@ -229,6 +264,12 @@ export default {
     ...mapActions({
       updateDataFolio: 'folios/updateDataFolio',
     }),
+    changeType(type = 'E') {
+      if (type === 'E') this.$refs.btnE.blur()
+      else this.$refs.btnD.blur()
+      this.type = type
+      this.setDataForm()
+    },
     async calculateFolioBySuc() {
       if (this.suc === null)
         this.showAlertDialog(['No ha seleccionado una sucursal'])
@@ -252,12 +293,11 @@ export default {
       this.setSucursal(sucursal)
     },
     setDataForm() {
-      const folioFinalOld = this.$store.state.folios.folio.data[0].FolioFinal
-      const folioActual = this.$store.state.folios.folio.data[0].FolioActual
-      const disponibles = this.$store.state.folios.folio.data[0].FolioDisponible
-      const incremento =
-        this.$store.state.folios.folio.data[0].INCREMENTODEFOLIO
-      const finalNew = this.$store.state.folios.folio.data[0].FOLIOFINC
+      const folioFinalOld = this.folio.FolioFinal
+      const folioActual = this.folio.FolioActual
+      const disponibles = this.folio.FolioDisponible
+      const incremento = this.folio.INCREMENTODEFOLIO
+      const finalNew = this.folio.FOLIOFINC
 
       this.formFolio.final = folioFinalOld
       this.formFolio.actual = folioActual
@@ -311,7 +351,7 @@ export default {
       this.setPromedioMensual(dato)
     },
     calculaFolioFinal() {
-      const folioFinalOld = this.$store.state.folios.folio.data[0].FolioFinal
+      const folioFinalOld = this.folio.FolioFinal
       const finalNuevo =
         parseInt(folioFinalOld) + parseInt(this.formFolio.incremento)
       this.formFolio.nuevoFinal = finalNuevo
@@ -320,7 +360,7 @@ export default {
       else this.statusFinalNew = true
     },
     async actualizaFolio() {
-      const sucursal = this.$store.state.folios.folio.data[0].Serie
+      let sucursal = this.folio.Serie
       const newFolio = this.formFolio.nuevoFinal
       if (!this.statusFinalNew)
         this.showAlertDialog([
@@ -335,10 +375,11 @@ export default {
         ])
       else {
         try {
+          sucursal = sucursal.replace('E', '')
           this.setLoading(true)
           const url =
             process.env.spastore_url_backend +
-            `api/v1/general/folios/${sucursal}?newFolio=${newFolio}`
+            `api/v1/general/folios/${sucursal}/${this.folio.Serie}?newFolio=${newFolio}`
           const response = await this.$axios({
             url,
             method: 'put',
