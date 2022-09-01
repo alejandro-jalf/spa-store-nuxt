@@ -63,13 +63,11 @@ export const actions = {
         '&fechaFin=' +
         dateEnd
 
-      console.log(dateStart, dateEnd)
       const response = await this.$axios({
         url,
         method: 'get',
       })
 
-      console.log(response.data)
       if (response.data.response.success) {
         commit('setData', { data: response.data.response.data })
       }
@@ -77,9 +75,8 @@ export const actions = {
       return response.data.response
     } catch (error) {
       if (error.response) {
-        console.log(error.response)
         return error.response.data
-      } else console.log(error)
+      }
       return {
         success: false,
         message: 'Error con el servidor',
