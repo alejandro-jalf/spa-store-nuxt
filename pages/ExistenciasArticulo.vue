@@ -13,6 +13,9 @@
         <span class="font-weight-bold">Busqueda por:</span>
         <b-button-group class="ml-2" size="md">
           <b-button
+            v-b-tooltip.hover.lefttop="
+              'Busqueda por codigo de articulo o codigo de barras'
+            "
             :pressed="!searchByName"
             variant="info"
             @click="setSearchBy('codigo')"
@@ -21,6 +24,7 @@
             Codigo
           </b-button>
           <b-button
+            v-b-tooltip.hover.righttop="'Busqueda por nombre'"
             :pressed="searchByName"
             variant="info"
             @click="setSearchBy('nombre')"

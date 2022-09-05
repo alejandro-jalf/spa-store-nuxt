@@ -31,7 +31,11 @@ export const actions = {
   async getListArticulos({ commit }, articulo) {
     try {
       const response = await this.$axios({
-        url: process.env.spastore_url_existencia_articulos + '=' + articulo,
+        url:
+          process.env.spastore_url_backend +
+          'api/v1/articulos/' +
+          articulo +
+          '/existencias',
         method: 'get',
       })
 
@@ -54,7 +58,11 @@ export const actions = {
   async getDetailsArticulo({ commit }, articulo) {
     try {
       const response = await this.$axios({
-        url: process.env.spastore_url_existencia_detalle + '=' + articulo,
+        url:
+          process.env.spastore_url_backend +
+          'api/v1/articulos/' +
+          articulo +
+          '/existencias/detalles',
         method: 'get',
       })
 

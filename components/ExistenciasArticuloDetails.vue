@@ -34,21 +34,15 @@
     >
       <template #header>
         <b-button
-          v-b-toggle="
-            'collapse-' + refactorNameSuc(sucursal.sucursal, sucursal.conexion)
-          "
+          v-b-toggle="'collapse-' + sucursal.sucursal"
           variant="link"
           class="btn-block text-right text-white dropdown-toggle"
         >
-          {{ refactorNameSuc(sucursal.sucursal, sucursal.conexion) }}
+          {{ sucursal.sucursal }}
         </b-button>
       </template>
 
-      <b-collapse
-        :id="
-          'collapse-' + refactorNameSuc(sucursal.sucursal, sucursal.conexion)
-        "
-      >
+      <b-collapse :id="'collapse-' + sucursal.sucursal">
         <b-card-body :class="variantBodyCard">
           <div class="row">
             <div class="col-sm">
@@ -179,25 +173,17 @@
           <div class="row">
             <div class="col-sm">
               <div
-                v-if="verifyAccess(sucursal.sucursal, sucursal.conexion)"
+                v-if="verifyAccess(sucursal.sucursal)"
                 class="form-group mt-1 mb-1"
               >
                 <b-button
-                  v-b-toggle="
-                    'collapse-compras-' +
-                    refactorNameSuc(sucursal.sucursal, sucursal.conexion)
-                  "
+                  v-b-toggle="'collapse-compras-' + sucursal.sucursal"
                   class="btn btn-success btn-block dropdown-toggle text-right"
                 >
                   Compras encontradas: {{ count(sucursal.compras) }}
                 </b-button>
               </div>
-              <b-collapse
-                :id="
-                  'collapse-compras-' +
-                  refactorNameSuc(sucursal.sucursal, sucursal.conexion)
-                "
-              >
+              <b-collapse :id="'collapse-compras-' + sucursal.sucursal">
                 <div
                   v-for="(value, key) in verifyCompras(sucursal.compras)"
                   :key="key + 'compra'"
@@ -328,7 +314,8 @@ export default {
     detailsProveedor() {
       if (
         this.details.proveedores.mejorPrecio ===
-        'Parametro enviado es no valido'
+          'Parametro enviado es no valido' ||
+        this.details.proveedores.mejorPrecio === null
       )
         return {
           mejorPrecio: {},
@@ -337,31 +324,12 @@ export default {
         }
       return this.details.proveedores
     },
-    validProveedores() {
-      if (
-        this.details.proveedores.mejorPrecio ===
-        'Parametro enviado es no valido'
-      )
-        return false
-      return true
-    },
     tipo_user() {
       return this.$store.state.user.user.tipo_user || 'invited'
     },
   },
   mounted() {},
   methods: {
-    refactorNameSuc(sucursal, conexion) {
-      if (!sucursal) {
-        if (!conexion) return sucursal
-        sucursal = conexion
-      }
-      const arraySucursal = sucursal.split('.')
-      const name = arraySucursal[0].slice(3)
-      if (name === 'SUPERUNO') return 'ZARAGOZA'
-      if (name === 'CENTRO') return 'VICTORIA'
-      return name
-    },
     parseToPorcent(value) {
       if (!value) return value
       const stringValue = value.toString()
@@ -402,8 +370,8 @@ export default {
         return 'dark'
       return 'info'
     },
-    verifyAccess(sucursal, conexion) {
-      if (this.refactorNameSuc(sucursal, conexion) !== 'BODEGA') return true
+    verifyAccess(sucursal) {
+      if (sucursal !== 'BODEGA') return true
       return this.tipo_user === 'manager'
     },
   },
