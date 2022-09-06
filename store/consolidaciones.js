@@ -87,8 +87,7 @@ export const actions = {
   async loadDetails({ commit }, [sucursal, documento, data, dateDocument]) {
     try {
       const url =
-        // process.env.spastore_url_backend +
-        'https://spa-store-backend-dev.herokuapp.com/' +
+        process.env.spastore_url_backend +
         'api/v1/consolidaciones/' +
         sucursal +
         '/articulos/' +
