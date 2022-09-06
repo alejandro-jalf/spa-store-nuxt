@@ -84,14 +84,17 @@ export const actions = {
       }
     }
   },
-  async loadDetails({ commit }, [sucursal, documento, data]) {
+  async loadDetails({ commit }, [sucursal, documento, data, dateDocument]) {
     try {
       const url =
-        process.env.spastore_url_backend +
+        // process.env.spastore_url_backend +
+        'https://spa-store-backend-dev.herokuapp.com/' +
         'api/v1/consolidaciones/' +
         sucursal +
         '/articulos/' +
-        documento
+        documento +
+        '?dateDocument=' +
+        dateDocument
       const response = await this.$axios({
         url,
         method: 'get',

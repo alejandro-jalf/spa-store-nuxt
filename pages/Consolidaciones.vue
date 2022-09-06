@@ -363,11 +363,14 @@ export default {
       else return 'container-info-danger'
     },
     async viewDetails(data) {
+      const dateDocument = data.Fecha.toString().slice(0, 10).replace(/-/g, '')
+
       this.setLoading(true)
       const response = await this.loadDetails([
         this.$store.state.consolidaciones.sucursal,
         data.Transferencia,
         data,
+        dateDocument,
       ])
       this.setLoading(false)
       this.transferenciaActual = data
