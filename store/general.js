@@ -162,6 +162,12 @@ export const state = () => ({
       nickname: 'Novedades',
       icon: 'star-fill',
     },
+    {
+      path: '/existenciasproveedor',
+      name: 'existenciasproveedor',
+      nickname: 'Existencia Por Proveedor',
+      icon: 'stack-icon',
+    },
   ].sort((a, b) => (a.nickname < b.nickname ? -1 : 1)),
   tabActual: 'Inicio',
   themePreferences: localStorage.getItem('spastore_theme_color'),

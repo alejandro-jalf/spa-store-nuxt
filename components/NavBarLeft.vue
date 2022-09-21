@@ -52,7 +52,15 @@
         replace
         :class="isActiveItem(tab.nickname)"
       >
-        <b-icon :icon="tab.icon" class="mr-1" />
+        <b-icon
+          v-if="tab.icon !== 'stack-icon'"
+          :icon="tab.icon"
+          class="mr-1"
+        />
+        <b-iconstack v-else-if="tab.name === 'existenciasproveedor'">
+          <b-icon stacked icon="collection" />
+          <b-icon stacked icon="box-seam" shift-v="-1.5" scale="0.6" />
+        </b-iconstack>
         {{ tab.nickname }}
       </b-list-group-item>
     </div>
