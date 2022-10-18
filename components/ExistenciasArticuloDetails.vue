@@ -332,9 +332,7 @@ export default {
   methods: {
     parseToPorcent(value) {
       if (!value) return value
-      const stringValue = value.toString()
-      const arrayValue = stringValue.split('.')
-      return parseInt(arrayValue[1])
+      return utils.roundTo(value * 100, 2, true)
     },
     count(anyObject) {
       if (!anyObject) return 0
