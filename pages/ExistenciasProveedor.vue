@@ -9,7 +9,10 @@
         @change="selectSucursal"
       ></b-form-select>
     </b-input-group>
-    <b-input-group prepend="Proveedor" class="mb-0 w-100">
+    <b-input-group
+      :prepend="width < 500 ? 'Prov' : 'Proveedor'"
+      class="mb-0 w-100"
+    >
       <b-form-input
         v-model="proveedor"
         autocomplete="off"
@@ -25,7 +28,7 @@
         @click="updateProviders"
       >
         <b-icon icon="arrow-clockwise" :animation="animationTable"></b-icon>
-        Refrescar
+        {{ textBtn }}
       </b-button>
     </b-input-group>
     <div class="container-card">
@@ -205,9 +208,9 @@ export default {
     },
     providerComplete() {
       return (
-        this.$store.state.existenciasproveedor.provider.Proveedor +
+        this.$store.state.existenciasproveedor.providerConsult.Proveedor +
         ' - ' +
-        this.$store.state.existenciasproveedor.provider.Nombre
+        this.$store.state.existenciasproveedor.providerConsult.Nombre
       )
     },
     sucExistences() {
@@ -217,6 +220,9 @@ export default {
     },
     width() {
       return this.$store.state.general.widthWindow
+    },
+    textBtn() {
+      return this.$store.state.general.widthWindow < 500 ? 'Ref' : 'Refrescar'
     },
     variantSuccess() {
       return this.$store.state.general.themesComponents.themeButtonSuccess
