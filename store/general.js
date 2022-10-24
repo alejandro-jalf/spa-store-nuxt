@@ -165,7 +165,7 @@ export const state = () => ({
     {
       path: '/existenciasproveedor',
       name: 'existenciasproveedor',
-      nickname: 'Existencia Por Proveedor',
+      nickname: 'Existencia Proveedor',
       icon: 'stack-icon',
     },
   ].sort((a, b) => (a.nickname < b.nickname ? -1 : 1)),

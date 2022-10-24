@@ -16,7 +16,18 @@ export const state = () => ({
         Proveedor: '',
         Nombre: '',
       },
+  providerConsult: localStorage.getItem(
+    'spastore_existence_provider_c_provider'
+  )
+    ? JSON.parse(localStorage.getItem('spastore_existence_provider_c_provider'))
+    : {
+        Proveedor: '',
+        Nombre: '',
+      },
   sucursal: localStorage.getItem('spastore_existencias_provider_sucursal'),
+  sucursalConsult: localStorage.getItem(
+    'spastore_existencias_provider_suc_consult'
+  ),
 })
 
 export const mutations = {
@@ -38,11 +49,25 @@ export const mutations = {
     state.sucursal = sucursal
     localStorage.setItem('spastore_existencias_provider_sucursal', sucursal)
   },
+  setSucursalConsult(state, sucursalConsult) {
+    state.sucursalConsult = sucursalConsult
+    localStorage.setItem(
+      'spastore_existencias_provider_suc_consult',
+      sucursalConsult
+    )
+  },
   setProvider(state, provider) {
     state.provider = provider
     localStorage.setItem(
       'spastore_existence_provider_provider',
       JSON.stringify(provider)
+    )
+  },
+  setProviderConsult(state, providerConsult) {
+    state.providerConsult = providerConsult
+    localStorage.setItem(
+      'spastore_existence_provider_c_provider',
+      JSON.stringify(providerConsult)
     )
   },
 }
@@ -55,22 +80,21 @@ export const actions = {
         'api/v1/articulos/existencias/' +
         sucursal +
         '/proveedor/' +
-        proveedor
+        proveedor.Proveedor
 
       const response = await this.$axios({
         url,
         method: 'get',
       })
 
-      console.log(response.data)
-
       if (response.data.success) {
         commit('setData', response.data)
+        commit('setProviderConsult', proveedor)
+        commit('setSucursalConsult', sucursal)
       }
 
       return response.data
     } catch (error) {
-      console.log(error.response || error)
       if (error.response) return error.response.data
       return {
         success: false,
