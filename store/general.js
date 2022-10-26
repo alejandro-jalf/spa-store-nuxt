@@ -168,6 +168,12 @@ export const state = () => ({
       nickname: 'Existencia Proveedor',
       icon: 'stack-icon',
     },
+    {
+      path: '/mayoristas',
+      name: 'mayoristas',
+      nickname: 'Mayoristas',
+      icon: 'front',
+    },
   ].sort((a, b) => (a.nickname < b.nickname ? -1 : 1)),
   tabActual: 'Inicio',
   themePreferences: localStorage.getItem('spastore_theme_color'),
