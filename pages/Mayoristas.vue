@@ -6,19 +6,24 @@
         :value="sucursalSelected"
         :options="options"
         class="w-150"
+        @change="setSucursal"
       ></b-form-select>
     </b-input-group>
     <div class="middle">
       <b-input-group prepend="Documento" class="w-100">
         <b-form-select
-          :value="typeSelected"
+          v-model="typeSelected"
           :options="optionsType"
+          :disabled="compraLoaded"
           class="w-10"
           @change="selectedType"
         ></b-form-select>
         <b-form-input
           id="input-document"
+          ref="inputDocument"
           v-model="document"
+          :disabled="compraLoaded"
+          :state="Boolean(document) && !isEmptyDocument"
           :placeholder="placeHolder"
           type="text"
           class="w-50"
@@ -31,25 +36,157 @@
         v-model="excel"
         :state="Boolean(excel) && isXlsx"
         accept=".xlsx"
+        :disabled="ExcelLoaded"
         browse-text="Seleccionar"
         placeholder="Seleccione o suelte archivo de cotizacion"
         drop-placeholder="Suelte el archivo aqui"
         @change="changeFile"
       ></b-form-file>
     </div>
-    <b-button variant="success" @click="compara">Comparar</b-button>
+    <div class="containerP">
+      <span class="titleP">Datos listos</span>
+      <b-form-checkbox
+        id="check-compra"
+        v-model="compraLoaded"
+        disabled
+        name="check-compra"
+      >
+        {{ nameTyped }} Cargada
+      </b-form-checkbox>
+      <b-form-checkbox
+        id="check-compra"
+        v-model="ExcelLoaded"
+        disabled
+        name="check-compra"
+      >
+        Excel Cargado
+      </b-form-checkbox>
+    </div>
+    <b-button
+      :variant="variantInfo"
+      class="mb-2"
+      :disabled="compraLoaded"
+      @click="loadData"
+    >
+      <b-icon :icon="iconLoad"></b-icon>
+      Cargar {{ nameTyped }}
+    </b-button>
+    <b-button
+      :variant="variantClean"
+      class="mb-2"
+      :disabled="!compraLoaded"
+      @click="cleanCompra"
+    >
+      <b-icon :icon="iconCleanCompra" />
+      Limpiar {{ nameTyped }}
+    </b-button>
+    <b-button
+      :variant="variantClean"
+      class="mb-2"
+      :disabled="!ExcelLoaded"
+      @click="cleanExcel"
+    >
+      <b-icon :icon="iconCleanExcel" />
+      Limpiar excel
+    </b-button>
+    <b-button
+      :variant="variantSuccess"
+      class="mb-2"
+      :disabled="!ExcelLoaded || !compraLoaded"
+      @click="compara"
+    >
+      <b-iconstack v-if="ExcelLoaded && compraLoaded">
+        <b-icon stacked icon="file-earmark"></b-icon>
+        <b-icon stacked icon="arrow-left-right" scale="0.6"></b-icon>
+      </b-iconstack>
+      <b-icon v-else icon="exclamation-diamond-fill" />
+      Comparar
+    </b-button>
+
+    <b-container v-if="dataExistencias.length > 20" fluid="xl">
+      <b-row cols="1" cols-sm="2">
+        <b-col sm="3" md="2" class="mb-2">
+          <b-form-select
+            id="per-page-select"
+            v-model="perPage"
+            :options="pageOptions"
+            size="sm"
+          ></b-form-select>
+        </b-col>
+        <b-col sm="9" md="10" class="mb-2">
+          <b-pagination
+            v-model="currentPage"
+            aria-controls="tableInventarioValuacion"
+            :total-rows="rows"
+            :per-page="perPage"
+            align="fill"
+            size="sm"
+            first-number
+            class="my-0"
+            last-number
+          >
+          </b-pagination>
+        </b-col>
+      </b-row>
+    </b-container>
+
+    <b-table
+      hover
+      head-variant="dark"
+      outlined
+      responsive
+      :per-page="perPage"
+      :current-page="currentPage"
+      :fields="fields"
+      :items="dataExistencias"
+      :class="variantThemeTableBody"
+      class="mt-0"
+    >
+      <template #cell(ExistenciaActualRegular)="row">
+        {{ formatNumber(row.item.ExistenciaActualRegular) }}
+      </template>
+      <template #cell(ExistenciaActualUC)="row">
+        {{ formatNumber(row.item.ExistenciaActualUC) }}
+      </template>
+    </b-table>
   </div>
 </template>
 
 <script>
-import { mapMutations } from 'vuex'
+import { mapMutations, mapActions } from 'vuex'
 import xlsx from 'xlsx'
 
 export default {
   data() {
     return {
+      compraLoaded: false,
+      ExcelLoaded: false,
+      perPage: 20,
+      pageOptions: [5, 10, 15, 20, 50, 100],
+      currentPage: 1,
+      fields: [
+        'CodigoBarras',
+        'ArticuloG',
+        'NombreG',
+        'FactorG',
+        'UnidadG',
+        'PEDIDOG',
+        '*',
+        'Proveedor',
+        'Articulo',
+        'Nombre',
+        'Relacion',
+        'Ieps',
+        'Iva',
+        'Cjas',
+        'Pzas',
+        'EnFactura',
+        'Pactado',
+        'TotalPactado',
+        'Diferencia',
+      ],
+      dataExistencias: [],
       excel: null,
-      dataExcel: {},
       typeSelected: 'C',
       sucursalSelected: 'ZR',
       document: '',
@@ -71,6 +208,9 @@ export default {
     }
   },
   computed: {
+    isEmptyDocument() {
+      return this.$store.state.mayoristas.documento.data.length === 0
+    },
     backgroundInputTheme() {
       return this.$store.state.general.themesComponents.themeInputBackground
     },
@@ -78,15 +218,105 @@ export default {
       const nameSplited = this.excel.name.split('.')
       return nameSplited[nameSplited.length - 1] === 'xlsx'
     },
+    nameTyped() {
+      return this.typeSelected === 'C' ? 'Compra' : 'Orden de Compra'
+    },
+    iconLoad() {
+      return !this.compraLoaded
+        ? 'arrow-up-square-fill'
+        : 'exclamation-diamond-fill'
+    },
+    iconCleanCompra() {
+      return this.compraLoaded
+        ? 'file-richtext-fill'
+        : 'exclamation-diamond-fill'
+    },
+    iconCleanExcel() {
+      return this.ExcelLoaded
+        ? 'file-earmark-excel-fill'
+        : 'exclamation-diamond-fill'
+    },
+    variantThemeTableBody() {
+      return this.$store.state.general.themesComponents.themeTableBody
+    },
+    variantClean() {
+      return this.$store.state.general.themesComponents.themeButtonClean
+    },
+    variantSuccess() {
+      return this.$store.state.general.themesComponents.themeButtonSuccess
+    },
+    variantInfo() {
+      return this.$store.state.general.themesComponents.themeButtonClose
+    },
+  },
+  mounted() {
+    const documentSaved = { ...this.$store.state.mayoristas.documento }
+    this.document = documentSaved.consecutivo
+    if (documentSaved.data.length > 0) this.compraLoaded = true
+    const excelSaved = { ...this.$store.state.mayoristas.excel }
+    if (excelSaved.data.length === 0) this.excel = null
+    else this.ExcelLoaded = true
+    const suc = this.$store.state.mayoristas.sucursal
+    this.sucursalSelected = suc
   },
   methods: {
     ...mapMutations({
       setLoading: 'general/setLoading',
       showAlertDialog: 'general/showAlertDialog',
+      setTitle: 'mayoristas/setTitle',
+      setSucursal: 'mayoristas/setSucursal',
+      setExcel: 'mayoristas/setExcel',
+      setDocumento: 'mayoristas/setDocumento',
     }),
+    ...mapActions({
+      changeDataDocument: 'mayoristas/changeDataDocument',
+    }),
+    cleanExcel() {
+      this.setExcel({
+        name: '',
+        data: [],
+      })
+      this.excel = null
+      this.ExcelLoaded = false
+    },
+    cleanCompra() {
+      this.setDocumento({ consecutivo: '', data: [] })
+      this.document = ''
+      this.compraLoaded = false
+    },
     selectedType(type) {
       if (type === 'C') this.placeHolder = 'C0000000000'
       else this.placeHolder = '0000000000'
+      this.$refs.inputDocument.select()
+    },
+    async loadData() {
+      if (this.document.trim() === '') {
+        this.showAlertDialog([
+          'Debe ingresar un documento para cargar',
+          'Datos vacios',
+        ])
+      } else {
+        const sucursal = this.$store.state.mayoristas.sucursal
+        this.setLoading(true)
+        const response = await this.changeDataDocument([
+          sucursal,
+          this.typeSelected,
+          this.document,
+        ])
+        this.setLoading(false)
+        if (!response.success)
+          this.showAlertDialog([response.message, 'Error inesperado'])
+        else if (response.data.length === 0)
+          this.showAlertDialog([
+            'El documento seleccionado esta vacio',
+            'Datos vacios',
+            'danger',
+          ])
+        else {
+          this.compraLoaded = true
+          this.showAlertDialog([response.message, 'Datos cargados', 'success'])
+        }
+      }
     },
     compara() {
       if (this.excel === null)
@@ -167,8 +397,13 @@ export default {
             )
             try {
               const titles = Object.keys(xlRowObject[0])
-              if (this.isValidFormat(titles)) this.dataExcel = xlRowObject
+              if (this.isValidFormat(titles))
+                this.setExcel({
+                  name: this.excel.name,
+                  data: xlRowObject,
+                })
               else this.excel = null
+              this.ExcelLoaded = true
             } catch (error) {
               this.showAlertDialog([
                 'El archivo no cumple con el formato: ' + error,
@@ -194,5 +429,31 @@ export default {
 .middle {
   display: inline-block;
   width: calc(50% - 5px);
+  margin-bottom: 10px;
+}
+
+.containerP {
+  position: relative;
+  min-width: max-content;
+  margin-bottom: 10px;
+  padding: 15px;
+  border-radius: 5px;
+  border: 1px solid rgb(0, 139, 164);
+}
+
+.titleP {
+  color: black;
+  position: absolute;
+  top: -12px;
+  padding-left: 3px;
+  padding-right: 3px;
+  left: 5px;
+  background: #f3f5f4;
+}
+
+@media screen and (max-width: 994px) {
+  .middle {
+    width: 100%;
+  }
 }
 </style>
