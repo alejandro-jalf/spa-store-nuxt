@@ -103,7 +103,9 @@
       Comparar
     </b-button>
 
-    <b-container v-if="dataExistencias.length > 20" fluid="xl">
+    <h4>{{ title }}</h4>
+
+    <b-container v-if="dataComparativa.length > 20" fluid="xl">
       <b-row cols="1" cols-sm="2">
         <b-col sm="3" md="2" class="mb-2">
           <b-form-select
@@ -138,7 +140,7 @@
       :per-page="perPage"
       :current-page="currentPage"
       :fields="fields"
-      :items="dataExistencias"
+      :items="dataComparativa"
       :class="variantThemeTableBody"
       class="mt-0"
     >
@@ -185,7 +187,6 @@ export default {
         'TotalPactado',
         'Diferencia',
       ],
-      dataExistencias: [],
       excel: null,
       typeSelected: 'C',
       sucursalSelected: 'ZR',
@@ -248,6 +249,23 @@ export default {
     variantInfo() {
       return this.$store.state.general.themesComponents.themeButtonClose
     },
+    dataComparativa() {
+      const items = []
+      this.$store.state.mayoristas.comparativa.data.forEach((compara) => {
+        const articleReviewed = {
+          ...compara.ArticuloExcel,
+          ...compara.ArticleDocument,
+        }
+        items.push(articleReviewed)
+      })
+      return items
+    },
+    rows() {
+      return this.$store.state.mayoristas.comparativa.data.length
+    },
+    title() {
+      return this.$store.state.mayoristas.title
+    },
   },
   mounted() {
     const documentSaved = { ...this.$store.state.mayoristas.documento }
@@ -267,6 +285,7 @@ export default {
       setSucursal: 'mayoristas/setSucursal',
       setExcel: 'mayoristas/setExcel',
       setDocumento: 'mayoristas/setDocumento',
+      setComparativa: 'mayoristas/setComparativa',
     }),
     ...mapActions({
       changeDataDocument: 'mayoristas/changeDataDocument',
@@ -319,12 +338,59 @@ export default {
       }
     },
     compara() {
-      if (this.excel === null)
+      if (this.excel === null && !this.ExcelLoaded)
         this.showAlertDialog(['Falta seleccionar el excel'])
       else {
-        const nameSplited = this.excel.name.split('.')
+        const nameSplited =
+          this.excel !== null
+            ? this.excel.name.split('.')
+            : this.$store.state.mayoristas.excel.name.split('.')
         if (nameSplited[nameSplited.length - 1] !== 'xlsx')
           this.showAlertDialog(['Debe seleccionar un archivo excel'])
+        else {
+          const documentSaved = { ...this.$store.state.mayoristas.documento }
+          const excelSaved = { ...this.$store.state.mayoristas.excel }
+
+          const comparativa = documentSaved.data.reduce(
+            (compara, articleDoc) => {
+              const articleXlsx = excelSaved.data.find(
+                (articleExcel) =>
+                  articleExcel.ArticuloGlobal === articleDoc.Articulo
+              )
+              const articleReviewed = { ArticuloExcel: {}, ArticleDocument: {} }
+              if (articleXlsx) {
+                const pactado =
+                  articleXlsx.Proveedor / articleDoc.IEPS / articleDoc.IEPS
+                const totalPactado = pactado * articleDoc.CantidadRegularUC
+                const diferencia = articleDoc.CostoValor - totalPactado
+
+                articleReviewed.ArticuloExcel = articleXlsx
+                articleReviewed.ArticleDocument = articleDoc
+                articleReviewed.ArticleDocument.Pactado = pactado
+                articleReviewed.ArticleDocument.TotalPactado = totalPactado
+                articleReviewed.ArticleDocument.Diferencia = diferencia
+              } else {
+                articleReviewed.ArticleDocument = articleDoc
+                articleReviewed.ArticleDocument.Pactado = 0
+                articleReviewed.ArticleDocument.TotalPactado = 0
+                articleReviewed.ArticleDocument.Diferencia = 0
+              }
+              compara.push(articleReviewed)
+              return compara
+            },
+            []
+          )
+
+          const title =
+            'Comparando ' + documentSaved.consecutivo + ' VS ' + excelSaved.name
+
+          this.setComparativa({
+            documento: documentSaved.consecutivo,
+            excel: excelSaved.name,
+            data: comparativa,
+          })
+          this.setTitle(title)
+        }
       }
     },
     isValidFormat(arrayTitles) {
