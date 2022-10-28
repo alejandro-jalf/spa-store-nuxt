@@ -2,8 +2,8 @@ if (!localStorage.getItem('spastore_mayoristas_sucursal'))
   localStorage.setItem('spastore_mayoristas_sucursal', 'ZR')
 
 export const state = () => ({
-  documento: sessionStorage.getItem('spastore_mayoristas_data')
-    ? JSON.parse(sessionStorage.getItem('spastore_mayoristas_data'))
+  documento: localStorage.getItem('spastore_mayoristas_data')
+    ? JSON.parse(localStorage.getItem('spastore_mayoristas_data'))
     : { consecutivo: '', data: [] },
   comparativa: localStorage.getItem('spastore_mayoristas_comparativa')
     ? JSON.parse(localStorage.getItem('spastore_mayoristas_comparativa'))
@@ -25,10 +25,7 @@ export const state = () => ({
 export const mutations = {
   setDocumento(state, documento) {
     state.documento = documento
-    sessionStorage.setItem(
-      'spastore_mayoristas_data',
-      JSON.stringify(documento)
-    )
+    localStorage.setItem('spastore_mayoristas_data', JSON.stringify(documento))
   },
   setComparativa(state, comparativa) {
     state.comparativa = comparativa
@@ -66,6 +63,7 @@ export const actions = {
       const response = await this.$axios({
         url,
         method: 'get',
+        headers: { 'access-token': 'dfa94a69ee28ebdade02657328f187b74db98dd0' },
       })
 
       if (response.data.success) {

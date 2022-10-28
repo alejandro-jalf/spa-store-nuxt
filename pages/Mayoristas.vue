@@ -92,15 +92,24 @@
     <b-button
       :variant="variantSuccess"
       class="mb-2"
-      :disabled="!ExcelLoaded || !compraLoaded"
+      :disabled="!ExcelLoaded || !compraLoaded || ComparativaSuccess"
       @click="compara"
     >
-      <b-iconstack v-if="ExcelLoaded && compraLoaded">
+      <b-iconstack v-if="ExcelLoaded && compraLoaded && !ComparativaSuccess">
         <b-icon stacked icon="file-earmark"></b-icon>
         <b-icon stacked icon="arrow-left-right" scale="0.6"></b-icon>
       </b-iconstack>
       <b-icon v-else icon="exclamation-diamond-fill" />
       Comparar
+    </b-button>
+    <b-button
+      :variant="variantClean"
+      class="mb-2"
+      :disabled="!ComparativaSuccess"
+      @click="cleanComparativa"
+    >
+      <b-icon :icon="iconCleanComparativa" />
+      Limpiar Comparativa
     </b-button>
 
     <h4>{{ title }}</h4>
@@ -144,11 +153,55 @@
       :class="variantThemeTableBody"
       class="mt-0"
     >
-      <template #cell(ExistenciaActualRegular)="row">
-        {{ formatNumber(row.item.ExistenciaActualRegular) }}
+      <template #cell(ArticuloG)="row">
+        {{ row.item.ArticuloGlobal }}
       </template>
-      <template #cell(ExistenciaActualUC)="row">
-        {{ formatNumber(row.item.ExistenciaActualUC) }}
+      <template #cell(FactorG)="row">
+        {{ row.item.Factor }}
+      </template>
+      <template #cell(UnidadG)="row">
+        {{ row.item.Unidad }}
+      </template>
+      <template #cell(PEDIDOG)="row">
+        {{ formatNumber(row.item.PEDIDO) }}
+      </template>
+      <template #cell(Ieps)="row">
+        {{ formatNumber(row.item.IEPS) }}
+      </template>
+      <template #cell(Iva)="row">
+        {{ formatNumber(row.item.IVA) }}
+      </template>
+      <template #cell(Cjas)="row">
+        {{ formatNumber(row.item.CantidadRegularUC) }}
+      </template>
+      <template #cell(Pzas)="row">
+        {{ formatNumber(row.item.CantidadRegular) }}
+      </template>
+      <template #cell(EnFactura)="row">
+        {{ formatNumber(row.item.CostoValor) }}
+      </template>
+      <template #cell(Pactado)="row">
+        {{ formatNumber(row.item.Pactado) }}
+      </template>
+      <template #cell(TotalPactado)="row">
+        {{ formatNumber(row.item.TotalPactado) }}
+      </template>
+      <template #cell(Diferencia)="row">
+        {{
+          utils.aplyFormatNumeric(
+            utils.roundTo(row.item.Diferencia, 2, true),
+            false
+          )
+        }}
+      </template>
+      <template #cell(Acciones)="row">
+        <b-button
+          v-if="!row.item.ArticuloGlobal"
+          variant="success"
+          @click="asignar(row.item)"
+        >
+          Asignar
+        </b-button>
       </template>
     </b-table>
   </div>
@@ -157,35 +210,39 @@
 <script>
 import { mapMutations, mapActions } from 'vuex'
 import xlsx from 'xlsx'
+import utils from '../modules/utils'
 
 export default {
   data() {
     return {
+      utils,
       compraLoaded: false,
       ExcelLoaded: false,
-      perPage: 20,
+      ComparativaSuccess: false,
+      perPage: 50,
       pageOptions: [5, 10, 15, 20, 50, 100],
       currentPage: 1,
       fields: [
-        'CodigoBarras',
-        'ArticuloG',
-        'NombreG',
-        'FactorG',
-        'UnidadG',
-        'PEDIDOG',
-        '*',
-        'Proveedor',
-        'Articulo',
-        'Nombre',
-        'Relacion',
-        'Ieps',
-        'Iva',
-        'Cjas',
-        'Pzas',
-        'EnFactura',
-        'Pactado',
-        'TotalPactado',
-        'Diferencia',
+        { key: 'CodigoBarras', label: 'CodigoBarras', sortable: true },
+        { key: 'ArticuloG', label: 'ArticuloG', sortable: true },
+        { key: 'NombreG', label: 'NombreG', sortable: true },
+        { key: 'FactorG', label: 'FactorG', sortable: false },
+        { key: 'UnidadG', label: 'UnidadG', sortable: false },
+        { key: 'PEDIDOG', label: 'PEDIDOG', sortable: false },
+        { key: '*', label: '*', sortable: false },
+        { key: 'Proveedor', label: 'Proveedor', sortable: false },
+        { key: 'Articulo', label: 'Articulo', sortable: true },
+        { key: 'Nombre', label: 'Nombre', sortable: true },
+        { key: 'Relacion', label: 'Relacion', sortable: false },
+        { key: 'Ieps', label: 'Ieps', sortable: false },
+        { key: 'Iva', label: 'Iva', sortable: false },
+        { key: 'Cjas', label: 'Cjas', sortable: false },
+        { key: 'Pzas', label: 'Pzas', sortable: false },
+        { key: 'EnFactura', label: 'EnFactura', sortable: false },
+        { key: 'Pactado', label: 'Pactado', sortable: false },
+        { key: 'TotalPactado', label: 'TotalPactado', sortable: false },
+        { key: 'Diferencia', label: 'Diferencia', sortable: true },
+        { key: 'Acciones', label: 'Acciones', sortable: false },
       ],
       excel: null,
       typeSelected: 'C',
@@ -199,7 +256,6 @@ export default {
         { value: 'SY', text: 'Sayula' },
         { value: 'JL', text: 'Jaltipan' },
         { value: 'BO', text: 'Bodega' },
-        { value: 'ALL', text: 'Todas' },
       ],
       optionsType: [
         { value: 'C', text: 'Compra' },
@@ -237,6 +293,11 @@ export default {
         ? 'file-earmark-excel-fill'
         : 'exclamation-diamond-fill'
     },
+    iconCleanComparativa() {
+      return this.ComparativaSuccess
+        ? 'file-earmark-fill'
+        : 'exclamation-diamond-fill'
+    },
     variantThemeTableBody() {
       return this.$store.state.general.themesComponents.themeTableBody
     },
@@ -254,7 +315,21 @@ export default {
       this.$store.state.mayoristas.comparativa.data.forEach((compara) => {
         const articleReviewed = {
           ...compara.ArticuloExcel,
+          NombreG: compara.ArticuloExcel.Nombre,
           ...compara.ArticleDocument,
+        }
+        if (!compara.ArticuloExcel.ArticuloGlobal)
+          articleReviewed._rowVariant = 'danger'
+        articleReviewed._cellVariants = {}
+        if (articleReviewed.Diferencia < 0)
+          articleReviewed._cellVariants.Diferencia = 'danger'
+
+        if (
+          compara.ArticuloExcel.PEDIDO !==
+          compara.ArticleDocument.CantidadRegularUC
+        ) {
+          articleReviewed._cellVariants.Cjas = 'warning'
+          articleReviewed._cellVariants.PEDIDOG = 'warning'
         }
         items.push(articleReviewed)
       })
@@ -268,6 +343,9 @@ export default {
     },
   },
   mounted() {
+    const comparativa = { ...this.$store.state.mayoristas.comparativa }
+    this.ComparativaSuccess = comparativa.data.length > 0
+
     const documentSaved = { ...this.$store.state.mayoristas.documento }
     this.document = documentSaved.consecutivo
     if (documentSaved.data.length > 0) this.compraLoaded = true
@@ -290,6 +368,11 @@ export default {
     ...mapActions({
       changeDataDocument: 'mayoristas/changeDataDocument',
     }),
+    formatNumber(value) {
+      if (value === null) return value
+      else if (value === undefined) return null
+      return utils.aplyFormatNumeric(utils.roundTo(value, 2, true))
+    },
     cleanExcel() {
       this.setExcel({
         name: '',
@@ -302,6 +385,15 @@ export default {
       this.setDocumento({ consecutivo: '', data: [] })
       this.document = ''
       this.compraLoaded = false
+    },
+    cleanComparativa() {
+      this.setComparativa({
+        documento: '',
+        excel: '',
+        data: [],
+      })
+      this.setTitle('')
+      this.ComparativaSuccess = false
     },
     selectedType(type) {
       if (type === 'C') this.placeHolder = 'C0000000000'
@@ -373,7 +465,8 @@ export default {
                 articleReviewed.ArticleDocument = articleDoc
                 articleReviewed.ArticleDocument.Pactado = 0
                 articleReviewed.ArticleDocument.TotalPactado = 0
-                articleReviewed.ArticleDocument.Diferencia = 0
+                articleReviewed.ArticleDocument.Diferencia =
+                  articleDoc.CostoValor
               }
               compara.push(articleReviewed)
               return compara
@@ -390,6 +483,7 @@ export default {
             data: comparativa,
           })
           this.setTitle(title)
+          this.ComparativaSuccess = true
         }
       }
     },

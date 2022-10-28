@@ -718,11 +718,13 @@ const utils = (() => {
     return newFormat
   }
 
-  const aplyFormatNumeric = (numberString) => {
+  const aplyFormatNumeric = (numberString, withComa = true) => {
+    const signo = numberString < 0 ? '-' : ''
     if (numberString === null || typeof numberString === 'undefined') {
       return true
     }
-    numberString = numberString.toString()
+    numberString =
+      signo === '-' ? (numberString * -1).toString() : numberString.toString()
     if (numberString.trim().length <= 2) return numberString
     const arrayDivision = numberString.split('.')
     let numberFormated = '00,000.000'
@@ -734,11 +736,11 @@ const utils = (() => {
       .reduce((acumulador, numero, indice) => {
         acumulador.push(numero)
         if (indice === sobrantes - 1 && indice < lengthPartInt - 1) {
-          acumulador.push(',')
+          if (withComa) acumulador.push(',')
         }
         if (indice >= sobrantes && indice < lengthPartInt - 1) {
           if (contadorSecundario % 3 === 0) {
-            acumulador.push(',')
+            if (withComa) acumulador.push(',')
           }
           contadorSecundario++
         }
@@ -748,7 +750,7 @@ const utils = (() => {
     if (arrayDivision.length === 2) {
       numberFormated += `.${arrayDivision[1]}`
     }
-    return numberFormated
+    return signo + numberFormated
   }
 
   const roundTo = (number, digits = 2, autoComplete = true) => {
