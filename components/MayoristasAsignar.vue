@@ -41,6 +41,19 @@ export default {
     return {
       article: '',
       name: '',
+      perPage: 20,
+      pageOptions: [5, 10, 15, 20, 50, 100],
+      currentPage: 1,
+      fields: [
+        { key: 'CodigoBarras', label: 'CodigoBarras', sortable: true },
+        { key: 'ArticuloG', label: 'ArticuloG', sortable: true },
+        { key: 'NombreG', label: 'NombreG', sortable: true },
+        { key: 'FactorG', label: 'FactorG', sortable: false },
+        { key: 'UnidadG', label: 'UnidadG', sortable: false },
+        { key: 'PEDIDOG', label: 'PEDIDOG', sortable: false },
+        { key: '*', label: '*', sortable: false },
+        { key: 'Observaciones', label: 'Observaciones', sortable: false },
+      ],
     }
   },
 }
