@@ -63,7 +63,6 @@ export const actions = {
       const response = await this.$axios({
         url,
         method: 'get',
-        headers: { 'access-token': 'dfa94a69ee28ebdade02657328f187b74db98dd0' },
       })
 
       if (response.data.success) {
