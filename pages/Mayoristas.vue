@@ -204,6 +204,12 @@
         </b-button>
       </template>
     </b-table>
+    <mayoristas-asignar
+      v-if="articleSearching.show"
+      :article-find="articleSearching.articleFind"
+      :name-complete="articleSearching.nameComplete"
+      :close="close"
+    />
   </div>
 </template>
 
@@ -211,10 +217,19 @@
 import { mapMutations, mapActions } from 'vuex'
 import xlsx from 'xlsx'
 import utils from '../modules/utils'
+import MayoristasAsignar from '../components/MayoristasAsignar'
 
 export default {
+  components: {
+    MayoristasAsignar,
+  },
   data() {
     return {
+      articleSearching: {
+        articleFind: '',
+        nameComplete: '',
+        show: false,
+      },
       utils,
       compraLoaded: false,
       ExcelLoaded: false,
@@ -231,6 +246,7 @@ export default {
         { key: 'PEDIDOG', label: 'PEDIDOG', sortable: false },
         { key: '*', label: '*', sortable: false },
         { key: 'Proveedor', label: 'Proveedor', sortable: false },
+        { key: 'Observaciones', label: 'Observaciones', sortable: true },
         { key: 'Articulo', label: 'Articulo', sortable: true },
         { key: 'Nombre', label: 'Nombre', sortable: true },
         { key: 'Relacion', label: 'Relacion', sortable: false },
@@ -372,6 +388,26 @@ export default {
       if (value === null) return value
       else if (value === undefined) return null
       return utils.aplyFormatNumeric(utils.roundTo(value, 2, true))
+    },
+    asignar(values) {
+      const nameComplete =
+        values.Articulo +
+        ' - ' +
+        values.Nombre +
+        ' [' +
+        values.Relacion +
+        '] ' +
+        '$' +
+        values.CostoValor +
+        ' (' +
+        values.CantidadRegularUC +
+        ' Cajas)'
+      this.articleSearching.show = true
+      this.articleSearching.nameComplete = nameComplete
+      this.articleSearching.articleFind = values.Articulo
+    },
+    close() {
+      this.articleSearching.show = false
     },
     cleanExcel() {
       this.setExcel({
@@ -557,12 +593,18 @@ export default {
             )
             try {
               const titles = Object.keys(xlRowObject[0])
-              if (this.isValidFormat(titles))
+              if (this.isValidFormat(titles)) {
+                xlRowObject.forEach((art, position) => {
+                  const titlesArt = Object.keys(art)
+                  if (titlesArt[8]) {
+                    xlRowObject[position].Observaciones = art[`${titlesArt[8]}`]
+                  }
+                })
                 this.setExcel({
                   name: this.excel.name,
                   data: xlRowObject,
                 })
-              else this.excel = null
+              } else this.excel = null
               this.ExcelLoaded = true
             } catch (error) {
               this.showAlertDialog([
