@@ -92,14 +92,17 @@
       <template #cell(PEDIDOG)="row">
         {{ formatNumber(row.item.PEDIDO) }}
       </template>
-      <template #cell(Acciones)>
-        <b-button variant="info"> Asignar </b-button>
+      <template #cell(Acciones)="row">
+        <b-button variant="info" @click="signarArticle(row.item)">
+          Asignar
+        </b-button>
       </template>
     </b-table>
   </div>
 </template>
 
 <script>
+import { mapMutations } from 'vuex'
 import utils from '../modules/utils'
 
 export default {
@@ -173,10 +176,30 @@ export default {
     },
   },
   methods: {
+    ...mapMutations({
+      setComparativa: 'mayoristas/setComparativa',
+    }),
     formatNumber(value) {
       if (value === null) return value
       else if (value === undefined) return null
       return utils.aplyFormatNumeric(utils.roundTo(value, 2, true))
+    },
+    signarArticle(article) {
+      console.log(article, this.articleFind)
+      const comparativa = { ...this.$store.state.mayoristas.comparativa }
+      const articleIndex = comparativa.data.findIndex(
+        (articleC) => articleC.Articulo === this.articleFind
+      )
+      if (articleIndex !== -1) {
+        console.log(article, comparativa.data[articleIndex])
+        comparativa.data[articleIndex] += { ...article }
+        console.log(comparativa.data[articleIndex])
+        this.setComparativa({
+          documento: comparativa.documento,
+          excel: comparativa.excel,
+          data: comparativa.data,
+        })
+      }
     },
   },
 }
