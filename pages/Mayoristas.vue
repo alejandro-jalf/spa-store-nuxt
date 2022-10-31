@@ -164,6 +164,13 @@
       </template>
       <template #cell(PEDIDOG)="row">
         {{ formatNumber(row.item.PEDIDO) }}
+        <b-button
+          v-if="isDiferentPedido(row.item)"
+          variant="info"
+          @click="openModal(row.item, 'pedido')"
+        >
+          <b-icon icon="pencil-square" />
+        </b-button>
       </template>
       <template #cell(Ieps)="row">
         {{ formatNumber(row.item.IEPS) }}
@@ -173,6 +180,13 @@
       </template>
       <template #cell(Cjas)="row">
         {{ formatNumber(row.item.CantidadRegularUC) }}
+        <b-button
+          v-if="isDiferentCajas(row.item)"
+          variant="info"
+          @click="openModal(row.item, 'cajas')"
+        >
+          <b-icon icon="pencil-square" />
+        </b-button>
       </template>
       <template #cell(Pzas)="row">
         {{ formatNumber(row.item.CantidadRegular) }}
@@ -210,6 +224,54 @@
       :name-complete="articleSearching.nameComplete"
       :close="close"
     />
+    <div>
+      <b-modal
+        id="modal-change"
+        :title="cantidadUC.title"
+        header-bg-variant="info"
+        header-text-variant="white"
+      >
+        <div>
+          <b-form-group
+            id="group-change"
+            :label="cantidadUC.label"
+            :description="cantidadUC.description"
+            label-for="input-article"
+          >
+            <b-form-input
+              id="input-article"
+              v-model="cantidadUC.cantidadRegularUC"
+              type="text"
+              placeholder="0.0"
+              autofocus
+              onclick="this.select()"
+              required
+              @keyup.enter="saveCantidadUC"
+            ></b-form-input>
+          </b-form-group>
+        </div>
+        <template #modal-footer>
+          <div class="w-100">
+            <b-button
+              variant="primary"
+              size="sm"
+              class="float-right ml-2"
+              @click="saveCantidadUC"
+            >
+              Aceptar
+            </b-button>
+            <b-button
+              variant="secondary"
+              size="sm"
+              class="float-right"
+              @click="closeModal"
+            >
+              Cancelar
+            </b-button>
+          </div>
+        </template>
+      </b-modal>
+    </div>
   </div>
 </template>
 
@@ -229,6 +291,15 @@ export default {
         articleFind: '',
         nameComplete: '',
         show: false,
+      },
+      cantidadUC: {
+        isPedido: false,
+        article: '',
+        articleExcel: '',
+        cantidadRegularUC: 0.0,
+        title: 'Cajas Pedidas',
+        label: 'Cantidad de Cajas Pedidas',
+        description: '',
       },
       utils,
       compraLoaded: false,
@@ -409,6 +480,82 @@ export default {
     close() {
       this.articleSearching.show = false
     },
+    closeModal() {
+      this.$bvModal.hide('modal-change')
+    },
+    saveCantidadUC() {
+      const comparativa = { ...this.$store.state.mayoristas.comparativa }
+      const data = []
+      comparativa.data.forEach((articleC) => {
+        const ArticleDocument = { ...articleC.ArticleDocument }
+        const ArticuloExcel = { ...articleC.ArticuloExcel }
+        // console.log(
+        //   ArticleDocument.Articulo,
+        //   this.cantidadUC.article,
+        //   ArticuloExcel.ArticuloGlobal,
+        //   this.cantidadUC.articleExcel,
+        //   ArticleDocument.Articulo === this.cantidadUC.article,
+        //   ArticuloExcel.ArticuloGlobal === this.cantidadUC.articleExcel
+        // )
+        if (
+          ArticleDocument.Articulo === this.cantidadUC.article &&
+          ArticuloExcel.ArticuloGlobal === this.cantidadUC.articleExcel
+        ) {
+          console.log('Entra', this.cantidadUC.cantidadRegularUC)
+          if (this.cantidadUC.isPedido)
+            ArticuloExcel.PEDIDO = this.cantidadUC.cantidadRegularUC
+          else {
+            const cUC = this.cantidadUC.cantidadRegularUC
+            console.log('En factura', cUC)
+            ArticleDocument.CantidadRegularUC = cUC
+          }
+          const pactado =
+            ArticuloExcel.Proveedor / ArticleDocument.IEPS / ArticleDocument.IVA
+          const totalPactado = pactado * ArticleDocument.CantidadRegularUC
+          const diferencia = ArticleDocument.CostoValor - totalPactado
+          console.log(ArticuloExcel, ArticleDocument)
+
+          ArticleDocument.Pactado = pactado
+          ArticleDocument.TotalPactado = totalPactado
+          ArticleDocument.Diferencia = diferencia
+        }
+        data.push({
+          ArticleDocument,
+          ArticuloExcel,
+        })
+      })
+      this.setComparativa({
+        documento: comparativa.documento,
+        excel: comparativa.excel,
+        data,
+      })
+      this.$bvModal.hide('modal-change')
+    },
+    openModal(values, from) {
+      console.log(values, values.PEDIDO, values.CantidadRegularUC)
+      if (from === 'cajas') {
+        const cUC = values.CantidadRegularUC
+        this.cantidadUC = {
+          isPedido: false,
+          article: values.Articulo,
+          articleExcel: values.ArticuloGlobal,
+          cantidadRegularUC: cUC,
+          title: 'Cajas En Factura',
+          label: 'Cantidad de Cajas En Factura',
+          description: `[${values.Articulo} - ${values.Nombre}]`,
+        }
+      } else
+        this.cantidadUC = {
+          isPedido: true,
+          article: values.Articulo,
+          articleExcel: values.ArticuloGlobal,
+          cantidadRegularUC: values.PEDIDO,
+          title: 'Cajas Pedidas',
+          label: 'Cantidad de Cajas Pedidas',
+          description: `[${values.Articulo} - ${values.Nombre}]`,
+        }
+      this.$bvModal.show('modal-change')
+    },
     cleanExcel() {
       this.setExcel({
         name: '',
@@ -435,6 +582,16 @@ export default {
       if (type === 'C') this.placeHolder = 'C0000000000'
       else this.placeHolder = '0000000000'
       this.$refs.inputDocument.select()
+    },
+    isDiferentCajas(data) {
+      return (
+        data._cellVariants && data._cellVariants.Cjas && data.ArticuloGlobal
+      )
+    },
+    isDiferentPedido(data) {
+      return (
+        data._cellVariants && data._cellVariants.PEDIDOG && data.ArticuloGlobal
+      )
     },
     async loadData() {
       if (this.document.trim() === '') {
