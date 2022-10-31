@@ -199,6 +199,17 @@
       </template>
       <template #cell(TotalPactado)="row">
         {{ formatNumber(row.item.TotalPactado) }}
+        <b-button
+          v-if="isInexpensivePactado(row.item)"
+          v-b-tooltip.hover.lefttop="
+            'Copiar Cantidad: ' + row.item.TotalPactado
+          "
+          variant="info"
+          size="sm"
+          @click="utils.copyToClipBoard(row.item.TotalPactado, $bvToast)"
+        >
+          <b-icon icon="files" />
+        </b-button>
       </template>
       <template #cell(Diferencia)="row">
         {{
@@ -489,31 +500,20 @@ export default {
       comparativa.data.forEach((articleC) => {
         const ArticleDocument = { ...articleC.ArticleDocument }
         const ArticuloExcel = { ...articleC.ArticuloExcel }
-        // console.log(
-        //   ArticleDocument.Articulo,
-        //   this.cantidadUC.article,
-        //   ArticuloExcel.ArticuloGlobal,
-        //   this.cantidadUC.articleExcel,
-        //   ArticleDocument.Articulo === this.cantidadUC.article,
-        //   ArticuloExcel.ArticuloGlobal === this.cantidadUC.articleExcel
-        // )
         if (
           ArticleDocument.Articulo === this.cantidadUC.article &&
           ArticuloExcel.ArticuloGlobal === this.cantidadUC.articleExcel
         ) {
-          console.log('Entra', this.cantidadUC.cantidadRegularUC)
           if (this.cantidadUC.isPedido)
             ArticuloExcel.PEDIDO = this.cantidadUC.cantidadRegularUC
           else {
             const cUC = this.cantidadUC.cantidadRegularUC
-            console.log('En factura', cUC)
             ArticleDocument.CantidadRegularUC = cUC
           }
           const pactado =
             ArticuloExcel.Proveedor / ArticleDocument.IEPS / ArticleDocument.IVA
           const totalPactado = pactado * ArticleDocument.CantidadRegularUC
           const diferencia = ArticleDocument.CostoValor - totalPactado
-          console.log(ArticuloExcel, ArticleDocument)
 
           ArticleDocument.Pactado = pactado
           ArticleDocument.TotalPactado = totalPactado
@@ -532,7 +532,6 @@ export default {
       this.$bvModal.hide('modal-change')
     },
     openModal(values, from) {
-      console.log(values, values.PEDIDO, values.CantidadRegularUC)
       if (from === 'cajas') {
         const cUC = values.CantidadRegularUC
         this.cantidadUC = {
@@ -587,6 +586,10 @@ export default {
       return (
         data._cellVariants && data._cellVariants.Cjas && data.ArticuloGlobal
       )
+    },
+    isInexpensivePactado(data) {
+      console.log(parseFloat(utils.roundTo(data.Diferencia)))
+      return parseFloat(utils.roundTo(data.Diferencia)) > 0
     },
     isDiferentPedido(data) {
       return (
