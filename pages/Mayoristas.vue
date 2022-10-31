@@ -488,7 +488,7 @@ export default {
               const articleReviewed = { ArticuloExcel: {}, ArticleDocument: {} }
               if (articleXlsx) {
                 const pactado =
-                  articleXlsx.Proveedor / articleDoc.IEPS / articleDoc.IEPS
+                  articleXlsx.Proveedor / articleDoc.IEPS / articleDoc.IVA
                 const totalPactado = pactado * articleDoc.CantidadRegularUC
                 const diferencia = articleDoc.CostoValor - totalPactado
 

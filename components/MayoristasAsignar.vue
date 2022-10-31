@@ -185,21 +185,33 @@ export default {
       return utils.aplyFormatNumeric(utils.roundTo(value, 2, true))
     },
     signarArticle(article) {
-      console.log(article, this.articleFind)
       const comparativa = { ...this.$store.state.mayoristas.comparativa }
-      const articleIndex = comparativa.data.findIndex(
-        (articleC) => articleC.Articulo === this.articleFind
-      )
-      if (articleIndex !== -1) {
-        console.log(article, comparativa.data[articleIndex])
-        comparativa.data[articleIndex] += { ...article }
-        console.log(comparativa.data[articleIndex])
-        this.setComparativa({
-          documento: comparativa.documento,
-          excel: comparativa.excel,
-          data: comparativa.data,
+      const data = []
+      comparativa.data.forEach((articleC) => {
+        const ArticleDocument = { ...articleC.ArticleDocument }
+        let ArticuloExcel = {}
+        if (articleC.ArticleDocument.Articulo === this.articleFind) {
+          ArticuloExcel = { ...article }
+          const pactado =
+            ArticuloExcel.Proveedor / ArticleDocument.IEPS / ArticleDocument.IVA
+          const totalPactado = pactado * ArticleDocument.CantidadRegularUC
+          const diferencia = ArticleDocument.CostoValor - totalPactado
+
+          ArticleDocument.Pactado = pactado
+          ArticleDocument.TotalPactado = totalPactado
+          ArticleDocument.Diferencia = diferencia
+        } else ArticuloExcel = { ...articleC.ArticuloExcel }
+        data.push({
+          ArticleDocument,
+          ArticuloExcel,
         })
-      }
+      })
+      this.setComparativa({
+        documento: comparativa.documento,
+        excel: comparativa.excel,
+        data,
+      })
+      this.close()
     },
   },
 }
