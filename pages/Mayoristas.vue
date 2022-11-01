@@ -144,6 +144,8 @@
     <b-table
       hover
       head-variant="dark"
+      foot-clone
+      foot-variant="dark"
       outlined
       responsive
       :per-page="perPage"
@@ -229,6 +231,34 @@
         </b-button>
       </template>
     </b-table>
+
+    <b-container v-if="dataComparativa.length > 20" fluid="xl" class="mb-5">
+      <b-row cols="1" cols-sm="2">
+        <b-col sm="3" md="2" class="mb-2">
+          <b-form-select
+            id="per-page-select"
+            v-model="perPage"
+            :options="pageOptions"
+            size="sm"
+          ></b-form-select>
+        </b-col>
+        <b-col sm="9" md="10" class="mb-2">
+          <b-pagination
+            v-model="currentPage"
+            aria-controls="tableInventarioValuacion"
+            :total-rows="rows"
+            :per-page="perPage"
+            align="fill"
+            size="sm"
+            first-number
+            class="my-0"
+            last-number
+          >
+          </b-pagination>
+        </b-col>
+      </b-row>
+    </b-container>
+
     <mayoristas-asignar
       v-if="articleSearching.show"
       :article-find="articleSearching.articleFind"
@@ -421,6 +451,8 @@ export default {
         articleReviewed._cellVariants = {}
         if (articleReviewed.Diferencia < 0)
           articleReviewed._cellVariants.Diferencia = 'danger'
+        else if (parseFloat(utils.roundTo(articleReviewed.Diferencia)) > 0.5)
+          articleReviewed._cellVariants.TotalPactado = 'success'
 
         if (
           compara.ArticuloExcel.PEDIDO !==
@@ -588,8 +620,7 @@ export default {
       )
     },
     isInexpensivePactado(data) {
-      console.log(parseFloat(utils.roundTo(data.Diferencia)))
-      return parseFloat(utils.roundTo(data.Diferencia)) > 0
+      return parseFloat(utils.roundTo(data.Diferencia)) > 0.5
     },
     isDiferentPedido(data) {
       return (
