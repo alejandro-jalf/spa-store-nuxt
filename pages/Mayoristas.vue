@@ -422,6 +422,7 @@ export default {
         { key: '*', label: '*', sortable: false },
         { key: 'Proveedor', label: 'Proveedor', sortable: false },
         { key: 'Observaciones', label: 'Observaciones', sortable: true },
+        { key: 'Position', label: 'Consec.', sortable: true },
         { key: 'Articulo', label: 'Articulo', sortable: true },
         { key: 'Nombre', label: 'Nombre', sortable: true },
         { key: 'Relacion', label: 'Relacion', sortable: false },
