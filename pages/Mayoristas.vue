@@ -28,6 +28,7 @@
           type="text"
           class="w-50"
           :class="backgroundInputTheme"
+          @keyup.enter="loadData"
         ></b-form-input>
       </b-input-group>
     </div>
@@ -111,8 +112,25 @@
       <b-icon :icon="iconCleanComparativa" />
       Limpiar Comparativa
     </b-button>
+    <b-button
+      :variant="variantInfo"
+      class="mb-2"
+      :disabled="!ComparativaSuccess && isOrdenDeCompra"
+      @click="$refs.modalUpdateAll.show()"
+    >
+      <b-icon :icon="iconMasivo" />
+      Actualizacion Masiva
+    </b-button>
 
     <h4>{{ title }}</h4>
+
+    <b-badge variant="info" pill class="mb-2 p-2">
+      {{ dataComparativa.length }} Registros
+    </b-badge>
+
+    <b-badge variant="danger" pill class="mb-2 p-2">
+      {{ countUpdates }} Registros Para Actualizar
+    </b-badge>
 
     <b-container v-if="dataComparativa.length > 20" fluid="xl">
       <b-row cols="1" cols-sm="2">
@@ -211,6 +229,17 @@
           @click="utils.copyToClipBoard(row.item.TotalPactado, $bvToast)"
         >
           <b-icon icon="files" />
+        </b-button>
+        <b-button
+          v-if="isWillUpdate(row.item)"
+          v-b-tooltip.hover.lefttop="
+            'Actualizar directamente en la orden de compra'
+          "
+          variant="info"
+          size="sm"
+          @click="updateDirect(row.item)"
+        >
+          <b-icon icon="box-arrow-in-up-right" />
         </b-button>
       </template>
       <template #cell(Diferencia)="row">
@@ -313,6 +342,40 @@
         </template>
       </b-modal>
     </div>
+    <b-modal
+      id="modal-update-all"
+      ref="modalUpdateAll"
+      title="Actualizando Todos los Costos"
+      header-bg-variant="info"
+      header-text-variant="white"
+    >
+      <h5 class="text-dark">
+        ¿Quiere actualizar los costos de la orden de compra?
+      </h5>
+      <div class="text-muted font-italic">
+        Nota: Recuerde que la orden de compra no debe estar abierta
+      </div>
+      <template #modal-footer>
+        <div class="w-100">
+          <b-button
+            variant="primary"
+            size="sm"
+            class="float-right ml-2"
+            @click="updateAllCostos()"
+          >
+            Actualizar
+          </b-button>
+          <b-button
+            variant="secondary"
+            size="sm"
+            class="float-right"
+            @click="$refs.modalUpdateAll.hide()"
+          >
+            Cancelar
+          </b-button>
+        </div>
+      </template>
+    </b-modal>
   </div>
 </template>
 
@@ -396,6 +459,27 @@ export default {
     isEmptyDocument() {
       return this.$store.state.mayoristas.documento.data.length === 0
     },
+    isOrdenDeCompra() {
+      const expConsecutivo = new RegExp('C.*')
+      return !expConsecutivo.test(
+        this.$store.state.mayoristas.comparativa.documento.toUpperCase()
+      )
+    },
+    countUpdates() {
+      const comparativa = { ...this.$store.state.mayoristas.comparativa }
+      const expConsecutivo = new RegExp('C.*')
+      let dataUpdates = 0
+      if (!expConsecutivo.test(comparativa.documento.toUpperCase())) {
+        comparativa.data.forEach((compara) => {
+          if (
+            !!compara.ArticuloExcel.ArticuloGlobal &&
+            parseFloat(utils.roundTo(compara.ArticleDocument.Diferencia)) > 0.5
+          )
+            dataUpdates++
+        })
+      }
+      return dataUpdates
+    },
     backgroundInputTheme() {
       return this.$store.state.general.themesComponents.themeInputBackground
     },
@@ -425,6 +509,9 @@ export default {
       return this.ComparativaSuccess
         ? 'file-earmark-fill'
         : 'exclamation-diamond-fill'
+    },
+    iconMasivo() {
+      return this.ComparativaSuccess ? 'list-stars' : 'exclamation-diamond-fill'
     },
     variantThemeTableBody() {
       return this.$store.state.general.themesComponents.themeTableBody
@@ -497,6 +584,8 @@ export default {
     }),
     ...mapActions({
       changeDataDocument: 'mayoristas/changeDataDocument',
+      updateCosto: 'mayoristas/updateCosto',
+      updateCostoMasivo: 'mayoristas/updateCostoMasivo',
     }),
     formatNumber(value) {
       if (value === null) return value
@@ -620,12 +709,94 @@ export default {
       )
     },
     isInexpensivePactado(data) {
-      return parseFloat(utils.roundTo(data.Diferencia)) > 0.5
+      return (
+        !!data.ArticuloGlobal &&
+        parseFloat(utils.roundTo(data.Diferencia)) > 0.5
+      )
+    },
+    isWillUpdate(data) {
+      const comparativa = { ...this.$store.state.mayoristas.comparativa }
+      const expConsecutivo = new RegExp('C.*')
+      return (
+        !!data.ArticuloGlobal &&
+        !expConsecutivo.test(comparativa.documento.toUpperCase()) &&
+        parseFloat(utils.roundTo(data.Diferencia)) > 0.5
+      )
     },
     isDiferentPedido(data) {
       return (
         data._cellVariants && data._cellVariants.PEDIDOG && data.ArticuloGlobal
       )
+    },
+    async updateDirect(data) {
+      this.setLoading(true)
+      const document = this.$store.state.mayoristas.comparativa.documento
+      const sucursal = this.$store.state.mayoristas.sucursal
+      const body = {
+        Articulo: data.Articulo,
+        Nombre: data.Nombre,
+        CantidadRegularUC: data.CantidadRegularUC,
+        CantidadRegular: data.CantidadRegular,
+        CostoValor: data.CostoValor,
+        TotalPactado: data.TotalPactado,
+        Position: data.Position,
+      }
+      const response = await this.updateCosto([sucursal, document, body])
+      this.setLoading(false)
+      if (!response.success)
+        this.showAlertDialog([response.message, 'Error inesperado'])
+      else
+        this.showAlertDialog([response.message, 'Costo actualizado', 'success'])
+    },
+    async updateAllCostos() {
+      this.$refs.modalUpdateAll.hide()
+      const comparativa = { ...this.$store.state.mayoristas.comparativa }
+      const expConsecutivo = new RegExp('C.*')
+      if (!expConsecutivo.test(comparativa.documento.toUpperCase())) {
+        this.setLoading(true)
+        const dataUpdates = []
+        comparativa.data.forEach((compara) => {
+          if (
+            !!compara.ArticuloExcel.ArticuloGlobal &&
+            parseFloat(utils.roundTo(compara.ArticleDocument.Diferencia)) > 0.5
+          ) {
+            dataUpdates.push({
+              Articulo: compara.ArticleDocument.Articulo,
+              Nombre: compara.ArticleDocument.Nombre,
+              CantidadRegularUC: compara.ArticleDocument.CantidadRegularUC,
+              CantidadRegular: compara.ArticleDocument.CantidadRegular,
+              CostoValor: compara.ArticleDocument.CostoValor,
+              TotalPactado: compara.ArticleDocument.TotalPactado,
+              Position: compara.ArticleDocument.Position,
+            })
+          }
+        })
+        if (dataUpdates.length > 0) {
+          const sucursal = this.$store.state.mayoristas.sucursal
+          const response = await this.updateCostoMasivo([
+            sucursal,
+            comparativa.documento,
+            dataUpdates,
+          ])
+          if (!response.success)
+            this.showAlertDialog([response.message, 'Error inesperado'])
+          else
+            this.showAlertDialog([
+              response.message,
+              'Costos actualizados',
+              'success',
+            ])
+        } else
+          this.showAlertDialog([
+            'No hay articulos que necesiten modificarse costos',
+            'Lista vacia',
+          ])
+        this.setLoading(false)
+      } else
+        this.showAlertDialog([
+          'Solo se puede modificar una orden de compra',
+          'Error al actualizar costos',
+        ])
     },
     async loadData() {
       if (this.document.trim() === '') {
@@ -841,6 +1012,7 @@ export default {
   padding-left: 3px;
   padding-right: 3px;
   left: 5px;
+  border-radius: 5px;
   background: #f3f5f4;
 }
 
