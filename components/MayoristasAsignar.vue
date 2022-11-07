@@ -1,7 +1,21 @@
 <template>
   <div class="container-back">
     <div class="container-cancel">
-      <span class="bg-light p-1">{{ nameComplete }}</span>
+      <span class="container-data">
+        <span>{{ data.Articulo }}</span>
+        <span class="mr-1 ml-1 text-danger">/</span>
+        <span>{{ data.Nombre }}</span>
+        <span class="mr-1 ml-1 text-danger">/</span>
+        <span>{{ '[' + data.Relacion + ']' }}</span>
+        <span class="mr-1 ml-1 text-danger">/</span>
+        <span>
+          ${{
+            utils.aplyFormatNumeric(utils.roundTo(data.CostoValor, 2, true))
+          }}
+        </span>
+        <span class="mr-1 ml-1 text-danger">/</span>
+        <span>{{ '(' + data.CantidadRegularUC + ' Cajas)' }}</span>
+      </span>
       <b-button variant="danger" class="float-right" @click="close">
         <b-icon icon="x-lg" />
         Cancelar
@@ -18,9 +32,11 @@
         id="input-article"
         v-model="article"
         autocomplete="off"
+        autofocus
         type="search"
         placeholder="*articulo*"
         required
+        @keyup.enter="$refs.inputName.focus()"
       ></b-form-input>
     </b-form-group>
 
@@ -33,6 +49,7 @@
     >
       <b-form-input
         id="input-name"
+        ref="inputName"
         v-model="name"
         autocomplete="off"
         type="search"
@@ -72,7 +89,6 @@
       hover
       head-variant="dark"
       outlined
-      responsive
       :per-page="perPage"
       :current-page="currentPage"
       :fields="fields"
@@ -112,9 +128,9 @@ export default {
       required: true,
       type: String,
     },
-    nameComplete: {
+    data: {
       required: true,
-      type: String,
+      type: Object,
     },
     close: {
       required: true,
@@ -123,6 +139,7 @@ export default {
   },
   data() {
     return {
+      utils,
       article: '',
       name: '',
       perPage: 7,
@@ -227,12 +244,24 @@ export default {
   padding: 20px;
   overflow: auto;
   z-index: 9;
+  color: #000;
   background: rgba(217, 217, 217, 0.95);
 }
 
 .container-cancel {
   display: block;
   height: 50px;
+}
+
+.container-data {
+  position: fixed;
+  top: 10px;
+  left: 20px;
+  z-index: 9;
+  border-radius: 10px;
+  padding: 8px 14px;
+  background: rgb(255, 255, 255);
+  border: 1px solid rgb(6, 97, 93);
 }
 
 .middle {

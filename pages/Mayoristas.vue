@@ -115,7 +115,7 @@
     <b-button
       :variant="variantInfo"
       class="mb-2"
-      :disabled="!ComparativaSuccess && isOrdenDeCompra"
+      :disabled="!ComparativaSuccess || !isOrdenDeCompra"
       @click="$refs.modalUpdateAll.show()"
     >
       <b-icon :icon="iconMasivo" />
@@ -291,7 +291,7 @@
     <mayoristas-asignar
       v-if="articleSearching.show"
       :article-find="articleSearching.articleFind"
-      :name-complete="articleSearching.nameComplete"
+      :data="articleSearching.data"
       :close="close"
     />
     <div>
@@ -393,7 +393,7 @@ export default {
     return {
       articleSearching: {
         articleFind: '',
-        nameComplete: '',
+        data: {},
         show: false,
       },
       cantidadUC: {
@@ -512,7 +512,13 @@ export default {
         : 'exclamation-diamond-fill'
     },
     iconMasivo() {
-      return this.ComparativaSuccess ? 'list-stars' : 'exclamation-diamond-fill'
+      const expConsecutivo = new RegExp('C.*')
+      const isOrdenDeCompra = !expConsecutivo.test(
+        this.$store.state.mayoristas.comparativa.documento.toUpperCase()
+      )
+      return this.ComparativaSuccess && isOrdenDeCompra
+        ? 'list-stars'
+        : 'exclamation-diamond-fill'
     },
     variantThemeTableBody() {
       return this.$store.state.general.themesComponents.themeTableBody
@@ -594,20 +600,8 @@ export default {
       return utils.aplyFormatNumeric(utils.roundTo(value, 2, true))
     },
     asignar(values) {
-      const nameComplete =
-        values.Articulo +
-        ' - ' +
-        values.Nombre +
-        ' [' +
-        values.Relacion +
-        '] ' +
-        '$' +
-        values.CostoValor +
-        ' (' +
-        values.CantidadRegularUC +
-        ' Cajas)'
       this.articleSearching.show = true
-      this.articleSearching.nameComplete = nameComplete
+      this.articleSearching.data = values
       this.articleSearching.articleFind = values.Articulo
     },
     close() {
