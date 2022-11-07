@@ -468,17 +468,14 @@ export default {
     },
     countUpdates() {
       const comparativa = { ...this.$store.state.mayoristas.comparativa }
-      const expConsecutivo = new RegExp('C.*')
       let dataUpdates = 0
-      if (!expConsecutivo.test(comparativa.documento.toUpperCase())) {
-        comparativa.data.forEach((compara) => {
-          if (
-            !!compara.ArticuloExcel.ArticuloGlobal &&
-            parseFloat(utils.roundTo(compara.ArticleDocument.Diferencia)) > 0.5
-          )
-            dataUpdates++
-        })
-      }
+      comparativa.data.forEach((compara) => {
+        if (
+          !!compara.ArticuloExcel.ArticuloGlobal &&
+          parseFloat(utils.roundTo(compara.ArticleDocument.Diferencia)) > 0.5
+        )
+          dataUpdates++
+      })
       return dataUpdates
     },
     backgroundInputTheme() {
