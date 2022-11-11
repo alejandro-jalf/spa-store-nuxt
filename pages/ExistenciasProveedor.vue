@@ -328,8 +328,9 @@ export default {
       this.proveedor = prov.Nombre
     },
     async updateProviders() {
+      const sucursal = this.$store.state.existenciasproveedor.sucursal
       this.loadingTable = true
-      const response = await this.loadProveedores()
+      const response = await this.loadProveedores(sucursal)
       this.loadingTable = false
       if (!response.success)
         this.showAlertDialog([response.message, 'Error inesperado'])

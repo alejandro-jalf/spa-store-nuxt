@@ -103,9 +103,10 @@ export const actions = {
       }
     }
   },
-  async loadProveedores({ commit }) {
+  async loadProveedores({ commit }, [sucursal]) {
     try {
-      const url = process.env.spastore_url_backend + 'api/v1/proveedores'
+      const url =
+        process.env.spastore_url_backend + 'api/v1/proveedores/' + sucursal
       const response = await this.$axios({
         url,
         method: 'get',
