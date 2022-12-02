@@ -530,7 +530,7 @@ export default {
       ])
       this.setLoading(false)
       if (!response.success)
-        this.showAlertDialog([response.message, 'Error inesperado'])
+        this.showAlertDialog([response.message, 'Fallo inesperado'])
     },
   },
 }
