@@ -5,12 +5,12 @@
       v-if="lastVersion"
       class="containerCard p-1 pb-0 mt-5"
       :class="variantTheme"
-      :title="'Version ' + lastVersion.numversion"
+      :title="'Version ' + lastVersion.NumVersion"
     >
-      <p>{{ lastVersion.detalles }}</p>
+      <p>{{ lastVersion.Detalles }}</p>
       <div>
         <span class="font-weight-bold">Fecha de lanzamiento:</span>
-        {{ utils.parseFecha(lastVersion.fechadelanzamiento, true) }}
+        {{ utils.parseFecha(lastVersion.FechaDeLanzamiento, true) }}
       </div>
       <div class="card-tabs">
         <div class="font-weight-bold">Novedades en:</div>
@@ -41,13 +41,10 @@
       :class="variantThemeTableBody"
     >
       <template #cell(Version)="row">
-        {{ row.item.numversion }}
-      </template>
-      <template #cell(Detalles)="row">
-        {{ row.item.detalles }}
+        {{ row.item.NumVersion }}
       </template>
       <template #cell(FechaDeLanzamiento)="row">
-        {{ utils.toDate(row.item.fechadelanzamiento) }}
+        {{ utils.toDate(row.item.FechaDeLanzamiento) }}
       </template>
       <template #cell(NovedadesEn)>
         <b-dropdown id="dropdown-1" text="Desplegar" variant="info">
@@ -98,7 +95,7 @@ export default {
       const lastVersion = this.$store.state.user.user.novedades
       if (lastVersion.length === 0) return []
       const tabs = []
-      lastVersion[0].paginasactualizadas.split(',').forEach((tab) => {
+      lastVersion[0].PaginasActualizadas.split(',').forEach((tab) => {
         const tabFind = accessUser.find(
           (tabU) => tabU.trim().toLowerCase() === tab.trim().toLowerCase()
         )
