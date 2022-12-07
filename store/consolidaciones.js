@@ -4,14 +4,14 @@ if (!localStorage.getItem('spastore_consolidaciones_show_details'))
   localStorage.setItem('spastore_consolidaciones_show_details', false)
 
 export const state = () => ({
-  data: localStorage.getItem('spastore_consolidaciones_data')
-    ? JSON.parse(localStorage.getItem('spastore_consolidaciones_data'))
+  data: sessionStorage.getItem('spastore_consolidaciones_data')
+    ? JSON.parse(sessionStorage.getItem('spastore_consolidaciones_data'))
     : { data: [] },
-  details: localStorage.getItem('spastore_consolidaciones_details')
-    ? JSON.parse(localStorage.getItem('spastore_consolidaciones_details'))
+  details: sessionStorage.getItem('spastore_consolidaciones_details')
+    ? JSON.parse(sessionStorage.getItem('spastore_consolidaciones_details'))
     : { data: [] },
-  consolidacionActual: localStorage.getItem('spastore_consolidaciones_actual')
-    ? JSON.parse(localStorage.getItem('spastore_consolidaciones_actual'))
+  consolidacionActual: sessionStorage.getItem('spastore_consolidaciones_actual')
+    ? JSON.parse(sessionStorage.getItem('spastore_consolidaciones_actual'))
     : { data: [] },
   showDetails:
     typeof localStorage.getItem('spastore_consolidaciones_show_details') ===
@@ -25,18 +25,21 @@ export const state = () => ({
 export const mutations = {
   setConsolidacionActual(state, consolidacionActual) {
     state.consolidacionActual = consolidacionActual
-    localStorage.setItem(
+    sessionStorage.setItem(
       'spastore_consolidaciones_actual',
       JSON.stringify(consolidacionActual)
     )
   },
   setData(state, data) {
     state.data = data
-    localStorage.setItem('spastore_consolidaciones_data', JSON.stringify(data))
+    sessionStorage.setItem(
+      'spastore_consolidaciones_data',
+      JSON.stringify(data)
+    )
   },
   setDetails(state, details) {
     state.details = details
-    localStorage.setItem(
+    sessionStorage.setItem(
       'spastore_consolidaciones_details',
       JSON.stringify(details)
     )

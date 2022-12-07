@@ -174,6 +174,12 @@ export const state = () => ({
       nickname: 'Mayoristas',
       icon: 'front',
     },
+    {
+      path: '/consolidacionesarticulos',
+      name: 'consolidacionesarticulos',
+      nickname: 'Consolidacion Articulos',
+      icon: 'list-stars',
+    },
   ].sort((a, b) => (a.nickname < b.nickname ? -1 : 1)),
   tabActual: 'Inicio',
   themePreferences: localStorage.getItem('spastore_theme_color'),
