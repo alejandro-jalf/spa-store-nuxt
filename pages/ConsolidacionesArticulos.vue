@@ -82,6 +82,7 @@
       <b-table
         v-if="width > 991"
         id="tableConsolidaciones"
+        sort-by="Articulo"
         responsive
         striped
         hover
@@ -323,18 +324,18 @@ export default {
       dateStar: '',
       dateEnd: '',
       fields: [
-        'Articulo',
-        'CodigoBarras',
-        'Nombre',
-        'Relacion',
-        'ZR',
-        'VC',
-        'ER',
-        'OU',
-        'SY',
-        'JL',
-        'BO',
-        'Acciones',
+        { key: 'Articulo', sortable: true },
+        { key: 'CodigoBarras', sortable: true },
+        { key: 'Nombre', sortable: true },
+        { key: 'Relacion' },
+        { key: 'ZR' },
+        { key: 'VC' },
+        { key: 'ER' },
+        { key: 'OU' },
+        { key: 'SY' },
+        { key: 'JL' },
+        { key: 'BO' },
+        { key: 'Acciones' },
       ],
       utils,
     }
