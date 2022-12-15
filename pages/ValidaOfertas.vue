@@ -152,6 +152,14 @@
       </b-badge>
     </h5>
 
+    <div class="mt-3 mb-2">
+      <Colors
+        :show-danger="true"
+        title-danger="Utilidad baja"
+        content-message-danger="La utilidad de la oferta para este articulo esta por debajo del 10%. <br/>Se recomienda comunicarse con el departamento de sistemas para modificar la oferta o quitarla"
+      />
+    </div>
+
     <b-table
       v-if="width > 767"
       id="tableValidaOfertas"
@@ -196,12 +204,14 @@
 import { mapMutations, mapActions } from 'vuex'
 import ValidaOfertasDetails from '../components/ValidaOfertasDetails'
 import ValidaOfertasCard from '../components/ValidaOfertasCard'
+import Colors from '../components/Colors'
 import utils from '../modules/utils'
 
 export default {
   components: {
     ValidaOfertasDetails,
     ValidaOfertasCard,
+    Colors,
   },
   data() {
     return {

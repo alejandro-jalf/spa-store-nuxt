@@ -22,6 +22,22 @@
       {{ utils.aplyFormatNumeric(utils.roundTo(details.CostoExistActual, 3)) }}
     </div>
 
+    <Colors
+      class="m-2"
+      :show-warning="true"
+      :show-danger="true"
+      :show-info="true"
+      :show-dark="true"
+      title-warning="No hay detalles"
+      title-danger="Sin Conexion"
+      title-info="Encontrado"
+      title-dark="Encontrado"
+      content-message-warning="Esto sucede cuando el articulo ya tiene tiempo sin movimientos o tambien si nunca se ha manejado en esta sucursal."
+      content-message-danger="Esto sucede cuando no hay conexion con la sucursal, ya bien sea por falta de internet o por conexion inactiva (caida). <br/> Se recomienda que se reporte con el departamento de sistemas"
+      content-message-dark="Se encontraron detalles del articulo en la sucursal"
+      content-message-info="Se encontraron detalles del articulo en la sucursal"
+    />
+
     <b-card
       v-for="(sucursal, indexSuc) in details.existencias"
       :key="indexSuc"
@@ -294,8 +310,12 @@
 
 <script>
 import utils from '../modules/utils'
+import Colors from '../components/Colors'
 
 export default {
+  components: {
+    Colors,
+  },
   props: {
     details: {
       type: Object,

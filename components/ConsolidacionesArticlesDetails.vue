@@ -14,6 +14,21 @@
           <b-icon icon="arrow-left-right" />
           Limpiar detalles
         </b-button>
+        <Colors
+          class="space-colors"
+          :show-warning="true"
+          :show-danger="true"
+          :show-info="true"
+          :show-dark="true"
+          title-warning="No encontrado"
+          title-danger="Sin Conexion"
+          title-info="Encontrado"
+          title-dark="Encontrado"
+          content-message-warning="Esto sucede cuando el articulo No existe en dicha sucursal, ya bien sea por la fecha de cracion, o por que no esta dado de alta ahi. <br/> Si quiere ocuparlo en la sucursal, le sugerimos que avise al departamento de sistemas para que se de de alta en la sucursal"
+          content-message-danger="Esto sucede cuando no hay conexion con la sucursal, ya bien sea por falta de internet o por conexion inactiva (caida). <br/> Se recomienda que se reporte con el departamento de sistemas"
+          content-message-dark="Se encontro el articulo en la sucursal"
+          content-message-info="Se encontro el articulo en la sucursal"
+        />
       </div>
 
       <b-card
@@ -120,8 +135,12 @@
 <script>
 import { mapMutations } from 'vuex'
 import utils from '../modules/utils'
+import Colors from '../components/Colors'
 
 export default {
+  components: {
+    Colors,
+  },
   data() {
     return {
       utils,
@@ -190,5 +209,11 @@ export default {
   width: 100%;
   height: 1px;
   background: #c3c3c3;
+}
+
+@media screen and (max-width: 767px) {
+  .space-colors {
+    margin-top: 20px;
+  }
 }
 </style>

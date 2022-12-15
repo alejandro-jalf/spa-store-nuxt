@@ -100,6 +100,15 @@
           Sin Existencia
         </b-button>
       </b-button-group>
+      <Colors
+        class="d-block mt-3"
+        :show-warning="true"
+        :show-danger="true"
+        title-warning="Sin Existencia"
+        title-danger="Sin Conexion"
+        content-message-warning="Las filas amarillas es para enfocar los articulos que tienen existencia 0"
+        content-message-danger="Esto sucede cuando no hay conexion con la sucursal, ya bien sea por falta de internet o por conexion inactiva (caida). <br/> Se recomienda que se reporte con el departamento de sistemas"
+      />
     </span>
 
     <h5 class="mt-4 mb-1">
@@ -165,8 +174,12 @@
 import { mapMutations, mapActions } from 'vuex'
 import { jsPDF } from 'jspdf'
 import utils from '../modules/utils'
+import Colors from '../components/Colors'
 
 export default {
+  components: {
+    Colors,
+  },
   data() {
     return {
       perPage: 20,

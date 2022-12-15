@@ -92,6 +92,28 @@
       :create-pdf-offers="createPdfOffers"
     ></oferta-lista>
     <div v-if="viewCrearOferta" class="container-table-ofe">
+      <div class="mt-3 mb-2">
+        <Colors
+          :show-warning="true"
+          :show-danger="true"
+          :show-info="true"
+          :show-secondary="true"
+          :show-success="true"
+          :show-white="true"
+          title-warning="Enviada"
+          title-danger="Cancelada"
+          title-info="En proceso"
+          title-secondary="Finalizada"
+          title-white="Creada"
+          title-success="Programada"
+          content-message-warning="La oferta ya ha sido enviada, y esta en espera de ser atendida"
+          content-message-danger="La oferta fue cancelada, en este punto se puede restaurar para enviarla o eliminarla"
+          content-message-secondary="La oferta ya fue programada y ademas ya termino debido a la fecha"
+          content-message-info="La oferta esta en preoceso, esta siendo revisada y programada por la persona encargada"
+          content-message-white="La oferta fue creada y esta siendo editada por la sucursal"
+          content-message-success="La oferta fue programada y esta vigente todavia"
+        />
+      </div>
       <b-table
         hover
         head-variant="dark"
@@ -262,6 +284,7 @@ import OfertaArticulosValidados from '../components/OfertaArticulosValidados'
 import OfertaArticulosOfertados from '../components/OfertaArticulosOfertados'
 import FloatButton from '../components/FloatButton'
 import Stepper from '../components/Stepper'
+import Colors from '../components/Colors'
 import utils from '../modules/utils'
 import 'jspdf-autotable'
 
@@ -273,6 +296,7 @@ export default {
     FloatButton,
     OfertaArticulosValidados,
     OfertaArticulosOfertados,
+    Colors,
   },
   data() {
     return {

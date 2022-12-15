@@ -69,6 +69,23 @@
         <b-icon icon="arrow-left-right" />
         Limpiar lista de consolidaciones
       </b-button>
+
+      <Colors
+        class="space-colors"
+        :show-warning="true"
+        :show-danger="true"
+        :show-white="true"
+        :show-secondary="true"
+        title-warning="Fallo"
+        title-danger="Sin Conexion"
+        title-white="Exito"
+        title-secondary="Exito"
+        content-message-warning="Esto sucede cuando no se ha consolidado la transferencia, o por problemas de conexion no pudo llegar la consolidacion. <br/> Se recomienda volver a realizar la consolidacion"
+        content-message-danger="Esto sucede cuando no hay conexion con la sucursal, ya bien sea por falta de internet o por conexion inactiva (caida). <br/> Se recomienda que se reporte con el departamento de sistemas"
+        content-message-white="La consolidacion llego con exito a la sucursal destino"
+        content-message-secondary="La consolidacion llego con exito a la sucursal destino"
+      />
+
       <b-table
         v-if="width > 991"
         id="tableConsolidaciones"
@@ -218,11 +235,13 @@
 <script>
 import { mapMutations, mapActions } from 'vuex'
 import ConsolidacionesDetails from '../components/ConsolidacionesDetails'
+import Colors from '../components/Colors'
 import utils from '../modules/utils'
 
 export default {
   components: {
     ConsolidacionesDetails,
+    Colors,
   },
   data() {
     return {
@@ -477,6 +496,12 @@ export default {
 @media screen and (max-width: 1100px) {
   .containerInp {
     display: block;
+  }
+}
+
+@media screen and (max-width: 767px) {
+  .space-colors {
+    margin-top: 20px;
   }
 }
 </style>

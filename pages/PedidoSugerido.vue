@@ -66,6 +66,13 @@
       <b-badge pill variant="info" class="chip"
         >Total: {{ dataRefactor.length }}</b-badge
       >
+      <div class="mt-3">
+        <Colors
+          :show-warning="true"
+          title-warning="No manejado"
+          content-message-warning="Las filas amarillas enfocan los articulo que aun no maneja la sucursal o que tiene tiempo que se dejo de manejar"
+        />
+      </div>
     </div>
 
     <b-table
@@ -137,10 +144,12 @@
 import { mapMutations, mapActions } from 'vuex'
 import PedidoSujeridoCard from '../components/PedidoSujeridoCard'
 import utils from '../modules/utils'
+import Colors from '../components/Colors'
 
 export default {
   components: {
     PedidoSujeridoCard,
+    Colors,
   },
   data() {
     return {
