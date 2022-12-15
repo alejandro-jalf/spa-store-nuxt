@@ -92,6 +92,12 @@
         class="mt-3"
         :class="variantThemeTableBody"
       >
+        <template #cell(Hora)="row">
+          {{ parseHora(row.item.Hora) }}
+        </template>
+        <template #cell(Codigo)="row">
+          {{ row.item.CodigoBarras }}
+        </template>
         <template #cell(Acciones)="row">
           <b-button
             variant="info"
@@ -193,6 +199,9 @@
             <div class="container-transferencia">
               <span class="font-weight-bold">Sucursales:</span>
               {{ consolidacion.Observaciones }}
+            </div>
+            <div class="dateHour">
+              {{ consolidacion.Fecha + ' ' + parseHora(consolidacion.Hora) }}
             </div>
             <div class="container-sucs">
               <div
@@ -325,9 +334,11 @@ export default {
       dateEnd: '',
       fields: [
         { key: 'Articulo', sortable: true },
-        { key: 'CodigoBarras', sortable: true },
+        { key: 'Codigo', sortable: true },
         { key: 'Nombre', sortable: true },
         { key: 'Relacion' },
+        { key: 'Fecha', sortable: true },
+        { key: 'Hora', sortable: true },
         { key: 'ZR' },
         { key: 'VC' },
         { key: 'ER' },
@@ -429,6 +440,9 @@ export default {
     getColorClass(value) {
       return value === 'Sin Conexion' ? 'bg-danger' : 'bg-light'
     },
+    parseHora(hora) {
+      return hora.slice(0, 5)
+    },
     async updateConsolidaciones() {
       this.setLoading(true)
       const response = await this.changeData([
@@ -478,6 +492,13 @@ export default {
 </script>
 
 <style scoped>
+.dateHour {
+  position: absolute;
+  top: 5px;
+  right: 10px;
+  font-style: italic;
+}
+
 .line-buttons {
   margin-bottom: 20px;
   width: calc(100% - 5px);
