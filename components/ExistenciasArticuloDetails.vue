@@ -28,21 +28,23 @@
       :show-danger="true"
       :show-info="true"
       :show-dark="true"
-      title-warning="No hay detalles"
+      :show-white="true"
+      title-warning="No encontrado"
       title-danger="Sin Conexion"
       title-info="Encontrado"
       title-dark="Encontrado"
-      content-message-warning="Esto sucede cuando el articulo ya tiene tiempo sin movimientos o tambien si nunca se ha manejado en esta sucursal."
+      title-white="No se maneja"
+      content-message-warning="Esto sucede cuando el articulo no existe en la sucursal. <br/> Si quiere utilizarlo le recomendamos solicitarlo con el departamento de sistemas"
       content-message-danger="Esto sucede cuando no hay conexion con la sucursal, ya bien sea por falta de internet o por conexion inactiva (caida). <br/> Se recomienda que se reporte con el departamento de sistemas"
       content-message-dark="Se encontraron detalles del articulo en la sucursal"
       content-message-info="Se encontraron detalles del articulo en la sucursal"
+      content-message-white="Esto sucede cuando el articulo no tiene registros en el almacen correspondiente a la sucursal. <br/> Sin embargo el articulo si existe en la sucursal, solo que no ha tenido movimientos nunca"
     />
 
     <b-card
       v-for="(sucursal, indexSuc) in details.existencias"
       :key="indexSuc"
-      :header-bg-variant="colorHeader(sucursal.status, sucursal.Articulo)"
-      header-text-variant="white"
+      :header-bg-variant="colorHeader(sucursal)"
       header="Sucursal Zaragoza"
       class="p-0 m-0"
       :border-variant="borderTheme()"
@@ -53,6 +55,7 @@
           v-b-toggle="'collapse-' + sucursal.sucursal"
           variant="link"
           class="btn-block text-right text-white dropdown-toggle"
+          :class="colorHeaderText(sucursal.Estatus)"
         >
           {{ sucursal.sucursal }}
         </b-button>
@@ -375,9 +378,11 @@ export default {
         return 'secondary'
       return 'light'
     },
-    colorHeader(status, articulo) {
-      if (status !== 'Online') return 'danger'
-      if (!articulo) return 'warning'
+    colorHeader(sucursal) {
+      if (sucursal.status !== 'Online') return 'danger'
+      if (!sucursal.Articulo) return 'warning'
+      else if (sucursal.Estatus === 'No se maneja en la sucursal')
+        return 'white'
       else if (this.$store.state.general.themePreferences === 'system') {
         const systemDark = window.matchMedia(
           '(prefers-color-scheme: dark)'
@@ -387,6 +392,10 @@ export default {
       } else if (this.$store.state.general.themePreferences === 'dark')
         return 'dark'
       return 'info'
+    },
+    colorHeaderText(Estatus) {
+      if (Estatus === 'No se maneja en la sucursal') return 'text-dark'
+      return 'text-white'
     },
     verifyAccess(sucursal) {
       if (sucursal !== 'BODEGA') return true
