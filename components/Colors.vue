@@ -4,7 +4,9 @@
     <span
       v-if="showWarning"
       class="container-color"
-      @click="showMessage(contentMessageWarning, titleMessageWarning)"
+      @click="
+        showMessage(contentMessageWarning, titleMessageWarning, 'warning')
+      "
     >
       <div class="bg-warning shape-color">
         <b-icon icon="question" class="icon-hand" />
@@ -14,7 +16,7 @@
     <span
       v-if="showDanger"
       class="container-color"
-      @click="showMessage(contentMessageDanger, titleMessageDanger)"
+      @click="showMessage(contentMessageDanger, titleMessageDanger, 'danger')"
     >
       <div class="bg-danger shape-color">
         <b-icon icon="question" class="icon-hand text-light" />
@@ -24,7 +26,7 @@
     <span
       v-if="showInfo"
       class="container-color"
-      @click="showMessage(contentMessageInfo, titleMessageInfo)"
+      @click="showMessage(contentMessageInfo, titleMessageInfo, 'info')"
     >
       <div class="bg-info shape-color">
         <b-icon icon="question" class="icon-hand text-light" />
@@ -34,7 +36,7 @@
     <span
       v-if="showDark"
       class="container-color"
-      @click="showMessage(contentMessageDark, titleMessageDark)"
+      @click="showMessage(contentMessageDark, titleMessageDark, 'dark')"
     >
       <div class="bg-dark shape-color">
         <b-icon icon="question" class="icon-hand text-light" />
@@ -44,7 +46,9 @@
     <span
       v-if="showSecondary"
       class="container-color"
-      @click="showMessage(contentMessageSecondary, titleMessageSecondary)"
+      @click="
+        showMessage(contentMessageSecondary, titleMessageSecondary, 'secondary')
+      "
     >
       <div class="bg-secondary shape-color">
         <b-icon icon="question" class="icon-hand text-light" />
@@ -54,7 +58,7 @@
     <span
       v-if="showWhite"
       class="container-color"
-      @click="showMessage(contentMessageWhite, titleMessageWhite)"
+      @click="showMessage(contentMessageWhite, titleMessageWhite, 'white')"
     >
       <div class="bg-white shape-color">
         <b-icon icon="question" class="icon-hand" />
@@ -64,7 +68,9 @@
     <span
       v-if="showSuccess"
       class="container-color"
-      @click="showMessage(contentMessageSuccess, titleMessageSuccess)"
+      @click="
+        showMessage(contentMessageSuccess, titleMessageSuccess, 'success')
+      "
     >
       <div class="bg-success shape-color">
         <b-icon icon="question" class="icon-hand text-light" />
@@ -82,72 +88,72 @@ export default {
     titleMessageWarning: {
       required: false,
       type: String,
-      default: 'Informacion',
+      default: 'Color Amarillo',
     },
     titleMessageInfo: {
       required: false,
       type: String,
-      default: 'Informacion',
+      default: 'Color Azul',
     },
     titleMessageDark: {
       required: false,
       type: String,
-      default: 'Informacion',
+      default: 'Color Oscuro',
     },
     titleMessageSecondary: {
       required: false,
       type: String,
-      default: 'Informacion',
+      default: 'Color Grisaceo',
     },
     titleMessageDanger: {
       required: false,
       type: String,
-      default: 'Informacion',
+      default: 'Color Rojo',
     },
     titleMessageWhite: {
       required: false,
       type: String,
-      default: 'Informacion',
+      default: 'Color Blanco',
     },
     titleMessageSuccess: {
       required: false,
       type: String,
-      default: 'Informacion',
+      default: 'Color Verde',
     },
     contentMessageWarning: {
       required: false,
       type: String,
-      default: 'Informacion',
+      default: 'Color Amarillo',
     },
     contentMessageInfo: {
       required: false,
       type: String,
-      default: 'Informacion',
+      default: 'Color Azul',
     },
     contentMessageDark: {
       required: false,
       type: String,
-      default: 'Informacion',
+      default: 'Color Oscuro',
     },
     contentMessageSecondary: {
       required: false,
       type: String,
-      default: 'Informacion',
+      default: 'Color Grisaceo',
     },
     contentMessageDanger: {
       required: false,
       type: String,
-      default: 'Informacion',
+      default: 'Color Rojo',
     },
     contentMessageWhite: {
       required: false,
       type: String,
-      default: 'Informacion',
+      default: 'Color Blanco',
     },
     contentMessageSuccess: {
       required: false,
       type: String,
-      default: 'Informacion',
+      default: 'Color Verde',
     },
     titleWarning: {
       required: false,
@@ -224,8 +230,8 @@ export default {
     ...mapMutations({
       showAlertDialog: 'general/showAlertDialog',
     }),
-    showMessage(message, title) {
-      this.showAlertDialog([message, title, 'info'])
+    showMessage(message, title, type = 'info') {
+      this.showAlertDialog([message, title, type])
     },
   },
 }

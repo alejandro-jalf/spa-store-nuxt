@@ -90,11 +90,23 @@ export default {
         const systemDark = window.matchMedia(
           '(prefers-color-scheme: dark)'
         ).matches
-        if (systemDark) return variant
+        if (systemDark && (variant === 'secondary' || variant === 'dark'))
+          return 'light'
+        else if (systemDark) return variant
         return 'dark'
-      } else if (this.$store.state.general.themePreferences === 'dark')
+      } else if (
+        this.$store.state.general.themePreferences === 'dark' &&
+        (variant === 'secondary' || variant === 'dark')
+      )
+        return 'light'
+      else if (this.$store.state.general.themePreferences === 'dark')
         return variant
-      else if (variant === 'warning' || variant === 'light') return 'dark'
+      else if (
+        variant === 'white' ||
+        variant === 'warning' ||
+        variant === 'light'
+      )
+        return 'dark'
       return 'light'
     },
     alertHeaderBorder() {
