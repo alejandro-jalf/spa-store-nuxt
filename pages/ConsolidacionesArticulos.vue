@@ -92,6 +92,9 @@
         class="mt-3"
         :class="variantThemeTableBody"
       >
+        <template #cell(Fecha)="row">
+          {{ row.item.Fecha + ' ' + parseHora(row.item.Hora) }}
+        </template>
         <template #cell(Hora)="row">
           {{ parseHora(row.item.Hora) }}
         </template>
@@ -111,7 +114,7 @@
           <b-icon
             v-b-tooltip.hover
             scale="1.5"
-            :title="getMessageFinded(row.item.ZR)"
+            :title="getMessageFinded(row.item.ZR, 'Zaragoza')"
             :icon="getIconFinded(row.item.ZR)"
             :variant="getVariantFinded(row.item.ZR)"
           />
@@ -120,7 +123,7 @@
           <b-icon
             v-b-tooltip.hover
             scale="1.5"
-            :title="getMessageFinded(row.item.VC)"
+            :title="getMessageFinded(row.item.VC, 'Victoria')"
             :icon="getIconFinded(row.item.VC)"
             :variant="getVariantFinded(row.item.VC)"
           />
@@ -129,7 +132,7 @@
           <b-icon
             v-b-tooltip.hover
             scale="1.5"
-            :title="getMessageFinded(row.item.ER)"
+            :title="getMessageFinded(row.item.ER, 'Enriquez')"
             :icon="getIconFinded(row.item.ER)"
             :variant="getVariantFinded(row.item.ER)"
           />
@@ -138,7 +141,7 @@
           <b-icon
             v-b-tooltip.hover
             scale="1.5"
-            :title="getMessageFinded(row.item.OU)"
+            :title="getMessageFinded(row.item.OU, 'Oluta')"
             :icon="getIconFinded(row.item.OU)"
             :variant="getVariantFinded(row.item.OU)"
           />
@@ -147,7 +150,7 @@
           <b-icon
             v-b-tooltip.hover
             scale="1.5"
-            :title="getMessageFinded(row.item.SY)"
+            :title="getMessageFinded(row.item.SY, 'Sayula')"
             :icon="getIconFinded(row.item.SY)"
             :variant="getVariantFinded(row.item.SY)"
           />
@@ -156,7 +159,7 @@
           <b-icon
             v-b-tooltip.hover
             scale="1.5"
-            :title="getMessageFinded(row.item.JL)"
+            :title="getMessageFinded(row.item.JL, 'Jaltipan')"
             :icon="getIconFinded(row.item.JL)"
             :variant="getVariantFinded(row.item.JL)"
           />
@@ -165,7 +168,7 @@
           <b-icon
             v-b-tooltip.hover
             scale="1.5"
-            :title="getMessageFinded(row.item.BO)"
+            :title="getMessageFinded(row.item.BO, 'Bodega')"
             :icon="getIconFinded(row.item.BO)"
             :variant="getVariantFinded(row.item.BO)"
           />
@@ -213,7 +216,7 @@
                   v-b-tooltip.hover
                   class="mx-1"
                   scale="1.5"
-                  :title="getMessageFinded(consolidacion.ZR)"
+                  :title="getMessageFinded(consolidacion.ZR, 'Zaragoza')"
                   :icon="getIconFinded(consolidacion.ZR)"
                   :variant="getVariantFinded(consolidacion.ZR)"
                 />
@@ -227,7 +230,7 @@
                   v-b-tooltip.hover
                   class="mx-1"
                   scale="1.5"
-                  :title="getMessageFinded(consolidacion.VC)"
+                  :title="getMessageFinded(consolidacion.VC, 'Victoria')"
                   :icon="getIconFinded(consolidacion.VC)"
                   :variant="getVariantFinded(consolidacion.VC)"
                 />
@@ -241,7 +244,7 @@
                   v-b-tooltip.hover
                   class="mx-1"
                   scale="1.5"
-                  :title="getMessageFinded(consolidacion.ER)"
+                  :title="getMessageFinded(consolidacion.ER, 'Enriquez')"
                   :icon="getIconFinded(consolidacion.ER)"
                   :variant="getVariantFinded(consolidacion.ER)"
                 />
@@ -255,7 +258,7 @@
                   v-b-tooltip.hover
                   class="mx-1"
                   scale="1.5"
-                  :title="getMessageFinded(consolidacion.OU)"
+                  :title="getMessageFinded(consolidacion.OU, 'Oluta')"
                   :icon="getIconFinded(consolidacion.OU)"
                   :variant="getVariantFinded(consolidacion.OU)"
                 />
@@ -269,7 +272,7 @@
                   v-b-tooltip.hover
                   class="mx-1"
                   scale="1.5"
-                  :title="getMessageFinded(consolidacion.SY)"
+                  :title="getMessageFinded(consolidacion.SY, 'Sayula')"
                   :icon="getIconFinded(consolidacion.SY)"
                   :variant="getVariantFinded(consolidacion.SY)"
                 />
@@ -283,7 +286,7 @@
                   v-b-tooltip.hover
                   class="mx-1"
                   scale="1.5"
-                  :title="getMessageFinded(consolidacion.JL)"
+                  :title="getMessageFinded(consolidacion.JL, 'Jaltipan')"
                   :icon="getIconFinded(consolidacion.JL)"
                   :variant="getVariantFinded(consolidacion.JL)"
                 />
@@ -297,7 +300,7 @@
                   v-b-tooltip.hover
                   class="mx-1"
                   scale="1.5"
-                  :title="getMessageFinded(consolidacion.BO)"
+                  :title="getMessageFinded(consolidacion.BO, 'Bodega')"
                   :icon="getIconFinded(consolidacion.BO)"
                   :variant="getVariantFinded(consolidacion.BO)"
                 />
@@ -338,7 +341,7 @@ export default {
         { key: 'Nombre', sortable: true },
         { key: 'Relacion' },
         { key: 'Fecha', sortable: true },
-        { key: 'Hora', sortable: true },
+        // { key: 'Hora', sortable: true },
         { key: 'ZR' },
         { key: 'VC' },
         { key: 'ER' },
@@ -427,12 +430,12 @@ export default {
         ? 'x-circle-fill'
         : 'exclamation-circle-fill'
     },
-    getMessageFinded(value) {
+    getMessageFinded(value, suc) {
       return value === 'Encontrado'
-        ? 'Articulo enviado'
+        ? `Articulo enviado a ${suc}`
         : value === 'Sin Conexion'
-        ? 'Fallo la conexion'
-        : 'No encontrado en Sucursal'
+        ? `Fallo la conexion con ${suc}`
+        : `No Encontrado en ${suc}`
     },
     getVariantFinded(value) {
       return value === 'Encontrado' ? 'success' : 'danger'
@@ -441,7 +444,8 @@ export default {
       return value === 'Sin Conexion' ? 'bg-danger' : 'bg-light'
     },
     parseHora(hora) {
-      return hora.slice(0, 5)
+      const a = hora.slice(0, 2) >= 12 ? 'pm' : 'am'
+      return hora.slice(0, 5) + ' ' + a
     },
     async updateConsolidaciones() {
       this.setLoading(true)
