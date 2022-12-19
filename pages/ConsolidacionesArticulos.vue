@@ -382,7 +382,7 @@ export default {
           data.ER = data.Sucursales.ER
           data.OU = data.Sucursales.OU
           data.SY = data.Sucursales.SY
-          data.JL = data.Sucursales.ZR
+          data.JL = data.Sucursales.JL
           data.BO = data.Sucursales.BO
           responsesFailed.forEach((response) => {
             data._cellVariants[`${response.sucursalSiglas}`] = 'danger'
