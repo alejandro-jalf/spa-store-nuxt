@@ -120,8 +120,6 @@
                 {{ sucursal.CostoNetUC }}
               </div>
               <div class="divider-h"></div>
-            </div>
-            <div class="col-sm">
               <div class="form-group mt-1 mb-0">
                 <span class="font-weight-bold">Costo Existencia:</span>
                 {{
@@ -129,6 +127,8 @@
                 }}
               </div>
               <div class="divider-h"></div>
+            </div>
+            <div class="col-sm">
               <div class="form-group mt-1 mb-0">
                 <span class="font-weight-bold">Precio UNO:</span>
                 {{
@@ -180,6 +180,16 @@
               <div class="form-group mt-1 mb-0">
                 <span class="font-weight-bold">Descripcion Sub:</span>
                 {{ sucursal.DescSubfamila }}
+              </div>
+              <div class="divider-h"></div>
+              <div class="form-group mt-1 mb-0">
+                <span class="font-weight-bold">Clave SAT:</span>
+                {{ sucursal.c_ClaveProdServ }}
+              </div>
+              <div class="divider-h"></div>
+              <div class="form-group mt-1 mb-0">
+                <span class="font-weight-bold">Fecha de Alta:</span>
+                {{ utils.parseFecha(sucursal.FechaAlta, true) }}
               </div>
               <div class="divider-h"></div>
               <div class="form-group mt-1 mb-0">
