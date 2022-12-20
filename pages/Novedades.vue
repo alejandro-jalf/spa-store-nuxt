@@ -46,10 +46,12 @@
       <template #cell(FechaDeLanzamiento)="row">
         {{ utils.toDate(row.item.FechaDeLanzamiento) }}
       </template>
-      <template #cell(NovedadesEn)>
+      <template #cell(NovedadesEn)="row">
         <b-dropdown id="dropdown-1" text="Desplegar" variant="info">
           <b-dropdown-item
-            v-for="(acess, indexAccess) in tabsVersion"
+            v-for="(acess, indexAccess) in tabsUpdatedVersion(
+              row.item.PaginasActualizadas
+            )"
             :key="indexAccess"
             disabled
           >
@@ -96,6 +98,21 @@ export default {
       if (lastVersion.length === 0) return []
       const tabs = []
       lastVersion[0].PaginasActualizadas.split(',').forEach((tab) => {
+        const tabFind = accessUser.find(
+          (tabU) => tabU.trim().toLowerCase() === tab.trim().toLowerCase()
+        )
+        if (tabFind) tabs.push(tab)
+      })
+      return tabs
+    },
+  },
+  methods: {
+    tabsUpdatedVersion(PaginasActualizadas) {
+      const accessUser = this.$store.state.user.user.access_to_user.split(',')
+      const lastVersion = this.$store.state.user.user.novedades
+      if (lastVersion.length === 0) return []
+      const tabs = []
+      PaginasActualizadas.split(',').forEach((tab) => {
         const tabFind = accessUser.find(
           (tabU) => tabU.trim().toLowerCase() === tab.trim().toLowerCase()
         )
