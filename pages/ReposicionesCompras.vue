@@ -45,7 +45,7 @@
         :variant="variantSuccess"
         :block="width < 528"
         class="mt-2"
-        @click="createPdf(false)"
+        @click="generatePdf(false)"
       >
         <b-icon icon="download" />
         Descargar
@@ -54,7 +54,7 @@
         :variant="variantInfo"
         :block="width < 528"
         class="mt-2"
-        @click="createPdf(true)"
+        @click="generatePdf(true)"
       >
         <b-icon icon="printer-fill" />
         Vista Previa
@@ -146,11 +146,18 @@
         </b-tr>
       </b-tbody>
     </b-table-simple>
+    <canvas
+      id="canvas"
+      class="canvasLogo"
+      width="100px"
+      height="100px"
+    ></canvas>
   </div>
 </template>
 
 <script>
 import { mapMutations, mapActions } from 'vuex'
+import { jsPDF } from 'jspdf'
 import utils from '../modules/utils'
 
 export default {
@@ -291,7 +298,7 @@ export default {
             subTotal.ImporteDescuento = 0
             subTotal.Pago = 0
           } else insertRow(datos, dato, false)
-          subTotal.Deducible += 'SI'
+          subTotal.Deducible = 'SI'
           subTotal.Subtotal += dato.Subtotal
           subTotal.Descuento += dato.Descuento
           subTotal.Ieps += dato.Ieps
@@ -323,6 +330,7 @@ export default {
   mounted() {
     this.setSucursalForUser()
     this.setDateInitials()
+    this.loadDataImage()
   },
   methods: {
     ...mapMutations({
@@ -358,6 +366,12 @@ export default {
     cleanData() {
       this.setData({ data: [] })
     },
+    loadDataImage() {
+      const canvas = document.getElementById('canvas')
+      const context = canvas.getContext('2d')
+      const imageObject = document.getElementById('imgLogoSpa')
+      context.drawImage(imageObject, 0, 0, 100, 100)
+    },
     async loadReposiciones() {
       this.setLoading(true)
       // this.loadDataImage()
@@ -369,7 +383,204 @@ export default {
       if (!response.success)
         this.showAlertDialog([response.message, 'Fallo inesperado'])
     },
-    createPdf() {},
+    generatePdf(preview) {
+      const detalles = this.textDetail
+      const data = [...this.dataRefactor]
+      const logo = document.getElementById('canvas')
+      const sucursal = this.selected
+      this.createPdf(detalles, sucursal, data, logo, preview)
+    },
+    createPdf(detalles, sucursal, data, logo, preview = false) {
+      // eslint-disable-next-line new-cap
+      const doc = new jsPDF('p', 'mm', 'letter')
+
+      doc.setFontSize(18)
+      doc.setFont('helvetica', 'bold')
+      doc.setTextColor(0, 125, 208)
+      if (logo) {
+        doc.text('REPOSICIONES DE COMPRAS', 200, 20, 'right')
+        doc.addImage(logo, 'PNG', 10, 15, 23, 23)
+      } else doc.text('REPOSICIONES DE COMPRAS', 105, 20, 'center')
+
+      doc.setTextColor(0, 0, 0)
+      doc.setFontSize(15)
+      doc.text('SUPER PROMOCIONES DE ACAYUCAN SA DE CV', 200, 29, 'right')
+      doc.setFontSize(13)
+      doc.setFont('helvetica', 'normal')
+      doc.text(detalles, 200, 36, 'right')
+
+      const getStyle = (dato, isNotaCredito) => {
+        return dato.footer
+          ? {
+              fontStyle: 'bold',
+              fillColor: [210, 210, 210],
+              textColor: isNotaCredito ? [200, 0, 0] : [0, 0, 0],
+            }
+          : { textColor: isNotaCredito ? [200, 0, 0] : [0, 0, 0] }
+      }
+
+      const body = data.reduce((acumData, dato) => {
+        if (dato.header) {
+          acumData.push([
+            {
+              content: dato.Deducible,
+              rowSpan: dato.span,
+            },
+            {
+              content: dato.Nombre,
+              styles: getStyle(dato),
+            },
+            {
+              content: dato.Documento,
+              styles: getStyle(dato),
+            },
+            {
+              content: dato.Folio,
+              styles: getStyle(dato),
+            },
+            {
+              content: dato.FechaCorte,
+              styles: getStyle(dato),
+            },
+            {
+              content: dato.Subtotal,
+              styles: getStyle(dato),
+            },
+            {
+              content: dato.Descuento,
+              styles: getStyle(dato),
+            },
+            {
+              content: dato.Ieps,
+              styles: getStyle(dato),
+            },
+            {
+              content: dato.Iva,
+              styles: getStyle(dato),
+            },
+            {
+              content: dato.Total,
+              styles: getStyle(dato),
+            },
+            {
+              content: dato.NotaCredito,
+              styles: getStyle(dato, true),
+            },
+            {
+              content: dato.Pago,
+              styles: getStyle(dato),
+            },
+            {
+              content: dato.Tipo,
+              styles: getStyle(dato),
+            },
+          ])
+        } else {
+          acumData.push([
+            {
+              content: dato.Nombre,
+              styles: getStyle(dato),
+            },
+            {
+              content: dato.Documento,
+              styles: getStyle(dato),
+            },
+            {
+              content: dato.Folio,
+              styles: getStyle(dato),
+            },
+            {
+              content: dato.FechaCorte,
+              styles: getStyle(dato),
+            },
+            {
+              content: dato.Subtotal,
+              styles: getStyle(dato),
+            },
+            {
+              content: dato.Descuento,
+              styles: getStyle(dato),
+            },
+            {
+              content: dato.Ieps,
+              styles: getStyle(dato),
+            },
+            {
+              content: dato.Iva,
+              styles: getStyle(dato),
+            },
+            {
+              content: dato.Total,
+              styles: getStyle(dato),
+            },
+            {
+              content: dato.NotaCredito,
+              styles: getStyle(dato, true),
+            },
+            {
+              content: dato.Pago,
+              styles: getStyle(dato),
+            },
+            {
+              content: dato.Tipo,
+              styles: getStyle(dato),
+            },
+          ])
+        }
+        return acumData
+      }, [])
+
+      doc.autoTable({
+        startY: 47,
+        tableWidth: 190,
+        margin: {
+          left: 10,
+        },
+        styles: { fontSize: 7 },
+        headStyles: {
+          fontStyle: 'bold',
+          halign: 'center',
+          fillColor: [0, 125, 208],
+          textColor: [255, 255, 255],
+        },
+        bodyStyles: { textColor: [0, 0, 0] },
+        head: [
+          [
+            'Deducible',
+            'Nombre',
+            'Documento',
+            'Folio',
+            'FechaCorte',
+            'Descuento',
+            'Ieps',
+            'Iva',
+            'Total',
+            'Nota Credito',
+            'Pago',
+            'Tipo',
+          ],
+        ],
+        body,
+      })
+
+      const countPages = doc.getNumberOfPages()
+      let pageCurrent = 0
+      doc.setFontSize(9)
+      doc.setFont('helvetica', 'italic')
+      for (let page = 0; page < countPages; page++) {
+        doc.setPage(page)
+        pageCurrent = doc.internal.getCurrentPageInfo().pageNumber
+        doc.text(`Pagina ${pageCurrent} de ${countPages}`, 207, 275, 'right')
+        doc.text(
+          'Impreso ' + utils.getDateNow().format('DD-MM-yyyy HH:mm:ss'),
+          8,
+          275
+        )
+      }
+
+      if (preview) doc.output('dataurlnewwindow')
+      else doc.save(`Reposiciones de compras ${sucursal}.pdf`)
+    },
   },
 }
 </script>
