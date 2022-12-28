@@ -6,7 +6,7 @@
           v-model="selected"
           :options="options"
           :disabled="!accessChangeSucursal"
-          @change="changeSuc"
+          @change="setSucursal"
         ></b-form-select>
       </b-input-group>
     </div>
@@ -14,7 +14,7 @@
       <b-input-group prepend="Fecha Corte">
         <b-form-datepicker
           id="dateEnd"
-          v-model="dateEnd"
+          v-model="dateCorte"
           today-button
           label-no-date-selected="Fecha no seleccionada"
           label-calendar="Calendario"
@@ -28,27 +28,136 @@
         ></b-form-datepicker>
       </b-input-group>
     </div>
-    <b-button variant="info">
+    <b-button variant="info" @click="loadReposiciones">
       <b-icon icon="search" />
       Buscar
     </b-button>
 
     <div class="content-titles">
       <img id="imgLogoSpa" class="imgLogo" src="@/assets/cesta.png" />
-      <h4 class="mt-3">Reporte de Reposiciones de Compras</h4>
-      <h5>Super Promociones de Acayucan</h5>
-      <div>Detalle de Suc. Oluta Al 27/12/2022</div>
+      <h1 class="mt-3">Reporte de Reposiciones de Compras</h1>
+      <h3>Super Promociones de Acayucan</h3>
+      <h5>{{ textDetail }}</h5>
     </div>
+
+    <div v-if="!emptyData">
+      <b-button
+        :variant="variantSuccess"
+        :block="width < 528"
+        class="mt-2"
+        @click="createPdf(false)"
+      >
+        <b-icon icon="download" />
+        Descargar
+      </b-button>
+      <b-button
+        :variant="variantInfo"
+        :block="width < 528"
+        class="mt-2"
+        @click="createPdf(true)"
+      >
+        <b-icon icon="printer-fill" />
+        Vista Previa
+      </b-button>
+      <b-button
+        :variant="variantClean"
+        :block="width < 528"
+        class="mt-2"
+        @click="cleanData"
+      >
+        <b-icon icon="file-earmark-pdf-fill" />
+        Limpiar tabla
+      </b-button>
+    </div>
+
+    <b-table-simple
+      id="tableAsistencias"
+      hover
+      responsive
+      class="mt-3"
+      :class="variantThemeTableBody"
+    >
+      <b-thead head-variant="dark">
+        <b-tr>
+          <b-th>Deduc</b-th>
+          <b-th>Nombre</b-th>
+          <b-th>Documento</b-th>
+          <b-th>Folio</b-th>
+          <b-th>Fecha Corte</b-th>
+          <b-th>Subtotal</b-th>
+          <b-th>Descuento</b-th>
+          <b-th>Ieps</b-th>
+          <b-th>Iva</b-th>
+          <b-th>Total</b-th>
+          <b-th>Nota Credito</b-th>
+          <b-th>Pago</b-th>
+          <b-th>Tipo</b-th>
+        </b-tr>
+      </b-thead>
+      <b-tbody>
+        <b-tr v-for="(rCompras, indext) in dataRefactor" :key="indext">
+          <b-td
+            v-if="rCompras.header"
+            :rowspan="rCompras.span"
+            class="nameTable"
+          >
+            {{ rCompras.Deducible }}
+          </b-td>
+          <b-td :class="bold(rCompras)" :variant="variant(rCompras)">{{
+            rCompras.Nombre
+          }}</b-td>
+          <b-td :class="bold(rCompras)" :variant="variant(rCompras)">{{
+            rCompras.Documento
+          }}</b-td>
+          <b-td :class="bold(rCompras)" :variant="variant(rCompras)">{{
+            rCompras.Folio
+          }}</b-td>
+          <b-td :class="bold(rCompras)" :variant="variant(rCompras)">{{
+            rCompras.FechaCorte
+          }}</b-td>
+          <b-td :class="bold(rCompras)" :variant="variant(rCompras)">{{
+            rCompras.Subtotal
+          }}</b-td>
+          <b-td :class="bold(rCompras)" :variant="variant(rCompras)">{{
+            rCompras.Descuento
+          }}</b-td>
+          <b-td :class="bold(rCompras)" :variant="variant(rCompras)">{{
+            rCompras.Ieps
+          }}</b-td>
+          <b-td :class="bold(rCompras)" :variant="variant(rCompras)">{{
+            rCompras.Iva
+          }}</b-td>
+          <b-td :class="bold(rCompras)" :variant="variant(rCompras)">{{
+            rCompras.Total
+          }}</b-td>
+          <b-td
+            :class="bold(rCompras)"
+            class="text-danger"
+            :variant="variant(rCompras)"
+          >
+            {{ rCompras.NotaCredito }}
+          </b-td>
+          <b-td :class="bold(rCompras)" :variant="variant(rCompras)">{{
+            rCompras.Pago
+          }}</b-td>
+          <b-td :class="bold(rCompras)" :variant="variant(rCompras)">{{
+            rCompras.Tipo
+          }}</b-td>
+        </b-tr>
+      </b-tbody>
+    </b-table-simple>
   </div>
 </template>
 
 <script>
+import { mapMutations, mapActions } from 'vuex'
 import utils from '../modules/utils'
 
 export default {
   data() {
     return {
       selected: 'ZR',
+      dateCorte: '',
       options: [
         { value: 'ZR', text: 'Zaragoza' },
         { value: 'VC', text: 'Victoria' },
@@ -66,32 +175,201 @@ export default {
     accessChangeSucursal() {
       return this.$store.state.user.user.tipo_user === 'manager'
     },
+    emptyData() {
+      return this.$store.state.reposicionescompras.data.data.length === 0
+    },
+    textDetail() {
+      return (
+        'Detalle de Suc. ' +
+        this.$store.state.reposicionescompras.sucursalFind +
+        ' Al ' +
+        this.$store.state.reposicionescompras.dateCorte
+      )
+    },
+    width() {
+      return this.$store.state.general.widthWindow
+    },
+    variantThemeTableBody() {
+      return this.$store.state.general.themesComponents.themeTableBody
+    },
+    variantClean() {
+      return this.$store.state.general.themesComponents.themeButtonClean
+    },
+    variantSuccess() {
+      return this.$store.state.general.themesComponents.themeButtonSuccess
+    },
+    variantInfo() {
+      return this.$store.state.general.themesComponents.themeButtonClose
+    },
+    dataRefactor() {
+      const datos = []
+      let positionDeducible = 0
+      let positionNoDeducible = 0
+
+      const insertRow = (
+        datos = [],
+        dato = {},
+        header = true,
+        span,
+        footer = false
+      ) => {
+        datos.push({
+          header,
+          span,
+          footer,
+          Deducible: dato.Deducible,
+          Nombre: dato.Nombre,
+          Documento: dato.Documento,
+          Folio: dato.Consecutivo,
+          FechaCorte: utils.formatWithMoment(dato.FechaCorte, 'DD/MM/yyyy'),
+          Subtotal: utils.aplyFormatNumeric(utils.roundTo(dato.Subtotal)),
+          Descuento: utils.aplyFormatNumeric(utils.roundTo(dato.Descuento)),
+          Ieps: utils.aplyFormatNumeric(utils.roundTo(dato.Ieps)),
+          Iva: utils.aplyFormatNumeric(utils.roundTo(dato.Iva)),
+          Total: utils.aplyFormatNumeric(utils.roundTo(dato.Total)),
+          NotaCredito: utils.aplyFormatNumeric(
+            utils.roundTo(dato.ImporteDescuento)
+          ),
+          Pago: utils.aplyFormatNumeric(utils.roundTo(dato.Pago)),
+          Tipo: dato.TipoDescuento,
+        })
+      }
+
+      const subTotal = {
+        Deducible: 'NO',
+        Nombre: 'Subtotal',
+        Documento: '',
+        Consecutivo: '',
+        FechaCorte: '',
+        Subtotal: 0,
+        Descuento: 0,
+        Ieps: 0,
+        Iva: 0,
+        Total: 0,
+        ImporteDescuento: 0,
+        Pago: 0,
+        TipoDescuento: '',
+      }
+
+      const total = {
+        Deducible: '',
+        Nombre: 'Total',
+        Documento: '',
+        Consecutivo: '',
+        FechaCorte: '',
+        Subtotal: 0,
+        Descuento: 0,
+        Ieps: 0,
+        Iva: 0,
+        Total: 0,
+        ImporteDescuento: 0,
+        Pago: 0,
+        TipoDescuento: '',
+      }
+
+      this.$store.state.reposicionescompras.data.data.forEach((dato) => {
+        if (dato.Deducible === 'NO') {
+          if (positionNoDeducible === 0) insertRow(datos, dato, true, 1)
+          else insertRow(datos, dato, false)
+          positionNoDeducible++
+          subTotal.Subtotal += dato.Subtotal
+          subTotal.Descuento += dato.Descuento
+          subTotal.Ieps += dato.Ieps
+          subTotal.Iva += dato.Iva
+          subTotal.Total += dato.Total
+          subTotal.ImporteDescuento += dato.ImporteDescuento
+          subTotal.Pago += dato.Pago
+        } else {
+          if (positionDeducible === 0) {
+            insertRow(datos, subTotal, false, undefined, true)
+            insertRow(datos, dato, true, 1)
+            subTotal.Subtotal = 0
+            subTotal.Descuento = 0
+            subTotal.Ieps = 0
+            subTotal.Iva = 0
+            subTotal.Total = 0
+            subTotal.ImporteDescuento = 0
+            subTotal.Pago = 0
+          } else insertRow(datos, dato, false)
+          subTotal.Deducible += 'SI'
+          subTotal.Subtotal += dato.Subtotal
+          subTotal.Descuento += dato.Descuento
+          subTotal.Ieps += dato.Ieps
+          subTotal.Iva += dato.Iva
+          subTotal.Total += dato.Total
+          subTotal.ImporteDescuento += dato.ImporteDescuento
+          subTotal.Pago += dato.Pago
+          positionDeducible++
+        }
+        total.Subtotal += dato.Subtotal
+        total.Descuento += dato.Descuento
+        total.Ieps += dato.Ieps
+        total.Iva += dato.Iva
+        total.Total += dato.Total
+        total.ImporteDescuento += dato.ImporteDescuento
+        total.Pago += dato.Pago
+      })
+      insertRow(datos, subTotal, false, undefined, true)
+      insertRow(datos, total, false, undefined, true)
+
+      const iHNDec = datos.findIndex((rp) => rp.Deducible === 'NO' && rp.header)
+      const iHDec = datos.findIndex((rp) => rp.Deducible === 'SI' && rp.header)
+
+      if (iHNDec !== -1) datos[iHNDec].span = positionNoDeducible + 1
+      if (iHDec !== -1) datos[iHDec].span = positionDeducible + 2
+      return datos
+    },
   },
   mounted() {
     this.setSucursalForUser()
+    this.setDateInitials()
   },
   methods: {
+    ...mapMutations({
+      setSucursal: 'reposicionescompras/setSucursal',
+      setData: 'reposicionescompras/setData',
+      setLoading: 'general/setLoading',
+      showAlertDialog: 'general/showAlertDialog',
+    }),
+    ...mapActions({
+      changeData: 'reposicionescompras/changeData',
+    }),
+    bold(data) {
+      return data.footer ? 'font-weight-bold' : ''
+    },
+    variant(data) {
+      return data.footer ? 'secondary' : ''
+    },
     setSucursalForUser() {
       if (!this.accessChangeSucursal) {
         this.selected = utils.getSucursalByName(
           this.$store.state.user.user.sucursal_user
         )
-        // this.setSucursal(sucursalUser)
+        this.setSucursal(this.selected)
+      } else {
+        const sucSelected = this.$store.state.reposicionescompras.sucursal
+        this.selected = sucSelected
       }
     },
-    getOptionBySucursal(sucursal = 'Zaragoza') {
-      sucursal = sucursal.trim().toUpperCase()
-      if (sucursal === 'ZARAGOZA') return 'ZR'
-      if (sucursal === 'VICTORIA') return 'VC'
-      if (sucursal === 'ENRIQUEZ') return 'ER'
-      if (sucursal === 'TORTILLERIAF') return 'TF'
-      if (sucursal === 'OLUTA') return 'OU'
-      if (sucursal === 'SAYULA') return 'SY'
-      if (sucursal === 'SAYULAT') return 'TY'
-      if (sucursal === 'JALTIPAN') return 'JL'
-      if (sucursal === 'BODEGA') return 'BO'
-      return 'SPAZARAGOZA'
+    setDateInitials() {
+      const dayActual = utils.getDateNow()
+      this.dateCorte = dayActual.format('yyyy-MM-DD')
     },
+    cleanData() {
+      this.setData({ data: [] })
+    },
+    async loadReposiciones() {
+      this.setLoading(true)
+      // this.loadDataImage()
+      const response = await this.changeData([
+        this.dateCorte.replace(/-/g, ''),
+        this.$store.state.reposicionescompras.sucursal,
+      ])
+      this.setLoading(false)
+      if (!response.success)
+        this.showAlertDialog([response.message, 'Fallo inesperado'])
+    },
+    createPdf() {},
   },
 }
 </script>
