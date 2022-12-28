@@ -188,7 +188,7 @@ export default {
     textDetail() {
       const option = [...this.options]
       const suc = option.reduce((optAcum, opt) => {
-        if (opt.value === this.$store.state.reposicionesgastos.sucursalFind)
+        if (opt.value === this.$store.state.reposicionescompras.sucursalFind)
           optAcum = opt.text
         return optAcum
       }, '')
@@ -197,7 +197,7 @@ export default {
         'Detalle de Suc. ' +
         suc +
         ' Al ' +
-        this.$store.state.reposicionesgastos.dateCorte
+        this.$store.state.reposicionescompras.dateCorte
       )
     },
     width() {
