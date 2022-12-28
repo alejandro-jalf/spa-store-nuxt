@@ -35,7 +35,7 @@
 
     <div class="content-titles">
       <img id="imgLogoSpa" class="imgLogo" src="@/assets/cesta.png" />
-      <h1 class="mt-3">Reporte de Reposiciones de Compras</h1>
+      <h1 class="mt-3">Reporte de Reposiciones de Gastos</h1>
       <h3>Super Promociones de Acayucan</h3>
       <h5>{{ textDetail }}</h5>
     </div>
@@ -82,16 +82,13 @@
           <b-th>Deduc</b-th>
           <b-th>Nombre</b-th>
           <b-th>Documento</b-th>
+          <b-th>Observaciones</b-th>
           <b-th>Folio</b-th>
           <b-th>Fecha Corte</b-th>
           <b-th>Subtotal</b-th>
-          <b-th>Descuento</b-th>
           <b-th>Ieps</b-th>
           <b-th>Iva</b-th>
           <b-th>Total</b-th>
-          <b-th>Nota Credito</b-th>
-          <b-th>Pago</b-th>
-          <b-th>Tipo</b-th>
         </b-tr>
       </b-thead>
       <b-tbody>
@@ -110,6 +107,9 @@
             rCompras.Documento
           }}</b-td>
           <b-td :class="bold(rCompras)" :variant="variant(rCompras)">{{
+            rCompras.Observaciones
+          }}</b-td>
+          <b-td :class="bold(rCompras)" :variant="variant(rCompras)">{{
             rCompras.Folio
           }}</b-td>
           <b-td :class="bold(rCompras)" :variant="variant(rCompras)">{{
@@ -119,9 +119,6 @@
             rCompras.Subtotal
           }}</b-td>
           <b-td :class="bold(rCompras)" :variant="variant(rCompras)">{{
-            rCompras.Descuento
-          }}</b-td>
-          <b-td :class="bold(rCompras)" :variant="variant(rCompras)">{{
             rCompras.Ieps
           }}</b-td>
           <b-td :class="bold(rCompras)" :variant="variant(rCompras)">{{
@@ -129,19 +126,6 @@
           }}</b-td>
           <b-td :class="bold(rCompras)" :variant="variant(rCompras)">{{
             rCompras.Total
-          }}</b-td>
-          <b-td
-            :class="bold(rCompras)"
-            class="text-danger"
-            :variant="variant(rCompras)"
-          >
-            {{ rCompras.NotaCredito }}
-          </b-td>
-          <b-td :class="bold(rCompras)" :variant="variant(rCompras)">{{
-            rCompras.Pago
-          }}</b-td>
-          <b-td :class="bold(rCompras)" :variant="variant(rCompras)">{{
-            rCompras.Tipo
           }}</b-td>
         </b-tr>
       </b-tbody>
@@ -183,7 +167,7 @@ export default {
       return this.$store.state.user.user.tipo_user === 'manager'
     },
     emptyData() {
-      return this.$store.state.reposicionescompras.data.data.length === 0
+      return this.$store.state.reposicionesgastos.data.data.length === 0
     },
     textDetail() {
       const option = [...this.options]
@@ -234,18 +218,13 @@ export default {
           Deducible: dato.Deducible,
           Nombre: dato.Nombre,
           Documento: dato.Documento,
+          Observaciones: dato.Observaciones,
           Folio: dato.Consecutivo,
           FechaCorte: utils.formatWithMoment(dato.FechaCorte, 'DD/MM/yyyy'),
           Subtotal: utils.aplyFormatNumeric(utils.roundTo(dato.Subtotal)),
-          Descuento: utils.aplyFormatNumeric(utils.roundTo(dato.Descuento)),
           Ieps: utils.aplyFormatNumeric(utils.roundTo(dato.Ieps)),
           Iva: utils.aplyFormatNumeric(utils.roundTo(dato.Iva)),
           Total: utils.aplyFormatNumeric(utils.roundTo(dato.Total)),
-          NotaCredito: utils.aplyFormatNumeric(
-            utils.roundTo(dato.ImporteDescuento)
-          ),
-          Pago: utils.aplyFormatNumeric(utils.roundTo(dato.Pago)),
-          Tipo: dato.TipoDescuento,
         })
       }
 
@@ -253,35 +232,29 @@ export default {
         Deducible: 'NO',
         Nombre: 'Subtotal',
         Documento: '',
+        Observaciones: '',
         Consecutivo: '',
         FechaCorte: '',
         Subtotal: 0,
-        Descuento: 0,
         Ieps: 0,
         Iva: 0,
         Total: 0,
-        ImporteDescuento: 0,
-        Pago: 0,
-        TipoDescuento: '',
       }
 
       const total = {
         Deducible: '',
         Nombre: 'Total',
         Documento: '',
+        Observaciones: '',
         Consecutivo: '',
         FechaCorte: '',
         Subtotal: 0,
-        Descuento: 0,
         Ieps: 0,
         Iva: 0,
         Total: 0,
-        ImporteDescuento: 0,
-        Pago: 0,
-        TipoDescuento: '',
       }
 
-      this.$store.state.reposicionescompras.data.data.forEach((dato) => {
+      this.$store.state.reposicionesgastos.data.data.forEach((dato) => {
         if (dato.Deducible === 'NO') {
           if (positionNoDeducible === 0) insertRow(datos, dato, true, 1)
           else insertRow(datos, dato, false)
@@ -291,37 +264,27 @@ export default {
           subTotal.Ieps += dato.Ieps
           subTotal.Iva += dato.Iva
           subTotal.Total += dato.Total
-          subTotal.ImporteDescuento += dato.ImporteDescuento
           subTotal.Pago += dato.Pago
         } else {
           if (positionDeducible === 0) {
             insertRow(datos, subTotal, false, undefined, true)
             insertRow(datos, dato, true, 1)
             subTotal.Subtotal = 0
-            subTotal.Descuento = 0
             subTotal.Ieps = 0
             subTotal.Iva = 0
             subTotal.Total = 0
-            subTotal.ImporteDescuento = 0
-            subTotal.Pago = 0
           } else insertRow(datos, dato, false)
           subTotal.Deducible = 'SI'
           subTotal.Subtotal += dato.Subtotal
-          subTotal.Descuento += dato.Descuento
           subTotal.Ieps += dato.Ieps
           subTotal.Iva += dato.Iva
           subTotal.Total += dato.Total
-          subTotal.ImporteDescuento += dato.ImporteDescuento
-          subTotal.Pago += dato.Pago
           positionDeducible++
         }
         total.Subtotal += dato.Subtotal
-        total.Descuento += dato.Descuento
         total.Ieps += dato.Ieps
         total.Iva += dato.Iva
         total.Total += dato.Total
-        total.ImporteDescuento += dato.ImporteDescuento
-        total.Pago += dato.Pago
       })
       insertRow(datos, subTotal, false, undefined, true)
       insertRow(datos, total, false, undefined, true)
@@ -329,7 +292,8 @@ export default {
       const iHNDec = datos.findIndex((rp) => rp.Deducible === 'NO' && rp.header)
       const iHDec = datos.findIndex((rp) => rp.Deducible === 'SI' && rp.header)
 
-      if (iHNDec !== -1) datos[iHNDec].span = positionNoDeducible + 1
+      if (iHNDec !== -1)
+        datos[iHNDec].span = positionNoDeducible + (iHDec !== -1 ? 1 : 2)
       if (iHDec !== -1) datos[iHDec].span = positionDeducible + 2
       return datos
     },
@@ -341,13 +305,13 @@ export default {
   },
   methods: {
     ...mapMutations({
-      setSucursal: 'reposicionescompras/setSucursal',
-      setData: 'reposicionescompras/setData',
+      setSucursal: 'reposicionesgastos/setSucursal',
+      setData: 'reposicionesgastos/setData',
       setLoading: 'general/setLoading',
       showAlertDialog: 'general/showAlertDialog',
     }),
     ...mapActions({
-      changeData: 'reposicionescompras/changeData',
+      changeData: 'reposicionesgastos/changeData',
     }),
     bold(data) {
       return data.footer ? 'font-weight-bold' : ''
@@ -362,7 +326,7 @@ export default {
         )
         this.setSucursal(this.selected)
       } else {
-        const sucSelected = this.$store.state.reposicionescompras.sucursal
+        const sucSelected = this.$store.state.reposicionesgastos.sucursal
         this.selected = sucSelected
       }
     },
@@ -384,7 +348,7 @@ export default {
       // this.loadDataImage()
       const response = await this.changeData([
         this.dateCorte.replace(/-/g, ''),
-        this.$store.state.reposicionescompras.sucursal,
+        this.$store.state.reposicionesgastos.sucursal,
       ])
       this.setLoading(false)
       if (!response.success)
@@ -405,9 +369,9 @@ export default {
       doc.setFont('helvetica', 'bold')
       doc.setTextColor(0, 125, 208)
       if (logo) {
-        doc.text('REPOSICIONES DE COMPRAS', 200, 20, 'right')
+        doc.text('REPOSICIONES DE GASTOS', 200, 20, 'right')
         doc.addImage(logo, 'PNG', 10, 15, 23, 23)
-      } else doc.text('REPOSICIONES DE COMPRAS', 105, 20, 'center')
+      } else doc.text('REPOSICIONES DE GASTOS', 105, 20, 'center')
 
       doc.setTextColor(0, 0, 0)
       doc.setFontSize(15)
@@ -442,6 +406,10 @@ export default {
               styles: getStyle(dato),
             },
             {
+              content: dato.Observaciones,
+              styles: getStyle(dato),
+            },
+            {
               content: dato.Folio,
               styles: getStyle(dato),
             },
@@ -454,10 +422,6 @@ export default {
               styles: getStyle(dato),
             },
             {
-              content: dato.Descuento,
-              styles: getStyle(dato),
-            },
-            {
               content: dato.Ieps,
               styles: getStyle(dato),
             },
@@ -467,18 +431,6 @@ export default {
             },
             {
               content: dato.Total,
-              styles: getStyle(dato),
-            },
-            {
-              content: dato.NotaCredito,
-              styles: getStyle(dato, true),
-            },
-            {
-              content: dato.Pago,
-              styles: getStyle(dato),
-            },
-            {
-              content: dato.Tipo,
               styles: getStyle(dato),
             },
           ])
@@ -493,6 +445,10 @@ export default {
               styles: getStyle(dato),
             },
             {
+              content: dato.Observaciones,
+              styles: getStyle(dato),
+            },
+            {
               content: dato.Folio,
               styles: getStyle(dato),
             },
@@ -505,10 +461,6 @@ export default {
               styles: getStyle(dato),
             },
             {
-              content: dato.Descuento,
-              styles: getStyle(dato),
-            },
-            {
               content: dato.Ieps,
               styles: getStyle(dato),
             },
@@ -518,18 +470,6 @@ export default {
             },
             {
               content: dato.Total,
-              styles: getStyle(dato),
-            },
-            {
-              content: dato.NotaCredito,
-              styles: getStyle(dato, true),
-            },
-            {
-              content: dato.Pago,
-              styles: getStyle(dato),
-            },
-            {
-              content: dato.Tipo,
               styles: getStyle(dato),
             },
           ])
@@ -556,15 +496,12 @@ export default {
             'Deducible',
             'Nombre',
             'Documento',
+            'Observaciones',
             'Folio',
             'FechaCorte',
-            'Descuento',
             'Ieps',
             'Iva',
             'Total',
-            'Nota Credito',
-            'Pago',
-            'Tipo',
           ],
         ],
         body,
