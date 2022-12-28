@@ -180,6 +180,12 @@ export const state = () => ({
       nickname: 'Consolidacion Articulos',
       icon: 'list-stars',
     },
+    {
+      path: '/reposicionescompras',
+      name: 'reposicionescompras',
+      nickname: 'Resposiciones Compras',
+      icon: 'file-earmark-pdf-fill',
+    },
   ].sort((a, b) => (a.nickname < b.nickname ? -1 : 1)),
   tabActual: 'Inicio',
   themePreferences: localStorage.getItem('spastore_theme_color'),
