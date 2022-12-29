@@ -28,15 +28,15 @@ export default function verifyRouters({ store, redirect, route, from }) {
       if (tabPrincipal) {
         const tabFinded = listTabs.find((tab) => tab.nickname === tabPrincipal)
         if (tabFinded) {
-          store.commit('general/setTabActual', tabFinded.nickname)
-          store.commit('user/setSesionInstancia', tabFinded.nickname)
+          store.commit('general/setTabActual', tabFinded.name)
+          store.commit('user/setSesionInstancia', tabFinded.name)
           if (route.path.toLowerCase() !== tabFinded.path.toLowerCase())
             redirect(tabFinded.path)
           return
         }
       }
-      store.commit('general/setTabActual', 'Inicio')
-      store.commit('user/setSesionInstancia', 'Inicio')
+      store.commit('general/setTabActual', 'index')
+      store.commit('user/setSesionInstancia', 'index')
       redirect('/')
       return
     }
@@ -50,14 +50,14 @@ export default function verifyRouters({ store, redirect, route, from }) {
       if (tabPrincipal) {
         const tabFinded = listTabs.find((tab) => tab.nickname === tabPrincipal)
         if (tabFinded) {
-          store.commit('general/setTabActual', tabFinded.nickname)
-          store.commit('user/setSesionInstancia', tabFinded.nickname)
+          store.commit('general/setTabActual', tabFinded.name)
+          store.commit('user/setSesionInstancia', tabFinded.name)
           redirect(tabFinded.path)
           return
         }
       }
-      store.commit('general/setTabActual', 'Inicio')
-      store.commit('user/setSesionInstancia', 'Inicio')
+      store.commit('general/setTabActual', 'index')
+      store.commit('user/setSesionInstancia', 'index')
       redirect('/')
       return
     }
@@ -70,14 +70,14 @@ export default function verifyRouters({ store, redirect, route, from }) {
       if (tabPrincipal) {
         const tabFinded = listTabs.find((tab) => tab.nickname === tabPrincipal)
         if (tabFinded) {
-          store.commit('general/setTabActual', tabFinded.nickname)
-          store.commit('user/setSesionInstancia', tabFinded.nickname)
+          store.commit('general/setTabActual', tabFinded.name)
+          store.commit('user/setSesionInstancia', tabFinded.name)
           redirect(tabFinded.path)
           return
         }
       }
-      store.commit('general/setTabActual', 'Inicio')
-      store.commit('user/setSesionInstancia', 'Inicio')
+      store.commit('general/setTabActual', 'index')
+      store.commit('user/setSesionInstancia', 'index')
       redirect('/')
       return
     }
@@ -92,13 +92,13 @@ export default function verifyRouters({ store, redirect, route, from }) {
             tabFinded &&
             route.path.toLowerCase() !== tabFinded.path.toLowerCase()
           ) {
-            store.commit('general/setTabActual', tabFinded.nickname)
-            store.commit('user/setSesionInstancia', tabFinded.nickname)
+            store.commit('general/setTabActual', tabFinded.name)
+            store.commit('user/setSesionInstancia', tabFinded.name)
             redirect(tabFinded.path)
             return
           }
         }
-        store.commit('user/setSesionInstancia', 'Inicio')
+        store.commit('user/setSesionInstancia', 'index')
       }
     }
 
@@ -106,9 +106,7 @@ export default function verifyRouters({ store, redirect, route, from }) {
       (tab) => tab.name.trim().toLowerCase() === route.name.trim().toLowerCase()
     )
 
-    const named = !findTabOfList
-      ? route.name.charAt(0).toUpperCase() + route.name.slice(1)
-      : findTabOfList.nickname
+    const named = !findTabOfList ? route.name.toLowerCase() : findTabOfList.name
 
     store.commit('general/setTabActual', named)
     store.commit('user/setSesionInstancia', named)

@@ -57,14 +57,6 @@ export const state = () => ({
       nickname: 'Ofertas',
       icon: 'percent',
     },
-    // {
-    //   path: '/validaofertas',
-    //   childrens: [
-    //   ],
-    //   name: 'validaofertas',
-    //   nickname: 'Verificador Ofertas',
-    //   icon: 'binoculars',
-    // },
     {
       path: '',
       childrens: [

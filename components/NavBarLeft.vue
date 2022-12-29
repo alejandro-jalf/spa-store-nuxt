@@ -50,7 +50,7 @@
           v-if="tab.childrens.length === 0"
           :to="tab.path"
           replace
-          :class="isActiveItem(tab.nickname)"
+          :class="isActiveItem(tab.name)"
         >
           <b-icon v-if="tab.icon" :icon="tab.icon" class="mr-1" />
           {{ tab.nickname }}
@@ -59,7 +59,7 @@
           <b-list-group-item
             v-b-toggle="'collapse-' + tab.nickname"
             replace
-            :class="isActiveItem(tab.nickname)"
+            :class="isActiveItem(tab.name, true, tab)"
             class="cursor-pointer"
           >
             <b-icon v-if="tab.icon" :icon="tab.icon" class="mr-1" />
@@ -75,7 +75,7 @@
               :key="indexChild"
               :to="child.path"
               replace
-              :class="isActiveItem(child.nickname)"
+              :class="isActiveItem(child.name)"
               class="sub-tab"
             >
               <b-icon v-if="child.icon" :icon="child.icon" class="mr-1" />
@@ -130,21 +130,32 @@ export default {
     },
     tabsAccess() {
       const user = this.$store.state.user.user
-      const tabsPermission = this.tabs.filter((tab) => {
-        const arrayTabs = user.access_to_user.trim().split(',')
-        const findTab = arrayTabs.find((ftab) => {
-          if (tab.childrens.length > 0) {
-            const findChild = tab.childrens.find(
-              (child) =>
+      const arrayTabs = user.access_to_user.trim().split(',')
+      const tabsSystem = [...this.$store.state.general.listTabs]
+      const tabsPermission = tabsSystem.reduce((acumTab, tab) => {
+        if (tab.childrens.length === 0) {
+          const findTab = arrayTabs.find(
+            (ftab) =>
+              tab.name.trim().toLowerCase() === ftab.trim().toLowerCase()
+          )
+          if (findTab) acumTab.push(tab)
+        } else {
+          const childrensFinded = tab.childrens.reduce((acumChild, child) => {
+            const findTab = arrayTabs.find(
+              (ftab) =>
                 child.name.trim().toLowerCase() === ftab.trim().toLowerCase()
             )
-            return !!findChild
-          } else
-            return tab.name.trim().toLowerCase() === ftab.trim().toLowerCase()
-        })
-        if (tab.name.trim().toLowerCase() === 'index') return true
-        return !!findTab
-      })
+            if (findTab) acumChild.push(child)
+            return acumChild
+          }, [])
+          if (childrensFinded.length > 0) {
+            const tabCopy = { ...tab }
+            tabCopy.childrens = childrensFinded
+            acumTab.push(tabCopy)
+          }
+        }
+        return acumTab
+      }, [])
       return tabsPermission
     },
   },
@@ -183,10 +194,20 @@ export default {
     isActive(nickname) {
       return this.$store.state.general.tabActual.trim() === nickname.trim()
     },
-    isActiveItem(nickname) {
-      return this.$store.state.general.tabActual.trim() === nickname.trim()
-        ? 'item-tab-active'
-        : 'item-tab'
+    isActiveItem(nickname, haveChildrens = false, tab = {}) {
+      let complement = ''
+      if (haveChildrens) {
+        const childrenFinded = tab.childrens.find(
+          (children) =>
+            this.$store.state.general.tabActual.trim() ===
+            children.name.trim().toLowerCase()
+        )
+        if (childrenFinded) complement = 'text-info'
+      }
+      return this.$store.state.general.tabActual.trim() ===
+        nickname.trim().toLowerCase()
+        ? 'item-tab-active ' + complement
+        : 'item-tab ' + complement
     },
   },
 }
