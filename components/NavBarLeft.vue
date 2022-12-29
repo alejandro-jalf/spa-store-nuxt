@@ -45,24 +45,45 @@
       </b-button>
     </div>
     <div class="container-item-list">
-      <b-list-group-item
-        v-for="(tab, indexTab) in tabsAccess"
-        :key="indexTab"
-        :to="tab.path"
-        replace
-        :class="isActiveItem(tab.nickname)"
-      >
-        <b-icon
-          v-if="tab.icon !== 'stack-icon'"
-          :icon="tab.icon"
-          class="mr-1"
-        />
-        <b-iconstack v-else-if="tab.name === 'existenciasproveedor'">
-          <b-icon stacked icon="collection" />
-          <b-icon stacked icon="box-seam" shift-v="-1.5" scale="0.6" />
-        </b-iconstack>
-        {{ tab.nickname }}
-      </b-list-group-item>
+      <div v-for="(tab, indexTab) in tabsAccess" :key="indexTab">
+        <b-list-group-item
+          v-if="tab.childrens.length === 0"
+          :to="tab.path"
+          replace
+          :class="isActiveItem(tab.nickname)"
+        >
+          <b-icon v-if="tab.icon" :icon="tab.icon" class="mr-1" />
+          {{ tab.nickname }}
+        </b-list-group-item>
+        <div v-else>
+          <b-list-group-item
+            v-b-toggle="'collapse-' + tab.nickname"
+            replace
+            :class="isActiveItem(tab.nickname)"
+            class="cursor-pointer"
+          >
+            <b-icon v-if="tab.icon" :icon="tab.icon" class="mr-1" />
+            {{ tab.nickname }}
+            <b-icon
+              :icon="iconOpenTab('collapse-' + tab.nickname)"
+              class="float-right"
+            />
+          </b-list-group-item>
+          <b-collapse :id="'collapse-' + tab.nickname" accordion="acordion">
+            <b-list-group-item
+              v-for="(child, indexChild) in tab.childrens"
+              :key="indexChild"
+              :to="child.path"
+              replace
+              :class="isActiveItem(child.nickname)"
+              class="sub-tab"
+            >
+              <b-icon v-if="child.icon" :icon="child.icon" class="mr-1" />
+              {{ child.nickname }}
+            </b-list-group-item>
+          </b-collapse>
+        </div>
+      </div>
     </div>
     <div class="background-btn-close"></div>
     <b-button
@@ -85,6 +106,10 @@ export default {
     return {
       tabs: this.$store.state.general.listTabs,
       userName: this.$store.state.user.name,
+      subTab: {
+        open: '',
+        close: '',
+      },
     }
   },
   computed: {
@@ -107,14 +132,28 @@ export default {
       const user = this.$store.state.user.user
       const tabsPermission = this.tabs.filter((tab) => {
         const arrayTabs = user.access_to_user.trim().split(',')
-        const findTab = arrayTabs.find(
-          (ftab) => tab.name.trim().toLowerCase() === ftab.trim().toLowerCase()
-        )
+        const findTab = arrayTabs.find((ftab) => {
+          if (tab.childrens.length > 0) {
+            const findChild = tab.childrens.find(
+              (child) =>
+                child.name.trim().toLowerCase() === ftab.trim().toLowerCase()
+            )
+            return !!findChild
+          } else
+            return tab.name.trim().toLowerCase() === ftab.trim().toLowerCase()
+        })
         if (tab.name.trim().toLowerCase() === 'index') return true
         return !!findTab
       })
       return tabsPermission
     },
+  },
+  mounted() {
+    const that = this
+    this.$root.$on('bv::collapse::state', (collapseId, isJustShown) => {
+      if (isJustShown) that.subTab.open = collapseId
+      else that.subTab.close = collapseId
+    })
   },
   methods: {
     ...mapMutations({
@@ -134,6 +173,12 @@ export default {
         utils,
       ])
       this.setLoading(false)
+    },
+    iconOpenTab(idTab) {
+      return this.subTab.open !== this.subTab.close &&
+        idTab === this.subTab.open
+        ? 'caret-down-fill'
+        : 'caret-right-fill'
     },
     isActive(nickname) {
       return this.$store.state.general.tabActual.trim() === nickname.trim()
@@ -178,6 +223,12 @@ export default {
   background: rgba(0, 183, 255, 0.705);
   color: #fff;
 }
+
+.sub-tab {
+  border-left: 8px solid rgba(0, 255, 8, 0.705);
+  padding-left: 35px;
+}
+
 .thisThemeDark {
   color: #161616;
 }

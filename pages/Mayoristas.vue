@@ -166,6 +166,7 @@
       foot-variant="dark"
       outlined
       responsive
+      select-mode="single"
       :per-page="perPage"
       :current-page="currentPage"
       :fields="fields"
