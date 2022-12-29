@@ -122,6 +122,12 @@ export const state = () => ({
           nickname: 'Transferencias',
           icon: 'file-earmark-font-fill',
         },
+        {
+          path: '/consolidacionesarticulos',
+          name: 'consolidacionesarticulos',
+          nickname: 'Articulos',
+          icon: 'file-ppt-fill',
+        },
       ],
       name: '',
       nickname: 'Consolidaciones',
@@ -147,13 +153,6 @@ export const state = () => ({
       nickname: 'Existencias',
       icon: 'collection',
     },
-    // {
-    //   path: '/ventasdiarias',
-    //   childrens: [],
-    //   name: 'ventasdiarias',
-    //   nickname: 'Ventas Diarias',
-    //   icon: 'graph-up',
-    // },
     {
       path: '',
       childrens: [
@@ -181,27 +180,6 @@ export const state = () => ({
       nickname: 'Valuacion Inventario',
       icon: 'patch-check',
     },
-    // {
-    //   path: '/stocks',
-    //   childrens: [],
-    //   name: 'stocks',
-    //   nickname: 'Stocks',
-    //   icon: 'cart-check-fill',
-    // },
-    // {
-    //   path: '/preciosbajos',
-    //   childrens: [],
-    //   name: 'preciosbajos',
-    //   nickname: 'Precios Bajos',
-    //   icon: 'sort-down',
-    // },
-    // {
-    //   path: '/pedidosugerido',
-    //   childrens: [],
-    //   name: 'pedidosugerido',
-    //   nickname: 'Pedido Sugerido',
-    //   icon: 'file-earmark-ruled-fill',
-    // },
     {
       path: '/folios',
       childrens: [],
@@ -209,13 +187,6 @@ export const state = () => ({
       nickname: 'Folios',
       icon: 'card-heading',
     },
-    // {
-    //   path: '/checadorprecios',
-    //   childrens: [],
-    //   name: 'checadorprecios',
-    //   nickname: 'Checador Precios',
-    //   icon: 'upc-scan',
-    // },
     {
       path: '',
       childrens: [
@@ -255,13 +226,6 @@ export const state = () => ({
       nickname: 'Proveedores',
       icon: 'box-seam',
     },
-    // {
-    //   path: '/menucocina',
-    //   childrens: [],
-    //   name: 'menucocina',
-    //   nickname: 'Menu Cocina',
-    //   icon: 'layout-text-sidebar-reverse',
-    // },
     {
       path: '',
       childrens: [
@@ -283,49 +247,44 @@ export const state = () => ({
       icon: 'file-earmark-easel-fill',
     },
     {
+      path: '',
+      childrens: [
+        {
+          path: '/reposicionescompras',
+          name: 'reposicionescompras',
+          nickname: 'Repo. Compras',
+          icon: 'file-earmark-pdf-fill',
+        },
+        {
+          path: '/reposicionesgastos',
+          name: 'reposicionesgastos',
+          nickname: 'Reposiciones Gastos',
+          icon: 'file-earmark-pdf-fill',
+        },
+        {
+          path: '/bitacorareporte',
+          name: 'bitacorareporte',
+          nickname: 'Bitacora',
+          icon: 'file-earmark-pdf-fill',
+        },
+      ],
+      name: '',
+      nickname: 'Reportes',
+      icon: 'file-earmark-pdf-fill',
+    },
+    {
       path: '/novedades',
       childrens: [],
       name: 'novedades',
       nickname: 'Novedades',
       icon: 'star-fill',
     },
-    // {
-    //   path: '/existenciasproveedor',
-    //   childrens: [],
-    //   name: 'existenciasproveedor',
-    //   nickname: 'Existencia Proveedor',
-    //   icon: 'stack-icon',
-    // },
     {
       path: '/mayoristas',
       childrens: [],
       name: 'mayoristas',
       nickname: 'Mayoristas',
       icon: 'front',
-    },
-    {
-      path: '/consolidacionesarticulos',
-      name: 'consolidacionesarticulos',
-      nickname: 'Consolidacion Articulos',
-      icon: 'list-stars',
-    },
-    {
-      path: '/reposicionescompras',
-      name: 'reposicionescompras',
-      nickname: 'Resposiciones Compras',
-      icon: 'file-earmark-pdf-fill',
-    },
-    {
-      path: '/reposicionesgastos',
-      name: 'reposicionesgastos',
-      nickname: 'Resposiciones Gastos',
-      icon: 'file-earmark-pdf-fill',
-    },
-    {
-      path: '/bitacorareporte',
-      name: 'bitacorareporte',
-      nickname: 'Bitacora',
-      icon: 'file-earmark-pdf-fill',
     },
   ].sort((a, b) => (a.nickname < b.nickname ? -1 : 1)),
   tabActual: 'Inicio',
