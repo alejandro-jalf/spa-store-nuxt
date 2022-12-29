@@ -192,6 +192,12 @@ export const state = () => ({
       nickname: 'Resposiciones Gastos',
       icon: 'file-earmark-pdf-fill',
     },
+    {
+      path: '/bitacorareporte',
+      name: 'bitacorareporte',
+      nickname: 'Bitacora',
+      icon: 'file-earmark-pdf-fill',
+    },
   ].sort((a, b) => (a.nickname < b.nickname ? -1 : 1)),
   tabActual: 'Inicio',
   themePreferences: localStorage.getItem('spastore_theme_color'),
