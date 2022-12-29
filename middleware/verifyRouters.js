@@ -2,7 +2,13 @@ export default function verifyRouters({ store, redirect, route, from }) {
   const login = store.state.user.login
   const user = store.state.user.user
   const sesionInstancia = store.state.user.sesionInstancia
-  const listTabs = store.state.general.listTabs
+  const listTabs = store.state.general.listTabs.reduce((acumTab, tab) => {
+    const childrens = [...tab.childrens]
+    if (childrens.length > 0) {
+      childrens.forEach((children) => acumTab.push(children))
+    } else acumTab.push(tab)
+    return acumTab
+  }, [])
 
   if (!login && route.path.toLowerCase() !== '/login') redirect('/login')
 

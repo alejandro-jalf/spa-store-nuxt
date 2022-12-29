@@ -275,7 +275,10 @@ export default {
     listTabs() {
       const list = this.$store.state.general.listTabs.reduce(
         (acumList, item) => {
-          acumList.push(item.name)
+          const childrens = [...item.childrens]
+          if (childrens.length > 0) {
+            childrens.forEach((children) => acumList.push(children.name))
+          } else acumList.push(item.name)
           return acumList
         },
         []

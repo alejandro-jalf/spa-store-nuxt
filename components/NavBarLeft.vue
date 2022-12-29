@@ -225,7 +225,7 @@ export default {
 }
 
 .sub-tab {
-  border-left: 8px solid rgba(0, 255, 8, 0.705);
+  border-left: 8px solid rgba(0, 140, 255, 0.705);
   padding-left: 35px;
 }
 
