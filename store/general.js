@@ -63,7 +63,7 @@ export const state = () => ({
         {
           path: '/ventav',
           name: 'ventav',
-          nickname: 'Ventas',
+          nickname: 'Punto Venta',
           icon: 'currency-dollar',
         },
         {
@@ -75,14 +75,7 @@ export const state = () => ({
       ],
       name: '',
       nickname: 'Ventas',
-      icon: 'shop',
-    },
-    {
-      path: '/usuarios',
-      childrens: [],
-      name: 'usuarios',
-      nickname: 'Usuarios',
-      icon: 'people-fill',
+      icon: 'cash',
     },
     {
       path: '',
@@ -99,26 +92,19 @@ export const state = () => ({
       icon: 'briefcase-fill',
     },
     {
-      path: '/conexiones',
-      childrens: [],
-      name: 'conexiones',
-      nickname: 'Conexiones',
-      icon: 'cloud-check-fill',
-    },
-    {
       path: '',
       childrens: [
-        {
-          path: '/consolidaciones',
-          name: 'consolidaciones',
-          nickname: 'Transferencias',
-          icon: 'file-earmark-font-fill',
-        },
         {
           path: '/consolidacionesarticulos',
           name: 'consolidacionesarticulos',
           nickname: 'Articulos',
           icon: 'file-ppt-fill',
+        },
+        {
+          path: '/consolidaciones',
+          name: 'consolidaciones',
+          nickname: 'Transferencias',
+          icon: 'file-earmark-font-fill',
         },
       ],
       name: '',
@@ -166,33 +152,19 @@ export const state = () => ({
       icon: 'cart-plus-fill',
     },
     {
-      path: '/valuacioninventario',
-      childrens: [],
-      name: 'ValuacionInventario',
-      nickname: 'Valuacion Inventario',
-      icon: 'patch-check',
-    },
-    {
-      path: '/folios',
-      childrens: [],
-      name: 'folios',
-      nickname: 'Folios',
-      icon: 'card-heading',
-    },
-    {
       path: '',
       childrens: [
-        {
-          path: '/codificadorarticulos',
-          name: 'codificadorarticulos',
-          nickname: 'Codificador',
-          icon: 'code',
-        },
         {
           path: '/checadorprecios',
           name: 'checadorprecios',
           nickname: 'Checador',
           icon: 'upc-scan',
+        },
+        {
+          path: '/codificadorarticulos',
+          name: 'codificadorarticulos',
+          nickname: 'Codificador',
+          icon: 'code',
         },
         {
           path: '/preciosbajos',
@@ -242,6 +214,12 @@ export const state = () => ({
       path: '',
       childrens: [
         {
+          path: '/bitacorareporte',
+          name: 'bitacorareporte',
+          nickname: 'Bitacora',
+          icon: 'file-earmark-pdf-fill',
+        },
+        {
           path: '/reposicionescompras',
           name: 'reposicionescompras',
           nickname: 'Repo. Compras',
@@ -251,12 +229,6 @@ export const state = () => ({
           path: '/reposicionesgastos',
           name: 'reposicionesgastos',
           nickname: 'Reposiciones Gastos',
-          icon: 'file-earmark-pdf-fill',
-        },
-        {
-          path: '/bitacorareporte',
-          name: 'bitacorareporte',
-          nickname: 'Bitacora',
           icon: 'file-earmark-pdf-fill',
         },
       ],
@@ -277,6 +249,42 @@ export const state = () => ({
       name: 'mayoristas',
       nickname: 'Mayoristas',
       icon: 'front',
+    },
+    {
+      path: '',
+      childrens: [
+        {
+          path: '/conexiones',
+          childrens: [],
+          name: 'conexiones',
+          nickname: 'Conexiones',
+          icon: 'cloud-check-fill',
+        },
+        {
+          path: '/folios',
+          childrens: [],
+          name: 'folios',
+          nickname: 'Folios',
+          icon: 'card-heading',
+        },
+        {
+          path: '/usuarios',
+          childrens: [],
+          name: 'usuarios',
+          nickname: 'Usuarios',
+          icon: 'people-fill',
+        },
+        {
+          path: '/valuacioninventario',
+          childrens: [],
+          name: 'ValuacionInventario',
+          nickname: 'Valuacion Inventario',
+          icon: 'patch-check',
+        },
+      ],
+      name: '',
+      nickname: 'Administracion',
+      icon: 'tools',
     },
   ].sort((a, b) => (a.nickname < b.nickname ? -1 : 1)),
   tabActual: 'Inicio',
