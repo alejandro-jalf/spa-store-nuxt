@@ -220,6 +220,12 @@ export const state = () => ({
           icon: 'file-earmark-pdf-fill',
         },
         {
+          path: '/listacreditostrabajadores',
+          name: 'listacreditostrabajadores',
+          nickname: 'Cred Trabajadores',
+          icon: 'file-earmark-pdf-fill',
+        },
+        {
           path: '/reposicionescompras',
           name: 'reposicionescompras',
           nickname: 'Repo. Compras',
