@@ -309,10 +309,20 @@ export default {
     },
 
     tabsAccess() {
+      const listTabs = this.$store.state.general.listTabs.reduce(
+        (acumTab, tab) => {
+          const childrens = [...tab.childrens]
+          if (childrens.length > 0) {
+            childrens.forEach((children) => acumTab.push(children))
+          } else acumTab.push(tab)
+          return acumTab
+        },
+        []
+      )
       const user = this.$store.state.user.user
-      const tabs = this.$store.state.general.listTabs
+      // const tabs = this.$store.state.general.listTabs
 
-      const tabsPermission = tabs.filter((tab) => {
+      const tabsPermission = listTabs.filter((tab) => {
         const arrayTabs = user.access_to_user.trim().split(',')
         const findTab = arrayTabs.find(
           (ftab) => tab.name.trim().toLowerCase() === ftab.trim().toLowerCase()
@@ -355,9 +365,7 @@ export default {
         const tabActual = this.$store.state.general.tabActual
         const countTabs = tabs.length
 
-        const positionActual = tabs.findIndex(
-          (tab) => tab.nickname === tabActual
-        )
+        const positionActual = tabs.findIndex((tab) => tab.name === tabActual)
         let newPosition = 0
 
         if (this.moveTouch === 'right') {

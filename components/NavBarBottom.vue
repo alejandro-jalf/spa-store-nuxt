@@ -136,8 +136,18 @@ export default {
       return this.$store.state.general.themePreferences === 'sepia'
     },
     tabsAccess() {
+      const listTabs = this.$store.state.general.listTabs.reduce(
+        (acumTab, tab) => {
+          const childrens = [...tab.childrens]
+          if (childrens.length > 0) {
+            childrens.forEach((children) => acumTab.push(children))
+          } else acumTab.push(tab)
+          return acumTab
+        },
+        []
+      )
       const user = this.$store.state.user.user
-      const tabsPermission = this.tabs.filter((tab) => {
+      const tabsPermission = listTabs.filter((tab) => {
         const arrayTabs = user.access_to_user
           ? user.access_to_user.trim().split(',')
           : []
@@ -148,6 +158,34 @@ export default {
         return !!findTab
       })
       return tabsPermission
+      // const user = this.$store.state.user.user
+      // const arrayTabs = user.access_to_user.trim().split(',')
+      // const tabsSystem = [...this.$store.state.general.listTabs]
+      // const tabsPermission = tabsSystem.reduce((acumTab, tab) => {
+      //   if (tab.childrens.length === 0) {
+      //     const findTab = arrayTabs.find(
+      //       (ftab) =>
+      //         tab.name.trim().toLowerCase() === ftab.trim().toLowerCase()
+      //     )
+      //     if (findTab) acumTab.push(tab)
+      //   } else {
+      //     const childrensFinded = tab.childrens.reduce((acumChild, child) => {
+      //       const findTab = arrayTabs.find(
+      //         (ftab) =>
+      //           child.name.trim().toLowerCase() === ftab.trim().toLowerCase()
+      //       )
+      //       if (findTab) acumChild.push(child)
+      //       return acumChild
+      //     }, [])
+      //     if (childrensFinded.length > 0) {
+      //       const tabCopy = { ...tab }
+      //       tabCopy.childrens = childrensFinded
+      //       acumTab.push(tabCopy)
+      //     }
+      //   }
+      //   return acumTab
+      // }, [])
+      // return tabsPermission
     },
   },
   mounted() {
