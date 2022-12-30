@@ -28,19 +28,38 @@
 
       <b-collapse id="nav-collapse" is-nav>
         <b-navbar-nav>
-          <b-nav-item
-            v-for="(tab, index) in tabsComplete"
-            :key="index"
-            :to="tab.path"
-            :active="isActive(tab.nickname)"
-            replace
-          >
-            {{ tab.nickname }}
-          </b-nav-item>
+          <span v-for="(tab, index) in tabsComplete" :key="index">
+            <b-nav-item
+              v-if="tab.childrens.length === 0"
+              :to="tab.path"
+              :active="isActive(tab.nickname)"
+              replace
+            >
+              <b-icon :icon="tab.icon" />
+              {{ tab.nickname }}
+            </b-nav-item>
+            <b-nav-item-dropdown v-else right>
+              <template #button-content>
+                <b-icon :icon="tab.icon" />
+                {{ tab.nickname }}
+              </template>
+              <b-dropdown-item
+                v-for="(child, indexChild) in tab.childrens"
+                :key="indexChild"
+                :to="child.path"
+                :active="isActive(child.nickname)"
+                replace
+              >
+                <b-icon :icon="child.icon" />
+                {{ child.nickname }}
+              </b-dropdown-item>
+            </b-nav-item-dropdown>
+          </span>
         </b-navbar-nav>
 
         <b-dropdown
           v-if="tabsSplit.length > 0"
+          ref="munuSplited"
           size="lg"
           :variant="variantLigth"
           no-caret
@@ -49,15 +68,43 @@
           <template #button-content>
             <b-icon icon="list-stars" />
           </template>
-          <b-dropdown-item
-            v-for="(tab, indexSplit) in tabsSplit"
-            :key="indexSplit"
-            :to="tab.path"
-            :active="isActive(tab.nickname)"
-            replace
-          >
-            {{ tab.nickname }}
-          </b-dropdown-item>
+          <span v-for="(tab, indexSplit) in tabsSplit" :key="indexSplit">
+            <b-dropdown-item
+              v-if="tab.childrens.length === 0"
+              :to="tab.path"
+              :active="isActive(tab.nickname)"
+              replace
+            >
+              {{ tab.nickname }}
+            </b-dropdown-item>
+            <div
+              v-else
+              class="dropdown-item item-submenu"
+              @mouseenter="showSubMenu('sub' + tab.nickname)"
+              @mouseleave="hideSubMenu"
+            >
+              <b-icon :icon="tab.icon" />
+              {{ tab.nickname }}
+              <b-icon icon="caret-down-fill" scale="0.7" />
+              <b-list-group
+                v-if="menuEnter('sub' + tab.nickname)"
+                class="card-submenu"
+              >
+                <b-list-group-item
+                  v-for="(child, indexChild) in tab.childrens"
+                  :key="indexChild"
+                  class="dropdown-item submenu-item"
+                  :to="child.path"
+                  :active="isActive(child.nickname)"
+                  replace
+                  @click="closeSubMenu"
+                >
+                  <b-icon :icon="child.icon" />
+                  {{ child.nickname }}
+                </b-list-group-item>
+              </b-list-group>
+            </div>
+          </span>
         </b-dropdown>
 
         <b-navbar-nav class="ml-auto">
@@ -161,6 +208,7 @@ export default {
       display: 0,
       tabs: this.$store.state.general.listTabs,
       userName: this.$store.state.user.name,
+      submenu: '',
     }
   },
   computed: {
@@ -172,19 +220,19 @@ export default {
     tabsComplete() {
       const totalTabs =
         this.$store.state.general.widthWindow < 1200
-          ? 7
+          ? 6
           : this.$store.state.general.widthWindow < 1370
-          ? 8
-          : 9
+          ? 7
+          : 8
       return this.tabsAccess.filter((tab, indexTab) => indexTab <= totalTabs)
     },
     tabsSplit() {
       const totalTabs =
         this.$store.state.general.widthWindow < 1200
-          ? 7
+          ? 6
           : this.$store.state.general.widthWindow < 1370
-          ? 8
-          : 9
+          ? 7
+          : 8
       return this.tabsAccess.filter((tab, indexTab) => indexTab > totalTabs)
     },
     variantTheme() {
@@ -214,15 +262,43 @@ export default {
       return this.$store.state.general.tabActual
     },
     tabsAccess() {
+      // const user = this.$store.state.user.user
+      // const tabsPermission = this.tabs.filter((tab) => {
+      //   const arrayTabs = user.access_to_user.trim().split(',')
+      //   const findTab = arrayTabs.find(
+      //     (ftab) => tab.name.trim().toLowerCase() === ftab.trim().toLowerCase()
+      //   )
+      //   if (tab.name.trim().toLowerCase() === 'index') return true
+      //   return !!findTab
+      // })
+      // return tabsPermission
       const user = this.$store.state.user.user
-      const tabsPermission = this.tabs.filter((tab) => {
-        const arrayTabs = user.access_to_user.trim().split(',')
-        const findTab = arrayTabs.find(
-          (ftab) => tab.name.trim().toLowerCase() === ftab.trim().toLowerCase()
-        )
-        if (tab.name.trim().toLowerCase() === 'index') return true
-        return !!findTab
-      })
+      const arrayTabs = user.access_to_user.trim().split(',')
+      const tabsSystem = [...this.$store.state.general.listTabs]
+      const tabsPermission = tabsSystem.reduce((acumTab, tab) => {
+        if (tab.childrens.length === 0) {
+          const findTab = arrayTabs.find(
+            (ftab) =>
+              tab.name.trim().toLowerCase() === ftab.trim().toLowerCase()
+          )
+          if (findTab) acumTab.push(tab)
+        } else {
+          const childrensFinded = tab.childrens.reduce((acumChild, child) => {
+            const findTab = arrayTabs.find(
+              (ftab) =>
+                child.name.trim().toLowerCase() === ftab.trim().toLowerCase()
+            )
+            if (findTab) acumChild.push(child)
+            return acumChild
+          }, [])
+          if (childrensFinded.length > 0) {
+            const tabCopy = { ...tab }
+            tabCopy.childrens = childrensFinded
+            acumTab.push(tabCopy)
+          }
+        }
+        return acumTab
+      }, [])
       return tabsPermission
     },
   },
@@ -237,6 +313,18 @@ export default {
     })
   },
   methods: {
+    showSubMenu(submenu = '') {
+      this.submenu = submenu
+    },
+    hideSubMenu() {
+      this.submenu = ''
+    },
+    menuEnter(submenu) {
+      return this.submenu === submenu
+    },
+    closeSubMenu() {
+      this.$refs.munuSplited.hide(true)
+    },
     closeMenu() {
       this.$refs.submenu.hide(true)
     },
@@ -284,5 +372,29 @@ export default {
   width: 300px;
   padding: 10px;
   border-radius: 3px;
+}
+
+.item-submenu {
+  position: relative;
+  cursor: default;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.card-submenu {
+  position: absolute;
+  right: 100%;
+  top: 0px;
+  width: 220px;
+}
+
+.submenu-item {
+  cursor: default;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 </style>
