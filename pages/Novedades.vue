@@ -7,7 +7,13 @@
       :class="variantTheme"
       :title="'Version ' + lastVersion.NumVersion"
     >
-      <p>{{ lastVersion.Detalles }}</p>
+      <p
+        v-for="(parrafo, indexP) in parrafos(lastVersion.Detalles)"
+        :key="indexP"
+      >
+        {{ parrafo }}
+        <br />
+      </p>
       <div>
         <span class="font-weight-bold">Fecha de lanzamiento:</span>
         {{ utils.parseFecha(lastVersion.FechaDeLanzamiento, true) }}
@@ -107,6 +113,9 @@ export default {
     },
   },
   methods: {
+    parrafos(detalles) {
+      return detalles.split('<br/>')
+    },
     tabsUpdatedVersion(PaginasActualizadas) {
       const accessUser = this.$store.state.user.user.access_to_user.split(',')
       const lastVersion = this.$store.state.user.user.novedades
