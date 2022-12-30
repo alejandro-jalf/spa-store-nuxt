@@ -53,29 +53,49 @@
           </b-button>
         </div>
         <b-list-group class="mt-3 mb-4">
-          <b-list-group-item
-            v-for="(tab, indexTab) in tabsAccess"
-            :key="indexTab"
-            :to="tab.path"
-            :active="isActive(tab.nickname)"
-            :variant="variantList"
-            :disabled="false"
-            replace
-            class="d-flex justify-content-between align-items-center"
-          >
-            <div class="any">
-              <b-icon
-                v-if="tab.icon !== 'stack-icon'"
-                :icon="tab.icon"
-                class="mr-1"
-              />
-              <b-iconstack v-else-if="tab.name === 'existenciasproveedor'">
-                <b-icon stacked icon="collection" />
-                <b-icon stacked icon="box-seam" shift-v="-1.5" scale="0.6" />
-              </b-iconstack>
+          <div v-for="(tab, indexTab) in tabsAccess" :key="indexTab">
+            <b-list-group-item
+              v-if="tab.childrens.length === 0"
+              :to="tab.path"
+              replace
+              :class="isActiveItem(tab.name)"
+            >
+              <b-icon v-if="tab.icon" :icon="tab.icon" class="mr-1" />
               {{ tab.nickname }}
+            </b-list-group-item>
+            <div v-else>
+              <b-list-group-item
+                v-b-toggle="'collapse-' + tab.nickname"
+                replace
+                :class="isActiveItem(tab.name, true, tab)"
+                class="cursor-pointer"
+              >
+                <b-icon v-if="tab.icon" :icon="tab.icon" class="mr-1" />
+                {{ tab.nickname }}
+                <b-icon
+                  :icon="iconOpenTab('collapse-' + tab.nickname)"
+                  class="float-right"
+                />
+              </b-list-group-item>
+              <b-collapse
+                :id="'collapse-' + tab.nickname"
+                accordion="acordion"
+                :visible="visibleCollapse(true, tab)"
+              >
+                <b-list-group-item
+                  v-for="(child, indexChild) in tab.childrens"
+                  :key="indexChild"
+                  :to="child.path"
+                  replace
+                  :class="isActiveItem(child.name)"
+                  class="sub-tab"
+                >
+                  <b-icon v-if="child.icon" :icon="child.icon" class="mr-1" />
+                  {{ child.nickname }}
+                </b-list-group-item>
+              </b-collapse>
             </div>
-          </b-list-group-item>
+          </div>
         </b-list-group>
         <b-button
           block
@@ -110,6 +130,10 @@ export default {
     return {
       tabs: this.$store.state.general.listTabs,
       userName: this.$store.state.user.name,
+      subTab: {
+        open: '',
+        close: '',
+      },
     }
   },
   computed: {
@@ -132,15 +156,43 @@ export default {
       return this.$store.state.general.themesComponents.themeVariantButton
     },
     tabsAccess() {
+      // const user = this.$store.state.user.user
+      // const tabsPermission = this.tabs.filter((tab) => {
+      //   const arrayTabs = user.access_to_user.trim().split(',')
+      //   const findTab = arrayTabs.find(
+      //     (ftab) => tab.name.trim().toLowerCase() === ftab.trim().toLowerCase()
+      //   )
+      //   if (tab.name.trim().toLowerCase() === 'index') return true
+      //   return !!findTab
+      // })
+      // return tabsPermission
       const user = this.$store.state.user.user
-      const tabsPermission = this.tabs.filter((tab) => {
-        const arrayTabs = user.access_to_user.trim().split(',')
-        const findTab = arrayTabs.find(
-          (ftab) => tab.name.trim().toLowerCase() === ftab.trim().toLowerCase()
-        )
-        if (tab.name.trim().toLowerCase() === 'index') return true
-        return !!findTab
-      })
+      const arrayTabs = user.access_to_user.trim().split(',')
+      const tabsSystem = [...this.$store.state.general.listTabs]
+      const tabsPermission = tabsSystem.reduce((acumTab, tab) => {
+        if (tab.childrens.length === 0) {
+          const findTab = arrayTabs.find(
+            (ftab) =>
+              tab.name.trim().toLowerCase() === ftab.trim().toLowerCase()
+          )
+          if (findTab) acumTab.push(tab)
+        } else {
+          const childrensFinded = tab.childrens.reduce((acumChild, child) => {
+            const findTab = arrayTabs.find(
+              (ftab) =>
+                child.name.trim().toLowerCase() === ftab.trim().toLowerCase()
+            )
+            if (findTab) acumChild.push(child)
+            return acumChild
+          }, [])
+          if (childrensFinded.length > 0) {
+            const tabCopy = { ...tab }
+            tabCopy.childrens = childrensFinded
+            acumTab.push(tabCopy)
+          }
+        }
+        return acumTab
+      }, [])
       return tabsPermission
     },
     variantCloseSesion() {
@@ -156,9 +208,45 @@ export default {
       return this.$store.state.general.themesComponents.themeItemList2
     },
   },
+  mounted() {
+    const that = this
+    this.$root.$on('bv::collapse::state', (collapseId, isJustShown) => {
+      if (isJustShown) that.subTab.open = collapseId
+      else that.subTab.close = collapseId
+    })
+  },
   methods: {
-    isActive(nickname) {
-      return this.$store.state.general.tabActual.trim() === nickname.trim()
+    visibleCollapse(haveChildrens = false, tab = {}) {
+      if (haveChildrens) {
+        const childrenFinded = tab.childrens.find(
+          (children) =>
+            this.$store.state.general.tabActual.trim() ===
+            children.name.trim().toLowerCase()
+        )
+        return !!childrenFinded
+      }
+      return false
+    },
+    isActiveItem(nickname, haveChildrens = false, tab = {}) {
+      let complement = ''
+      if (haveChildrens) {
+        const childrenFinded = tab.childrens.find(
+          (children) =>
+            this.$store.state.general.tabActual.trim() ===
+            children.name.trim().toLowerCase()
+        )
+        if (childrenFinded) complement = 'item-tab'
+      }
+      return this.$store.state.general.tabActual.trim() ===
+        nickname.trim().toLowerCase()
+        ? complement + ' item-tab-active'
+        : complement
+    },
+    iconOpenTab(idTab) {
+      return this.subTab.open !== this.subTab.close &&
+        idTab === this.subTab.open
+        ? 'caret-down-fill'
+        : 'caret-right-fill'
     },
     ...mapActions({
       changeThemePreferences: 'general/changeThemePreferences',
@@ -181,6 +269,21 @@ export default {
 </script>
 
 <style scoped>
+.item-tab-active {
+  background: rgba(0, 183, 255);
+  color: #fff;
+}
+
+.item-tab {
+  background: rgba(0, 140, 255);
+  color: #fff;
+}
+
+.sub-tab {
+  border-left: 8px solid rgba(0, 140, 255);
+  padding-left: 35px;
+}
+
 .btnUpdate {
   margin-top: 8px;
   width: 220px;
