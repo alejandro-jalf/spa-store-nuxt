@@ -199,12 +199,12 @@ export default {
       if (haveChildrens) {
         const childrenFinded = tab.childrens.find(
           (children) =>
-            this.$store.state.general.tabActual.trim() ===
+            this.$store.state.general.tabActual.trim().toLowerCase() ===
             children.name.trim().toLowerCase()
         )
         if (childrenFinded) complement = 'text-info'
       }
-      return this.$store.state.general.tabActual.trim() ===
+      return this.$store.state.general.tabActual.trim().toLowerCase() ===
         nickname.trim().toLowerCase()
         ? 'item-tab-active ' + complement
         : 'item-tab ' + complement

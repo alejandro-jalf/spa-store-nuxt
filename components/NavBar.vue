@@ -32,7 +32,7 @@
             <b-nav-item
               v-if="tab.childrens.length === 0"
               :to="tab.path"
-              :active="isActive(tab.nickname)"
+              :active="isActive(tab.name)"
               replace
             >
               <b-icon :icon="tab.icon" />
@@ -40,14 +40,16 @@
             </b-nav-item>
             <b-nav-item-dropdown v-else right>
               <template #button-content>
-                <b-icon :icon="tab.icon" />
-                {{ tab.nickname }}
+                <span :class="textActive(tab)">
+                  <b-icon :icon="tab.icon" />
+                  {{ tab.nickname }}
+                </span>
               </template>
               <b-dropdown-item
                 v-for="(child, indexChild) in tab.childrens"
                 :key="indexChild"
                 :to="child.path"
-                :active="isActive(child.nickname)"
+                :active="isActive(child.name)"
                 replace
               >
                 <b-icon :icon="child.icon" />
@@ -64,6 +66,7 @@
           :variant="variantLigth"
           no-caret
           right
+          :toggle-class="isActiveSplit()"
         >
           <template #button-content>
             <b-icon icon="list-stars" />
@@ -72,7 +75,7 @@
             <b-dropdown-item
               v-if="tab.childrens.length === 0"
               :to="tab.path"
-              :active="isActive(tab.nickname)"
+              :active="isActive(tab.name)"
               replace
             >
               {{ tab.nickname }}
@@ -80,6 +83,7 @@
             <div
               v-else
               class="dropdown-item item-submenu"
+              :class="textActive(tab)"
               @mouseenter="showSubMenu('sub' + tab.nickname)"
               @mouseleave="hideSubMenu"
             >
@@ -95,7 +99,7 @@
                   :key="indexChild"
                   class="dropdown-item submenu-item"
                   :to="child.path"
-                  :active="isActive(child.nickname)"
+                  :active="isActive(child.name)"
                   replace
                   @click="closeSubMenu"
                 >
@@ -318,8 +322,48 @@ export default {
     closeMenu() {
       this.$refs.submenu.hide(true)
     },
-    isActive(nickname) {
-      return this.$store.state.general.tabActual.trim() === nickname.trim()
+    isActive(nickname, haveChildrens = false, tab = {}) {
+      if (haveChildrens) {
+        const childrenFinded = tab.childrens.find(
+          (children) =>
+            this.$store.state.general.tabActual.trim().toLowerCase() ===
+            children.name.trim().toLowerCase()
+        )
+        if (childrenFinded) return true
+      }
+      return (
+        this.$store.state.general.tabActual.trim().toLowerCase() ===
+        nickname.trim().toLowerCase()
+      )
+    },
+    isActiveSplit() {
+      const active = this.tabsSplit.reduce((active, tab) => {
+        if (tab.childrens.length === 0) {
+          if (
+            this.$store.state.general.tabActual.trim().toLowerCase() ===
+            tab.name.trim().toLowerCase()
+          )
+            active = 'active'
+        } else {
+          tab.childrens.forEach((child) => {
+            if (
+              this.$store.state.general.tabActual.trim().toLowerCase() ===
+              child.name.trim().toLowerCase()
+            )
+              active = 'active'
+          })
+        }
+        return active
+      }, '')
+      return active
+    },
+    textActive(tab = {}) {
+      const childrenFinded = tab.childrens.find(
+        (children) =>
+          this.$store.state.general.tabActual.trim().toLowerCase() ===
+          children.name.trim().toLowerCase()
+      )
+      return childrenFinded ? 'text-white active' : ''
     },
     ...mapActions({
       logout: 'user/logout',

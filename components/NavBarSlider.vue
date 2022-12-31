@@ -225,12 +225,12 @@ export default {
             this.$store.state.general.tabActual.trim() ===
             children.name.trim().toLowerCase()
         )
-        if (childrenFinded) complement = 'item-tab'
+        if (childrenFinded) complement = 'item-tab text-white'
       }
       return this.$store.state.general.tabActual.trim() ===
         nickname.trim().toLowerCase()
-        ? complement + ' item-tab-active'
-        : complement
+        ? complement + ' item-tab-active text-white'
+        : complement + ' text-dark'
     },
     iconOpenTab(idTab) {
       return this.subTab.open !== this.subTab.close &&
