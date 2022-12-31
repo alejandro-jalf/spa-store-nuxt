@@ -260,15 +260,30 @@ export default {
       return this.$store.state.general.themesComponents.themeVariantButton
     },
     listAccess() {
-      if (this.$store.state.user.user.access_to_user) {
-        const tabsUser = this.$store.state.user.user.access_to_user.split(',')
-        return this.listTabs.reduce((acumTab, tab) => {
-          const tabFinded = tabsUser.find((tUser) => tUser === tab.name)
-          if (tabFinded) acumTab.push(tab.nickname)
-          return acumTab
-        }, [])
-      }
-      return []
+      const user = this.$store.state.user.user
+      const arrayTabs = user.access_to_user.trim().split(',')
+      const tabsSystem = [...this.$store.state.general.listTabs]
+      const tabsPermission = tabsSystem.reduce((acumTab, tab) => {
+        if (tab.childrens.length === 0) {
+          const findTab = arrayTabs.find(
+            (ftab) =>
+              tab.name.trim().toLowerCase() === ftab.trim().toLowerCase()
+          )
+          if (findTab) acumTab.push(tab.nickname)
+        } else {
+          tab.childrens.forEach((child) => {
+            const findTab = arrayTabs.find(
+              (ftab) =>
+                child.name.trim().toLowerCase() === ftab.trim().toLowerCase()
+            )
+            if (findTab) {
+              acumTab.push(tab.nickname + '/' + child.nickname)
+            }
+          })
+        }
+        return acumTab
+      }, [])
+      return tabsPermission
     },
     blockButton() {
       return this.width <= 500

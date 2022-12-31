@@ -193,10 +193,21 @@ export default {
           'success',
         ])
         const user = response.data
-        const tabFinded = this.listTabs.find(
-          (tab) => tab.nickname === user.principal
+        const tabPrincipal = this.$store.state.general.listTabs.reduce(
+          (tabPrin, tab) => {
+            if (tab.childrens.length === 0) {
+              if (tab.nickname === user.principal) tabPrin = tab
+            } else {
+              tab.childrens.forEach((child) => {
+                if (tab.nickname + '/' + child.nickname === user.principal)
+                  tabPrin = child
+              })
+            }
+            return tabPrin
+          },
+          undefined
         )
-        if (tabFinded) this.$router.replace({ path: tabFinded.path })
+        if (tabPrincipal) this.$router.replace({ path: tabPrincipal.path })
         else {
           this.showAlertDialog([
             'La ruta establecida como principal, ya no esta disponible, esta siendo redireccionado a Inicio',
