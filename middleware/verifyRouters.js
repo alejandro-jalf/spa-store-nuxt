@@ -9,31 +9,17 @@ export default function verifyRouters({ store, redirect, route, from }) {
     } else acumTab.push(tab)
     return acumTab
   }, [])
-  // const tabsRef = store.state.general.listTabs.reduce((acumTab, tab, pos) => {
-  //   if (tab.childrens.length === 0) {
-  //     const newTab = { ...tab }
-  //     newTab.nameComplete = tab.nickname
-  //     acumTab.push(newTab)
-  //   } else {
-  //     tab.childrens.forEach((child) => {
-  //       const newTab = { ...child }
-  //       newTab.nameComplete = tab.nickname + '/' + child.nickname
-  //       acumTab.push(tab.nickname + '/' + child.nickname)
-  //     })
-  //   }
-  //   return acumTab
-  // }, [])
 
   if (!login && route.path.toLowerCase() !== '/login') redirect('/login')
 
   if (login) {
     const tabPrincipal = store.state.general.listTabs.reduce((tabPrin, tab) => {
       if (tab.childrens.length === 0) {
-        if (tab.nickname === user.principal) tabPrin = tab.path
+        if (tab.nickname === user.principal) tabPrin = tab.name
       } else {
         tab.childrens.forEach((child) => {
           if (tab.nickname + '/' + child.nickname === user.principal)
-            tabPrin = child.path
+            tabPrin = child.name
         })
       }
       return tabPrin
@@ -50,8 +36,7 @@ export default function verifyRouters({ store, redirect, route, from }) {
       ])
 
       if (tabPrincipal) {
-        const tabFinded = listTabs.find((tab) => tab.nickname === tabPrincipal)
-        console.log('Finded 1:', tabFinded)
+        const tabFinded = listTabs.find((tab) => tab.name === tabPrincipal)
         if (tabFinded) {
           store.commit('general/setTabActual', tabFinded.name)
           store.commit('user/setSesionInstancia', tabFinded.name)
@@ -73,8 +58,7 @@ export default function verifyRouters({ store, redirect, route, from }) {
       redirect(from.path)
     } else if (route.path.toLowerCase() === '/login') {
       if (tabPrincipal) {
-        const tabFinded = listTabs.find((tab) => tab.nickname === tabPrincipal)
-        console.log('Finded 2:', tabFinded)
+        const tabFinded = listTabs.find((tab) => tab.name === tabPrincipal)
         if (tabFinded) {
           store.commit('general/setTabActual', tabFinded.name)
           store.commit('user/setSesionInstancia', tabFinded.name)
@@ -94,8 +78,7 @@ export default function verifyRouters({ store, redirect, route, from }) {
 
     if (route.path !== '/' && !findedTab) {
       if (tabPrincipal) {
-        const tabFinded = listTabs.find((tab) => tab.nickname === tabPrincipal)
-        console.log('Finded 3:', tabFinded)
+        const tabFinded = listTabs.find((tab) => tab.name === tabPrincipal)
         if (tabFinded) {
           store.commit('general/setTabActual', tabFinded.name)
           store.commit('user/setSesionInstancia', tabFinded.name)
@@ -112,10 +95,7 @@ export default function verifyRouters({ store, redirect, route, from }) {
     if (route.path === '/') {
       if (sesionInstancia === 'null') {
         if (tabPrincipal) {
-          const tabFinded = listTabs.find(
-            (tab) => tab.nickname === tabPrincipal
-          )
-          console.log('Finded 4:', tabFinded)
+          const tabFinded = listTabs.find((tab) => tab.name === tabPrincipal)
           if (
             tabFinded &&
             route.path.toLowerCase() !== tabFinded.path.toLowerCase()
