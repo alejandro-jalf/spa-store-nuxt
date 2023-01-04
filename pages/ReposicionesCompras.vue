@@ -399,22 +399,22 @@ export default {
     },
     createPdf(detalles, sucursal, data, logo, preview = false) {
       // eslint-disable-next-line new-cap
-      const doc = new jsPDF('p', 'mm', 'letter')
+      const doc = new jsPDF('l', 'mm', 'letter')
 
       doc.setFontSize(18)
       doc.setFont('helvetica', 'bold')
       doc.setTextColor(0, 125, 208)
       if (logo) {
-        doc.text('REPOSICIONES DE COMPRAS', 200, 20, 'right')
+        doc.text('REPOSICIONES DE COMPRAS', 265, 20, 'right')
         doc.addImage(logo, 'PNG', 10, 15, 23, 23)
       } else doc.text('REPOSICIONES DE COMPRAS', 105, 20, 'center')
 
       doc.setTextColor(0, 0, 0)
       doc.setFontSize(15)
-      doc.text('SUPER PROMOCIONES DE ACAYUCAN SA DE CV', 200, 29, 'right')
+      doc.text('SUPER PROMOCIONES DE ACAYUCAN SA DE CV', 265, 29, 'right')
       doc.setFontSize(13)
       doc.setFont('helvetica', 'normal')
-      doc.text(detalles, 200, 36, 'right')
+      doc.text(detalles, 265, 36, 'right')
 
       const getStyle = (dato, isNotaCredito) => {
         return dato.footer
@@ -539,11 +539,11 @@ export default {
 
       doc.autoTable({
         startY: 47,
-        tableWidth: 190,
+        tableWidth: 255,
         margin: {
           left: 10,
         },
-        styles: { fontSize: 7 },
+        styles: { fontSize: 9 },
         headStyles: {
           fontStyle: 'bold',
           halign: 'center',
@@ -558,6 +558,7 @@ export default {
             'Documento',
             'Folio',
             'FechaCorte',
+            'SubTotal',
             'Descuento',
             'Ieps',
             'Iva',
@@ -577,11 +578,11 @@ export default {
       for (let page = 0; page < countPages; page++) {
         doc.setPage(page)
         pageCurrent = doc.internal.getCurrentPageInfo().pageNumber
-        doc.text(`Pagina ${pageCurrent} de ${countPages}`, 207, 275, 'right')
+        doc.text(`Pagina ${pageCurrent} de ${countPages}`, 270, 207, 'right')
         doc.text(
-          'Impreso ' + utils.getDateNow().format('DD-MM-yyyy HH:mm:ss'),
+          'Impreso ' + utils.getDateNow().format('DD-MM-yyyy hh:mm a'),
           8,
-          275
+          207
         )
       }
 

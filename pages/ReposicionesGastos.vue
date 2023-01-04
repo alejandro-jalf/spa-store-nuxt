@@ -483,7 +483,7 @@ export default {
         margin: {
           left: 10,
         },
-        styles: { fontSize: 7 },
+        styles: { fontSize: 7.5 },
         headStyles: {
           fontStyle: 'bold',
           halign: 'center',
@@ -499,6 +499,7 @@ export default {
             'Observaciones',
             'Folio',
             'FechaCorte',
+            'SubTotal',
             'Ieps',
             'Iva',
             'Total',
@@ -516,7 +517,7 @@ export default {
         pageCurrent = doc.internal.getCurrentPageInfo().pageNumber
         doc.text(`Pagina ${pageCurrent} de ${countPages}`, 207, 275, 'right')
         doc.text(
-          'Impreso ' + utils.getDateNow().format('DD-MM-yyyy HH:mm:ss'),
+          'Impreso ' + utils.getDateNow().format('DD-MM-yyyy hh:mm a'),
           8,
           275
         )
