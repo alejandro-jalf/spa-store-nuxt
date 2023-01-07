@@ -329,65 +329,36 @@ export default {
       }
 
       const body = data.reduce((acumData, dato) => {
-        if (dato.header) {
-          acumData.push([
-            {
-              content: dato.Caja,
-              rowSpan: dato.Counts,
-            },
-            {
-              content: dato.Documento,
-              styles: getStyle(dato),
-            },
-            {
-              content: dato.Tercero,
-              styles: getStyle(dato),
-            },
-            {
-              content: dato.NombreTercero,
-              styles: getStyle(dato),
-            },
-            {
-              content: dato.FormaPago,
-              styles: getStyle(dato),
-            },
-            {
-              content: dato.FormaPagoDescripcion,
-              styles: getStyle(dato),
-            },
-            {
-              content: dato.Pagado,
-              styles: getStyle(dato),
-            },
-          ])
-        } else {
-          acumData.push([
-            {
-              content: dato.Documento,
-              styles: getStyle(dato),
-            },
-            {
-              content: dato.Tercero,
-              styles: getStyle(dato),
-            },
-            {
-              content: dato.NombreTercero,
-              styles: getStyle(dato),
-            },
-            {
-              content: dato.FormaPago,
-              styles: getStyle(dato),
-            },
-            {
-              content: dato.FormaPagoDescripcion,
-              styles: getStyle(dato),
-            },
-            {
-              content: dato.Pagado,
-              styles: getStyle(dato),
-            },
-          ])
-        }
+        acumData.push([
+          {
+            content: dato.header ? dato.Caja : '',
+            styles: !dato.header ? { fillColor: [255, 255, 255] } : {},
+          },
+          {
+            content: dato.Documento,
+            styles: getStyle(dato),
+          },
+          {
+            content: dato.Tercero,
+            styles: getStyle(dato),
+          },
+          {
+            content: dato.NombreTercero,
+            styles: getStyle(dato),
+          },
+          {
+            content: dato.FormaPago,
+            styles: getStyle(dato),
+          },
+          {
+            content: dato.FormaPagoDescripcion,
+            styles: getStyle(dato),
+          },
+          {
+            content: dato.Pagado,
+            styles: getStyle(dato),
+          },
+        ])
         return acumData
       }, [])
 

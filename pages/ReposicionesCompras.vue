@@ -295,7 +295,8 @@ export default {
           subTotal.Pago += dato.Pago
         } else {
           if (positionDeducible === 0) {
-            insertRow(datos, subTotal, false, undefined, true)
+            if (subTotal.Subtotal !== 0)
+              insertRow(datos, subTotal, false, undefined, true)
             insertRow(datos, dato, true, 1)
             subTotal.Subtotal = 0
             subTotal.Descuento = 0
@@ -323,7 +324,8 @@ export default {
         total.ImporteDescuento += dato.ImporteDescuento
         total.Pago += dato.Pago
       })
-      insertRow(datos, subTotal, false, undefined, true)
+      if (subTotal.Subtotal !== 0)
+        insertRow(datos, subTotal, false, undefined, true)
       insertRow(datos, total, false, undefined, true)
 
       const iHNDec = datos.findIndex((rp) => rp.Deducible === 'NO' && rp.header)
@@ -427,113 +429,60 @@ export default {
       }
 
       const body = data.reduce((acumData, dato) => {
-        if (dato.header) {
-          acumData.push([
-            {
-              content: dato.Deducible,
-              rowSpan: dato.span,
-            },
-            {
-              content: dato.Nombre,
-              styles: getStyle(dato),
-            },
-            {
-              content: dato.Documento,
-              styles: getStyle(dato),
-            },
-            {
-              content: dato.Folio,
-              styles: getStyle(dato),
-            },
-            {
-              content: dato.FechaCorte,
-              styles: getStyle(dato),
-            },
-            {
-              content: dato.Subtotal,
-              styles: getStyle(dato),
-            },
-            {
-              content: dato.Descuento,
-              styles: getStyle(dato),
-            },
-            {
-              content: dato.Ieps,
-              styles: getStyle(dato),
-            },
-            {
-              content: dato.Iva,
-              styles: getStyle(dato),
-            },
-            {
-              content: dato.Total,
-              styles: getStyle(dato),
-            },
-            {
-              content: dato.NotaCredito,
-              styles: getStyle(dato, true),
-            },
-            {
-              content: dato.Pago,
-              styles: getStyle(dato),
-            },
-            {
-              content: dato.Tipo,
-              styles: getStyle(dato),
-            },
-          ])
-        } else {
-          acumData.push([
-            {
-              content: dato.Nombre,
-              styles: getStyle(dato),
-            },
-            {
-              content: dato.Documento,
-              styles: getStyle(dato),
-            },
-            {
-              content: dato.Folio,
-              styles: getStyle(dato),
-            },
-            {
-              content: dato.FechaCorte,
-              styles: getStyle(dato),
-            },
-            {
-              content: dato.Subtotal,
-              styles: getStyle(dato),
-            },
-            {
-              content: dato.Descuento,
-              styles: getStyle(dato),
-            },
-            {
-              content: dato.Ieps,
-              styles: getStyle(dato),
-            },
-            {
-              content: dato.Iva,
-              styles: getStyle(dato),
-            },
-            {
-              content: dato.Total,
-              styles: getStyle(dato),
-            },
-            {
-              content: dato.NotaCredito,
-              styles: getStyle(dato, true),
-            },
-            {
-              content: dato.Pago,
-              styles: getStyle(dato),
-            },
-            {
-              content: dato.Tipo,
-              styles: getStyle(dato),
-            },
-          ])
-        }
+        acumData.push([
+          {
+            content: dato.header ? dato.Deducible : '',
+            styles: !dato.header ? { fillColor: [255, 255, 255] } : {},
+          },
+          {
+            content: dato.Nombre,
+            styles: getStyle(dato),
+          },
+          {
+            content: dato.Documento,
+            styles: getStyle(dato),
+          },
+          {
+            content: dato.Folio,
+            styles: getStyle(dato),
+          },
+          {
+            content: dato.FechaCorte,
+            styles: getStyle(dato),
+          },
+          {
+            content: dato.Subtotal,
+            styles: getStyle(dato),
+          },
+          {
+            content: dato.Descuento,
+            styles: getStyle(dato),
+          },
+          {
+            content: dato.Ieps,
+            styles: getStyle(dato),
+          },
+          {
+            content: dato.Iva,
+            styles: getStyle(dato),
+          },
+          {
+            content: dato.Total,
+            styles: getStyle(dato),
+          },
+          {
+            content: dato.NotaCredito,
+            styles: getStyle(dato, true),
+          },
+          {
+            content: dato.Pago,
+            styles: getStyle(dato),
+          },
+          {
+            content: dato.Tipo,
+            styles: getStyle(dato),
+          },
+        ])
         return acumData
       }, [])
 
@@ -543,7 +492,7 @@ export default {
         margin: {
           left: 10,
         },
-        styles: { fontSize: 9 },
+        styles: { fontSize: 8 },
         headStyles: {
           fontStyle: 'bold',
           halign: 'center',

@@ -267,7 +267,8 @@ export default {
           subTotal.Pago += dato.Pago
         } else {
           if (positionDeducible === 0) {
-            insertRow(datos, subTotal, false, undefined, true)
+            if (subTotal.Subtotal !== 0)
+              insertRow(datos, subTotal, false, undefined, true)
             insertRow(datos, dato, true, 1)
             subTotal.Subtotal = 0
             subTotal.Ieps = 0
@@ -286,7 +287,8 @@ export default {
         total.Iva += dato.Iva
         total.Total += dato.Total
       })
-      insertRow(datos, subTotal, false, undefined, true)
+      if (subTotal.Subtotal !== 0)
+        insertRow(datos, subTotal, false, undefined, true)
       insertRow(datos, total, false, undefined, true)
 
       const iHNDec = datos.findIndex((rp) => rp.Deducible === 'NO' && rp.header)
@@ -391,89 +393,48 @@ export default {
       }
 
       const body = data.reduce((acumData, dato) => {
-        if (dato.header) {
-          acumData.push([
-            {
-              content: dato.Deducible,
-              rowSpan: dato.span,
-            },
-            {
-              content: dato.Nombre,
-              styles: getStyle(dato),
-            },
-            {
-              content: dato.Documento,
-              styles: getStyle(dato),
-            },
-            {
-              content: dato.Observaciones,
-              styles: getStyle(dato),
-            },
-            {
-              content: dato.Folio,
-              styles: getStyle(dato),
-            },
-            {
-              content: dato.FechaCorte,
-              styles: getStyle(dato),
-            },
-            {
-              content: dato.Subtotal,
-              styles: getStyle(dato),
-            },
-            {
-              content: dato.Ieps,
-              styles: getStyle(dato),
-            },
-            {
-              content: dato.Iva,
-              styles: getStyle(dato),
-            },
-            {
-              content: dato.Total,
-              styles: getStyle(dato),
-            },
-          ])
-        } else {
-          acumData.push([
-            {
-              content: dato.Nombre,
-              styles: getStyle(dato),
-            },
-            {
-              content: dato.Documento,
-              styles: getStyle(dato),
-            },
-            {
-              content: dato.Observaciones,
-              styles: getStyle(dato),
-            },
-            {
-              content: dato.Folio,
-              styles: getStyle(dato),
-            },
-            {
-              content: dato.FechaCorte,
-              styles: getStyle(dato),
-            },
-            {
-              content: dato.Subtotal,
-              styles: getStyle(dato),
-            },
-            {
-              content: dato.Ieps,
-              styles: getStyle(dato),
-            },
-            {
-              content: dato.Iva,
-              styles: getStyle(dato),
-            },
-            {
-              content: dato.Total,
-              styles: getStyle(dato),
-            },
-          ])
-        }
+        acumData.push([
+          {
+            content: dato.header ? dato.Deducible : '',
+            styles: !dato.header ? { fillColor: [255, 255, 255] } : {},
+          },
+          {
+            content: dato.Nombre,
+            styles: getStyle(dato),
+          },
+          {
+            content: dato.Documento,
+            styles: getStyle(dato),
+          },
+          {
+            content: dato.Observaciones,
+            styles: getStyle(dato),
+          },
+          {
+            content: dato.Folio,
+            styles: getStyle(dato),
+          },
+          {
+            content: dato.FechaCorte,
+            styles: getStyle(dato),
+          },
+          {
+            content: dato.Subtotal,
+            styles: getStyle(dato),
+          },
+          {
+            content: dato.Ieps,
+            styles: getStyle(dato),
+          },
+          {
+            content: dato.Iva,
+            styles: getStyle(dato),
+          },
+          {
+            content: dato.Total,
+            styles: getStyle(dato),
+          },
+        ])
         return acumData
       }, [])
 
