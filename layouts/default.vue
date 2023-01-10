@@ -225,12 +225,12 @@ export default {
     }
 
     const eventKeyUp = (evt) => {
-      if (this.$store.state.general.tabActual.trim() === 'Checador Precios') {
+      if (this.$store.state.general.tabActual.trim() === 'checadorprecios') {
         if (parseInt(evt.key) >= 0 && parseInt(evt.key) <= 9)
           this.barCode += evt.key
         else if (evt.key === 'Enter') this.getArticleByCodeOrArticle()
       } else if (
-        this.$store.state.general.tabActual.trim() === 'Codificador Articulos'
+        this.$store.state.general.tabActual.trim() === 'codificadorarticulos'
       ) {
         if (parseInt(evt.key) >= 0 && parseInt(evt.key) <= 9) {
           const code = this.barCodeCodificador + evt.key
