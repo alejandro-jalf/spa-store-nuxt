@@ -129,7 +129,9 @@ export default {
         .format('hh:mm a')
     },
     getDateMove(data) {
-      const date = data.Fecha.toString()
+      const date = data.Fecha
+        ? data.Fecha.toString()
+        : '2000-01-01 00:00:00.000'
       return utils.toMoment(date.replace('Z', '')).format('DD/MM/yyyy')
     },
     getColor(move) {
