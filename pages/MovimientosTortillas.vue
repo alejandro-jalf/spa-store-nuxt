@@ -35,14 +35,14 @@
       class="card card-details"
     >
       <span>
-        <b-avatar variant="info" :text="getSucursal(move)" size="3rem" />
+        <b-avatar :variant="getColor(move)" :text="move.sucursal" size="3rem" />
       </span>
       <span class="container-title">
-        <span class="h4">Tortillas De Maiz</span>
-        <div class="subtitle-card">0957042</div>
+        <span class="h4">{{ getTitle(move) }}</span>
+        <div class="subtitle-card">{{ getSubTitle(move) }}</div>
       </span>
       <b-container
-        v-for="(mv, indexMv) in getMovesData(move)"
+        v-for="(mv, indexMv) in move.data"
         :key="indexMv"
         class="move"
         :class="complementClass(mv)"
@@ -57,9 +57,13 @@
       </b-container>
       <div class="fecha-detail">{{ getDateMove(move) }}</div>
       <div class="mt-3">
-        <h5>Existencia Actual</h5>
+        <h5>{{ getTitleBar(move) }}</h5>
         <b-progress height="2rem" show-value class="mb-2">
-          <b-progress-bar :value="getValueMove(move)" :max="getMaxMove(move)">
+          <b-progress-bar
+            :value="getValueMove(move)"
+            :max="getMaxMove(move)"
+            :variant="getColorBar(move)"
+          >
             <strong>{{ getExistenceMove(move) }}</strong>
           </b-progress-bar>
         </b-progress>
@@ -95,13 +99,8 @@ export default {
       const sucursalConsult =
         this.$store.state.movimientostortillas.sucursalConsult
       const data = this.$store.state.movimientostortillas.data
-      if (sucursalConsult && sucursalConsult === 'ALL') {
-        console.log(data)
-        return data
-      } else {
-        console.log({ data })
-        return { data }
-      }
+      if (sucursalConsult && sucursalConsult === 'ALL') return data.data
+      else return [data]
     },
     isAll() {
       const sucursalConsult =
@@ -121,10 +120,6 @@ export default {
     ...mapActions({
       changeData: 'movimientostortillas/changeData',
     }),
-    getSucursal(data) {
-      if (data.lenght > 0) return data.sucursal
-      else return '?'
-    },
     getNameMove(mv) {
       return mv.TipoMovimiento + ' ' + mv.Tercero
     },
@@ -134,31 +129,41 @@ export default {
         .format('hh:mm a')
     },
     getDateMove(data) {
-      if (data.lenght > 0) {
-        const date = data.Fecha.toString()
-        return utils.toMoment(date.replace('Z', '')).format('DD/MM/yyyy')
-      } else return '00/00/0000'
+      const date = data.Fecha.toString()
+      return utils.toMoment(date.replace('Z', '')).format('DD/MM/yyyy')
     },
-    getMovesData(data) {
-      if (data.success > 0) {
-        return data.data
-      } else return []
+    getColor(move) {
+      return move.success ? 'info' : 'danger'
+    },
+    getTitle(move) {
+      return move.name || 'Tortillas De Maiz'
+    },
+    getSubTitle(move) {
+      return move.name ? 'Tortillas De Maiz' : '0957042'
+    },
+    getColorBar(move) {
+      return move.success ? 'success' : 'danger'
     },
     complementClass(mv) {
       return mv.TipoDocumento !== 'V' ? 'move-asc' : 'move-des'
     },
     getValueMove(move) {
-      console.log(move)
-      if (move) return 0
-      return move.data[0].ExistenciaActualRegular
+      if (!move.success) return 100
+      if (move.data.length > 0) return move.data[0].ExistenciaActualRegular
+      return 0
     },
     getExistenceMove(move) {
-      if (move) return 0
-      return move.data[0].ExistenciaActualRegular + 'KG'
+      if (move.data.length > 0)
+        return move.data[0].ExistenciaActualRegular + 'KG'
+      return 0 + 'KG'
+    },
+    getTitleBar(move) {
+      if (!move.success) return 'Fallo la conexion con la sucursal'
+      return 'Existencia Actual'
     },
     getMaxMove(move) {
-      if (move) return 0
-      return move.data[0].ExistenciaActualRegular + move.inputs
+      if (!move.success) return 100
+      if (move.data.length > 0) return move.inputs
     },
     async loadData() {
       const sucursal = this.$store.state.movimientostortillas.sucursal
@@ -181,17 +186,20 @@ export default {
   display: inline-block;
   color: #000;
   padding: 10px;
-  margin-right: 4px;
-  width: calc(50% - 5px);
+  margin-bottom: 8px;
+  margin-right: 8px;
+  width: calc(50% - 9px);
 }
 
 .container-title {
   position: relative;
+  display: inline-block;
+  width: calc(100% - 6rem);
 }
 
 .subtitle-card {
   position: absolute;
-  top: 16px;
+  top: 20px;
   left: 0px;
   font-weight: 600;
   color: rgb(92, 92, 92);
@@ -206,7 +214,7 @@ export default {
 }
 
 .move {
-  margin-top: 10px;
+  margin-top: 5px;
   padding: 3px 10px;
   border-radius: 3px;
   -webkit-user-select: none;
