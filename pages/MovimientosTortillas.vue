@@ -25,7 +25,10 @@
         label-today-button="Hoy"
       ></b-form-datepicker>
       <b-input-group-append>
-        <b-button variant="info" @click="loadData">Consultar</b-button>
+        <b-button :disabled="loadingTable" variant="info" @click="loadData">
+          <b-icon icon="arrow-clockwise" :animation="animationTable" />
+          Consultar
+        </b-button>
       </b-input-group-append>
     </b-input-group>
 
@@ -63,6 +66,7 @@
             :value="getValueMove(move)"
             :max="getMaxMove(move)"
             :variant="getColorBar(move)"
+            :animated="loadingTable"
           >
             <strong>{{ getExistenceMove(move) }}</strong>
           </b-progress-bar>
@@ -80,6 +84,7 @@ export default {
   data() {
     return {
       date: '',
+      loadingTable: false,
       sucursalSelected: this.$store.state.movimientostortillas.sucursal,
       options: [
         { value: 'ZR', text: 'Zaragoza' },
@@ -106,6 +111,9 @@ export default {
       const sucursalConsult =
         this.$store.state.movimientostortillas.sucursalConsult
       return sucursalConsult && sucursalConsult === 'ALL'
+    },
+    animationTable() {
+      return this.loadingTable ? 'spin-pulse' : ''
     },
   },
   mounted() {
@@ -169,12 +177,12 @@ export default {
     },
     async loadData() {
       const sucursal = this.$store.state.movimientostortillas.sucursal
-      this.setLoading(true)
+      this.loadingTable = true
       const response = await this.changeData([
         sucursal,
         this.date.replace(/-/g, ''),
       ])
-      this.setLoading(false)
+      this.loadingTable = false
       if (!response.success)
         this.showAlertDialog([response.message, 'Error inesperado'])
     },
