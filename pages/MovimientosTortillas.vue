@@ -5,6 +5,7 @@
       <b-form-select
         :value="sucursalSelected"
         :options="options"
+        :disabled="!accessChangeSucursal"
         class="w-150"
         @change="setSucursal"
       ></b-form-select>
@@ -114,6 +115,13 @@ export default {
     },
     animationTable() {
       return this.loadingTable ? 'spin-pulse' : ''
+    },
+    accessChangeSucursal() {
+      const name = this.$store.state.user.user.correo_user
+      return (
+        this.$store.state.user.user.tipo_user === 'manager' ||
+        name === 'aleflo_1996@outlook.com'
+      )
     },
   },
   mounted() {
