@@ -126,6 +126,7 @@ export default {
   },
   mounted() {
     this.date = utils.getDateNow().format('yyyy-MM-DD')
+    this.setSucursalForUser()
   },
   methods: {
     ...mapMutations({
@@ -136,6 +137,14 @@ export default {
     ...mapActions({
       changeData: 'movimientostortillas/changeData',
     }),
+    setSucursalForUser() {
+      if (!this.accessChangeSucursal) {
+        const sucursalUser = utils.getSucursalByName(
+          this.$store.state.user.user.sucursal_user
+        )
+        this.setSucursal(sucursalUser)
+      }
+    },
     getNameMove(mv) {
       return mv.TipoMovimiento + ' ' + mv.Tercero
     },
