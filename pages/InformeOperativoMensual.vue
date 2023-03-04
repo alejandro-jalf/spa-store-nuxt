@@ -268,6 +268,66 @@
         {{ formatNumber(row.item.Porcentaje) }}
       </template>
     </b-table>
+
+    <divider class="mt-3 mb-0" />
+    <h4 class="text-center mb-0 py-1">
+      Compras por Subfamilias
+      <b-badge variant="info" pill> {{ rowsCpS }} </b-badge>
+    </h4>
+    <divider class="mt-0 mb-2" />
+
+    <b-container v-if="dataCPS.length > 20" fluid="xl">
+      <b-row cols="1" cols-sm="2">
+        <b-col sm="3" md="2" class="mb-2">
+          <b-form-select
+            id="per-page-select"
+            v-model="perPageCPS"
+            :options="pageOptionsCPS"
+            size="sm"
+          ></b-form-select>
+        </b-col>
+        <b-col sm="9" md="10" class="mb-2">
+          <b-pagination
+            v-model="currentPageCPS"
+            aria-controls="tableInventarioValuacion"
+            :total-rows="rowsCpS"
+            :per-page="perPageCPS"
+            align="fill"
+            size="sm"
+            first-number
+            class="my-0"
+            last-number
+          >
+          </b-pagination>
+        </b-col>
+      </b-row>
+    </b-container>
+
+    <b-table
+      hover
+      head-variant="dark"
+      outlined
+      responsive
+      :per-page="perPageCPS"
+      :current-page="currentPageCPS"
+      :fields="fieldsCPS"
+      :items="dataCPS"
+      :class="variantThemeTableBody"
+      class="mt-0 mb-5"
+    >
+      <template #cell(CostoValor)="row">
+        {{ formatNumber(row.item.CostoValor) }}
+      </template>
+      <template #cell(IepsValorCosto)="row">
+        {{ formatNumber(row.item.IepsValorCosto) }}
+      </template>
+      <template #cell(IvaValorCosto)="row">
+        {{ formatNumber(row.item.IvaValorCosto) }}
+      </template>
+      <template #cell(CostoValorNeto)="row">
+        {{ formatNumber(row.item.CostoValorNeto) }}
+      </template>
+    </b-table>
   </div>
 </template>
 
@@ -283,6 +343,9 @@ export default {
       perPageVPS: 10,
       pageOptionsVPS: [10, 15, 20],
       currentPageVPS: 1,
+      perPageCPS: 10,
+      pageOptionsCPS: [10, 15, 20],
+      currentPageCPS: 1,
       selected: 'ZR',
       dateStart: '',
       dateEnd: '',
@@ -309,6 +372,13 @@ export default {
         { key: 'Venta', label: 'Venta Sin Impuesto' },
         { key: 'Utilidad', label: 'Utilidad $' },
         { key: 'Porcentaje', label: 'Utilidad %' },
+      ],
+      fieldsCPS: [
+        'Subfamilia',
+        'CostoValor',
+        'IepsValorCosto',
+        'IvaValorCosto',
+        'CostoValorNeto',
       ],
       fieldsME: [
         'Tipo',
@@ -362,35 +432,53 @@ export default {
     },
     dataVentas() {
       const data = this.$store.state.informeoperativomensual.data
+      if (data.data.length === 0) return []
       return data.data[7].data
     },
     dataUAI() {
       const data = this.$store.state.informeoperativomensual.data
+      if (data.data.length === 0) return []
       return data.data[5].data
     },
     dataME() {
       const data = this.$store.state.informeoperativomensual.data
+      if (data.data.length === 0) return []
       return data.data[2].data
     },
     dataMS() {
       const data = this.$store.state.informeoperativomensual.data
+      if (data.data.length === 0) return []
       return data.data[3].data
     },
     dataIF() {
       const data = this.$store.state.informeoperativomensual.data
+      if (data.data.length === 0) return []
       return data.data[1].data
     },
     dataR() {
       const data = this.$store.state.informeoperativomensual.data
+      if (data.data.length === 0) return []
       return data.data[4].data
     },
     dataVPS() {
       const data = this.$store.state.informeoperativomensual.data
+      if (data.data.length === 0) return []
       return data.data[6].data
+    },
+    dataCPS() {
+      const data = this.$store.state.informeoperativomensual.data
+      if (data.data.length === 0) return []
+      return data.data[0].data
     },
     rows() {
       const data = this.$store.state.informeoperativomensual.data
+      if (data.data.length === 0) return 0
       return data.data[6].data.length
+    },
+    rowsCpS() {
+      const data = this.$store.state.informeoperativomensual.data
+      if (data.data.length === 0) return 0
+      return data.data[0].data.length
     },
   },
   mounted() {
