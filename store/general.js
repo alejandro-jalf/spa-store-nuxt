@@ -228,7 +228,7 @@ export const state = () => ({
         {
           path: '/listacreditostrabajadores',
           name: 'listacreditostrabajadores',
-          nickname: 'Cred Trabajadores',
+          nickname: 'Cred. Trabajadores',
           icon: 'file-earmark-pdf-fill',
         },
         {
@@ -241,6 +241,12 @@ export const state = () => ({
           path: '/reposicionesgastos',
           name: 'reposicionesgastos',
           nickname: 'Reposiciones Gastos',
+          icon: 'file-earmark-pdf-fill',
+        },
+        {
+          path: '/informeoperativomensual',
+          name: 'informeoperativomensual',
+          nickname: 'Info. Operativo M',
           icon: 'file-earmark-pdf-fill',
         },
       ],
