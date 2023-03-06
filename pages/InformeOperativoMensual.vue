@@ -55,7 +55,34 @@
       <h5>{{ textDetail }}</h5>
     </div>
     <divider class="bg-info" />
-    <divider class="mt-3 mb-0" />
+    <b-button
+      :variant="variantSuccess"
+      :block="width < 528"
+      class="mt-2 mb-1"
+      @click="createPdf(false)"
+    >
+      <b-icon icon="download" />
+      Generar Excel
+    </b-button>
+    <b-button
+      :variant="variantSuccess"
+      :block="width < 528"
+      class="mt-2 mb-1"
+      @click="createPdf(false)"
+    >
+      <b-icon icon="download" />
+      Descargar PDF
+    </b-button>
+    <b-button
+      :variant="variantInfo"
+      :block="width < 528"
+      class="mb-1 mt-2"
+      @click="createPdf(true)"
+    >
+      <b-icon icon="printer-fill" />
+      Imprimir PDF
+    </b-button>
+    <divider class="mt-2 mb-0" />
     <h4 class="text-center mb-0 py-1">Ventas</h4>
     <divider class="mt-0" />
     <b-table
@@ -79,7 +106,7 @@
         {{ formatNumber(row.item.Iva) }}
       </template>
       <template #cell(Total)="row">
-        {{ formatNumber(row.item.Iva) }}
+        {{ formatNumber(row.item.Total) }}
       </template>
     </b-table>
     <b-table
@@ -97,7 +124,7 @@
         {{ formatNumber(row.item.UtilidadImporte) }}
       </template>
       <template #cell(UtilidadPorcentaje)="row">
-        {{ formatNumber(row.item.UtilidadPorcentaje) }}
+        {{ formatPercentage(row.item.UtilidadPorcentaje) }}
       </template>
     </b-table>
     <divider class="mt-3 mb-0" />
@@ -117,14 +144,14 @@
       <template #cell(Subtotal)="row">
         {{ formatNumber(row.item.Subtotal) }}
       </template>
-      <template #cell(Ieps)="row">
-        {{ formatNumber(row.item.Ieps) }}
+      <template #cell(IepsCosto)="row">
+        {{ formatNumber(row.item.IepsCosto) }}
       </template>
       <template #cell(Iva)="row">
         {{ formatNumber(row.item.Iva) }}
       </template>
       <template #cell(Total)="row">
-        {{ formatNumber(row.item.Iva) }}
+        {{ formatNumber(row.item.Total) }}
       </template>
     </b-table>
     <divider class="mt-3 mb-0" />
@@ -144,14 +171,14 @@
       <template #cell(Subtotal)="row">
         {{ formatNumber(row.item.Subtotal) }}
       </template>
-      <template #cell(Ieps)="row">
-        {{ formatNumber(row.item.Ieps) }}
+      <template #cell(IepsCosto)="row">
+        {{ formatNumber(row.item.IepsCosto) }}
       </template>
       <template #cell(Iva)="row">
         {{ formatNumber(row.item.Iva) }}
       </template>
       <template #cell(Total)="row">
-        {{ formatNumber(row.item.Iva) }}
+        {{ formatNumber(row.item.Total) }}
       </template>
     </b-table>
     <divider class="mt-3 mb-0" />
@@ -171,14 +198,14 @@
       <template #cell(Subtotal)="row">
         {{ formatNumber(row.item.Subtotal) }}
       </template>
-      <template #cell(Ieps)="row">
-        {{ formatNumber(row.item.Ieps) }}
+      <template #cell(IepsCosto)="row">
+        {{ formatNumber(row.item.IepsCosto) }}
       </template>
       <template #cell(Iva)="row">
         {{ formatNumber(row.item.Iva) }}
       </template>
       <template #cell(Total)="row">
-        {{ formatNumber(row.item.Iva) }}
+        {{ formatNumber(row.item.Total) }}
       </template>
     </b-table>
     <divider class="mt-3 mb-0" />
@@ -198,14 +225,14 @@
       <template #cell(Subtotal)="row">
         {{ formatNumber(row.item.Subtotal) }}
       </template>
-      <template #cell(Ieps)="row">
-        {{ formatNumber(row.item.Ieps) }}
+      <template #cell(IepsCosto)="row">
+        {{ formatNumber(row.item.IepsCosto) }}
       </template>
       <template #cell(Iva)="row">
         {{ formatNumber(row.item.Iva) }}
       </template>
       <template #cell(Total)="row">
-        {{ formatNumber(row.item.Iva) }}
+        {{ formatNumber(row.item.Total) }}
       </template>
     </b-table>
 
@@ -265,7 +292,7 @@
         {{ formatNumber(row.item.Utilidad) }}
       </template>
       <template #cell(Porcentaje)="row">
-        {{ formatNumber(row.item.Porcentaje) }}
+        {{ formatPercentage(row.item.Porcentaje) }}
       </template>
     </b-table>
 
@@ -328,11 +355,19 @@
         {{ formatNumber(row.item.CostoValorNeto) }}
       </template>
     </b-table>
+
+    <canvas
+      id="canvas"
+      class="canvasLogo"
+      width="100px"
+      height="100px"
+    ></canvas>
   </div>
 </template>
 
 <script>
 import { mapMutations, mapActions } from 'vuex'
+import { jsPDF } from 'jspdf'
 import utils from '../modules/utils'
 import Divider from '../components/Divider.vue'
 
@@ -363,8 +398,8 @@ export default {
       fieldsVentas: ['Tipo', 'Subtotal', 'Ieps', 'Iva', 'Total'],
       fieldsUAI: [
         { key: 'Tipo', label: 'Tipo' },
-        { key: 'UtilidadImporte', label: '$ Utilidad Importe' },
         { key: 'UtilidadPorcentaje', label: '% Utilidad Porcentaje' },
+        { key: 'UtilidadImporte', label: '$ Utilidad Importe' },
       ],
       fieldsVPS: [
         'Subfamilia',
@@ -397,7 +432,8 @@ export default {
       const option = [...this.options]
       const suc = option.reduce((optAcum, opt) => {
         if (
-          opt.value === this.$store.state.informeoperativomensual.sucursalFind
+          opt.value ===
+          this.$store.state.informeoperativomensual.sucursalConsult
         )
           optAcum = opt.text
         return optAcum
@@ -429,6 +465,15 @@ export default {
     },
     variantThemeTableBody() {
       return this.$store.state.general.themesComponents.themeTableBody
+    },
+    variantSuccess() {
+      return this.$store.state.general.themesComponents.themeButtonSuccess
+    },
+    variantInfo() {
+      return this.$store.state.general.themesComponents.themeButtonClose
+    },
+    width() {
+      return this.$store.state.general.widthWindow
     },
     dataVentas() {
       const data = this.$store.state.informeoperativomensual.data
@@ -485,6 +530,7 @@ export default {
     this.dateStart = utils.getDateNow().format('yyyy-MM-DD')
     this.dateEnd = utils.getDateNow().format('yyyy-MM-DD')
     this.setSucursalForUser()
+    this.loadDataImage()
   },
   methods: {
     ...mapMutations({
@@ -515,6 +561,99 @@ export default {
     },
     formatNumber(value) {
       return utils.aplyFormatNumeric(utils.roundTo(value))
+    },
+    formatPercentage(value) {
+      return utils.roundTo(value, 4) * 100 + '%'
+    },
+    loadDataImage() {
+      const canvas = document.getElementById('canvas')
+      const context = canvas.getContext('2d')
+      const imageObject = document.getElementById('imgLogoSpa')
+      context.drawImage(imageObject, 0, 0, 100, 100)
+    },
+    createPdf(preview) {
+      const data = this.$store.state.informeoperativomensual.data.data
+      const details = this.textDetail
+      const suc = this.option.reduce((optAcum, opt) => {
+        if (
+          opt.value ===
+          this.$store.state.informeoperativomensual.sucursalConsult
+        )
+          optAcum = opt.text
+        return optAcum
+      }, '')
+      const logo = document.getElementById('canvas')
+      this.createPdfTransferencias(suc, data, details, logo, preview)
+    },
+    createPdfTransferencias(sucursal, data, detalles, logo, preview = false) {
+      // eslint-disable-next-line new-cap
+      const doc = new jsPDF('p', 'mm', 'letter')
+
+      doc.setFontSize(16)
+      doc.setFont('helvetica', 'normal')
+      doc.setTextColor(0, 125, 208)
+      if (logo) {
+        doc.text('INFORME OPERATIVO MENSUAL', 200, 20, 'right')
+        doc.addImage(logo, 'PNG', 10, 15, 23, 23)
+      } else doc.text('INFORME OPERATIVO MENSUAL', 105, 20, 'center')
+
+      doc.setTextColor(0, 0, 0)
+      doc.setFontSize(15)
+      doc.setFont('helvetica', 'bold')
+      doc.text('SUPER PROMOCIONES DE ACAYUCAN SA DE CV', 200, 29, 'right')
+      doc.setFontSize(13)
+      doc.setFont('helvetica', 'normal')
+      doc.text(detalles, 200, 36, 'right')
+
+      const body = data.reduce((acumData, dato) => {
+        acumData.push([
+          { content: dato.Suc },
+          { content: dato.Articulo },
+          { content: dato.Nombre },
+          { content: dato.Relacion },
+          {
+            content: this.formatNumber(dato.ExistenciaActualRegular),
+          },
+          {
+            content: this.formatNumber(dato.ExistenciaActualUC),
+          },
+        ])
+        return acumData
+      }, [])
+
+      doc.autoTable({
+        startY: 36,
+        tableWidth: 190,
+        margin: {
+          left: 10,
+        },
+        styles: { fontSize: 10 },
+        headStyles: {
+          fontStyle: 'bold',
+          halign: 'left',
+          fillColor: [255, 255, 255],
+          textColor: [0, 0, 0],
+        },
+        bodyStyles: { textColor: [0, 0, 0] },
+        head: [
+          ['Suc.', 'Articulo', 'Nombre', 'Relacion', 'Exist. UV', 'Exist. UC'],
+        ],
+        body,
+      })
+
+      const countPages = doc.getNumberOfPages()
+      let pageCurrent = 0
+      doc.setFontSize(9)
+      doc.setFont('helvetica', 'italic')
+      for (let page = 0; page < countPages; page++) {
+        doc.setPage(page)
+        pageCurrent = doc.internal.getCurrentPageInfo().pageNumber
+        doc.text(`Pagina ${pageCurrent} de ${countPages}`, 207, 275, 'right')
+        if (pageCurrent === 1) doc.line(10, 44, 200, 44)
+      }
+
+      if (preview) doc.output('dataurlnewwindow')
+      else doc.save(`Informe Operativo Mensual - ${sucursal}.pdf`)
     },
   },
 }
