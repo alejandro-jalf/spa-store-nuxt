@@ -55,33 +55,35 @@
       <h5>{{ textDetail }}</h5>
     </div>
     <divider class="bg-info" />
-    <b-button
-      :variant="variantSuccess"
-      :block="width < 528"
-      class="mt-2 mb-1"
-      @click="createPdf(false)"
-    >
-      <b-icon icon="download" />
-      Generar Excel
-    </b-button>
-    <b-button
-      :variant="variantSuccess"
-      :block="width < 528"
-      class="mt-2 mb-1"
-      @click="createPdf(false)"
-    >
-      <b-icon icon="download" />
-      Descargar PDF
-    </b-button>
-    <b-button
-      :variant="variantInfo"
-      :block="width < 528"
-      class="mb-1 mt-2"
-      @click="createPdf(true)"
-    >
-      <b-icon icon="printer-fill" />
-      Imprimir PDF
-    </b-button>
+    <div v-if="!isEmpty">
+      <b-button
+        :variant="variantSuccess"
+        :block="width < 528"
+        class="mt-2 mb-1"
+        @click="createPdf(false)"
+      >
+        <b-icon icon="download" />
+        Generar Excel
+      </b-button>
+      <b-button
+        :variant="variantSuccess"
+        :block="width < 528"
+        class="mt-2 mb-1"
+        @click="createPdf(false)"
+      >
+        <b-icon icon="download" />
+        Descargar PDF
+      </b-button>
+      <b-button
+        :variant="variantInfo"
+        :block="width < 528"
+        class="mb-1 mt-2"
+        @click="createPdf(true)"
+      >
+        <b-icon icon="printer-fill" />
+        Imprimir PDF
+      </b-button>
+    </div>
     <divider class="mt-2 mb-0" />
     <h4 class="text-center mb-0 py-1">Ventas</h4>
     <divider class="mt-0" />
@@ -475,6 +477,10 @@ export default {
     width() {
       return this.$store.state.general.widthWindow
     },
+    isEmpty() {
+      const data = this.$store.state.informeoperativomensual.data
+      return data.data.length === 0
+    },
     dataVentas() {
       const data = this.$store.state.informeoperativomensual.data
       if (data.data.length === 0) return []
@@ -574,7 +580,7 @@ export default {
     createPdf(preview) {
       const data = this.$store.state.informeoperativomensual.data.data
       const details = this.textDetail
-      const suc = this.option.reduce((optAcum, opt) => {
+      const suc = this.options.reduce((optAcum, opt) => {
         if (
           opt.value ===
           this.$store.state.informeoperativomensual.sucursalConsult
@@ -589,40 +595,39 @@ export default {
       // eslint-disable-next-line new-cap
       const doc = new jsPDF('p', 'mm', 'letter')
 
+      const dataVentas = data[7].data
+      const dataUAI = data[5].data
+      const dataME = data[2].data
+      const dataMS = data[3].data
+      const dataIF = data[1].data
+      const dataR = data[4].data
+      const dataVpS = data[6].data
+      const dataCpS = data[0].data
+
       doc.setFontSize(16)
       doc.setFont('helvetica', 'normal')
       doc.setTextColor(0, 125, 208)
       if (logo) {
-        doc.text('INFORME OPERATIVO MENSUAL', 200, 20, 'right')
-        doc.addImage(logo, 'PNG', 10, 15, 23, 23)
-      } else doc.text('INFORME OPERATIVO MENSUAL', 105, 20, 'center')
+        doc.text('INFORME OPERATIVO MENSUAL', 200, 18, 'right')
+        doc.addImage(logo, 'PNG', 10, 11, 23, 23)
+      } else doc.text('INFORME OPERATIVO MENSUAL', 105, 18, 'center')
 
       doc.setTextColor(0, 0, 0)
-      doc.setFontSize(15)
+      doc.setFontSize(14)
       doc.setFont('helvetica', 'bold')
-      doc.text('SUPER PROMOCIONES DE ACAYUCAN SA DE CV', 200, 29, 'right')
+      doc.text('SUPER PROMOCIONES DE ACAYUCAN SA DE CV', 200, 25, 'right')
       doc.setFontSize(13)
       doc.setFont('helvetica', 'normal')
-      doc.text(detalles, 200, 36, 'right')
+      doc.text(detalles, 200, 31, 'right')
 
-      const body = data.reduce((acumData, dato) => {
-        acumData.push([
-          { content: dato.Suc },
-          { content: dato.Articulo },
-          { content: dato.Nombre },
-          { content: dato.Relacion },
-          {
-            content: this.formatNumber(dato.ExistenciaActualRegular),
-          },
-          {
-            content: this.formatNumber(dato.ExistenciaActualUC),
-          },
-        ])
-        return acumData
-      }, [])
+      doc.setFontSize(15)
+      doc.setFont('helvetica', 'bold')
 
-      doc.autoTable({
-        startY: 36,
+      doc.line(10, 38, 200, 38)
+      doc.text('Ventas', 105, 43, 'center')
+      doc.line(10, 45, 200, 45)
+
+      const configHeader = {
         tableWidth: 190,
         margin: {
           left: 10,
@@ -631,14 +636,206 @@ export default {
         headStyles: {
           fontStyle: 'bold',
           halign: 'left',
-          fillColor: [255, 255, 255],
-          textColor: [0, 0, 0],
+          fillColor: [50, 50, 50],
+          textColor: [255, 255, 255],
         },
         bodyStyles: { textColor: [0, 0, 0] },
-        head: [
-          ['Suc.', 'Articulo', 'Nombre', 'Relacion', 'Exist. UV', 'Exist. UC'],
-        ],
+      }
+
+      let body = dataVentas.reduce((acumData, dato) => {
+        acumData.push([
+          { content: dato.Tipo },
+          { content: this.formatNumber(dato.Subtotal) },
+          { content: this.formatNumber(dato.Ieps) },
+          { content: this.formatNumber(dato.Iva) },
+          { content: this.formatNumber(dato.Total) },
+        ])
+        return acumData
+      }, [])
+
+      doc.autoTable({
+        startY: 47,
+        ...configHeader,
         body,
+        head: [['Tipo', 'Subtotal', 'Ieps', 'Iva', 'Total']],
+      })
+
+      let finalY = doc.lastAutoTable.finalY
+
+      body = dataUAI.reduce((acumData, dato) => {
+        acumData.push([
+          { content: dato.Tipo },
+          { content: this.formatPercentage(dato.UtilidadPorcentaje) },
+          { content: this.formatNumber(dato.UtilidadImporte) },
+        ])
+        return acumData
+      }, [])
+
+      doc.autoTable({
+        startY: finalY + 5,
+        ...configHeader,
+        body,
+        head: [['Tipo', 'Utilidad Porcentual', 'Utilidad Importe']],
+      })
+
+      finalY = doc.lastAutoTable.finalY
+
+      doc.line(10, finalY + 3, 200, finalY + 3)
+      doc.text('Movimientos de Entrada', 105, finalY + 9, 'center')
+      doc.line(10, finalY + 11, 200, finalY + 11)
+
+      body = dataME.reduce((acumData, dato) => {
+        acumData.push([
+          { content: dato.Tipo },
+          { content: this.formatNumber(dato.Subtotal) },
+          { content: this.formatNumber(dato.Iva) },
+          { content: this.formatNumber(dato.IepsCosto) },
+          { content: this.formatNumber(dato.Total) },
+        ])
+        return acumData
+      }, [])
+
+      doc.autoTable({
+        startY: finalY + 13,
+        ...configHeader,
+        body,
+        head: [['Tipo', 'Subtotal', 'Ieps', 'Iva', 'Total']],
+      })
+
+      finalY = doc.lastAutoTable.finalY
+
+      doc.line(10, finalY + 3, 200, finalY + 3)
+      doc.text('Movimientos de Salida', 105, finalY + 9, 'center')
+      doc.line(10, finalY + 11, 200, finalY + 11)
+
+      body = dataMS.reduce((acumData, dato) => {
+        acumData.push([
+          { content: dato.Tipo },
+          { content: this.formatNumber(dato.Subtotal) },
+          { content: this.formatNumber(dato.Iva) },
+          { content: this.formatNumber(dato.IepsCosto) },
+          { content: this.formatNumber(dato.Total) },
+        ])
+        return acumData
+      }, [])
+
+      doc.autoTable({
+        startY: finalY + 13,
+        ...configHeader,
+        body,
+        head: [['Tipo', 'Subtotal', 'Ieps', 'Iva', 'Total']],
+      })
+
+      finalY = doc.lastAutoTable.finalY
+
+      doc.line(10, finalY + 3, 200, finalY + 3)
+      doc.text('Inventario', 105, finalY + 9, 'center')
+      doc.line(10, finalY + 11, 200, finalY + 11)
+
+      body = dataIF.reduce((acumData, dato) => {
+        acumData.push([
+          { content: dato.Tipo },
+          { content: this.formatNumber(dato.Subtotal) },
+          { content: this.formatNumber(dato.Iva) },
+          { content: this.formatNumber(dato.IepsCosto) },
+          { content: this.formatNumber(dato.Total) },
+        ])
+        return acumData
+      }, [])
+
+      doc.autoTable({
+        startY: finalY + 13,
+        ...configHeader,
+        body,
+        head: [['Tipo', 'Subtotal', 'Ieps', 'Iva', 'Total']],
+      })
+
+      finalY = doc.lastAutoTable.finalY
+
+      doc.line(10, finalY + 3, 200, finalY + 3)
+      doc.text('Otros Servicios', 105, finalY + 9, 'center')
+      doc.line(10, finalY + 11, 200, finalY + 11)
+
+      body = dataR.reduce((acumData, dato) => {
+        acumData.push([
+          { content: dato.Tipo },
+          { content: this.formatNumber(dato.Subtotal) },
+          { content: this.formatNumber(dato.Iva) },
+          { content: this.formatNumber(dato.IepsCosto) },
+          { content: this.formatNumber(dato.Total) },
+        ])
+        return acumData
+      }, [])
+
+      doc.autoTable({
+        startY: finalY + 13,
+        ...configHeader,
+        body,
+        head: [['Tipo', 'Subtotal', 'Ieps', 'Iva', 'Total']],
+      })
+
+      doc.addPage()
+
+      doc.line(10, 10, 200, 10)
+      doc.text('Ventas por Subfamilias', 105, 16, 'center')
+      doc.line(10, 19, 200, 19)
+
+      body = dataVpS.reduce((acumData, dato) => {
+        acumData.push([
+          { content: dato.Subfamilia },
+          { content: this.formatNumber(dato.CostoValor) },
+          { content: this.formatNumber(dato.Venta) },
+          { content: this.formatNumber(dato.Utilidad) },
+          { content: this.formatPercentage(dato.Porcentaje) },
+        ])
+        return acumData
+      }, [])
+
+      doc.autoTable({
+        startY: 21,
+        ...configHeader,
+        body,
+        head: [
+          [
+            'Subfamilia',
+            'Costo Sin Impuesto',
+            'Venta Sin Impuesto',
+            'Utilidad $',
+            'Utilidad %',
+          ],
+        ],
+      })
+
+      finalY = doc.lastAutoTable.finalY
+
+      doc.line(10, finalY + 3, 200, finalY + 3)
+      doc.text('Compras por Subfamilias', 105, finalY + 9, 'center')
+      doc.line(10, finalY + 11, 200, finalY + 11)
+
+      body = dataCpS.reduce((acumData, dato) => {
+        acumData.push([
+          { content: dato.Subfamilia },
+          { content: this.formatNumber(dato.CostoValor) },
+          { content: this.formatNumber(dato.IepsValorCosto) },
+          { content: this.formatNumber(dato.IvaValorCosto) },
+          { content: this.formatNumber(dato.CostoValorNeto) },
+        ])
+        return acumData
+      }, [])
+
+      doc.autoTable({
+        startY: finalY + 13,
+        ...configHeader,
+        body,
+        head: [
+          [
+            'Subfamilia',
+            'Costo Valor',
+            'Ieps Valor Costo',
+            'Iva Valor Costo',
+            'Costo Valor Neto',
+          ],
+        ],
       })
 
       const countPages = doc.getNumberOfPages()
@@ -649,7 +846,6 @@ export default {
         doc.setPage(page)
         pageCurrent = doc.internal.getCurrentPageInfo().pageNumber
         doc.text(`Pagina ${pageCurrent} de ${countPages}`, 207, 275, 'right')
-        if (pageCurrent === 1) doc.line(10, 44, 200, 44)
       }
 
       if (preview) doc.output('dataurlnewwindow')
