@@ -569,7 +569,10 @@ export default {
       return utils.aplyFormatNumeric(utils.roundTo(value))
     },
     formatPercentage(value) {
-      return utils.roundTo(value, 4) * 100 + '%'
+      let rounded = utils.roundTo(value, 4) * 100
+      if (rounded.toString().length > 5)
+        rounded = Math.round(rounded * 100) / 100
+      return rounded + '%'
     },
     loadDataImage() {
       const canvas = document.getElementById('canvas')
