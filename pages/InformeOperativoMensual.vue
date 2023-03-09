@@ -60,10 +60,10 @@
         :variant="variantSuccess"
         :block="width < 528"
         class="mt-2 mb-1"
-        @click="createPdf(false)"
+        @click="generateExcel()"
       >
-        <b-icon icon="download" />
-        Generar Excel
+        <b-icon icon="file-earmark-excel-fill" />
+        Generar
       </b-button>
       <b-button
         :variant="variantSuccess"
@@ -71,8 +71,8 @@
         class="mt-2 mb-1"
         @click="createPdf(false)"
       >
-        <b-icon icon="download" />
-        Descargar PDF
+        <b-icon icon="file-earmark-pdf-fill" />
+        Genrar
       </b-button>
       <b-button
         :variant="variantInfo"
@@ -81,7 +81,7 @@
         @click="createPdf(true)"
       >
         <b-icon icon="printer-fill" />
-        Imprimir PDF
+        Vista Previa
       </b-button>
     </div>
     <divider class="mt-2 mb-0" />
@@ -370,6 +370,8 @@
 <script>
 import { mapMutations, mapActions } from 'vuex'
 import { jsPDF } from 'jspdf'
+import XLSX from 'xlsx'
+import FileSaver from 'file-saver'
 import utils from '../modules/utils'
 import Divider from '../components/Divider.vue'
 
@@ -853,6 +855,323 @@ export default {
 
       if (preview) doc.output('dataurlnewwindow')
       else doc.save(`Informe Operativo Mensual - ${sucursal}.pdf`)
+    },
+
+    generateExcel() {
+      const data = this.$store.state.informeoperativomensual.data.data
+      const details = this.textDetail
+      this.createExcel(data, details)
+    },
+    createExcel(dataE, details) {
+      const dataVentas = dataE[7].data
+      const dataUAI = dataE[5].data
+      const dataME = dataE[2].data
+      const dataMS = dataE[3].data
+      const dataIF = dataE[1].data
+      const dataR = dataE[4].data
+      const dataVpS = dataE[6].data
+      const dataCpS = dataE[0].data
+
+      const wb = XLSX.utils.book_new()
+      const suc = this.options.reduce((optAcum, opt) => {
+        if (
+          opt.value ===
+          this.$store.state.informeoperativomensual.sucursalConsult
+        )
+          optAcum = opt.text
+        return optAcum
+      }, '')
+      wb.Props = {
+        Title: 'Informe Operativo Mensual - ' + suc,
+        Subject: 'Reporte',
+        Author: this.$store.state.user.name,
+      }
+      wb.SheetNames.push('Hoja1')
+
+      const header = ['Tipo', 'Subtotal', 'Ieps', 'Iva', 'Total']
+
+      // const listInventory = [...this.inventarioList]
+      let listRefactor = []
+
+      listRefactor.push(
+        {
+          Tipo: 'INFORME OPERATIVO MENSUAL',
+        },
+        {
+          Tipo: 'SUPER PROMOCIONES DE ACAYUCAN',
+        },
+        {
+          Tipo: details,
+        },
+        {},
+        { Subtotal: 'VENTAS' },
+        {},
+        {
+          Tipo: 'Tipo',
+          Subtotal: 'Subtotal',
+          Ieps: 'Ieps',
+          Iva: 'Iva',
+          Total: 'Total',
+        }
+      )
+
+      dataVentas.forEach((dt) => {
+        listRefactor.push({
+          Tipo: dt.Tipo,
+          Subtotal: dt.Subtotal,
+          Ieps: dt.Ieps,
+          Iva: dt.Iva,
+          Total: dt.Total,
+        })
+      })
+
+      listRefactor.push(
+        {},
+        {},
+        {
+          Tipo: 'Tipo',
+          Subtotal: 'Util %',
+          Ieps: 'Util $',
+        }
+      )
+
+      dataUAI.forEach((dt) => {
+        listRefactor.push({
+          Tipo: dt.Tipo,
+          Subtotal: dt.Subtotal,
+          Ieps: dt.UtilidadImporte,
+        })
+      })
+
+      listRefactor.push(
+        {},
+        {},
+        { Subtotal: 'MOVIMIENTOS DE ENTRADA' },
+        {},
+        {
+          Tipo: 'Tipo',
+          Subtotal: 'Subtotal',
+          Ieps: 'Ieps',
+          Iva: 'Iva',
+          Total: 'Total',
+        }
+      )
+
+      dataME.forEach((dt) => {
+        listRefactor.push({
+          Tipo: dt.Tipo,
+          Subtotal: dt.Subtotal,
+          Ieps: dt.IepsCosto,
+          Iva: dt.Iva,
+          Total: dt.Total,
+        })
+      })
+
+      listRefactor.push(
+        {},
+        {},
+        { Subtotal: 'MOVIMIENTOS DE SALIDA' },
+        {},
+        {
+          Tipo: 'Tipo',
+          Subtotal: 'Subtotal',
+          Ieps: 'Ieps',
+          Iva: 'Iva',
+          Total: 'Total',
+        }
+      )
+
+      dataMS.forEach((dt) => {
+        listRefactor.push({
+          Tipo: dt.Tipo,
+          Subtotal: dt.Subtotal,
+          Ieps: dt.IepsCosto,
+          Iva: dt.Iva,
+          Total: dt.Total,
+        })
+      })
+
+      listRefactor.push(
+        {},
+        {},
+        { Subtotal: 'Inventario' },
+        {},
+        {
+          Tipo: 'Tipo',
+          Subtotal: 'Subtotal',
+          Ieps: 'Ieps',
+          Iva: 'Iva',
+          Total: 'Total',
+        }
+      )
+
+      dataIF.forEach((dt) => {
+        listRefactor.push({
+          Tipo: dt.Tipo,
+          Subtotal: dt.Subtotal,
+          Ieps: dt.IepsCosto,
+          Iva: dt.Iva,
+          Total: dt.Total,
+        })
+      })
+
+      listRefactor.push(
+        {},
+        {},
+        { Subtotal: 'Otros Servicios' },
+        {},
+        {
+          Tipo: 'Tipo',
+          Subtotal: 'Subtotal',
+          Ieps: 'Ieps',
+          Iva: 'Iva',
+          Total: 'Total',
+        }
+      )
+
+      dataR.forEach((dt) => {
+        listRefactor.push({
+          Tipo: dt.Tipo,
+          Subtotal: dt.Subtotal,
+          Ieps: dt.Ieps,
+          Iva: dt.Iva,
+          Total: dt.Total,
+        })
+      })
+
+      let data = XLSX.utils.json_to_sheet(listRefactor, {
+        header,
+        skipHeader: true,
+        origin: 'A2',
+      })
+
+      wb.Sheets.Hoja1 = data
+      wb.Sheets.Hoja1['!cols'] = [
+        { wpx: 150 },
+        { wpx: 90 },
+        { wpx: 90 },
+        { wpx: 90 },
+        { wpx: 90 },
+      ]
+
+      wb.SheetNames.push('Hoja2')
+
+      listRefactor = []
+      listRefactor.push(
+        {
+          Tipo: 'INFORME OPERATIVO MENSUAL',
+        },
+        {
+          Tipo: 'SUPER PROMOCIONES DE ACAYUCAN',
+        },
+        {
+          Tipo: details,
+        },
+        {},
+        { Subtotal: 'VENTAS POR SUBFAMILIAS' },
+        {},
+        {
+          Tipo: 'Subfamilia',
+          Subtotal: 'Costo Sin Impuesto',
+          Ieps: 'Venta Sin Impuesto',
+          Iva: 'Utilidad $',
+          Total: 'Utilidad %',
+        }
+      )
+
+      dataVpS.forEach((dt) => {
+        listRefactor.push({
+          Tipo: dt.Subfamilia,
+          Subtotal: dt.CostoValor,
+          Ieps: dt.Venta,
+          Iva: dt.Utilidad,
+          Total: dt.Porcentaje,
+        })
+      })
+
+      data = XLSX.utils.json_to_sheet(listRefactor, {
+        header,
+        skipHeader: true,
+        origin: 'A2',
+      })
+
+      wb.Sheets.Hoja2 = data
+      wb.Sheets.Hoja2['!cols'] = [
+        { wpx: 150 },
+        { wpx: 90 },
+        { wpx: 90 },
+        { wpx: 90 },
+        { wpx: 90 },
+      ]
+
+      wb.SheetNames.push('Hoja3')
+
+      listRefactor = []
+      listRefactor.push(
+        {
+          Tipo: 'INFORME OPERATIVO MENSUAL',
+        },
+        {
+          Tipo: 'SUPER PROMOCIONES DE ACAYUCAN',
+        },
+        {
+          Tipo: details,
+        },
+        {},
+        { Subtotal: 'COMPRAS POR SUBFAMILIAS' },
+        {},
+        {
+          Tipo: 'Subfamilia',
+          Subtotal: 'Costo Valor',
+          Ieps: 'Ieps Valor Costo',
+          Iva: 'Iva Valor Costo',
+          Total: 'Costo Valor Neto',
+        }
+      )
+
+      dataCpS.forEach((dt) => {
+        listRefactor.push({
+          Tipo: dt.Subfamilia,
+          Subtotal: dt.CostoValor,
+          Ieps: dt.IepsValorCosto,
+          Iva: dt.IvaValorCosto,
+          Total: dt.CostoValorNeto,
+        })
+      })
+
+      data = XLSX.utils.json_to_sheet(listRefactor, {
+        header,
+        skipHeader: true,
+        origin: 'A2',
+      })
+
+      wb.Sheets.Hoja3 = data
+      wb.Sheets.Hoja3['!cols'] = [
+        { wpx: 150 },
+        { wpx: 90 },
+        { wpx: 90 },
+        { wpx: 90 },
+        { wpx: 90 },
+      ]
+
+      const num = 3
+      if (num !== 2) {
+        const fecha = utils.getDateNow().format('YYYY MMDD')
+        const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'binary' })
+
+        FileSaver.saveAs(
+          new Blob([this.s2ab(wbout)], { type: 'application/octet-stream' }),
+          fecha + ' - Informe Operativo Mensual - ' + suc + '.xlsx'
+        )
+      }
+    },
+
+    s2ab(s) {
+      const buf = new ArrayBuffer(s.length)
+      const view = new Uint8Array(buf)
+      // eslint-disable-next-line prettier/prettier
+      for (let i = 0; i < s.length; i++) view[i] = s.charCodeAt(i) & 0xFF
+      return buf
     },
   },
 }
