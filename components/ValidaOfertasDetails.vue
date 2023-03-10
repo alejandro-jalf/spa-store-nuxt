@@ -46,11 +46,11 @@
               <span class="font-weight-bold">Ultimo Costo:</span>
               {{ articleActual.UltimoCosto }}
               <hr class="p-0" />
-            </div>
-            <div class="col-md">
               <span class="font-weight-bold">Precio 1:</span>
               {{ articleActual.Precio1IVAUV }}
               <hr class="p-0" />
+            </div>
+            <div class="col-md">
               <span class="font-weight-bold">Utilidad Venta:</span>
               {{ articleActual.UtilidadVenta }}
               <hr class="p-0" />
@@ -71,8 +71,11 @@
               <span class="font-weight-bold">Disponibles:</span>
               {{ articleActual.Disponible }}
               <hr class="p-0" />
-              <span class="font-weight-bold">Limite:</span>
+              <span class="font-weight-bold">Limite de Oferta:</span>
               {{ articleActual.Limite }}
+              <hr class="p-0" />
+              <span class="font-weight-bold">Limite por Venta:</span>
+              {{ articleActual.LimiteXVenta }}
               <hr class="p-0" />
               <span class="font-weight-bold">Nivel de Precio:</span>
               {{ articleActual.NivelPrecio }}

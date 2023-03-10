@@ -18,8 +18,8 @@ export const state = () => ({
       ? localStorage.getItem('spastore_validaofertasfilter_by_dates')
       : localStorage.getItem('spastore_validaofertasfilter_by_dates') ===
         'true',
-  data: localStorage.getItem('spastore_validaofertas_data')
-    ? JSON.parse(localStorage.getItem('spastore_validaofertas_data'))
+  data: sessionStorage.getItem('spastore_validaofertas_data')
+    ? JSON.parse(sessionStorage.getItem('spastore_validaofertas_data'))
     : { data: [] },
 })
 
@@ -38,7 +38,7 @@ export const mutations = {
   },
   setData(state, data) {
     state.data = data
-    localStorage.setItem('spastore_validaofertas_data', JSON.stringify(data))
+    sessionStorage.setItem('spastore_validaofertas_data', JSON.stringify(data))
   },
 }
 
