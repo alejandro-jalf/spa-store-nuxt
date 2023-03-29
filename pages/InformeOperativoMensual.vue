@@ -63,7 +63,7 @@
         @click="generateExcel()"
       >
         <b-icon icon="file-earmark-excel-fill" />
-        Generar
+        XLSX
       </b-button>
       <b-button
         :variant="variantSuccess"
@@ -72,7 +72,7 @@
         @click="createPdf(false)"
       >
         <b-icon icon="file-earmark-pdf-fill" />
-        Genrar
+        PDF
       </b-button>
       <b-button
         :variant="variantInfo"
