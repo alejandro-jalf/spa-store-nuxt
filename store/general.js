@@ -132,6 +132,12 @@ export const state = () => ({
           nickname: 'Por Proveedor',
           icon: 'box-seam',
         },
+        {
+          path: '/existenciasporsucursal',
+          name: 'existenciasporsucursal',
+          nickname: 'Por Sucursal',
+          icon: 'view-list',
+        },
       ],
       name: '',
       nickname: 'Existencias',
