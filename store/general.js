@@ -307,6 +307,12 @@ export const state = () => ({
           nickname: 'Tortillas',
           icon: 'hourglass-split',
         },
+        {
+          path: '/databases',
+          name: 'databases',
+          nickname: 'Bases de Datos',
+          icon: 'hdd-rack-fill',
+        },
       ],
       name: '',
       nickname: 'Administracion',
