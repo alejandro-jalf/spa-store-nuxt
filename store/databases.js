@@ -1,5 +1,7 @@
 if (!sessionStorage.getItem('spastore_datab_sucursal'))
   sessionStorage.setItem('spastore_datab_sucursal', 'ZR')
+if (!sessionStorage.getItem('spastore_datab_tipo'))
+  sessionStorage.setItem('spastore_datab_tipo', 'bar')
 
 export const state = () => ({
   data: sessionStorage.getItem('spastore_datab_data')
@@ -19,6 +21,8 @@ export const state = () => ({
         ],
       },
   sucursal: sessionStorage.getItem('spastore_datab_sucursal'),
+  tipo: sessionStorage.getItem('spastore_datab_tipo'),
+  showGraph: true,
 })
 
 export const mutations = {
@@ -29,6 +33,13 @@ export const mutations = {
   setSucursal(state, sucursal) {
     state.sucursal = sucursal
     sessionStorage.setItem('spastore_datab_sucursal', sucursal)
+  },
+  setShowGraph(state, showGraph) {
+    state.showGraph = showGraph
+  },
+  setTipoGrafico(state, tipo) {
+    state.tipo = tipo
+    sessionStorage.setItem('spastore_datab_tipo', tipo)
   },
 }
 
@@ -42,7 +53,6 @@ export const actions = {
         method: 'get',
       })
 
-      console.log(response.data)
       if (response.data.success) {
         const data = sessionStorage.getItem('spastore_datab_data')
           ? JSON.parse(sessionStorage.getItem('spastore_datab_data'))
@@ -71,7 +81,6 @@ export const actions = {
 
       return response.data
     } catch (error) {
-      console.log(error.response || error)
       if (error.response) return error.response.data
       return {
         success: false,

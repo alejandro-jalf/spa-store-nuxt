@@ -81,7 +81,7 @@ export default {
       return this.$store.state.general.themesComponents.themeButtonClose
     },
     dataExistencias() {
-      const data = this.$store.state.databases.data.data
+      const data = [...this.$store.state.databases.data.data]
       const sucursal = this.sucursal
       const sucFindIndex = data.findIndex(
         (suc) => suc.suc.toUpperCase() === sucursal.toUpperCase()

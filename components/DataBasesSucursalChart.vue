@@ -1,10 +1,18 @@
 <template>
   <div>
-    <canvas id="planet-chart"></canvas>
+    <h2>Grafico</h2>
+    <div class="mb-5">
+      <b-button variant="info" @click="refreshGrafico()">
+        <b-icon icon="arrow-repeat" />
+        Refrescar
+      </b-button>
+    </div>
+    <canvas :id="'chart-suc-' + sucursal"></canvas>
   </div>
 </template>
 
 <script>
+import { mapMutations } from 'vuex'
 import Chart from 'chart.js'
 
 export default {
@@ -13,15 +21,18 @@ export default {
       required: true,
       type: String,
     },
-    tipo: {
-      required: false,
-      type: String,
-      default: 'bar',
-    },
+  },
+  data() {
+    return {
+      tipo: 'bar',
+    }
   },
   computed: {
+    showGraph() {
+      return this.$store.state.databases.showGraph
+    },
     dataExistencias() {
-      const data = this.$store.state.databases.data.data
+      const data = [...this.$store.state.databases.data.data]
       const sucursal = this.sucursal
       const sucFindIndex = data.findIndex(
         (suc) => suc.suc.toUpperCase() === sucursal.toUpperCase()
@@ -30,26 +41,32 @@ export default {
     },
   },
   mounted() {
-    const ctx = document.getElementById('planet-chart')
     const that = this
+    const ctx = document.getElementById('chart-suc-' + that.sucursal)
     // eslint-disable-next-line no-new
     new Chart(ctx, that.dataConvert(that.dataExistencias))
   },
   methods: {
+    ...mapMutations({
+      setShowGraph: 'databases/setShowGraph',
+    }),
+    refreshGrafico() {
+      const that = this
+      this.setShowGraph(false)
+      setTimeout(() => {
+        that.setShowGraph(true)
+      }, 100)
+    },
     dataConvert(datos) {
-      console.log('Entra', datos)
       const dbNames = []
       const label1 = 'Data MB'
       const label2 = 'Log MB'
       const dataMB = []
       const logMB = []
       datos.forEach((dbInfo) => {
-        // const diaFinded = dbNames.find((dia) => dbInfo.Dia === dia)
         dbNames.push(dbInfo.DataBaseName)
         dataMB.push(parseFloat(dbInfo.DataFileSizeMB))
         logMB.push(parseFloat(dbInfo.LogFileSizeMB))
-        // if (dbInfo.Dia !== 'Total') {
-        // }
       })
       return {
         type: this.tipo,
