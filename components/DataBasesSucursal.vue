@@ -2,10 +2,11 @@
   <div>
     <b-button
       :variant="variantInfo"
+      :disabled="dataSupportingDB"
       class="d-inline-block mb-3"
       @click="loadData"
     >
-      <b-icon icon="arrow-repeat"></b-icon>
+      <b-icon :icon="iconRefresh"></b-icon>
       Refrescar
     </b-button>
 
@@ -61,6 +62,24 @@
         </b-dropdown>
       </template>
     </b-table>
+    <b-modal
+      :id="'modal-details-backup-' + sucursal"
+      title="Detalles de Respaldo"
+      hide-footer
+      header-bg-variant="dark"
+      header-text-variant="info"
+      body-text-variant="dark"
+    >
+      <h6>Resultados de Generar Respaldo:</h6>
+      <b-form-textarea id="textarea" v-model="detailsBack" rows="5" readonly />
+      <h6 class="mt-2">Resultados de Comprimir Reslpado:</h6>
+      <b-form-textarea id="textarea" v-model="detailsZip" rows="5" readonly />
+      <h6 class="mt-2">Resultados de Subir Respaldo a Google Drive:</h6>
+      <b-form-textarea id="textarea" v-model="detailsDrive" rows="5" readonly />
+      <b-button variant="info" class="my-2" @click="hideModalDetails">
+        Aceptar
+      </b-button>
+    </b-modal>
   </div>
 </template>
 
@@ -77,6 +96,9 @@ export default {
   },
   data() {
     return {
+      detailsBack: '{}',
+      detailsZip: '{}',
+      detailsDrive: '{}',
       fields: [
         { key: 'DataBaseName', label: 'Base de Datos', sortable: true },
         { key: 'DataFileSizeMB', label: 'Tamaño de Data(MB)', sortable: true },
@@ -93,6 +115,17 @@ export default {
       return this.$store.state.general.themesComponents.themeTableBody
     },
     variantInfo() {
+      const data = [...this.$store.state.databases.data.data]
+      const sucursal = this.sucursal
+      const sucFindIndex = data.findIndex(
+        (suc) => suc.suc.toUpperCase() === sucursal.toUpperCase()
+      )
+      let isSupporting = false
+      if (sucFindIndex !== -1)
+        data[sucFindIndex].data.forEach((dataDB) => {
+          if (dataDB.IsSupporting) isSupporting = true
+        })
+      if (isSupporting) return 'danger'
       return this.$store.state.general.themesComponents.themeButtonClose
     },
     dataExistencias() {
@@ -102,6 +135,32 @@ export default {
         (suc) => suc.suc.toUpperCase() === sucursal.toUpperCase()
       )
       return sucFindIndex !== -1 ? data[sucFindIndex].data : []
+    },
+    dataSupportingDB() {
+      const data = [...this.$store.state.databases.data.data]
+      const sucursal = this.sucursal
+      const sucFindIndex = data.findIndex(
+        (suc) => suc.suc.toUpperCase() === sucursal.toUpperCase()
+      )
+      let isSupporting = false
+      if (sucFindIndex !== -1)
+        data[sucFindIndex].data.forEach((dataDB) => {
+          if (dataDB.IsSupporting) isSupporting = true
+        })
+      return isSupporting
+    },
+    iconRefresh() {
+      const data = [...this.$store.state.databases.data.data]
+      const sucursal = this.sucursal
+      const sucFindIndex = data.findIndex(
+        (suc) => suc.suc.toUpperCase() === sucursal.toUpperCase()
+      )
+      let isSupporting = false
+      if (sucFindIndex !== -1)
+        data[sucFindIndex].data.forEach((dataDB) => {
+          if (dataDB.IsSupporting) isSupporting = true
+        })
+      return isSupporting ? 'toggle2-off' : 'arrow-repeat'
     },
   },
   methods: {
@@ -133,24 +192,15 @@ export default {
     functionNotAvailable() {
       this.showAlertDialog(['No disponible por el momento'])
     },
+    hideModalDetails() {
+      this.$bvModal.hide('modal-details-backup-' + this.sucursal)
+    },
     showDetailsBackup(data) {
-      const resultBackup = data.resultBackup.success
-        ? 'Exito al Generar respaldo'
-        : JSON.stringify(data.resultBackup, undefined, 4)
-      const resultUpload = data.resultUpload.success
-        ? 'Exito al subir respaldo'
-        : JSON.stringify(data.resultUpload, undefined, 4)
-      const resultZip = data.resultZip.success
-        ? 'Exito al comprimir respaldo'
-        : JSON.stringify(data.resultZip, undefined, 4)
-      const message =
-        'Resultados al generar backup: <br/>' +
-        resultBackup +
-        '<br/>Resultados al comprimir backup: <br/>' +
-        resultZip +
-        '<br/>Resultados al subir backup a drive: <br/>' +
-        resultUpload
-      this.showAlertDialog([message, 'Detalles de Backup', 'info'])
+      this.detailsBack = JSON.stringify(data.resultBackup, undefined, 4)
+      this.detailsZip = JSON.stringify(data.resultZip, undefined, 4)
+      this.detailsDrive = JSON.stringify(data.resultUpload, undefined, 4)
+
+      this.$bvModal.show('modal-details-backup-' + this.sucursal)
     },
     formatNumber(value) {
       return utils.aplyFormatNumeric(utils.roundTo(value))
