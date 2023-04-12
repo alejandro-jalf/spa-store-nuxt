@@ -28,6 +28,9 @@
       <template #cell(LastBackup)="row">
         {{ formatDate(row.item.LastBackup) }}
       </template>
+      <template #cell(create_date)="row">
+        {{ formatDate(row.item.create_date) }}
+      </template>
       <template #cell(Acciones)="row">
         <div v-if="isLoadedBackup(row.item)">
           <div class="progress-backup">{{ messageProgress(row.item) }}</div>
@@ -53,6 +56,13 @@
           <b-dropdown-item @click="functionNotAvailable">
             Reducir log
           </b-dropdown-item>
+          <b-dropdown-item
+            v-if="haveFilesDetails(row.item)"
+            @click="functionNotAvailable"
+          >
+            Detalles de Archivos
+          </b-dropdown-item>
+          <b-dropdown-item v-else>Sin Detalles de Archivos</b-dropdown-item>
           <b-dropdown-item
             v-if="haveDetails(row.item)"
             @click="showDetailsBackup(row.item)"
@@ -104,8 +114,9 @@ export default {
         { key: 'DataFileSizeMB', label: 'Tamaño de Data(MB)', sortable: true },
         { key: 'LogFileSizeMB', label: 'Tamaño Log(MB)', sortable: true },
         { key: 'Estatus', label: 'Estatus', sortable: true },
+        { key: 'create_date', label: 'Creado', sortable: true },
         { key: 'LastBackup', label: 'Ultimo Respaldo', sortable: true },
-        { key: 'Acciones', label: 'Acciones', sortable: true },
+        { key: 'Acciones', label: 'Acciones', sortable: false },
       ],
       utils,
     }
@@ -188,6 +199,10 @@ export default {
       const resultUpload = Object.keys(data.resultUpload)
       const resultZip = Object.keys(data.resultZip)
       return resultBackup.length > 0 || resultUpload > 0 || resultZip > 0
+    },
+    haveFilesDetails(data) {
+      const resultDataFile = data.dataFiles.data
+      return resultDataFile ? resultDataFile.length > 0 : false
     },
     functionNotAvailable() {
       this.showAlertDialog(['No disponible por el momento'])

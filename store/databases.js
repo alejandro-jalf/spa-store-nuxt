@@ -76,6 +76,7 @@ export const actions = {
         )
         data.data[sucFindIndex].data = response.data.data
         data.data[sucFindIndex].count = response.data.data.length
+        console.log(data)
         commit('setData', data)
       }
 
