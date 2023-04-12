@@ -89,4 +89,89 @@ export const actions = {
       }
     }
   },
+  async uploadBackup({ commit }, [sucursal, source, database, nameBackup]) {
+    try {
+      const urlGenerate = `${process.env.spastore_url_backend}api/v1/general/backup/${sucursal}?source=${source}&name=${nameBackup}&dataBase=${database}`
+      const urlZip = `${process.env.spastore_url_backend}api/v1/general/backup/${sucursal}/zip?source=${source}\\${nameBackup}`
+      const urlUpload = `${process.env.spastore_url_backend}api/v1/general/backup/${sucursal}/upload?source=${source}&nameFile=${nameBackup}`
+      let data = JSON.parse(sessionStorage.getItem('spastore_datab_data'))
+      const sucFindIndex = data.data.findIndex(
+        (suc) => suc.suc.toUpperCase() === sucursal.toUpperCase()
+      )
+      const dbFindIndex = data.data[sucFindIndex].data.findIndex(
+        (db) => db.DataBaseName === database
+      )
+
+      data.data[sucFindIndex].data[dbFindIndex].IsSupporting = true
+      data.data[sucFindIndex].data[dbFindIndex].message = 'Generando Backup'
+      data.data[sucFindIndex].data[dbFindIndex].progress = 5
+      commit('setData', data)
+
+      const response = await this.$axios({
+        url: urlGenerate,
+        method: 'post',
+      })
+
+      data = JSON.parse(sessionStorage.getItem('spastore_datab_data'))
+      if (response.data.success) {
+        data.data[sucFindIndex].data[dbFindIndex].message = 'Comprimiendo'
+        data.data[sucFindIndex].data[dbFindIndex].progress = 20
+        data.data[sucFindIndex].data[dbFindIndex].resultBackup = response.data
+        commit('setData', data)
+      } else {
+        data.data[sucFindIndex].data[dbFindIndex].message = ''
+        data.data[sucFindIndex].data[dbFindIndex].progress = 0
+        data.data[sucFindIndex].data[dbFindIndex].resultBackup = response.data
+        data.data[sucFindIndex].data[dbFindIndex].IsSupporting = false
+        commit('setData', data)
+        return response.data
+      }
+
+      const responsez = await this.$axios({
+        url: urlZip,
+        method: 'post',
+      })
+
+      data = JSON.parse(sessionStorage.getItem('spastore_datab_data'))
+      if (responsez.data.success) {
+        data.data[sucFindIndex].data[dbFindIndex].message = 'Subiendo a Drive'
+        data.data[sucFindIndex].data[dbFindIndex].progress = 60
+        data.data[sucFindIndex].data[dbFindIndex].resultZip = responsez.data
+        commit('setData', data)
+      } else {
+        data.data[sucFindIndex].data[dbFindIndex].message = ''
+        data.data[sucFindIndex].data[dbFindIndex].progress = 0
+        data.data[sucFindIndex].data[dbFindIndex].resultZip = responsez.data
+        data.data[sucFindIndex].data[dbFindIndex].IsSupporting = false
+        commit('setData', data)
+        return responsez.data
+      }
+
+      const responseU = await this.$axios({
+        url: urlUpload,
+        method: 'post',
+      })
+
+      data = JSON.parse(sessionStorage.getItem('spastore_datab_data'))
+      if (responseU.data.success) {
+        data.data[sucFindIndex].data[dbFindIndex].message = 'Respaldo Generado'
+        data.data[sucFindIndex].data[dbFindIndex].progress = 100
+      } else {
+        data.data[sucFindIndex].data[dbFindIndex].message = ''
+        data.data[sucFindIndex].data[dbFindIndex].progress = 0
+      }
+      data.data[sucFindIndex].data[dbFindIndex].IsSupporting = false
+      data.data[sucFindIndex].data[dbFindIndex].resultUpload = responseU.data
+      commit('setData', data)
+
+      return response.data
+    } catch (error) {
+      if (error.response) return error.response.data
+      return {
+        success: false,
+        message: 'Error con el servidor',
+        error,
+      }
+    }
+  },
 }

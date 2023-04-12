@@ -900,6 +900,25 @@ const utils = (() => {
     })
   }
 
+  const getSourceBySuc = (suc) => {
+    switch (suc.toUpperCase()) {
+      case 'ZR':
+        return 'C:\\backups'
+      case 'VC':
+        return 'D:\\backups'
+      case 'ER':
+        return 'D:\\backups'
+      case 'OU':
+        return 'D:\\backups'
+      case 'SY':
+        return 'D:\\backups'
+      case 'JL':
+        return 'D:\\backups'
+      case 'BO':
+        return 'C:\\backups'
+    }
+  }
+
   const getLocationGps = () => {
     // eslint-disable-next-line no-negated-in-lhs
     if (!('geolocation' in navigator)) {
@@ -956,6 +975,7 @@ const utils = (() => {
     numeroALetras,
     getImgUrl,
     getLocationGps,
+    getSourceBySuc,
   }
 })()
 

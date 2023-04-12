@@ -27,8 +27,17 @@
       <template #cell(LastBackup)="row">
         {{ formatDate(row.item.LastBackup) }}
       </template>
-      <template #cell(Acciones)>
+      <template #cell(Acciones)="row">
+        <div v-if="isLoadedBackup(row.item)">
+          <div class="progress-backup">{{ messageProgress(row.item) }}</div>
+          <b-progress
+            :value="progressBackup(row.item)"
+            :max="100"
+            animated
+          ></b-progress>
+        </div>
         <b-dropdown
+          v-else
           size="lg"
           variant="link"
           toggle-class="text-decoration-none"
@@ -37,11 +46,17 @@
           <template #button-content>
             <b-icon icon="three-dots" />
           </template>
-          <b-dropdown-item @click="functionNotAvailable">
+          <b-dropdown-item @click="approveBackup(row.item)">
             Respaldar
           </b-dropdown-item>
           <b-dropdown-item @click="functionNotAvailable">
             Reducir log
+          </b-dropdown-item>
+          <b-dropdown-item
+            v-if="haveDetails(row.item)"
+            @click="showDetailsBackup(row.item)"
+          >
+            Detalles Respaldo
           </b-dropdown-item>
         </b-dropdown>
       </template>
@@ -93,12 +108,49 @@ export default {
     ...mapMutations({
       setLoading: 'general/setLoading',
       showAlertDialog: 'general/showAlertDialog',
+      showAlertDialogOption: 'general/showAlertDialogOption',
+      hideAlertDialogOption: 'general/hideAlertDialogOption',
     }),
     ...mapActions({
       changeData: 'databases/changeData',
+      uploadBackup: 'databases/uploadBackup',
     }),
+    isLoadedBackup(data) {
+      return data.IsSupporting
+    },
+    progressBackup(data) {
+      return data.progress
+    },
+    messageProgress(data) {
+      return data.message
+    },
+    haveDetails(data) {
+      const resultBackup = Object.keys(data.resultBackup)
+      const resultUpload = Object.keys(data.resultUpload)
+      const resultZip = Object.keys(data.resultZip)
+      return resultBackup.length > 0 || resultUpload > 0 || resultZip > 0
+    },
     functionNotAvailable() {
       this.showAlertDialog(['No disponible por el momento'])
+    },
+    showDetailsBackup(data) {
+      const resultBackup = data.resultBackup.success
+        ? 'Exito al Generar respaldo'
+        : JSON.stringify(data.resultBackup, undefined, 4)
+      const resultUpload = data.resultUpload.success
+        ? 'Exito al subir respaldo'
+        : JSON.stringify(data.resultUpload, undefined, 4)
+      const resultZip = data.resultZip.success
+        ? 'Exito al comprimir respaldo'
+        : JSON.stringify(data.resultZip, undefined, 4)
+      const message =
+        'Resultados al generar backup: <br/>' +
+        resultBackup +
+        '<br/>Resultados al comprimir backup: <br/>' +
+        resultZip +
+        '<br/>Resultados al subir backup a drive: <br/>' +
+        resultUpload
+      this.showAlertDialog([message, 'Detalles de Backup', 'info'])
     },
     formatNumber(value) {
       return utils.aplyFormatNumeric(utils.roundTo(value))
@@ -114,9 +166,40 @@ export default {
       this.setLoading(false)
       if (!response.success)
         this.showAlertDialog([response.message, 'Error inesperado'])
-      else {
-      }
+    },
+    approveBackup(items) {
+      this.showAlertDialogOption([
+        `¿Realizar respaldo a la base de datos [${items.DataBaseName}]?`,
+        'Confirmando Reslpado',
+        () => {
+          this.hideAlertDialogOption()
+          this.generateBackup(items)
+        },
+        'warning',
+        'light',
+        this.hideAlertDialogOption,
+      ])
+    },
+    async generateBackup(items) {
+      const sucursal = this.sucursal
+      const dateName = utils.getDateNow().format('YYYYMMDDHHmm')
+      const nameBackup = `${items.DataBaseName}_${dateName}.BAK`
+      const source = utils.getSourceBySuc(sucursal)
+      const response = await this.uploadBackup([
+        sucursal,
+        source,
+        items.DataBaseName,
+        nameBackup,
+      ])
+      if (!response.success)
+        this.showAlertDialog([response.message, 'Error inesperado'])
     },
   },
 }
 </script>
+
+<style scoped>
+.progress-backup {
+  font-size: 11px;
+}
+</style>
