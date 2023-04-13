@@ -58,11 +58,13 @@
           </b-dropdown-item>
           <b-dropdown-item
             v-if="haveFilesDetails(row.item)"
-            @click="functionNotAvailable"
+            @click="showDetailsFiles(row.item)"
           >
             Detalles de Archivos
           </b-dropdown-item>
-          <b-dropdown-item v-else>Sin Detalles de Archivos</b-dropdown-item>
+          <b-dropdown-item v-else disabled>
+            Sin Detalles de Archivos
+          </b-dropdown-item>
           <b-dropdown-item
             v-if="haveDetails(row.item)"
             @click="showDetailsBackup(row.item)"
@@ -87,6 +89,28 @@
       <h6 class="mt-2">Resultados de Subir Respaldo a Google Drive:</h6>
       <b-form-textarea id="textarea" v-model="detailsDrive" rows="5" readonly />
       <b-button variant="info" class="my-2" @click="hideModalDetails">
+        Aceptar
+      </b-button>
+    </b-modal>
+    <b-modal
+      :id="'modal-details-files-' + sucursal"
+      title="Detalles de Respaldo"
+      size="xl"
+      hide-footer
+      header-bg-variant="dark"
+      header-text-variant="info"
+      body-text-variant="dark"
+    >
+      <h6>Detalles de archivos fisicos:</h6>
+      <b-table
+        id="table-details-files"
+        hover
+        head-variant="dark"
+        outlined
+        :fields="fieldsFiles"
+        :items="itemsFiles"
+      ></b-table>
+      <b-button variant="info" class="my-2" @click="hideModalFiles">
         Aceptar
       </b-button>
     </b-modal>
@@ -118,7 +142,16 @@ export default {
         { key: 'LastBackup', label: 'Ultimo Respaldo', sortable: true },
         { key: 'Acciones', label: 'Acciones', sortable: false },
       ],
+      fieldsFiles: [
+        { key: 'file_id', label: 'ID', sortable: true },
+        { key: 'name', label: 'Nombre Logico', sortable: true },
+        { key: 'type_desc', label: 'Tipo', sortable: true },
+        { key: 'physical_name', label: 'Nombre Fisico', sortable: true },
+        { key: 'sizeInMB', label: 'Tamaño', sortable: true },
+        { key: 'max_size', label: 'Tamaño Maximo', sortable: true },
+      ],
       utils,
+      itemsFiles: [],
     }
   },
   computed: {
@@ -210,12 +243,19 @@ export default {
     hideModalDetails() {
       this.$bvModal.hide('modal-details-backup-' + this.sucursal)
     },
+    hideModalFiles() {
+      this.$bvModal.hide('modal-details-files-' + this.sucursal)
+    },
     showDetailsBackup(data) {
       this.detailsBack = JSON.stringify(data.resultBackup, undefined, 4)
       this.detailsZip = JSON.stringify(data.resultZip, undefined, 4)
       this.detailsDrive = JSON.stringify(data.resultUpload, undefined, 4)
 
       this.$bvModal.show('modal-details-backup-' + this.sucursal)
+    },
+    showDetailsFiles(data) {
+      this.itemsFiles = data.dataFiles.data || []
+      this.$bvModal.show('modal-details-files-' + this.sucursal)
     },
     formatNumber(value) {
       return utils.aplyFormatNumeric(utils.roundTo(value))
