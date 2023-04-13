@@ -7,7 +7,7 @@
         Refrescar
       </b-button>
     </div>
-    <canvas :id="'chart-suc-' + sucursal"></canvas>
+    <canvas :id="'chart-suc-' + sucursal" class="mb-5"></canvas>
   </div>
 </template>
 

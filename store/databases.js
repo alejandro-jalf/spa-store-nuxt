@@ -75,8 +75,8 @@ export const actions = {
           (suc) => suc.suc.toUpperCase() === sucursal.toUpperCase()
         )
         data.data[sucFindIndex].data = response.data.data
+        data.data[sucFindIndex].detailsHD = response.data.detailsHD
         data.data[sucFindIndex].count = response.data.data.length
-        console.log(data)
         commit('setData', data)
       }
 

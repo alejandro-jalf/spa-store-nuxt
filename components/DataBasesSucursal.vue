@@ -10,6 +10,20 @@
       Refrescar
     </b-button>
 
+    <div class="container-hd">
+      <b-icon icon="hdd-fill" class="icon-hd" />
+      <span>
+        <span class="name-hd">Disco ({{ HDDisk }}:)</span>
+        <b-progress :max="100" class="progress-hd">
+          <b-progress-bar
+            :value="HDValue"
+            :label="`${Math.round(HDValue)} %`"
+          />
+        </b-progress>
+        <p class="disponible-hd">{{ HDAvailable }}</p>
+      </span>
+    </div>
+
     <b-table
       hover
       head-variant="dark"
@@ -180,6 +194,36 @@ export default {
       )
       return sucFindIndex !== -1 ? data[sucFindIndex].data : []
     },
+    HDDisk() {
+      const data = [...this.$store.state.databases.data.data]
+      const sucursal = this.sucursal
+      const sucFindIndex = data.findIndex(
+        (suc) => suc.suc.toUpperCase() === sucursal.toUpperCase()
+      )
+      return sucFindIndex !== -1 && data[sucFindIndex].detailsHD
+        ? data[sucFindIndex].detailsHD.Disco.toUpperCase()
+        : '?'
+    },
+    HDValue() {
+      const data = [...this.$store.state.databases.data.data]
+      const sucursal = this.sucursal
+      const sucFindIndex = data.findIndex(
+        (suc) => suc.suc.toUpperCase() === sucursal.toUpperCase()
+      )
+      return sucFindIndex !== -1 && data[sucFindIndex].detailsHD
+        ? 100 - data[sucFindIndex].detailsHD.Porcentaje_Disponible
+        : 0
+    },
+    HDAvailable() {
+      const data = [...this.$store.state.databases.data.data]
+      const sucursal = this.sucursal
+      const sucFindIndex = data.findIndex(
+        (suc) => suc.suc.toUpperCase() === sucursal.toUpperCase()
+      )
+      return sucFindIndex !== -1 && data[sucFindIndex].detailsHD
+        ? `${data[sucFindIndex].detailsHD.Disponible_GB} GB disponibles de ${data[sucFindIndex].detailsHD.total_GB} GB`
+        : '?? GB disponibles de ?? GB'
+    },
     dataSupportingDB() {
       const data = [...this.$store.state.databases.data.data]
       const sucursal = this.sucursal
@@ -306,5 +350,43 @@ export default {
 <style scoped>
 .progress-backup {
   font-size: 11px;
+}
+
+.container-hd {
+  float: right;
+  position: relative;
+  /* display: inline-block; */
+  width: 410px;
+  height: 80px;
+  border-radius: 10px;
+  border: 1px solid rgb(116, 116, 116);
+  padding: 5px;
+  margin-bottom: 10px;
+}
+
+.icon-hd {
+  font-size: 60px;
+  width: 100px;
+}
+
+.name-hd {
+  position: absolute;
+  top: 00px;
+  left: 100px;
+  width: 300px;
+}
+
+.progress-hd {
+  position: absolute;
+  top: 30px;
+  left: 100px;
+  width: 300px;
+}
+
+.disponible-hd {
+  position: absolute;
+  top: 50px;
+  left: 100px;
+  width: 300px;
 }
 </style>
