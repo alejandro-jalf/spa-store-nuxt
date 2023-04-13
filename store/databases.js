@@ -90,6 +90,43 @@ export const actions = {
       }
     }
   },
+  async reduceLogDataBase({ commit }, [sucursal, dataBase, nameLog]) {
+    const data = JSON.parse(sessionStorage.getItem('spastore_datab_data'))
+    const sucFindIndex = data.data.findIndex(
+      (suc) => suc.suc.toUpperCase() === sucursal.toUpperCase()
+    )
+    const dbFindIndex = data.data[sucFindIndex].data.findIndex(
+      (db) => db.DataBaseName === dataBase
+    )
+    try {
+      const url = `${process.env.spastore_url_backend}api/v1/general/logs/${sucursal}/reduce`
+
+      const response = await this.$axios({
+        url,
+        method: 'put',
+        data: { dataBase, nameLog },
+      })
+
+      data.data[sucFindIndex].data[dbFindIndex].resultReduceLog = response.data
+      commit('setData', data)
+
+      return response.data
+    } catch (error) {
+      if (error.response) {
+        data.data[sucFindIndex].data[dbFindIndex].resultReduceLog =
+          error.response.data
+        commit('setData', data)
+        return error.response.data
+      }
+      data.data[sucFindIndex].data[dbFindIndex].resultReduceLog = error
+      commit('setData', data)
+      return {
+        success: false,
+        message: 'Error con el servidor',
+        error,
+      }
+    }
+  },
   async uploadBackup({ commit }, [sucursal, source, database, nameBackup]) {
     try {
       const urlGenerate = `${process.env.spastore_url_backend}api/v1/general/backup/${sucursal}?source=${source}&name=${nameBackup}&dataBase=${database}`

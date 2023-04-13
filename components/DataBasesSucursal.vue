@@ -65,25 +65,36 @@
             <b-icon icon="three-dots" />
           </template>
           <b-dropdown-item @click="approveBackup(row.item)">
-            Respaldar
+            <b-icon icon="layer-forward" /> Respaldar
           </b-dropdown-item>
-          <b-dropdown-item @click="functionNotAvailable">
+          <b-dropdown-item @click="approveReduceLog(row.item)">
+            <b-icon icon="speedometer" />
             Reducir log
           </b-dropdown-item>
           <b-dropdown-item
             v-if="haveFilesDetails(row.item)"
             @click="showDetailsFiles(row.item)"
           >
-            Detalles de Archivos
+            <b-icon icon="file-earmark-fill" />
+            DATA y LOG
           </b-dropdown-item>
           <b-dropdown-item v-else disabled>
-            Sin Detalles de Archivos
+            <b-icon icon="info-circle-fill" />
+            No hay DATA ni LOG
           </b-dropdown-item>
           <b-dropdown-item
             v-if="haveDetails(row.item)"
             @click="showDetailsBackup(row.item)"
           >
+            <b-icon icon="eye" />
             Detalles Respaldo
+          </b-dropdown-item>
+          <b-dropdown-item
+            v-if="haveDetailsReduce(row.item)"
+            @click="showDetailsReduce(row.item)"
+          >
+            <b-icon icon="eye" />
+            Detalles de Reduccion
           </b-dropdown-item>
         </b-dropdown>
       </template>
@@ -97,18 +108,32 @@
       body-text-variant="dark"
     >
       <h6>Resultados de Generar Respaldo:</h6>
-      <b-form-textarea id="textarea" v-model="detailsBack" rows="5" readonly />
+      <b-form-textarea id="textarea1" v-model="detailsBack" rows="5" readonly />
       <h6 class="mt-2">Resultados de Comprimir Reslpado:</h6>
-      <b-form-textarea id="textarea" v-model="detailsZip" rows="5" readonly />
+      <b-form-textarea id="textarea2" v-model="detailsZip" rows="5" readonly />
       <h6 class="mt-2">Resultados de Subir Respaldo a Google Drive:</h6>
-      <b-form-textarea id="textarea" v-model="detailsDrive" rows="5" readonly />
+      <b-form-textarea id="textare3" v-model="detailsDrive" rows="5" readonly />
       <b-button variant="info" class="my-2" @click="hideModalDetails">
         Aceptar
       </b-button>
     </b-modal>
     <b-modal
+      :id="'modal-details-reduce-' + sucursal"
+      title="Detalles de Reduccion de Log"
+      hide-footer
+      header-bg-variant="dark"
+      header-text-variant="info"
+      body-text-variant="dark"
+    >
+      <h6>Resultados de Reducir Log:</h6>
+      <b-form-textarea id="areaRed" v-model="detailsReduce" rows="8" readonly />
+      <b-button variant="info" class="my-2" @click="hideModalReduce">
+        Aceptar
+      </b-button>
+    </b-modal>
+    <b-modal
       :id="'modal-details-files-' + sucursal"
-      title="Detalles de Respaldo"
+      title="Data y Log"
       size="xl"
       hide-footer
       header-bg-variant="dark"
@@ -147,6 +172,7 @@ export default {
       detailsBack: '{}',
       detailsZip: '{}',
       detailsDrive: '{}',
+      detailsReduce: '{}',
       fields: [
         { key: 'DataBaseName', label: 'Base de Datos', sortable: true },
         { key: 'DataFileSizeMB', label: 'Tamaño de Data(MB)', sortable: true },
@@ -261,6 +287,7 @@ export default {
     ...mapActions({
       changeData: 'databases/changeData',
       uploadBackup: 'databases/uploadBackup',
+      reduceLogDataBase: 'databases/reduceLogDataBase',
     }),
     isLoadedBackup(data) {
       return data.IsSupporting
@@ -277,6 +304,11 @@ export default {
       const resultZip = Object.keys(data.resultZip)
       return resultBackup.length > 0 || resultUpload > 0 || resultZip > 0
     },
+    haveDetailsReduce(data) {
+      if (!data.resultReduceLog) return false
+      const resultReduceLog = Object.keys(data.resultReduceLog)
+      return resultReduceLog.length > 0
+    },
     haveFilesDetails(data) {
       const resultDataFile = data.dataFiles.data
       return resultDataFile ? resultDataFile.length > 0 : false
@@ -290,12 +322,20 @@ export default {
     hideModalFiles() {
       this.$bvModal.hide('modal-details-files-' + this.sucursal)
     },
+    hideModalReduce() {
+      this.$bvModal.hide('modal-details-reduce-' + this.sucursal)
+    },
     showDetailsBackup(data) {
       this.detailsBack = JSON.stringify(data.resultBackup, undefined, 4)
       this.detailsZip = JSON.stringify(data.resultZip, undefined, 4)
       this.detailsDrive = JSON.stringify(data.resultUpload, undefined, 4)
 
       this.$bvModal.show('modal-details-backup-' + this.sucursal)
+    },
+    showDetailsReduce(data) {
+      this.detailsReduce = JSON.stringify(data.resultReduceLog, undefined, 4)
+
+      this.$bvModal.show('modal-details-reduce-' + this.sucursal)
     },
     showDetailsFiles(data) {
       this.itemsFiles = data.dataFiles.data || []
@@ -315,6 +355,56 @@ export default {
       this.setLoading(false)
       if (!response.success)
         this.showAlertDialog([response.message, 'Error inesperado'])
+    },
+    approveReduceLog(items) {
+      this.showAlertDialogOption([
+        `¿Quiere reducir el log de la base de datos [${items.DataBaseName}]?`,
+        'Confirmando Reduccion de Log',
+        () => {
+          this.hideAlertDialogOption()
+          this.reduceLogDB(items)
+        },
+        'warning',
+        'light',
+        this.hideAlertDialogOption,
+      ])
+    },
+    async reduceLogDB(items) {
+      const dataLog = items.dataFiles.data
+      const nameDataBase = items.DataBaseName
+      if (dataLog) {
+        const nameLog = dataLog.reduce((nameLogFile, file) => {
+          if (file.type_desc === 'LOG') nameLogFile = file.name
+          return nameLogFile
+        }, '')
+        if (nameLog === '')
+          return this.showAlertDialog([
+            'No se encontro el nombre logico del archivo Log',
+            'Fallo en el nombre del archivo',
+          ])
+        else {
+          const sucursal = this.sucursal
+          this.setLoading(true)
+          const response = await this.reduceLogDataBase([
+            sucursal,
+            nameDataBase,
+            nameLog,
+          ])
+          this.setLoading(false)
+          if (!response.success)
+            this.showAlertDialog([response.message, 'Error inesperado'])
+          else
+            this.showAlertDialog([
+              'Se ha reducido el tamaño del log de manera exitosa. <br/>Para ver los detalles vea en la acciones de la cada base de datos en "Detalles de Reduccion"<br/>Puede refrescar la tabla de datos y el grafico para ver los cambios, (tome en cuenta que esto borrara los detalles)',
+              'Exito al Reducir',
+              'info',
+            ])
+        }
+      } else
+        this.showAlertDialog([
+          'No hay datos para reducir el Log',
+          'Error en archivos',
+        ])
     },
     approveBackup(items) {
       this.showAlertDialogOption([
