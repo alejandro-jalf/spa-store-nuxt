@@ -129,9 +129,9 @@ export const actions = {
   },
   async uploadBackup({ commit }, [sucursal, source, database, nameBackup]) {
     try {
-      const urlGenerate = `${process.env.spastore_url_backend}api/v1/general/backup/${sucursal}?source=${source}&name=${nameBackup}&dataBase=${database}`
-      const urlZip = `${process.env.spastore_url_backend}api/v1/general/backup/${sucursal}/zip?source=${source}\\${nameBackup}`
-      const urlUpload = `${process.env.spastore_url_backend}api/v1/general/backup/${sucursal}/upload?source=${source}&nameFile=${nameBackup}`
+      const urlGenerate = `${process.env.spastore_url_backend}api/v1/general/backup/${sucursal}`
+      const urlZip = `${process.env.spastore_url_backend}api/v1/general/backup/${sucursal}/zip`
+      const urlUpload = `${process.env.spastore_url_backend}api/v1/general/backup/${sucursal}/upload`
       let data = JSON.parse(sessionStorage.getItem('spastore_datab_data'))
       const sucFindIndex = data.data.findIndex(
         (suc) => suc.suc.toUpperCase() === sucursal.toUpperCase()
@@ -148,6 +148,7 @@ export const actions = {
       const response = await this.$axios({
         url: urlGenerate,
         method: 'post',
+        data: { source, name: nameBackup, dataBase: database },
       })
 
       data = JSON.parse(sessionStorage.getItem('spastore_datab_data'))
@@ -168,6 +169,7 @@ export const actions = {
       const responsez = await this.$axios({
         url: urlZip,
         method: 'post',
+        data: { source: `${source}\\${nameBackup}` },
       })
 
       data = JSON.parse(sessionStorage.getItem('spastore_datab_data'))
@@ -188,6 +190,7 @@ export const actions = {
       const responseU = await this.$axios({
         url: urlUpload,
         method: 'post',
+        data: { source, nameFile: nameBackup },
       })
 
       data = JSON.parse(sessionStorage.getItem('spastore_datab_data'))
