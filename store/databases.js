@@ -149,6 +149,7 @@ export const actions = {
         url: urlGenerate,
         method: 'post',
         data: { source, name: nameBackup, dataBase: database },
+        timeout: 30000,
       })
 
       data = JSON.parse(sessionStorage.getItem('spastore_datab_data'))
@@ -170,6 +171,7 @@ export const actions = {
         url: urlZip,
         method: 'post',
         data: { source: `${source}\\${nameBackup}` },
+        timeout: 600000,
       })
 
       data = JSON.parse(sessionStorage.getItem('spastore_datab_data'))
@@ -191,6 +193,7 @@ export const actions = {
         url: urlUpload,
         method: 'post',
         data: { source, nameFile: nameBackup },
+        timeout: 600000,
       })
 
       data = JSON.parse(sessionStorage.getItem('spastore_datab_data'))
