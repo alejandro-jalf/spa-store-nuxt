@@ -139,6 +139,10 @@ export const actions = {
       const dbFindIndex = data.data[sucFindIndex].data.findIndex(
         (db) => db.DataBaseName === database
       )
+      const abortZ = this.$axios.CancelToken.source()
+      const tokenZ = setTimeout(() => abortZ.cancel('Finished'), 600000)
+      const abortU = this.$axios.CancelToken.source()
+      const tokenU = setTimeout(() => abortU.cancel('Finished'), 600000)
 
       data.data[sucFindIndex].data[dbFindIndex].IsSupporting = true
       data.data[sucFindIndex].data[dbFindIndex].message = 'Generando Backup'
@@ -172,8 +176,10 @@ export const actions = {
         timeout: 600000,
         url: urlZip,
         data: { source: `${source}\\${nameBackup}` },
+        cancelToken: abortZ.token,
       })
 
+      clearTimeout(tokenZ)
       data = JSON.parse(sessionStorage.getItem('spastore_datab_data'))
       if (responsez.data.success) {
         data.data[sucFindIndex].data[dbFindIndex].message = 'Subiendo a Drive'
@@ -194,7 +200,10 @@ export const actions = {
         timeout: 600000,
         url: urlUpload,
         data: { source, nameFile: nameBackup },
+        cancelToken: abortU.token,
       })
+
+      clearTimeout(tokenU)
 
       data = JSON.parse(sessionStorage.getItem('spastore_datab_data'))
       if (responseU.data.success) {
