@@ -146,9 +146,9 @@ export const actions = {
       commit('setData', data)
 
       const response = await this.$axios({
-        url: urlGenerate,
         method: 'post',
         timeout: 30000,
+        url: urlGenerate,
         data: { source, name: nameBackup, dataBase: database },
       })
 
@@ -168,9 +168,9 @@ export const actions = {
       }
 
       const responsez = await this.$axios({
-        url: urlZip,
         method: 'post',
         timeout: 600000,
+        url: urlZip,
         data: { source: `${source}\\${nameBackup}` },
       })
 
@@ -190,9 +190,9 @@ export const actions = {
       }
 
       const responseU = await this.$axios({
-        url: urlUpload,
         method: 'post',
         timeout: 600000,
+        url: urlUpload,
         data: { source, nameFile: nameBackup },
       })
 
