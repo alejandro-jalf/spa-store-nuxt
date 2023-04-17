@@ -148,8 +148,8 @@ export const actions = {
       const response = await this.$axios({
         url: urlGenerate,
         method: 'post',
-        data: { source, name: nameBackup, dataBase: database },
         timeout: 30000,
+        data: { source, name: nameBackup, dataBase: database },
       })
 
       data = JSON.parse(sessionStorage.getItem('spastore_datab_data'))
@@ -170,8 +170,8 @@ export const actions = {
       const responsez = await this.$axios({
         url: urlZip,
         method: 'post',
-        data: { source: `${source}\\${nameBackup}` },
         timeout: 600000,
+        data: { source: `${source}\\${nameBackup}` },
       })
 
       data = JSON.parse(sessionStorage.getItem('spastore_datab_data'))
@@ -192,8 +192,8 @@ export const actions = {
       const responseU = await this.$axios({
         url: urlUpload,
         method: 'post',
-        data: { source, nameFile: nameBackup },
         timeout: 600000,
+        data: { source, nameFile: nameBackup },
       })
 
       data = JSON.parse(sessionStorage.getItem('spastore_datab_data'))
