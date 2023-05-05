@@ -317,7 +317,9 @@ export default {
           { value: null, text: 'Seleccione una sucursal' },
           { value: 'ZR', text: 'Zaragoza' },
           { value: 'VC', text: 'Victoria' },
+          { value: 'ER', text: 'Enriquez' },
           { value: 'OU', text: 'Oluta' },
+          { value: 'SY', text: 'Sayula' },
           { value: 'JL', text: 'Jaltipan' },
           { value: 'BO', text: 'Bodega' },
         ]
@@ -375,8 +377,9 @@ export default {
         ])
       else {
         try {
-          sucursal = sucursal.replace('E', '')
+          sucursal = sucursal === 'ERE' ? 'ER' : sucursal
           this.setLoading(true)
+          sucursal = sucursal === 'ER' ? sucursal : sucursal.replace('E', '')
           const url =
             process.env.spastore_url_backend +
             `api/v1/general/folios/${sucursal}/${this.folio.Serie}?newFolio=${newFolio}`
