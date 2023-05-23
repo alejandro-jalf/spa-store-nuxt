@@ -50,11 +50,12 @@
         {{ countCostos }} Articulos
       </div>
       <b-button
+        v-if="countCostosUpdate > 0"
         block
         variant="success"
         class="mt-3"
         size="sm"
-        @click="loadData"
+        @click="prepareUpdateCostos"
       >
         Actualizar [ {{ countCostosUpdate }} ]
       </b-button>
@@ -128,7 +129,7 @@ export default {
     dataCostos() {
       const data = [...this.$store.state.revisiondecostos.data.data]
       data.forEach((article) => {
-        if (article.Diferencia > 0.01) article._rowVariant = 'warning'
+        if (article.Diferencia >= 0.01) article._rowVariant = 'warning'
       })
       return data
     },
@@ -138,7 +139,7 @@ export default {
     countCostosUpdate() {
       let count = 0
       this.$store.state.revisiondecostos.data.data.forEach((article) => {
-        if (article.Diferencia > 0.01) count++
+        if (article.Diferencia >= 0.01) count++
       })
       return count
     },
@@ -157,10 +158,13 @@ export default {
     ...mapMutations({
       setLoading: 'general/setLoading',
       showAlertDialog: 'general/showAlertDialog',
+      showAlertDialogOption: 'general/showAlertDialogOption',
+      hideAlertDialogOption: 'general/hideAlertDialogOption',
       setSucursal: 'revisiondecostos/setSucursal',
     }),
     ...mapActions({
       changeData: 'revisiondecostos/changeData',
+      updateCostos: 'revisiondecostos/updateCostos',
     }),
     selectSucursal(suc) {
       this.tienda = utils.getTiendaBySuc(suc)
@@ -188,6 +192,37 @@ export default {
       this.setLoading(false)
       if (!response.success)
         this.showAlertDialog([response.message, 'Error inesperado'])
+    },
+    prepareUpdateCostos() {
+      this.showAlertDialogOption([
+        `¿Quiere actualizar el costo de los [ ${this.countCostosUpdate} ] Articulos?`,
+        'Actualizando Costos',
+        () => {
+          this.hideAlertDialogOption()
+          this.update()
+        },
+        'warning',
+        'light',
+        this.hideAlertDialogOption,
+      ])
+    },
+    async update() {
+      const sucursal = this.$store.state.revisiondecostos.sucursal
+      const costos = [...this.$store.state.revisiondecostos.data.data]
+      const listCostos = costos.reduce((list, article) => {
+        if (article.Diferencia >= 0.01)
+          list.push({
+            Article: article.Articulo,
+            CostoUnitario: article.CostoUnitario,
+          })
+        return list
+      }, [])
+      this.setLoading(true)
+      const response = await this.updateCostos([sucursal, listCostos])
+      this.setLoading(false)
+      if (!response.success)
+        this.showAlertDialog([response.message, 'Error inesperado'])
+      else this.loadData()
     },
   },
 }

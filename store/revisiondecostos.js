@@ -59,4 +59,30 @@ export const actions = {
       }
     }
   },
+  async updateCostos({ commit }, [sucursal, listCostos]) {
+    try {
+      const url =
+        process.env.spastore_url_backend +
+        'api/v1/consolidaciones/' +
+        sucursal +
+        '/costos/'
+
+      const response = await this.$axios({
+        url,
+        method: 'put',
+        data: { listCostos },
+      })
+
+      return response.data
+    } catch (error) {
+      if (error.response) {
+        return error.response.data
+      }
+      return {
+        success: false,
+        message: 'Error con el servidor',
+        error,
+      }
+    }
+  },
 }
