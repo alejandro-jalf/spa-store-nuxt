@@ -59,6 +59,10 @@
       >
         Actualizar [ {{ countCostosUpdate }} ]
       </b-button>
+      <div v-else class="success-art">
+        Costos Actualizados
+        <b-icon icon="patch-check-fill" />
+      </div>
     </div>
     <div class="siteRight">
       <b-table
@@ -152,7 +156,7 @@ export default {
   },
   mounted() {
     this.setSucursalForUser()
-    this.dia = utils.getDateNow().format('YYYY-MM-DD')
+    this.setDay()
   },
   methods: {
     ...mapMutations({
@@ -166,6 +170,14 @@ export default {
       changeData: 'revisiondecostos/changeData',
       updateCostos: 'revisiondecostos/updateCostos',
     }),
+    setDay() {
+      const fecha = this.$store.state.revisiondecostos.fecha
+      if (!fecha || fecha === '')
+        this.dia = utils.getDateNow().format('YYYY-MM-DD')
+      else
+        this.dia =
+          `${fecha.slice(0, 4)}-${fecha.slice(4, 6)}-` + fecha.slice(6, 8)
+    },
     selectSucursal(suc) {
       this.tienda = utils.getTiendaBySuc(suc)
       this.almacen = utils.getAlmacenBySuc(suc)
@@ -181,7 +193,7 @@ export default {
         )
         this.sucursal = sucUser
         this.selectSucursal(sucUser)
-      } else this.sucursal = this.$store.state.revisiondecostos.sucursal
+      } else this.selectSucursal(this.$store.state.revisiondecostos.sucursal)
     },
     async loadData() {
       const sucursal = this.$store.state.revisiondecostos.sucursal
@@ -255,6 +267,15 @@ export default {
   border-radius: 5px;
   border: 2px solid rgb(1, 160, 228);
   padding: 5px;
+  text-align: center;
+}
+
+.success-art {
+  margin-top: 10px;
+  background: rgb(32, 126, 1);
+  color: #fff;
+  padding: 5px 15px;
+  border-radius: 8px;
   text-align: center;
 }
 
