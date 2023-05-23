@@ -313,6 +313,12 @@ export const state = () => ({
           nickname: 'Bases de Datos',
           icon: 'hdd-rack-fill',
         },
+        {
+          path: '/revisiondecostos',
+          name: 'revisiondecostos',
+          nickname: 'Rev. de Costos',
+          icon: 'file-text-fill',
+        },
       ],
       name: '',
       nickname: 'Administracion',

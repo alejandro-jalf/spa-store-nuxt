@@ -1,6 +1,6 @@
 <template>
   <div class="containerRevision">
-    <h4 class="text-center">Revision de Costos</h4>
+    <h4 class="text-center my-4">Revision de Costos</h4>
     <div class="siteLeft">
       <b-input-group prepend="Suc" size="sm" class="w-100 mb-3">
         <b-form-select
@@ -43,13 +43,28 @@
         label-no-date-selected="Seleccione una Fecha"
         label-help="Use el cursor para navegar entre las fechas"
       />
-      <b-button block variant="info" class="mt-3" size="sm">Buscar</b-button>
+      <b-button block variant="info" class="mt-3" size="sm" @click="loadData">
+        Buscar
+      </b-button>
+      <div v-if="countCostos > 0" class="articles">
+        {{ countCostos }} Articulos
+      </div>
+      <b-button
+        block
+        variant="success"
+        class="mt-3"
+        size="sm"
+        @click="loadData"
+      >
+        Actualizar [ {{ countCostosUpdate }} ]
+      </b-button>
     </div>
     <div class="siteRight">
       <b-table
         hover
         small
         head-variant="dark"
+        sticky-header="750px"
         outlined
         responsive
         :fields="fields"
@@ -57,11 +72,17 @@
         :class="variantThemeTableBody"
         class="mt-0"
       >
-        <template #cell(ExistenciaActualRegular)="row">
-          {{ formatNumber(row.item.ExistenciaActualRegular) }}
+        <template #cell(Fecha)="row">
+          {{ utils.toDate(row.item.Fecha) }}
         </template>
-        <template #cell(ExistenciaActualUC)="row">
-          {{ formatNumber(row.item.ExistenciaActualUC) }}
+        <template #cell(CostoUnitario)="row">
+          {{ formatNumber(row.item.CostoUnitario) }}
+        </template>
+        <template #cell(UltimoCosto)="row">
+          {{ formatNumber(row.item.UltimoCosto) }}
+        </template>
+        <template #cell(Diferencia)="row">
+          {{ utils.roundTo(row.item.Diferencia) }}
         </template>
       </b-table>
     </div>
@@ -69,6 +90,7 @@
 </template>
 
 <script>
+import { mapMutations, mapActions } from 'vuex'
 import utils from '../modules/utils'
 
 export default {
@@ -78,6 +100,7 @@ export default {
       tienda: 0,
       almacen: 0,
       dia: '',
+      utils,
       fields: [
         'Fecha',
         'Documento',
@@ -103,7 +126,21 @@ export default {
       return this.$store.state.general.themesComponents.themeInputBackground
     },
     dataCostos() {
-      return []
+      const data = [...this.$store.state.revisiondecostos.data.data]
+      data.forEach((article) => {
+        if (article.Diferencia > 0.01) article._rowVariant = 'warning'
+      })
+      return data
+    },
+    countCostos() {
+      return this.$store.state.revisiondecostos.data.data.length
+    },
+    countCostosUpdate() {
+      let count = 0
+      this.$store.state.revisiondecostos.data.data.forEach((article) => {
+        if (article.Diferencia > 0.01) count++
+      })
+      return count
     },
     variantThemeTableBody() {
       return this.$store.state.general.themesComponents.themeTableBody
@@ -114,12 +151,24 @@ export default {
   },
   mounted() {
     this.setSucursalForUser()
+    this.dia = utils.getDateNow().format('YYYY-MM-DD')
   },
   methods: {
+    ...mapMutations({
+      setLoading: 'general/setLoading',
+      showAlertDialog: 'general/showAlertDialog',
+      setSucursal: 'revisiondecostos/setSucursal',
+    }),
+    ...mapActions({
+      changeData: 'revisiondecostos/changeData',
+    }),
     selectSucursal(suc) {
-      console.log(suc, this.sucursal)
       this.tienda = utils.getTiendaBySuc(suc)
       this.almacen = utils.getAlmacenBySuc(suc)
+      this.setSucursal(suc)
+    },
+    formatNumber(value) {
+      return utils.aplyFormatNumeric(utils.roundTo(value))
     },
     setSucursalForUser() {
       if (!this.accessChangeSucursal) {
@@ -128,7 +177,17 @@ export default {
         )
         this.sucursal = sucUser
         this.selectSucursal(sucUser)
-      }
+      } else this.sucursal = this.$store.state.revisiondecostos.sucursal
+    },
+    async loadData() {
+      const sucursal = this.$store.state.revisiondecostos.sucursal
+      const dia = this.dia
+      if (dia === '') this.showAlertDialog(['Falta seleccionar una fecha'])
+      this.setLoading(true)
+      const response = await this.changeData([sucursal, dia.replace(/-/g, '')])
+      this.setLoading(false)
+      if (!response.success)
+        this.showAlertDialog([response.message, 'Error inesperado'])
     },
   },
 }
@@ -153,10 +212,20 @@ export default {
   height: 30px;
 }
 
+.articles {
+  margin: auto;
+  margin-top: 5px;
+  width: 50%;
+  max-width: 300px;
+  border-radius: 5px;
+  border: 2px solid rgb(1, 160, 228);
+  padding: 5px;
+  text-align: center;
+}
+
 .siteRight {
   display: inline-block;
   margin-left: 290px;
-  background: rgb(149, 240, 186);
   width: calc(100% - 410px);
 }
 </style>

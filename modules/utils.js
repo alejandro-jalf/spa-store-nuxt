@@ -919,6 +919,44 @@ const utils = (() => {
     }
   }
 
+  const getTiendaBySuc = (suc) => {
+    switch (suc.toUpperCase()) {
+      case 'ZR':
+        return 1
+      case 'VC':
+        return 2
+      case 'ER':
+        return 3
+      case 'OU':
+        return 5
+      case 'SY':
+        return 9
+      case 'JL':
+        return 4
+      case 'BO':
+        return 6
+    }
+  }
+
+  const getAlmacenBySuc = (suc) => {
+    switch (suc.toUpperCase()) {
+      case 'ZR':
+        return 2
+      case 'VC':
+        return 3
+      case 'ER':
+        return 5
+      case 'OU':
+        return 19
+      case 'SY':
+        return 16
+      case 'JL':
+        return 7
+      case 'BO':
+        return 21
+    }
+  }
+
   const getLocationGps = () => {
     // eslint-disable-next-line no-negated-in-lhs
     if (!('geolocation' in navigator)) {
@@ -976,6 +1014,8 @@ const utils = (() => {
     getImgUrl,
     getLocationGps,
     getSourceBySuc,
+    getTiendaBySuc,
+    getAlmacenBySuc,
   }
 })()
 
