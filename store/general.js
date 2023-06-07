@@ -319,6 +319,12 @@ export const state = () => ({
           nickname: 'Bases de Datos',
           icon: 'hdd-rack-fill',
         },
+        {
+          path: '/facturas',
+          name: 'facturas',
+          nickname: 'Facturas',
+          icon: 'tags-fill',
+        },
       ],
       name: '',
       nickname: 'Administracion',
