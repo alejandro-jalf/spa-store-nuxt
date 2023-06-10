@@ -196,6 +196,12 @@ export const state = () => ({
           nickname: 'Stocks',
           icon: 'cart-check-fill',
         },
+        {
+          path: '/solicitudArticulo',
+          name: 'solicitudArticulo',
+          nickname: 'Monitor',
+          icon: 'tv-fill',
+        },
       ],
       name: '',
       nickname: 'Articulos',
