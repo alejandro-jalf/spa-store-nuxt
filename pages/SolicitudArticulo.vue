@@ -6,6 +6,7 @@
         <b-form-select
           :value="sucursal"
           :options="options"
+          :disabled="!accessChangeSucursal"
           @change="setSucursal"
         />
       </b-input-group>
@@ -43,11 +44,14 @@
           {{ refactorFecha(row.item.FechaCreado) }}
         </template>
         <template #cell(sucursal)="row">
-          {{ refactorSucursal(row.item.sucursal) }}
+          {{ refactorSucursal(row.item.Sucursal) }}
+        </template>
+        <template #cell(Nombre)="row">
+          {{ refactorName(row) }}
         </template>
         <template #cell(Acciones)="row">
           <b-button
-            v-if="isSucursal(row)"
+            v-if="isSucursal(row) && allowView('EN SUCURSAL', row)"
             variant="info"
             size="sm"
             @click="
@@ -56,11 +60,15 @@
           >
             <b-icon icon="telegram" /> Enviar
           </b-button>
-          <b-button v-if="isSucursal(row)" variant="warning" size="sm">
+          <b-button
+            v-if="isSucursal(row) && allowView('EN SUCURSAL', row)"
+            variant="warning"
+            size="sm"
+          >
             <b-icon icon="x-circle-fill" /> Cancelar
           </b-button>
           <b-button
-            v-if="isSucursal(row)"
+            v-if="isSucursal(row) && allowView('EN SUCURSAL', row)"
             variant="secondary"
             size="sm"
             @click="openRequest('EDIT', row.item.UUID)"
@@ -68,7 +76,7 @@
             <b-icon icon="pencil-square" /> Editar
           </b-button>
           <b-button
-            v-if="isCancel(row)"
+            v-if="isCancel(row) && allowView('CANCELADO', row)"
             variant="success"
             size="sm"
             @click="
@@ -82,7 +90,7 @@
             <b-icon icon="arrow-up-left-circle-fill" /> Restaurar
           </b-button>
           <b-button
-            v-if="isCancel(row)"
+            v-if="isCancel(row) && allowView('CANCELADO', row)"
             variant="danger"
             size="sm"
             @click="prepareDeleteRequest(row.item.UUID)"
@@ -90,7 +98,7 @@
             <b-icon icon="trash-fill" /> Eliminar
           </b-button>
           <b-button
-            v-if="isSending(row)"
+            v-if="isSending(row) && allowView('ENVIADO', row)"
             variant="info"
             size="sm"
             @click="
@@ -104,7 +112,7 @@
             <b-icon icon="arrow-up-right-circle-fill" /> En Proceso
           </b-button>
           <b-button
-            v-if="isInProcess(row)"
+            v-if="isInProcess(row) && allowView('EN PROCESO', row)"
             variant="info"
             size="sm"
             @click="openModal(row.item.UUID)"
@@ -119,6 +127,16 @@
           >
             <b-icon icon="eye-fill" /> Ver
           </b-button>
+          <div v-if="isSucursal(row) && !allowView('EN SUCURSAL', row)">
+            <b-spinner
+              v-for="(canti, position) in 5"
+              :key="position"
+              style="width: 6px; height: 6px"
+              class="ml-1"
+              variant="success"
+              type="grow"
+            ></b-spinner>
+          </div>
         </template>
       </b-table>
     </div>
@@ -236,6 +254,23 @@ export default {
       changeEstatus: 'solicitudarticulo/changeEstatus',
       deleteRequest: 'solicitudarticulo/deleteRequest',
     }),
+    allowView(from, row) {
+      const userActual = this.$store.state.user.user.correo_user
+      const isOwner = row.item.CreadoPor === userActual
+      const isManager = this.$store.state.user.user.tipo_user === 'manager'
+      if (from === 'EN SUCURSAL') return isOwner
+      else if (from === 'ENVIADO') return isManager
+      else if (from === 'CANCELADO') return isOwner
+      else if (from === 'EN PROCESO') return isManager
+      return false
+    },
+    refactorName(row) {
+      const Nombre = row.item.Nombre
+      const TipoModelo = row.item.TipoModelo
+      const Marca = row.item.Marca
+      const Presentacion = row.item.Presentacion
+      return `${Nombre} ${TipoModelo} ${Marca} ${Presentacion}`
+    },
     isSucursal(row) {
       return row.item.Estatus === 'EN SUCURSAL'
     },

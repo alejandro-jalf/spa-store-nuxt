@@ -257,7 +257,7 @@
         Regresar
       </b-button>
       <b-button
-        v-if="isSucursal"
+        v-if="isSucursal && allowView('EN SUCURSAL')"
         variant="info"
         @click="prepareChangeEstatus('ENVIADO')"
       >
@@ -265,26 +265,26 @@
         Enviar
       </b-button>
       <b-button
-        v-if="isSucursal"
+        v-if="isSucursal && allowView('EN SUCURSAL')"
         variant="warning"
         @click="prepareChangeEstatus('CANCELADO')"
       >
         <b-icon icon="x-circle-fill" />
         Cancelar
       </b-button>
-      <b-button v-if="isSending" variant="info">
+      <b-button v-if="isSending && allowView('ENVIADO')" variant="info">
         <b-icon icon="arrow-up-right-circle-fill" />
         En Proceso
       </b-button>
       <b-button
-        v-if="isInProcess"
+        v-if="isInProcess && allowView('EN PROCESO')"
         variant="info"
         @click="$bvModal.show('modal-code')"
       >
         <b-icon icon="patch-check-fill" />
         Atendido
       </b-button>
-      <b-button v-if="isCancel" variant="danger">
+      <b-button v-if="isCancel && allowView('CANCELADO')" variant="danger">
         <b-icon icon="trash-fill" />
         Eliminar
       </b-button>
@@ -519,6 +519,16 @@ export default {
       changeEstatus: 'solicitudarticulo/changeEstatus',
       saveRequest: 'solicitudarticulo/saveRequest',
     }),
+    allowView(from) {
+      const userActual = this.$store.state.user.user.correo_user
+      const isOwner = this.requestActual.CreadoPor === userActual
+      const isManager = this.$store.state.user.user.tipo_user === 'manager'
+      if (from === 'EN SUCURSAL') return isOwner
+      else if (from === 'ENVIADO') return isManager
+      else if (from === 'CANCELADO') return isOwner
+      else if (from === 'EN PROCESO') return isManager
+      // else if (from === 'ATENDIDO') return isManager
+    },
     atender() {
       if (this.codigo.trim() === '') this.validation = false
       else {
@@ -529,7 +539,8 @@ export default {
       }
     },
     backToList() {
-      if (this.requestActual.Estatus === 'EN SUCURSAL')
+      if (!this.allowView('EN SUCURSAL')) this.setVentana('LIST')
+      else if (this.requestActual.Estatus === 'EN SUCURSAL')
         this.showAlertDialogOption([
           `¿Guardar cambios realizados en la solicitud?`,
           'Regresando',
