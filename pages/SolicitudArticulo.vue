@@ -52,10 +52,26 @@
           <b-button v-if="isSucursal(row)" variant="warning" size="sm">
             <b-icon icon="x-circle-fill" /> Cancelar
           </b-button>
-          <b-button v-if="isSucursal(row)" variant="secondary" size="sm">
+          <b-button
+            v-if="isSucursal(row)"
+            variant="secondary"
+            size="sm"
+            @click="openRequest('EDIT', row.item.UUID)"
+          >
             <b-icon icon="pencil-square" /> Editar
           </b-button>
-          <b-button v-if="isCancel(row)" variant="success" size="sm">
+          <b-button
+            v-if="isCancel(row)"
+            variant="success"
+            size="sm"
+            @click="
+              prepareChangeEstatus(
+                'EN SUCURSAL',
+                row.item.UUID,
+                row.item.Articulo
+              )
+            "
+          >
             <b-icon icon="arrow-up-left-circle-fill" /> Restaurar
           </b-button>
           <b-button v-if="isCancel(row)" variant="danger" size="sm">
@@ -67,23 +83,30 @@
           <b-button v-if="isInProcess(row)" variant="info" size="sm">
             <b-icon icon="patch-check-fill" /> Atendido
           </b-button>
-          <b-button v-if="isAtendido(row)" variant="info" size="sm">
+          <b-button
+            v-if="isAtendido(row)"
+            variant="info"
+            size="sm"
+            @click="openRequest('VIEW', row.item.UUID)"
+          >
             <b-icon icon="eye-fill" /> Ver
           </b-button>
         </template>
       </b-table>
     </div>
-    <div v-else>
-      <h5>Solicitud</h5>
-    </div>
+    <SolicitudArticuloView v-else :load-data="loadData" />
   </div>
 </template>
 
 <script>
 import { mapMutations, mapActions } from 'vuex'
+import SolicitudArticuloView from '../components/SolicitudArticuloView'
 import utils from '../modules/utils'
 
 export default {
+  components: {
+    SolicitudArticuloView,
+  },
   data() {
     return {
       sucursal: 'ALL',
@@ -141,10 +164,14 @@ export default {
       showAlertDialogOption: 'general/showAlertDialogOption',
       hideAlertDialogOption: 'general/hideAlertDialogOption',
       setSucursal: 'solicitudarticulo/setSucursal',
+      setVentana: 'solicitudarticulo/setVentana',
+      setTipoSolicitud: 'solicitudarticulo/setTipoSolicitud',
     }),
     ...mapActions({
       changeData: 'solicitudarticulo/changeData',
       createRequest: 'solicitudarticulo/createRequest',
+      loadSolicitud: 'solicitudarticulo/loadSolicitud',
+      changeEstatus: 'solicitudarticulo/changeEstatus',
     }),
     isSucursal(row) {
       return row.item.Estatus === 'EN SUCURSAL'
@@ -180,6 +207,17 @@ export default {
         this.setSucursal(sucUser)
       } else this.sucursal = this.$store.state.solicitudarticulo.sucursal
     },
+    async openRequest(type, uuid) {
+      this.setLoading(true)
+      const response = await this.loadSolicitud([uuid])
+      this.setLoading(false)
+      if (!response.success)
+        this.showAlertDialog([response.message, 'Error inesperado'])
+      else {
+        this.setTipoSolicitud(type)
+        this.setVentana('EDIT_NEW')
+      }
+    },
     async loadData() {
       const sucursal = this.$store.state.solicitudarticulo.sucursal
       this.setLoading(true)
@@ -206,6 +244,31 @@ export default {
       const correo = this.$store.state.user.user.correo_user
       this.setLoading(true)
       const response = await this.createRequest([sucursal, correo])
+      this.setLoading(false)
+      if (!response.success)
+        this.showAlertDialog([response.message, 'Error inesperado'])
+      else this.loadData()
+    },
+    prepareChangeEstatus(estatus, UUID, Articulo) {
+      let message = ''
+      if (estatus === 'CANCELADO') message = '¿Quiere Cancelar la solicitud?'
+      if (estatus === 'ENVIADO') message = '¿Quiere Enviar la solicitud?'
+      if (estatus === 'EN SUCURSAL') message = '¿Quiere Restaurar la solicitud?'
+      this.showAlertDialogOption([
+        message,
+        'Cambiando Estatus',
+        () => {
+          this.hideAlertDialogOption()
+          this.saveEstatus(estatus, UUID, Articulo)
+        },
+        'warning',
+        'light',
+        this.hideAlertDialogOption,
+      ])
+    },
+    async saveEstatus(Estatus, UUID, Articulo) {
+      this.setLoading(true)
+      const response = await this.changeEstatus([UUID, Estatus, Articulo])
       this.setLoading(false)
       if (!response.success)
         this.showAlertDialog([response.message, 'Error inesperado'])

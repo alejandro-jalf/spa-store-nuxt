@@ -2,6 +2,8 @@ if (!localStorage.getItem('spastore_sol_articulos_sucursal'))
   localStorage.setItem('spastore_sol_articulos_sucursal', 'ZR')
 if (!sessionStorage.getItem('spastore_sol_articulos_ventana'))
   sessionStorage.setItem('spastore_sol_articulos_ventana', 'LIST')
+if (!sessionStorage.getItem('spastore_sol_articulos_v_tipo'))
+  sessionStorage.setItem('spastore_sol_articulos_v_tipo', 'VIEW')
 
 export const state = () => ({
   data: sessionStorage.getItem('spastore_sol_articulos_data')
@@ -12,6 +14,7 @@ export const state = () => ({
     : { data: [] },
   sucursal: localStorage.getItem('spastore_sol_articulos_sucursal'),
   ventana: sessionStorage.getItem('spastore_sol_articulos_ventana'),
+  tipoSolicitud: sessionStorage.getItem('spastore_sol_articulos_v_tipo'),
 })
 
 export const mutations = {
@@ -33,6 +36,10 @@ export const mutations = {
   setVentana(state, ventana) {
     state.ventana = ventana
     sessionStorage.setItem('spastore_sol_articulos_ventana', ventana)
+  },
+  setTipoSolicitud(state, tipoSolicitud) {
+    state.tipoSolicitud = tipoSolicitud
+    sessionStorage.setItem('spastore_sol_articulos_v_tipo', tipoSolicitud)
   },
 }
 
@@ -79,6 +86,7 @@ export const actions = {
       if (response.data.success) {
         commit('setActual', response.data)
         commit('setVentana', 'EDIT_NEW')
+        commit('setTipoSolicitud', 'NEW')
       }
 
       return response.data
@@ -107,6 +115,67 @@ export const actions = {
 
       return response.data
     } catch (error) {
+      if (error.response) {
+        return error.response.data
+      }
+      return {
+        success: false,
+        message: 'Error con el servidor',
+        error,
+      }
+    }
+  },
+  async saveRequest({ commit }, [uuid, data]) {
+    try {
+      const url =
+        process.env.spastore_url_backend +
+        'api/v1/solicitud/articulos/' +
+        uuid +
+        '/update'
+
+      const response = await this.$axios({
+        url,
+        method: 'put',
+        data,
+      })
+
+      if (response.data.success) commit('setVentana', 'LIST')
+
+      return response.data
+    } catch (error) {
+      if (error.response) {
+        return error.response.data
+      }
+      return {
+        success: false,
+        message: 'Error con el servidor',
+        error,
+      }
+    }
+  },
+  async changeEstatus({ commit }, [uuid, estatus, Articulo]) {
+    try {
+      const url =
+        process.env.spastore_url_backend +
+        'api/v1/solicitud/articulos/' +
+        uuid +
+        '/status/' +
+        estatus
+
+      const response = await this.$axios({
+        url,
+        method: 'put',
+        data: {
+          Articulo,
+        },
+      })
+
+      console.log(response)
+      if (response.data.success) commit('setVentana', 'LIST')
+
+      return response.data
+    } catch (error) {
+      console.log(error.response, error)
       if (error.response) {
         return error.response.data
       }
