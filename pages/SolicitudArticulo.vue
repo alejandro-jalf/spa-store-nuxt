@@ -46,7 +46,14 @@
           {{ refactorSucursal(row.item.sucursal) }}
         </template>
         <template #cell(Acciones)="row">
-          <b-button v-if="isSucursal(row)" variant="info" size="sm">
+          <b-button
+            v-if="isSucursal(row)"
+            variant="info"
+            size="sm"
+            @click="
+              prepareChangeEstatus('ENVIADO', row.item.UUID, row.item.Articulo)
+            "
+          >
             <b-icon icon="telegram" /> Enviar
           </b-button>
           <b-button v-if="isSucursal(row)" variant="warning" size="sm">
@@ -74,17 +81,38 @@
           >
             <b-icon icon="arrow-up-left-circle-fill" /> Restaurar
           </b-button>
-          <b-button v-if="isCancel(row)" variant="danger" size="sm">
+          <b-button
+            v-if="isCancel(row)"
+            variant="danger"
+            size="sm"
+            @click="prepareDeleteRequest(row.item.UUID)"
+          >
             <b-icon icon="trash-fill" /> Eliminar
           </b-button>
-          <b-button v-if="isSending(row)" variant="info" size="sm">
+          <b-button
+            v-if="isSending(row)"
+            variant="info"
+            size="sm"
+            @click="
+              prepareChangeEstatus(
+                'EN PROCESO',
+                row.item.UUID,
+                row.item.Articulo
+              )
+            "
+          >
             <b-icon icon="arrow-up-right-circle-fill" /> En Proceso
           </b-button>
-          <b-button v-if="isInProcess(row)" variant="info" size="sm">
+          <b-button
+            v-if="isInProcess(row)"
+            variant="info"
+            size="sm"
+            @click="openModal(row.item.UUID)"
+          >
             <b-icon icon="patch-check-fill" /> Atendido
           </b-button>
           <b-button
-            v-if="isAtendido(row)"
+            v-if="isAtendido(row) || isInProcess(row)"
             variant="info"
             size="sm"
             @click="openRequest('VIEW', row.item.UUID)"
@@ -95,6 +123,37 @@
       </b-table>
     </div>
     <SolicitudArticuloView v-else :load-data="loadData" />
+    <b-modal
+      id="modal-li-c"
+      hide-footer
+      header-bg-variant="info"
+      header-text-variant="white"
+      body-text-variant="dark"
+    >
+      <template #modal-title>Codigo de Articulo</template>
+      <b-form-group id="gpCode" label="Codigo de WinCaja:" label-for="ipCode">
+        <b-form-input
+          id="ipCode"
+          v-model="codigo"
+          type="text"
+          placeholder="Codigo del Articulo"
+          :state="validation"
+          required
+          autocomplete="off"
+        ></b-form-input>
+        <b-form-invalid-feedback :state="validation">
+          Codigo No Puede Quedar Vacio
+        </b-form-invalid-feedback>
+      </b-form-group>
+      <div class="float-right">
+        <b-button class="mt-3" @click="$bvModal.hide('modal-li-c')">
+          Cancelar
+        </b-button>
+        <b-button variant="info" class="mt-3 ml-2" @click="atender">
+          Aceptar
+        </b-button>
+      </div>
+    </b-modal>
   </div>
 </template>
 
@@ -109,6 +168,9 @@ export default {
   },
   data() {
     return {
+      uuid: '',
+      codigo: '',
+      validation: true,
       sucursal: 'ALL',
       options: [
         { value: 'ALL', text: 'Todas' },
@@ -172,6 +234,7 @@ export default {
       createRequest: 'solicitudarticulo/createRequest',
       loadSolicitud: 'solicitudarticulo/loadSolicitud',
       changeEstatus: 'solicitudarticulo/changeEstatus',
+      deleteRequest: 'solicitudarticulo/deleteRequest',
     }),
     isSucursal(row) {
       return row.item.Estatus === 'EN SUCURSAL'
@@ -197,6 +260,18 @@ export default {
         if (sucursal.value === sucRe) suc = sucursal.text
         return suc
       }, 'Zaragoza')
+    },
+    openModal(uuid) {
+      this.uuid = uuid
+      this.$bvModal.show('modal-li-c')
+    },
+    atender() {
+      if (this.codigo.trim() === '') this.validation = false
+      else {
+        this.validation = true
+        this.$bvModal.hide('modal-li-c')
+        this.saveEstatus('ATENDIDO', this.uuid, this.codigo)
+      }
     },
     setSucursalForUser() {
       if (!this.accessChangeSucursal) {
@@ -254,6 +329,8 @@ export default {
       if (estatus === 'CANCELADO') message = '¿Quiere Cancelar la solicitud?'
       if (estatus === 'ENVIADO') message = '¿Quiere Enviar la solicitud?'
       if (estatus === 'EN SUCURSAL') message = '¿Quiere Restaurar la solicitud?'
+      if (estatus === 'EN PROCESO')
+        message = '¿Quiere poner En Proceso la solicitud?'
       this.showAlertDialogOption([
         message,
         'Cambiando Estatus',
@@ -269,6 +346,27 @@ export default {
     async saveEstatus(Estatus, UUID, Articulo) {
       this.setLoading(true)
       const response = await this.changeEstatus([UUID, Estatus, Articulo])
+      this.setLoading(false)
+      if (!response.success)
+        this.showAlertDialog([response.message, 'Error inesperado'])
+      else this.loadData()
+    },
+    prepareDeleteRequest(UUID) {
+      this.showAlertDialogOption([
+        `¿Quiere eliminar esta solicitud de manera permanente?`,
+        'Eliminando Solicitud',
+        () => {
+          this.hideAlertDialogOption()
+          this.deleteSolicitud(UUID)
+        },
+        'warning',
+        'light',
+        this.hideAlertDialogOption,
+      ])
+    },
+    async deleteSolicitud(UUID) {
+      this.setLoading(true)
+      const response = await this.deleteRequest([UUID])
       this.setLoading(false)
       if (!response.success)
         this.showAlertDialog([response.message, 'Error inesperado'])

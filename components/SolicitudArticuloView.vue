@@ -55,6 +55,7 @@
           placeholder="Codigo de Barras"
           class="codes"
           autocomplete="off"
+          :readonly="!allowEdit"
           @keyup.enter="$refs.inputIVA.focus()"
         ></b-form-input>
       </b-input-group>
@@ -65,6 +66,7 @@
           v-model="requestActual.IVA"
           :options="optionsImpuestos"
           class="codes"
+          :disabled="!allowEdit"
           @keyup.enter="$refs.inputIEPS.focus()"
         />
       </b-input-group>
@@ -75,6 +77,7 @@
           v-model="requestActual.Ieps"
           :options="optionsImpuestos"
           class="codes"
+          :disabled="!allowEdit"
           @keyup.enter="$refs.inputTazaIeps.focus()"
         />
       </b-input-group>
@@ -85,7 +88,7 @@
           v-model="requestActual.TazaIeps"
           placeholder="Taza IEPS"
           class="codes"
-          :disabled="!requestActual.Ieps"
+          :disabled="!requestActual.Ieps || !allowEdit"
           @keyup.enter="$refs.inputName.focus()"
         ></b-form-input>
       </b-input-group>
@@ -100,6 +103,7 @@
           v-model="requestActual.Nombre"
           placeholder="Nombre"
           autocomplete="off"
+          :readonly="!allowEdit"
           @keyup.enter="$refs.inputTipoModelo.focus()"
         ></b-form-input>
         <b-input-group-append>
@@ -116,6 +120,7 @@
             v-model="requestActual.TipoModelo"
             placeholder="Tipo o Modelo"
             autocomplete="off"
+            :readonly="!allowEdit"
             @keyup.enter="$refs.inputMarca.focus()"
           ></b-form-input>
           <b-input-group-append>
@@ -131,6 +136,7 @@
             v-model="requestActual.Marca"
             placeholder="Marca"
             autocomplete="off"
+            :readonly="!allowEdit"
             @keyup.enter="$refs.inputPresentacion.focus()"
           ></b-form-input>
           <b-input-group-append>
@@ -149,6 +155,7 @@
             placeholder="Presentacion"
             autocomplete="off"
             type="text"
+            :readonly="!allowEdit"
             @keyup.enter="$refs.inputCompra.focus()"
           ></b-form-input>
           <b-input-group-append>
@@ -167,9 +174,16 @@
           ref="selectExample"
           v-model="example"
           :options="optionsExamples"
+          :disabled="!allowEdit"
         />
         <template #append>
-          <b-button variant="success" @click="tryExample">Lanzar</b-button>
+          <b-button
+            variant="success"
+            :disabled="!allowEdit"
+            @click="tryExample"
+          >
+            Lanzar
+          </b-button>
         </template>
       </b-input-group>
     </div>
@@ -187,6 +201,7 @@
             placeholder="Compra"
             class="realtion"
             autocomplete="off"
+            :readonly="!allowEdit"
             @keyup.enter="$refs.selectUnidadCompra.focus()"
           ></b-form-input>
         </b-input-group>
@@ -196,6 +211,7 @@
             ref="selectUnidadCompra"
             v-model="requestActual.UnidadCompra"
             :options="unidadesCompra"
+            :disabled="!allowEdit"
             @keyup.enter="$refs.inputVenta.focus()"
           />
         </b-input-group>
@@ -210,6 +226,7 @@
             placeholder="Venta"
             class="realtion"
             autocomplete="off"
+            :readonly="!allowEdit"
             @keyup.enter="$refs.selectUnidadVenta.focus()"
           ></b-form-input>
         </b-input-group>
@@ -218,6 +235,7 @@
             id="selectUnidadVenta"
             ref="selectUnidadVenta"
             v-model="requestActual.UnidadVenta"
+            :disabled="!allowEdit"
             :options="unidadesVenta"
           />
         </b-input-group>
@@ -234,11 +252,15 @@
       debe considerar cualquier fallo en los sistemas.
     </p>
     <div class="float-right">
-      <b-button variant="secondary" @click="setVentana('LIST')">
+      <b-button variant="secondary" @click="backToList">
         <b-icon icon="x-lg" />
         Regresar
       </b-button>
-      <b-button v-if="isSucursal" variant="info">
+      <b-button
+        v-if="isSucursal"
+        variant="info"
+        @click="prepareChangeEstatus('ENVIADO')"
+      >
         <b-icon icon="telegram" />
         Enviar
       </b-button>
@@ -254,7 +276,11 @@
         <b-icon icon="arrow-up-right-circle-fill" />
         En Proceso
       </b-button>
-      <b-button v-if="isInProcess" variant="info">
+      <b-button
+        v-if="isInProcess"
+        variant="info"
+        @click="$bvModal.show('modal-code')"
+      >
         <b-icon icon="patch-check-fill" />
         Atendido
       </b-button>
@@ -270,11 +296,48 @@
         <b-icon icon="arrow-up-left-circle-fill" />
         Restaurar
       </b-button>
-      <b-button variant="success" @click="prepareUpdateRequest">
+      <b-button
+        v-if="isSucursal && allowEdit"
+        variant="success"
+        @click="prepareUpdateRequest"
+      >
         <b-icon icon="shield-fill-check" />
         Guardar
       </b-button>
     </div>
+
+    <b-modal
+      id="modal-code"
+      hide-footer
+      header-bg-variant="info"
+      header-text-variant="white"
+      body-text-variant="dark"
+    >
+      <template #modal-title>Codigo de Articulo</template>
+      <b-form-group id="gpCode" label="Codigo de WinCaja:" label-for="ipCode">
+        <b-form-input
+          id="ipCode"
+          v-model="codigo"
+          type="text"
+          placeholder="Codigo del Articulo"
+          :state="validation"
+          required
+          autocomplete="off"
+          :class="backgroundInputTheme"
+        ></b-form-input>
+        <b-form-invalid-feedback :state="validation">
+          Codigo No Puede Quedar Vacio
+        </b-form-invalid-feedback>
+      </b-form-group>
+      <div class="float-right">
+        <b-button class="mt-3" @click="$bvModal.hide('modal-code')">
+          Cancelar
+        </b-button>
+        <b-button variant="info" class="mt-3 ml-2" @click="atender">
+          Aceptar
+        </b-button>
+      </div>
+    </b-modal>
   </b-card>
 </template>
 
@@ -289,6 +352,8 @@ export default {
   },
   data() {
     return {
+      codigo: '',
+      validation: true,
       optionsImpuestos: [
         { value: false, text: 'NO' },
         { value: true, text: 'SI' },
@@ -426,6 +491,9 @@ export default {
         ? 'Editando Solicitud'
         : 'Generando solicitud'
     },
+    allowEdit() {
+      return this.$store.state.solicitudarticulo.tipoSolicitud !== 'VIEW'
+    },
     variantTheme() {
       return this.$store.state.general.themesComponents.themeCard2Body
     },
@@ -451,6 +519,33 @@ export default {
       changeEstatus: 'solicitudarticulo/changeEstatus',
       saveRequest: 'solicitudarticulo/saveRequest',
     }),
+    atender() {
+      if (this.codigo.trim() === '') this.validation = false
+      else {
+        this.validation = true
+        this.requestActual.Articulo = this.codigo
+        this.$bvModal.hide('modal-code')
+        this.saveEstatus('ATENDIDO')
+      }
+    },
+    backToList() {
+      if (this.requestActual.Estatus === 'EN SUCURSAL')
+        this.showAlertDialogOption([
+          `¿Guardar cambios realizados en la solicitud?`,
+          'Regresando',
+          () => {
+            this.hideAlertDialogOption()
+            this.saveChanges()
+          },
+          'warning',
+          'light',
+          () => {
+            this.hideAlertDialogOption()
+            this.setVentana('LIST')
+          },
+        ])
+      else this.setVentana('LIST')
+    },
     showHelpers(type) {
       const message = this.ayudas[type]
       this.showAlertDialog([message, 'Ayuda', 'info'])
@@ -537,6 +632,7 @@ export default {
       ])
     },
     async saveEstatus(Estatus) {
+      if (Estatus === 'ENVIADO') await this.prepareUpdateRequest()
       const uuid = this.requestActual.UUID
       const articulo = this.requestActual.Articulo
       this.setLoading(true)

@@ -170,12 +170,37 @@ export const actions = {
         },
       })
 
-      console.log(response)
       if (response.data.success) commit('setVentana', 'LIST')
 
       return response.data
     } catch (error) {
-      console.log(error.response, error)
+      if (error.response) {
+        return error.response.data
+      }
+      return {
+        success: false,
+        message: 'Error con el servidor',
+        error,
+      }
+    }
+  },
+  async deleteRequest({ commit }, [uuid]) {
+    try {
+      const url =
+        process.env.spastore_url_backend +
+        'api/v1/solicitud/articulos/' +
+        uuid +
+        '/delete'
+
+      const response = await this.$axios({
+        url,
+        method: 'delete',
+      })
+
+      if (response.data.success) commit('setVentana', 'LIST')
+
+      return response.data
+    } catch (error) {
       if (error.response) {
         return error.response.data
       }
