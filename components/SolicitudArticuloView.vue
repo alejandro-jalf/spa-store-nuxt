@@ -81,12 +81,14 @@
           @keyup.enter="$refs.inputTazaIeps.focus()"
         />
       </b-input-group>
-      <b-input-group class="mt-3" prepend="Taza IEPS:">
+      <b-input-group class="mt-3" prepend="Tasa IEPS:">
         <b-form-input
           id="inputTazaIeps"
           ref="inputTazaIeps"
           v-model="requestActual.TazaIeps"
-          placeholder="Taza IEPS"
+          placeholder="Tasa IEPS"
+          type="number"
+          min="0"
           class="codes"
           :disabled="!requestActual.Ieps || !allowEdit"
           @keyup.enter="$refs.inputName.focus()"
@@ -103,10 +105,11 @@
           v-model="requestActual.Nombre"
           placeholder="Nombre"
           autocomplete="off"
+          class="colorActive"
           :readonly="!allowEdit"
           @keyup.enter="$refs.inputTipoModelo.focus()"
         ></b-form-input>
-        <b-input-group-append>
+        <b-input-group-append v-if="!isInProcess && !isAtendido">
           <b-button variant="info" @click="showHelpers('Nombre')">
             <b-icon icon="question-circle-fill" />
           </b-button>
@@ -120,10 +123,11 @@
             v-model="requestActual.TipoModelo"
             placeholder="Tipo o Modelo"
             autocomplete="off"
+            class="colorActive"
             :readonly="!allowEdit"
             @keyup.enter="$refs.inputMarca.focus()"
           ></b-form-input>
-          <b-input-group-append>
+          <b-input-group-append v-if="!isInProcess && !isAtendido">
             <b-button variant="info" @click="showHelpers('TipoModelo')">
               <b-icon icon="question-circle-fill" />
             </b-button>
@@ -136,10 +140,11 @@
             v-model="requestActual.Marca"
             placeholder="Marca"
             autocomplete="off"
+            class="colorActive"
             :readonly="!allowEdit"
             @keyup.enter="$refs.inputPresentacion.focus()"
           ></b-form-input>
-          <b-input-group-append>
+          <b-input-group-append v-if="!isInProcess && !isAtendido">
             <b-button variant="info" @click="showHelpers('Marca')">
               <b-icon icon="question-circle-fill" />
             </b-button>
@@ -155,10 +160,11 @@
             placeholder="Presentacion"
             autocomplete="off"
             type="text"
+            class="colorActive"
             :readonly="!allowEdit"
             @keyup.enter="$refs.inputCompra.focus()"
           ></b-form-input>
-          <b-input-group-append>
+          <b-input-group-append v-if="!isInProcess && !isAtendido">
             <b-button variant="info" @click="showHelpers('Presentacion')">
               <b-icon icon="question-circle-fill" />
             </b-button>
@@ -167,38 +173,40 @@
       </div>
       <div class="mt-3 font-weight-bold">Posible Nombre Final:</div>
       <div class="nameResult">{{ nameResult }}</div>
-      <Divider class="my-2" />
-      <b-input-group class="mt-3" prepend="Ejemplo:">
-        <b-form-select
-          id="selectExample"
-          ref="selectExample"
-          v-model="example"
-          :options="optionsExamples"
-          :disabled="!allowEdit"
-        />
-        <template #append>
-          <b-button
-            variant="success"
+      <div v-if="!isInProcess && !isAtendido">
+        <Divider class="my-2" />
+        <b-input-group class="mt-3" prepend="Ejemplo:">
+          <b-form-select
+            id="selectExample"
+            ref="selectExample"
+            v-model="example"
+            :options="optionsExamples"
             :disabled="!allowEdit"
-            @click="tryExample"
-          >
-            Lanzar
-          </b-button>
-        </template>
-      </b-input-group>
+          />
+          <template #append>
+            <b-button
+              variant="success"
+              :disabled="!allowEdit"
+              @click="tryExample"
+            >
+              Lanzar
+            </b-button>
+          </template>
+        </b-input-group>
+      </div>
     </div>
 
     <div class="mt-3">Relacion:</div>
     <div class="dataName">
       <b-form inline>
-        <b-input-group class="mt-1" prepend="Compra:">
+        <b-input-group class="mt-1" prepend="Factor Compra:">
           <b-form-input
             id="inputCompra"
             ref="inputCompra"
             v-model="requestActual.FactorCompra"
             type="number"
             min="0"
-            placeholder="Compra"
+            placeholder="Factor Compra"
             class="realtion"
             autocomplete="off"
             :readonly="!allowEdit"
@@ -212,18 +220,19 @@
             v-model="requestActual.UnidadCompra"
             :options="unidadesCompra"
             :disabled="!allowEdit"
+            class="colorActive"
             @keyup.enter="$refs.inputVenta.focus()"
           />
         </b-input-group>
         <span class="dividerRelation">/</span>
-        <b-input-group class="mt-1" prepend="Venta:">
+        <b-input-group class="mt-1" prepend="Factor Venta:">
           <b-form-input
             id="inputVenta"
             ref="inputVenta"
             v-model="requestActual.FactorVenta"
             type="number"
             min="0"
-            placeholder="Venta"
+            placeholder="Factor Venta"
             class="realtion"
             autocomplete="off"
             :readonly="!allowEdit"
@@ -237,6 +246,7 @@
             v-model="requestActual.UnidadVenta"
             :disabled="!allowEdit"
             :options="unidadesVenta"
+            class="colorActive"
           />
         </b-input-group>
       </b-form>
@@ -244,14 +254,16 @@
       <div class="nameResult">{{ relationFinal }}</div>
     </div>
 
-    <div class="notaTitle">Importante:</div>
-    <p>
-      Los artículos nuevos deben ser solicitados con mínimo
-      <strong>1 dia de anticipacion</strong>, ya que la atención del artículo
-      dependerá totalmente de la carga de trabajo de la bodega, aunado a ello se
-      debe considerar cualquier fallo en los sistemas.
-    </p>
-    <div class="float-right">
+    <div v-if="!isInProcess && !isAtendido">
+      <div class="notaTitle">Importante:</div>
+      <p>
+        Los artículos nuevos deben ser solicitados con mínimo
+        <strong>1 dia de anticipacion</strong>, ya que la atención del artículo
+        dependerá totalmente de la carga de trabajo de la bodega, aunado a ello
+        se debe considerar cualquier fallo en los sistemas.
+      </p>
+    </div>
+    <div class="float-right mt-3">
       <b-button variant="secondary" @click="backToList">
         <b-icon icon="x-lg" />
         Regresar
@@ -486,7 +498,7 @@ export default {
     typeRequest() {
       const type = this.$store.state.solicitudarticulo.tipoSolicitud
       return type === 'VIEW'
-        ? 'Vizualizando Solicitud'
+        ? 'Visualizando Solicitud'
         : type === 'EDIT'
         ? 'Editando Solicitud'
         : 'Generando solicitud'
@@ -643,7 +655,7 @@ export default {
       ])
     },
     async saveEstatus(Estatus) {
-      if (Estatus === 'ENVIADO') await this.prepareUpdateRequest()
+      if (Estatus === 'ENVIADO') await this.saveChanges()
       const uuid = this.requestActual.UUID
       const articulo = this.requestActual.Articulo
       this.setLoading(true)
@@ -669,6 +681,13 @@ export default {
 
 .codes {
   margin-right: 10px;
+  background: #fff;
+  color: black;
+}
+
+.colorActive {
+  background: #fff;
+  color: #000;
 }
 
 .TipoMarca {
@@ -680,6 +699,8 @@ export default {
 .realtion {
   width: 100px;
   margin-right: 10px;
+  background: #fff;
+  color: black;
 }
 
 .dividerRelation {

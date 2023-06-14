@@ -7,7 +7,7 @@
           :value="sucursal"
           :options="options"
           :disabled="!accessChangeSucursal"
-          @change="setSucursal"
+          @change="changeSucursal"
         />
       </b-input-group>
       <b-button variant="info" size="sm" @click="loadData">
@@ -307,6 +307,10 @@ export default {
         this.$bvModal.hide('modal-li-c')
         this.saveEstatus('ATENDIDO', this.uuid, this.codigo)
       }
+    },
+    changeSucursal(sucursal) {
+      this.setSucursal(sucursal)
+      this.sucursal = sucursal
     },
     setSucursalForUser() {
       if (!this.accessChangeSucursal) {
