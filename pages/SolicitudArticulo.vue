@@ -287,7 +287,7 @@ export default {
       return row.item.Estatus === 'ATENDIDO'
     },
     refactorFecha(date) {
-      const dateMoment = utils.toMoment(date.replaceAll('z', ''))
+      const dateMoment = utils.toMoment(date.replace(/Z/g, ''))
       return dateMoment.format('DD/MM/YYYY hh:mm a')
     },
     refactorSucursal(sucRe) {
