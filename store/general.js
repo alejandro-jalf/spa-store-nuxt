@@ -267,6 +267,12 @@ export const state = () => ({
           nickname: 'Info. Operativo M',
           icon: 'file-earmark-pdf-fill',
         },
+        {
+          path: '/existenciasantiguedad',
+          name: 'existenciasantiguedad',
+          nickname: 'Exist. Antiguedad',
+          icon: 'file-earmark-pdf-fill',
+        },
       ],
       name: '',
       nickname: 'Reportes',
