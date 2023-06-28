@@ -6,7 +6,7 @@
         v-model="selected"
         :options="options"
         :disabled="!accessChangeSucursal"
-        @change="setSucursalMore"
+        @change="selectSucursal"
       ></b-form-select>
       <b-input-group-append>
         <b-form-input
@@ -195,6 +195,9 @@ export default {
       return datos
     },
   },
+  mounted() {
+    this.setSucursalForUser()
+  },
   methods: {
     ...mapMutations({
       setSucursal: 'existenciasantiguedad/setSucursal',
@@ -213,7 +216,18 @@ export default {
     formatNumber(value) {
       return utils.aplyFormatNumeric(utils.roundTo(value))
     },
-    setSucursalMore() {},
+    setSucursalForUser() {
+      if (!this.accessChangeSucursal) {
+        const sucursalUser = utils.getSucursalByName(
+          this.$store.state.user.user.sucursal_user
+        )
+        this.setSucursal(sucursalUser)
+        this.selected = sucursalUser
+      } else this.selected = this.$store.state.existenciasantiguedad.sucursal
+    },
+    selectSucursal(suc) {
+      this.setSucursal(suc)
+    },
     getDateActual() {
       return utils.getDateNow().format('DD/MM/YYYY')
     },
