@@ -45,18 +45,9 @@
         <b-icon icon="printer-fill" />
         Imprimir PDF
       </b-button>
-      <Colors
-        class="d-block mt-5 mb-3"
-        :show-warning="true"
-        :show-danger="true"
-        title-warning="Sin Existencia"
-        title-danger="Sin Conexion"
-        content-message-warning="Las filas amarillas es para enfocar los articulos que tienen existencia 0"
-        content-message-danger="Esto sucede cuando no hay conexion con la sucursal, ya bien sea por falta de internet o por conexion inactiva (caida). <br/> Se recomienda que se reporte con el departamento de sistemas"
-      />
     </span>
 
-    <b-container v-if="dataExistencias.length > 20" fluid="xl">
+    <b-container v-if="dataExistencias.length > 20" fluid="xl" class="mt-4">
       <b-row cols="1" cols-sm="2">
         <b-col sm="3" md="2" class="mb-2">
           <b-form-select
@@ -108,6 +99,12 @@
       <template #cell(FechaCompra)="row">
         {{ utils.toDate(row.item.FechaCompra) }}
       </template>
+      <template #cell(StockMinimo)="row">
+        {{ formatNumber(row.item.StockMinimo) }}
+      </template>
+      <template #cell(StockMaximo)="row">
+        {{ formatNumber(row.item.StockMaximo) }}
+      </template>
     </b-table>
 
     <canvas
@@ -140,7 +137,7 @@ export default {
         { key: 'Relacion', label: 'Relacion', sortable: true },
         { key: 'CostoNet', label: 'Costo Neto', sortable: true },
         { key: 'CostoExist', label: 'Costo Exist.', sortable: true },
-        { key: 'Fecha Compra', label: 'FechaCompra', sortable: true },
+        { key: 'Fecha Compra', label: 'Fecha Compra', sortable: true },
         { key: 'Dias', label: 'Dias', sortable: true },
         { key: 'StockMinimo', label: 'Min', sortable: true },
         { key: 'StockMaximo', label: 'Max', sortable: true },
