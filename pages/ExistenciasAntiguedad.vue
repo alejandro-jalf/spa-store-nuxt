@@ -125,7 +125,7 @@ export default {
   data() {
     return {
       utils,
-      perPage: 20,
+      perPage: 100,
       dias: 45,
       pageOptions: [5, 10, 15, 20, 50, 100],
       currentPage: 1,
@@ -137,7 +137,7 @@ export default {
         { key: 'Relacion', label: 'Relacion', sortable: true },
         { key: 'CostoNet', label: 'Costo Neto', sortable: true },
         { key: 'CostoExist', label: 'Costo Exist.', sortable: true },
-        { key: 'Fecha Compra', label: 'Fecha Compra', sortable: true },
+        { key: 'FechaCompra', label: 'Fecha Compra', sortable: true },
         { key: 'Dias', label: 'Dias', sortable: true },
         { key: 'StockMinimo', label: 'Min', sortable: true },
         { key: 'StockMaximo', label: 'Max', sortable: true },
