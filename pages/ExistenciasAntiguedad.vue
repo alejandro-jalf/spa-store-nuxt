@@ -21,6 +21,7 @@
       </b-input-group-append>
     </b-input-group>
 
+    <img id="imgLogoSpa" class="imgLogo" src="@/assets/cesta.png" />
     <h5 v-if="haveData">
       {{
         `Detalles de Existencias Con ${diasConsult}+ Dias en Suc ${sucConsult} al ${getDateActual()}`
@@ -45,7 +46,7 @@
         Imprimir PDF
       </b-button>
       <Colors
-        class="d-block my-3"
+        class="d-block mt-5 mb-3"
         :show-warning="true"
         :show-danger="true"
         title-warning="Sin Existencia"
@@ -108,6 +109,13 @@
         {{ utils.toDate(row.item.FechaCompra) }}
       </template>
     </b-table>
+
+    <canvas
+      id="canvas"
+      class="canvasLogo"
+      width="100px"
+      height="100px"
+    ></canvas>
   </div>
 </template>
 
@@ -132,7 +140,7 @@ export default {
         { key: 'Relacion', label: 'Relacion', sortable: true },
         { key: 'CostoNet', label: 'Costo Neto', sortable: true },
         { key: 'CostoExist', label: 'Costo Exist.', sortable: true },
-        { key: 'FechaCompra', label: 'FechaCompra', sortable: true },
+        { key: 'Fecha Compra', label: 'FechaCompra', sortable: true },
         { key: 'Dias', label: 'Dias', sortable: true },
         { key: 'StockMinimo', label: 'Min', sortable: true },
         { key: 'StockMaximo', label: 'Max', sortable: true },
@@ -197,6 +205,7 @@ export default {
   },
   mounted() {
     this.setSucursalForUser()
+    this.loadDataImage()
   },
   methods: {
     ...mapMutations({
@@ -207,6 +216,12 @@ export default {
     ...mapActions({
       changeData: 'existenciasantiguedad/changeData',
     }),
+    loadDataImage() {
+      const canvas = document.getElementById('canvas')
+      const context = canvas.getContext('2d')
+      const imageObject = document.getElementById('imgLogoSpa')
+      context.drawImage(imageObject, 0, 0, 100, 100)
+    },
     getSucursalBySiglas(sucursal) {
       return this.options.reduce((suc, option) => {
         if (option.value === sucursal) suc = option.text
@@ -246,51 +261,62 @@ export default {
         this.showAlertDialog([response.message, 'Error inesperado'])
     },
     createPdf(preview) {
-      this.createPdfTransferencias(
-        this.sucExistences,
+      const logo = document.getElementById('canvas')
+      const detalles = `Detalles de Existencias Con ${
+        this.diasConsult
+      }+ Dias en Suc ${this.sucConsult} al ${this.getDateActual()}`
+      this.createPdfExistencias(
+        this.sucConsult,
         this.dataExistencias,
-        this.providerComplete,
+        logo,
+        detalles,
         preview
       )
     },
-    createPdfExistencias(sucursal, data, proveedor, preview = false) {
+    createPdfExistencias(sucursal, data, logo, detalles, preview = false) {
       // eslint-disable-next-line new-cap
-      const doc = new jsPDF('p', 'mm', 'letter')
+      const doc = new jsPDF('l', 'mm', 'letter')
 
-      const provider = `Existencias, Proveedor: "${proveedor}"`
       const headerPage = () => {
-        doc.setFontSize(12)
+        doc.setFontSize(18)
         doc.setFont('helvetica', 'bold')
-        doc.text('SUPER PROMOCIONES DE ACAYUCAN', 105, 15, 'center')
+        doc.setTextColor(0, 125, 208)
+        if (logo) {
+          doc.text('ANTIGUEDAD DE EXISTENCIAS', 265, 20, 'right')
+          doc.addImage(logo, 'PNG', 10, 15, 23, 23)
+        } else doc.text('REPOSICIONES DE COMPRAS', 105, 20, 'center')
 
-        doc.setFontSize(11)
-        doc.text(provider, 10, 23, 'left')
-
-        doc.text(data.length + ' Registros', 10, 31)
-        doc.text('Sucursal: ' + sucursal, 200, 31, 'right')
+        doc.setTextColor(0, 0, 0)
+        doc.setFontSize(15)
+        doc.text('SUPER PROMOCIONES DE ACAYUCAN', 265, 29, 'right')
+        doc.setFontSize(13)
+        doc.setFont('helvetica', 'normal')
+        doc.text(detalles, 265, 36, 'right')
       }
 
       headerPage()
 
       const body = data.reduce((acumData, dato) => {
         acumData.push([
-          { content: dato.Suc },
+          { content: dato.Subfamilia },
           { content: dato.Articulo },
           { content: dato.Nombre },
+          { content: this.formatNumber(dato.ExistUV) },
           { content: dato.Relacion },
-          {
-            content: this.formatNumber(dato.ExistenciaActualRegular),
-          },
-          {
-            content: this.formatNumber(dato.ExistenciaActualUC),
-          },
+          { content: this.formatNumber(dato.CostoNet) },
+          { content: this.formatNumber(dato.CostoExist) },
+          { content: utils.toDate(dato.FechaCompra) },
+          { content: dato.Dias },
+          { content: this.formatNumber(dato.StockMinimo) },
+          { content: this.formatNumber(dato.StockMaximo) },
+          { content: dato.Estatus },
         ])
         return acumData
       }, [])
 
       doc.autoTable({
-        startY: 36,
-        tableWidth: 190,
+        startY: 47,
+        tableWidth: 255,
         margin: {
           left: 10,
         },
@@ -298,12 +324,25 @@ export default {
         headStyles: {
           fontStyle: 'bold',
           halign: 'left',
-          fillColor: [255, 255, 255],
-          textColor: [0, 0, 0],
+          fillColor: [0, 125, 208],
+          textColor: [255, 255, 255],
         },
         bodyStyles: { textColor: [0, 0, 0] },
         head: [
-          ['Suc.', 'Articulo', 'Nombre', 'Relacion', 'Exist. UV', 'Exist. UC'],
+          [
+            'Subfamilia',
+            'Articulo',
+            'Nombre',
+            'Exist. UV',
+            'Relacion',
+            'Costo Neto',
+            'Costo Exist.',
+            'Fecha Compra',
+            'Dias',
+            'Min',
+            'Max',
+            'Estatus',
+          ],
         ],
         body,
       })
@@ -312,16 +351,33 @@ export default {
       let pageCurrent = 0
       doc.setFontSize(9)
       doc.setFont('helvetica', 'italic')
+      const horaImpreso = utils.getDateNow().format('DD-MM-yyyy hh:mm a')
       for (let page = 0; page < countPages; page++) {
         doc.setPage(page)
         pageCurrent = doc.internal.getCurrentPageInfo().pageNumber
-        doc.text(`Pagina ${pageCurrent} de ${countPages}`, 207, 275, 'right')
-        if (pageCurrent === 1) doc.line(10, 44, 200, 44)
+        doc.text(`Pagina ${pageCurrent} de ${countPages}`, 270, 207, 'right')
+        doc.text('Impreso ' + horaImpreso, 8, 207)
       }
 
       if (preview) doc.output('dataurlnewwindow')
-      else doc.save(`${sucursal} - ${provider} - ${sucursal}.pdf`)
+      else doc.save(`Antiguedad Existencias de ${sucursal}.pdf`)
     },
   },
 }
 </script>
+
+<style scoped>
+.imgLogo {
+  width: 100px;
+  height: 100px;
+  float: left;
+  margin-right: 40px;
+}
+
+.canvasLogo {
+  position: fixed;
+  top: 100px;
+  left: -250px;
+  z-index: 11;
+}
+</style>
