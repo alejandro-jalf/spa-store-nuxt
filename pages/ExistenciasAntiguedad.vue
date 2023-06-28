@@ -188,16 +188,7 @@ export default {
       )
     },
     dataExistencias() {
-      const datos = []
-      this.$store.state.existenciasantiguedad.data.data.forEach((articulo) => {
-        const data = { ...articulo }
-        if (data.StockMinimo === null || data.ExitLoc === null)
-          data._rowVariant = 'warning'
-        if (data.CalculoRotacion === null)
-          data.CalculoRotacion = data.FactorVenta
-        datos.push(data)
-      })
-      return datos
+      return this.$store.state.existenciasantiguedad.data.data
     },
   },
   mounted() {
@@ -262,13 +253,8 @@ export default {
       const detalles = `Detalles de Existencias Con ${
         this.diasConsult
       }+ Dias en Suc ${this.sucConsult} al ${this.getDateActual()}`
-      this.createPdfExistencias(
-        this.sucConsult,
-        this.dataExistencias,
-        logo,
-        detalles,
-        preview
-      )
+      const data = this.$store.state.existenciasantiguedad.data.data
+      this.createPdfExistencias(this.sucConsult, data, logo, detalles, preview)
     },
     createPdfExistencias(sucursal, data, logo, detalles, preview = false) {
       // eslint-disable-next-line new-cap
@@ -317,7 +303,7 @@ export default {
         margin: {
           left: 10,
         },
-        styles: { fontSize: 10 },
+        styles: { fontSize: 8 },
         headStyles: {
           fontStyle: 'bold',
           halign: 'left',
