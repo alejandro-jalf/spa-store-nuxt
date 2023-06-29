@@ -67,7 +67,7 @@
           </span>
         </span>
       </div>
-      <div class="mb-2">
+      <div class="mb-2" :class="validate(consolidacionActual.Observaciones)">
         <span>
           Destino:
           <span class="font-weight-bold">
@@ -81,7 +81,10 @@
           </span>
         </span>
       </div>
-      <div class="text-center mb-3">
+      <div
+        class="text-center mb-3"
+        :class="validate(consolidacionActual.Observaciones)"
+      >
         Observaciones:
         <span class="font-weight-bold">
           {{ consolidacionActual.Observaciones.toUpperCase() }}
@@ -268,6 +271,9 @@ export default {
       setShowDetails: 'consolidaciones/setShowDetails',
       setConsolidacionActual: 'consolidaciones/setConsolidacionActual',
     }),
+    validate(Observaciones) {
+      return Observaciones === 'Entrada No Encontrada' ? 'danger' : ''
+    },
     formatNumber(value) {
       return utils.aplyFormatNumeric(utils.roundTo(value))
     },
@@ -466,5 +472,10 @@ export default {
 .rectangle {
   display: inline-block;
   width: 150px;
+}
+
+.danger {
+  background: rgb(203, 0, 0);
+  color: rgb(255, 255, 255);
 }
 </style>

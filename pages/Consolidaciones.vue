@@ -81,7 +81,7 @@
         title-white="Exito"
         title-secondary="Exito"
         content-message-warning="Esto sucede cuando no se ha consolidado la transferencia, o por problemas de conexion no pudo llegar la consolidacion. <br/> Se recomienda volver a realizar la consolidacion"
-        content-message-danger="Esto sucede cuando no hay conexion con la sucursal, ya bien sea por falta de internet o por conexion inactiva (caida). <br/> Se recomienda que se reporte con el departamento de sistemas"
+        content-message-danger="Esto sucede cuando no hay conexion con la sucursal, ya bien sea por falta de internet o por conexion inactiva (caida). <br/> Tambien en algunas ocaciones es debido a que no se genero el movimiento de entrada <br/> Se recomienda que se reporte con el departamento de sistemas"
         content-message-white="La consolidacion llego con exito a la sucursal destino"
         content-message-secondary="La consolidacion llego con exito a la sucursal destino"
       />
