@@ -72,7 +72,7 @@
         </b-button>
       </b-button-group>
     </div>
-    <div v-if="viewCrearOferta" class="groupDate">
+    <!-- <div v-if="viewCrearOferta" class="groupDate">
       <b-button
         :pressed="onlyIcons"
         :variant="themeButtonClose"
@@ -81,7 +81,7 @@
         <b-icon :icon="iconOnlyIcons"></b-icon>
         Solo Iconos En Acciones
       </b-button>
-    </div>
+    </div> -->
     <oferta-form v-if="programandoOferta" class="pt-2 pb-2 mb-3"></oferta-form>
     <oferta-lista
       v-if="programandoListaOferta"
@@ -135,102 +135,6 @@
           </b-badge>
         </template>
         <template #cell(Acciones)="row">
-          <b-button
-            v-if="visibleButton(row.item, 'views')"
-            v-b-tooltip.hover
-            :title="msgTooltipDetails(row.item.estatus)"
-            variant="info"
-            size="sm"
-            class="mr-2 mt-2"
-            @click="viewDetails(row.item.uuid, row.item)"
-          >
-            <b-icon :icon="getIconDetail(row.item.estatus)" />
-            {{ detailsMessage(row.item.estatus) }}
-          </b-button>
-          <b-button
-            v-if="visibleButton(row.item, 'validate')"
-            v-b-tooltip.hover
-            :title="tooltipMessage('Validar')"
-            class="mr-2 mt-2"
-            size="sm"
-            variant="success"
-            @click="validateArticlesForProgram(row.item)"
-          >
-            <b-icon icon="info-circle-fill" />
-            {{ messageButtonIcons('Validar') }}
-          </b-button>
-          <b-button
-            v-if="visibleButton(row.item, 'check')"
-            v-b-tooltip.hover
-            :title="tooltipMessage('Verificar')"
-            class="mr-2 mt-2"
-            size="sm"
-            variant="success"
-            @click="verifyArticlesOffered(row.item)"
-          >
-            <b-icon icon="binoculars-fill" />
-            {{ messageButtonIcons('Verificar') }}
-          </b-button>
-          <b-button
-            v-if="visibleButton(row.item, 'action')"
-            v-b-tooltip.hover
-            :title="msgTooltipAction(row.item.estatus)"
-            class="mr-2 mt-2"
-            size="sm"
-            :variant="variantStatus(row.item.estatus)"
-            @click="prepareChangeStatusOffer(row.item)"
-          >
-            <b-icon icon="folder-symlink-fill" />
-            {{ messageButton(row.item.estatus) }}
-          </b-button>
-          <b-button
-            v-if="visibleButton(row.item, 'cancelar')"
-            v-b-tooltip.hover
-            :title="tooltipMessage('Cancelar')"
-            class="mr-2 mt-2"
-            size="sm"
-            variant="danger"
-            @click="prepareCancelOffer(row.item)"
-          >
-            <b-icon icon="x-circle-fill" />
-            {{ messageButtonIcons('Cancelar') }}
-          </b-button>
-          <b-button
-            v-if="visibleButton(row.item, 'eliminar')"
-            v-b-tooltip.hover
-            :title="tooltipMessage('Eliminar')"
-            size="sm"
-            class="mr-2 mt-2"
-            variant="danger"
-            @click="prepareDeleteOffer(row.item)"
-          >
-            <b-icon icon="trash-fill" />
-            {{ messageButtonIcons('Eliminar') }}
-          </b-button>
-          <b-button
-            v-if="visibleButton(row.item, 'excel')"
-            v-b-tooltip.hover
-            :title="tooltipMessage('Descargar Excel')"
-            class="mr-2 mt-2"
-            size="sm"
-            variant="light"
-            @click="generateExcel(row.item)"
-          >
-            <b-icon icon="download" />
-            {{ messageButtonIcons('EXCEL') }}
-          </b-button>
-          <b-button
-            v-if="visibleButton(row.item, 'pdf')"
-            v-b-tooltip.hover
-            :title="tooltipMessage('Imprimir PDF')"
-            class="mr-2 mt-2"
-            size="sm"
-            variant="light"
-            @click="createPdf(row.item, true)"
-          >
-            <b-icon icon="printer-fill" />
-            {{ messageButtonIcons('PDF') }}
-          </b-button>
           <div v-if="visibleButton(row.item, 'load')">
             <b-spinner
               v-for="(canti, position) in 9"
@@ -241,6 +145,170 @@
               type="grow"
             ></b-spinner>
           </div>
+          <b-dropdown v-else size="sm" no-caret>
+            <template #button-content>
+              Acciones
+              <b-icon icon="caret-down-fill" />
+            </template>
+            <b-dropdown-item
+              v-if="visibleButton(row.item, 'views')"
+              variant="info"
+              @click="viewDetails(row.item.uuid, row.item)"
+            >
+              <b-icon :icon="getIconDetail(row.item.estatus)" />
+              {{ detailsMessage(row.item.estatus) }}
+            </b-dropdown-item>
+            <b-dropdown-item
+              v-if="visibleButton(row.item, 'validate')"
+              variant="success"
+              @click="validateArticlesForProgram(row.item)"
+            >
+              <b-icon icon="info-circle-fill" />
+              {{ messageButtonIcons('Validar') }}
+            </b-dropdown-item>
+            <b-dropdown-item
+              v-if="visibleButton(row.item, 'check')"
+              variant="success"
+              @click="verifyArticlesOffered(row.item)"
+            >
+              <b-icon icon="binoculars-fill" />
+              {{ messageButtonIcons('Verificar') }}
+            </b-dropdown-item>
+            <b-dropdown-item
+              v-if="visibleButton(row.item, 'action')"
+              :variant="variantStatus(row.item.estatus)"
+              @click="prepareChangeStatusOffer(row.item)"
+            >
+              <b-icon icon="folder-symlink-fill" />
+              {{ messageButton(row.item.estatus) }}
+            </b-dropdown-item>
+            <b-dropdown-item
+              v-if="visibleButton(row.item, 'cancelar')"
+              variant="danger"
+              @click="prepareCancelOffer(row.item)"
+            >
+              <b-icon icon="x-circle-fill" />
+              {{ messageButtonIcons('Cancelar') }}
+            </b-dropdown-item>
+            <b-dropdown-item
+              v-if="visibleButton(row.item, 'eliminar')"
+              variant="danger"
+              @click="prepareDeleteOffer(row.item)"
+            >
+              <b-icon icon="trash-fill" />
+              {{ messageButtonIcons('Eliminar') }}
+            </b-dropdown-item>
+            <b-dropdown-item
+              v-if="visibleButton(row.item, 'excel')"
+              @click="generateExcel(row.item)"
+            >
+              <b-icon icon="download" />
+              {{ messageButtonIcons('EXCEL') }}
+            </b-dropdown-item>
+            <b-dropdown-item
+              v-if="visibleButton(row.item, 'pdf')"
+              @click="createPdf(row.item, true)"
+            >
+              <b-icon icon="printer-fill" />
+              {{ messageButtonIcons('PDF') }}
+            </b-dropdown-item>
+          </b-dropdown>
+          <!-- <b-button
+            v-if="visibleButton(row.item, 'views')"
+            v-b-tooltip.hover
+            :title="msgTooltipDetails(row.item.estatus)"
+            variant="info"
+            size="sm"
+            class="mr-2 mt-2"
+            @click="viewDetails(row.item.uuid, row.item)"
+          >
+            <b-icon :icon="getIconDetail(row.item.estatus)" />
+            {{ detailsMessage(row.item.estatus) }}
+          </b-button> -->
+          <!-- <b-button
+            v-if="visibleButton(row.item, 'validate')"
+            v-b-tooltip.hover
+            :title="tooltipMessage('Validar')"
+            class="mr-2 mt-2"
+            size="sm"
+            variant="success"
+            @click="validateArticlesForProgram(row.item)"
+          >
+            <b-icon icon="info-circle-fill" />
+            {{ messageButtonIcons('Validar') }}
+          </b-button> -->
+          <!-- <b-button
+            v-if="visibleButton(row.item, 'check')"
+            v-b-tooltip.hover
+            :title="tooltipMessage('Verificar')"
+            class="mr-2 mt-2"
+            size="sm"
+            variant="success"
+            @click="verifyArticlesOffered(row.item)"
+          >
+            <b-icon icon="binoculars-fill" />
+            {{ messageButtonIcons('Verificar') }}
+          </b-button> -->
+          <!-- <b-button
+            v-if="visibleButton(row.item, 'action')"
+            v-b-tooltip.hover
+            :title="msgTooltipAction(row.item.estatus)"
+            class="mr-2 mt-2"
+            size="sm"
+            :variant="variantStatus(row.item.estatus)"
+            @click="prepareChangeStatusOffer(row.item)"
+          >
+            <b-icon icon="folder-symlink-fill" />
+            {{ messageButton(row.item.estatus) }}
+          </b-button> -->
+          <!-- <b-button
+            v-if="visibleButton(row.item, 'cancelar')"
+            v-b-tooltip.hover
+            :title="tooltipMessage('Cancelar')"
+            class="mr-2 mt-2"
+            size="sm"
+            variant="danger"
+            @click="prepareCancelOffer(row.item)"
+          >
+            <b-icon icon="x-circle-fill" />
+            {{ messageButtonIcons('Cancelar') }}
+          </b-button> -->
+          <!-- <b-button
+            v-if="visibleButton(row.item, 'eliminar')"
+            v-b-tooltip.hover
+            :title="tooltipMessage('Eliminar')"
+            size="sm"
+            class="mr-2 mt-2"
+            variant="danger"
+            @click="prepareDeleteOffer(row.item)"
+          >
+            <b-icon icon="trash-fill" />
+            {{ messageButtonIcons('Eliminar') }}
+          </b-button> -->
+          <!-- <b-button
+            v-if="visibleButton(row.item, 'excel')"
+            v-b-tooltip.hover
+            :title="tooltipMessage('Descargar Excel')"
+            class="mr-2 mt-2"
+            size="sm"
+            variant="light"
+            @click="generateExcel(row.item)"
+          >
+            <b-icon icon="download" />
+            {{ messageButtonIcons('EXCEL') }}
+          </b-button> -->
+          <!-- <b-button
+            v-if="visibleButton(row.item, 'pdf')"
+            v-b-tooltip.hover
+            :title="tooltipMessage('Imprimir PDF')"
+            class="mr-2 mt-2"
+            size="sm"
+            variant="light"
+            @click="createPdf(row.item, true)"
+          >
+            <b-icon icon="printer-fill" />
+            {{ messageButtonIcons('PDF') }}
+          </b-button> -->
         </template>
         <template #cell(sucursal)="row">
           {{ nameSuc(row.item.sucursal) }}
@@ -419,9 +487,6 @@ En estatus que aparece en la tabla de ofertas dice lo siguiente de cada oferta:
     themeButtonClose() {
       return this.$store.state.general.themesComponents.themeButtonClose
     },
-    iconOnlyIcons() {
-      return this.onlyIcons ? 'check-square' : 'square'
-    },
     showOffered() {
       return this.$store.state.ofertas.detallesVerify.show
     },
@@ -505,6 +570,7 @@ En estatus que aparece en la tabla de ofertas dice lo siguiente de cada oferta:
       this.showStepper = false
     },
     visibleButton(dataOffer, typeButton) {
+      // algo
       const status = dataOffer.estatus
       const isOwner = dataOffer.creadoPor === this.dataUser.correo_user
       switch (status) {
@@ -533,8 +599,15 @@ En estatus que aparece en la tabla de ofertas dice lo siguiente de cada oferta:
           else return false
         case 3:
           if (typeButton === 'views' || typeButton === 'pdf') return true
-          if (typeButton === 'check' || typeButton === 'excel')
-            return this.tipoUser === 'manager'
+          if (typeButton === 'check') {
+            const dateActual = this.utils.getDateNow()
+            const fechaFin = dataOffer.fechaFin
+              .replace('T', ' ')
+              .replace('Z', '')
+            const dateEnd = utils.toMoment(fechaFin)
+            return dateActual.isBefore(dateEnd)
+          }
+          if (typeButton === 'excel') return this.tipoUser === 'manager'
           else return false
         case 4:
           if (typeButton === 'action' || typeButton === 'eliminar')
@@ -556,17 +629,17 @@ En estatus que aparece en la tabla de ofertas dice lo siguiente de cada oferta:
       return 'Detalles'
     },
     msgTooltipDetails(status) {
-      if (!this.onlyIcons) return null
+      // if (!this.onlyIcons) return null
       if (status === 0 || (status === 2 && this.tipoUser === 'manager'))
         return 'Editar'
       return 'Detalles'
     },
     tooltipMessage(message) {
-      if (!this.onlyIcons) return null
+      // if (!this.onlyIcons) return null
       return message
     },
     messageButtonIcons(message) {
-      if (this.onlyIcons) return ''
+      // if (this.onlyIcons) return ''
       return message
     },
     getIconDetail(status) {
@@ -750,7 +823,7 @@ En estatus que aparece en la tabla de ofertas dice lo siguiente de cada oferta:
       }
     },
     messageButton(status, isText = false) {
-      if (!isText && this.onlyIcons) return ''
+      // if (!isText && this.onlyIcons) return ''
       switch (status) {
         case 0:
           return 'Enviar'
@@ -765,8 +838,8 @@ En estatus que aparece en la tabla de ofertas dice lo siguiente de cada oferta:
       }
     },
     msgTooltipAction(status) {
-      if (!this.onlyIcons) return null
-      else if (status === 0) return 'Enviar'
+      // if (!this.onlyIcons) return null
+      if (status === 0) return 'Enviar'
       else if (status === 1) return 'Poner En Proceso'
       else if (status === 2) return 'Programar'
       else if (status === 4) return 'Restaurar'
