@@ -623,7 +623,7 @@ En estatus que aparece en la tabla de ofertas dice lo siguiente de cada oferta:
       return suc ? suc.text : sucursal
     },
     detailsMessage(status) {
-      if (this.onlyIcons) return ''
+      // if (this.onlyIcons) return ''
       if (status === 0 || (status === 2 && this.tipoUser === 'manager'))
         return 'Editar'
       return 'Detalles'

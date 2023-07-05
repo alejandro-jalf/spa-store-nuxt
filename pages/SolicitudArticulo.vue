@@ -6,7 +6,7 @@
         <b-form-select
           :value="sucursal"
           :options="options"
-          :disabled="!accessChangeSucursal"
+          :disabled="!accessChangeSucursal || isArticlesMaker"
           @change="changeSucursal"
         />
       </b-input-group>
@@ -20,6 +20,7 @@
       </b-button>
 
       <b-button
+        v-if="!isArticlesMaker"
         variant="success"
         size="sm"
         class="float-right"
@@ -64,6 +65,13 @@
             v-if="isSucursal(row) && allowView('EN SUCURSAL', row)"
             variant="warning"
             size="sm"
+            @click="
+              prepareChangeEstatus(
+                'CANCELADO',
+                row.item.UUID,
+                row.item.Articulo
+              )
+            "
           >
             <b-icon icon="x-circle-fill" /> Cancelar
           </b-button>
@@ -233,6 +241,11 @@ export default {
     accessChangeSucursal() {
       return this.$store.state.user.user.tipo_user === 'manager'
     },
+    isArticlesMaker() {
+      return (
+        this.$store.state.user.user.correo_user === 'auditoriaspamx@gmail.com'
+      )
+    },
   },
   mounted() {
     this.setSucursalForUser()
@@ -319,6 +332,9 @@ export default {
         )
         this.sucursal = sucUser
         this.setSucursal(sucUser)
+      } else if (this.isArticlesMaker) {
+        this.sucursal = 'ALL'
+        this.setSucursal('ALL')
       } else this.sucursal = this.$store.state.solicitudarticulo.sucursal
     },
     async openRequest(type, uuid) {
