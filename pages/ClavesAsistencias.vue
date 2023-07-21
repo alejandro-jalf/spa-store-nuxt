@@ -11,6 +11,10 @@
           <b-icon icon="shield-lock-fill" />
           Editar Contraseña
         </b-button>
+        <b-button :variant="variantInfo" @click="setView('EDITARTRABAJADOR')">
+          <b-icon icon="person-badge-fill" />
+          Reasignar Trabajador
+        </b-button>
       </div>
       <b-card
         class="w-75"
@@ -49,18 +53,21 @@
             autocomplete="false"
             required
             :class="backgroundInputTheme"
-            @keyup.enter="setFocusRadios"
+            @keyup.enter="$refs.EstatusED.focus()"
           ></b-form-input>
         </b-form-group>
-        <b-form-group v-slot="{ ariaDescribedby }" label="Seleccione Tipo">
-          <b-form-radio-group
-            id="radiosEstatus"
+        <b-form-group label="Seleccione Tipo">
+          <b-form-radio
+            v-for="(opt, indexOpt) in optionsRadious"
+            :id="opt.ref"
+            :key="indexOpt"
+            :ref="opt.ref"
             v-model="register.estatus"
-            :options="optionsRadious"
-            :aria-describedby="ariaDescribedby"
-            name="radios-stacked"
-            stacked
-          ></b-form-radio-group>
+            name="some-radios"
+            :value="opt.value"
+            @keyup.enter="registerAsistencia"
+            >{{ opt.text }}</b-form-radio
+          >
         </b-form-group>
         <div>
           <b-button
@@ -102,10 +109,10 @@ export default {
         estatus: 'ENTRADA DIA',
       },
       optionsRadious: [
-        { text: 'ENTRADA DIA', value: 'ENTRADA DIA' },
-        { text: 'SALIDA COMIDA', value: 'SALIDA COMIDA' },
-        { text: 'ENTRADA COMIDA', value: 'ENTRADA COMIDA' },
-        { text: 'SALIDA DIA', value: 'SALIDA DIA' },
+        { text: 'ENTRADA DIA', value: 'ENTRADA DIA', ref: 'EstatusED' },
+        { text: 'SALIDA COMIDA', value: 'SALIDA COMIDA', ref: 'EstatusSC' },
+        { text: 'ENTRADA COMIDA', value: 'ENTRADA COMIDA', ref: 'EstatusEC' },
+        { text: 'SALIDA DIA', value: 'SALIDA DIA', ref: 'EstatusSD' },
       ],
       options: [
         { value: 'ZR', text: 'Zaragoza' },
@@ -179,11 +186,13 @@ export default {
           this.register.estatus,
         ])
         if (!response.success) this.showAlertDialog([response.message])
-        else this.showAlertDialog([response.message, 'Exito', 'success'])
-        this.register.Cajero = ''
-        this.register.Clave = ''
-        this.register.estatus = 'ENTRADA DIA'
-        this.$refs.ipCajero.focus()
+        else {
+          this.showAlertDialog([response.message, 'Exito', 'success'])
+          this.register.Cajero = ''
+          this.register.Clave = ''
+          this.register.estatus = 'ENTRADA DIA'
+          this.$refs.ipCajero.focus()
+        }
         this.setLoading(false)
       }
     },

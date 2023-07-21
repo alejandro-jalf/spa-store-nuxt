@@ -29,7 +29,7 @@
             :class="backgroundInputTheme"
             @keyup.enter="enterCajero"
           ></b-form-input>
-          <b-input-group-append v-if="editingClave">
+          <b-input-group-append v-if="editingClave || editingTrabajador">
             <b-button variant="info" @click="getDataTrabajador">
               Buscar
             </b-button>
@@ -70,7 +70,7 @@
           ref="btnSelect"
           v-b-modal.modalSelect
           variant="info"
-          :disabled="editingClave"
+          :disabled="disabledSelect"
         >
           <b-icon icon="search" />
           Seleccionar
@@ -102,7 +102,7 @@
         :class="backgroundInputTheme"
       ></b-form-input>
       <b-button
-        v-if="!editingClave"
+        v-if="!editingClave && !editingTrabajador"
         ref="btnRegister"
         variant="primary"
         class="mt-3"
@@ -111,16 +111,25 @@
         <b-icon icon="clipboard-check" />
         Registrar
       </b-button>
-      <b-button
-        v-else
-        ref="btnUpdated"
-        variant="primary"
-        class="mt-3"
-        @click="prepareUpdateClave"
-      >
-        <b-icon icon="clipboard-check" />
-        Actualizar
-      </b-button>
+      <div v-else>
+        <b-button
+          ref="btnUpdated"
+          variant="primary"
+          class="mt-3"
+          @click="switchUpdate"
+        >
+          <b-icon icon="clipboard-check" />
+          Actualizar
+        </b-button>
+        <b-button
+          ref="btnUpdated"
+          variant="warning"
+          class="mt-3"
+          @click="cleanCamps"
+        >
+          Limpiar Campos
+        </b-button>
+      </div>
     </b-card>
     <b-modal
       id="modalSelect"
@@ -174,6 +183,7 @@ export default {
   data() {
     return {
       utils,
+      disabledSelect: false,
       disabledCajero: false,
       disabledSucursal: false,
       disabledClave: false,
@@ -231,6 +241,9 @@ export default {
     editingClave() {
       return this.$store.state.claveasistencias.view === 'EDITARCLAVE'
     },
+    editingTrabajador() {
+      return this.$store.state.claveasistencias.view === 'EDITARTRABAJADOR'
+    },
     titleSelect() {
       return (
         'Trabajadores de Sucursal: ' +
@@ -248,9 +261,10 @@ export default {
   },
   mounted() {
     this.setSucursalForUser()
-    if (this.editingClave) {
+    if (this.editingClave || this.editingTrabajador) {
       this.disabledClave = true
       this.disabledRClave = true
+      this.disabledSelect = true
     }
   },
   methods: {
@@ -266,6 +280,7 @@ export default {
       addClave: 'claveasistencias/addClave',
       getClave: 'claveasistencias/getClave',
       updateClaveTrabajador: 'claveasistencias/updateClaveTrabajador',
+      updateIdTrabajador: 'claveasistencias/updateIdTrabajador',
     }),
     setSucursalForUser() {
       if (!this.accessChangeSucursal) {
@@ -288,7 +303,7 @@ export default {
     },
     enterCajero() {
       if (this.register.Cajero === '') return false
-      if (this.editingClave) this.getDataTrabajador()
+      if (this.editingClave || this.editingTrabajador) this.getDataTrabajador()
       else this.$refs.inputClave.focus()
     },
     async getTrabajadores() {
@@ -296,6 +311,22 @@ export default {
       const response = await this.changeData(this.sucursal)
       if (!response.success) this.showAlertDialog([response.message])
       this.setLoading(false)
+    },
+    cleanCamps() {
+      if (this.editingClave) {
+        this.disabledClave = true
+        this.disabledRClave = true
+      }
+      if (this.editingTrabajador) this.disabledSelect = true
+      this.disabledCajero = false
+      this.disabledSucursal = false
+      this.register.Clave = ''
+      this.register.RepetirClave = ''
+      this.trabajador.IdTrabajador = ''
+      this.trabajador.Nombre = ''
+      this.trabajador.Categoria = ''
+      this.register.Cajero = ''
+      this.$refs.ipCajero.focus()
     },
     prepareAddClave() {
       if (this.validateForm()) {
@@ -328,10 +359,13 @@ export default {
       ])
       if (!response.success) this.showAlertDialog([response.message])
       else {
+        if (this.editingClave) {
+          this.disabledClave = false
+          this.disabledRClave = false
+        }
+        if (this.editingTrabajador) this.disabledSelect = false
         this.disabledCajero = true
         this.disabledSucursal = true
-        this.disabledClave = false
-        this.disabledRClave = false
         this.register.Clave = response.data[0].Clave
         this.register.RepetirClave = response.data[0].Clave
         this.trabajador.IdTrabajador = response.data[0].IdTrabajador
@@ -376,6 +410,10 @@ export default {
       }
       return true
     },
+    switchUpdate() {
+      if (this.editingClave) this.prepareUpdateClave()
+      else this.prepareUpdateTrabajador()
+    },
     prepareUpdateClave() {
       if (this.validateForm()) {
         this.showAlertDialogOption([
@@ -397,6 +435,32 @@ export default {
         this.sucursal,
         this.register.Cajero.trim(),
         this.register.Clave.trim(),
+      ])
+      if (!response.success) this.showAlertDialog([response.message])
+      else this.showAlertDialog([response.message, 'Exito', 'success'])
+      this.setLoading(false)
+    },
+    prepareUpdateTrabajador() {
+      if (this.validateForm()) {
+        this.showAlertDialogOption([
+          `¿Quiere asignar al cajero [${this.register.Cajero}] el trabajador [${this.trabajador.Nombre}]`,
+          'Actualizando contraseña',
+          () => {
+            this.hideAlertDialogOption()
+            this.updateTrabajador()
+          },
+          'warning',
+          'light',
+          this.hideAlertDialogOption,
+        ])
+      }
+    },
+    async updateTrabajador() {
+      this.setLoading(true)
+      const response = await this.updateIdTrabajador([
+        this.sucursal,
+        this.register.Cajero.trim(),
+        this.trabajador.IdTrabajador,
       ])
       if (!response.success) this.showAlertDialog([response.message])
       else this.showAlertDialog([response.message, 'Exito', 'success'])

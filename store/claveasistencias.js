@@ -170,4 +170,34 @@ export const actions = {
       }
     }
   },
+  async updateIdTrabajador({ commit }, [sucursal, Cajero, IdTrabajador]) {
+    try {
+      const url =
+        process.env.spastore_url_backend +
+        'api/v1/trabajadores/claves/' +
+        sucursal +
+        '/' +
+        Cajero +
+        '/IdTrabajador'
+
+      const response = await this.$axios({
+        url,
+        method: 'put',
+        data: { IdTrabajador },
+      })
+
+      if (response.data.success) commit('setView', 'REGISTRO')
+
+      return response.data
+    } catch (error) {
+      if (error.response) {
+        return error.response.data
+      }
+      return {
+        success: false,
+        message: 'Error con el servidor',
+        error,
+      }
+    }
+  },
 }
