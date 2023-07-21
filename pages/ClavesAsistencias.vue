@@ -22,7 +22,7 @@
           <b-form-select
             :value="sucursal"
             :options="options"
-            :disabled="accessChangeSucursal"
+            :disabled="!accessChangeSucursal"
             @change="selectSucursal"
           ></b-form-select>
         </b-input-group>
