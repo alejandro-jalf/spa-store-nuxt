@@ -36,7 +36,7 @@
             ref="ipCajero"
             v-model="register.Cajero"
             type="text"
-            autocomplete="false"
+            autocomplete="off"
             autofocus
             placeholder="Numero de cajero"
             required
@@ -52,7 +52,7 @@
             v-model="register.Clave"
             type="password"
             placeholder="Contraseña"
-            autocomplete="false"
+            autocomplete="off"
             required
             :class="backgroundInputTheme"
             @keyup.enter="enterClave"

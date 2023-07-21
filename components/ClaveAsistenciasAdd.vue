@@ -23,7 +23,7 @@
             v-model="register.Cajero"
             :disabled="disabledCajero"
             type="text"
-            autocomplete="false"
+            autocomplete="off"
             placeholder="Numero de cajero"
             required
             :class="backgroundInputTheme"
@@ -43,7 +43,7 @@
           v-model="register.Clave"
           type="password"
           placeholder="Contraseña"
-          autocomplete="false"
+          autocomplete="off"
           :disabled="disabledClave"
           required
           :class="backgroundInputTheme"
@@ -57,7 +57,7 @@
           v-model="register.RepetirClave"
           type="password"
           placeholder="Repetir Contraseña"
-          autocomplete="false"
+          autocomplete="off"
           :disabled="disabledRClave"
           required
           :class="backgroundInputTheme"
