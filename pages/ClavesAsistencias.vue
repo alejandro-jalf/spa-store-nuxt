@@ -7,9 +7,9 @@
           <b-icon icon="plus-square-dotted" />
           Agregar Clave
         </b-button>
-        <b-button :variant="variantClean">
-          <b-icon icon="pencil" />
-          Editar Clave
+        <b-button :variant="variantClean" @click="setView('EDITARCLAVE')">
+          <b-icon icon="shield-lock-fill" />
+          Editar Contraseña
         </b-button>
       </div>
       <b-card
@@ -166,7 +166,6 @@ export default {
       }
     },
     selectSucursal(suc) {
-      console.log(suc)
       this.sucursal = suc
       this.setSucursal(suc)
     },

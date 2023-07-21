@@ -4,28 +4,37 @@
       class="w-75"
       :class="variantTheme"
       style="margin: auto"
-      title="Registro de Clave"
+      :title="title"
     >
       <b-input-group prepend="Sucursal" class="mb-2">
         <b-form-select
           :value="sucursal"
           :options="options"
           :class="backgroundInputTheme"
+          :disabled="disabledSucursal"
           @change="selectSucursal"
         ></b-form-select>
       </b-input-group>
       <b-form-group id="gpCaj" label="Cajero:" label-for="ipCajero">
-        <b-form-input
-          id="ipCajero"
-          ref="ipCajero"
-          v-model="register.Cajero"
-          type="text"
-          autocomplete="false"
-          placeholder="Numero de cajero"
-          required
-          :class="backgroundInputTheme"
-          @keyup.enter="$refs.inputClave.focus()"
-        ></b-form-input>
+        <b-input-group>
+          <b-form-input
+            id="ipCajero"
+            ref="ipCajero"
+            v-model="register.Cajero"
+            :disabled="disabledCajero"
+            type="text"
+            autocomplete="false"
+            placeholder="Numero de cajero"
+            required
+            :class="backgroundInputTheme"
+            @keyup.enter="enterCajero"
+          ></b-form-input>
+          <b-input-group-append v-if="editingClave">
+            <b-button variant="info" @click="getDataTrabajador">
+              Buscar
+            </b-button>
+          </b-input-group-append>
+        </b-input-group>
       </b-form-group>
       <b-form-group id="gpCla" label="Contraseña:" label-for="ipClave">
         <b-form-input
@@ -35,6 +44,7 @@
           type="password"
           placeholder="Contraseña"
           autocomplete="false"
+          :disabled="disabledClave"
           required
           :class="backgroundInputTheme"
           @keyup.enter="$refs.inputClaveR.focus()"
@@ -48,6 +58,7 @@
           type="password"
           placeholder="Repetir Contraseña"
           autocomplete="false"
+          :disabled="disabledRClave"
           required
           :class="backgroundInputTheme"
           @keyup.enter="$refs.btnSelect.focus()"
@@ -55,7 +66,12 @@
       </b-form-group>
       <div class="my-2">
         Trabajador:
-        <b-button ref="btnSelect" v-b-modal.modalSelect variant="info">
+        <b-button
+          ref="btnSelect"
+          v-b-modal.modalSelect
+          variant="info"
+          :disabled="editingClave"
+        >
           <b-icon icon="search" />
           Seleccionar
         </b-button>
@@ -86,6 +102,7 @@
         :class="backgroundInputTheme"
       ></b-form-input>
       <b-button
+        v-if="!editingClave"
         ref="btnRegister"
         variant="primary"
         class="mt-3"
@@ -93,6 +110,16 @@
       >
         <b-icon icon="clipboard-check" />
         Registrar
+      </b-button>
+      <b-button
+        v-else
+        ref="btnUpdated"
+        variant="primary"
+        class="mt-3"
+        @click="prepareUpdateClave"
+      >
+        <b-icon icon="clipboard-check" />
+        Actualizar
       </b-button>
     </b-card>
     <b-modal
@@ -147,6 +174,10 @@ export default {
   data() {
     return {
       utils,
+      disabledCajero: false,
+      disabledSucursal: false,
+      disabledClave: false,
+      disabledRClave: false,
       sucursal: 'ZR',
       register: {
         Cajero: '',
@@ -189,6 +220,17 @@ export default {
     variantTheme() {
       return this.$store.state.general.themesComponents.themeCard2Body
     },
+    title() {
+      const view = this.$store.state.claveasistencias.view
+      return view === 'AGREGAR'
+        ? 'Registro de Clave'
+        : view === 'EDITARCLAVE'
+        ? 'Editando Contraseña'
+        : 'Reasignando Trabajador'
+    },
+    editingClave() {
+      return this.$store.state.claveasistencias.view === 'EDITARCLAVE'
+    },
     titleSelect() {
       return (
         'Trabajadores de Sucursal: ' +
@@ -206,6 +248,10 @@ export default {
   },
   mounted() {
     this.setSucursalForUser()
+    if (this.editingClave) {
+      this.disabledClave = true
+      this.disabledRClave = true
+    }
   },
   methods: {
     ...mapMutations({
@@ -218,6 +264,8 @@ export default {
     ...mapActions({
       changeData: 'claveasistencias/changeData',
       addClave: 'claveasistencias/addClave',
+      getClave: 'claveasistencias/getClave',
+      updateClaveTrabajador: 'claveasistencias/updateClaveTrabajador',
     }),
     setSucursalForUser() {
       if (!this.accessChangeSucursal) {
@@ -231,13 +279,17 @@ export default {
       }
     },
     selectSucursal(suc) {
-      console.log(suc)
       this.sucursal = suc
       this.setSucursal(suc)
     },
     selectTrabajador(items) {
       this.trabajador = { ...items }
       this.$refs.modalSelect.hide()
+    },
+    enterCajero() {
+      if (this.register.Cajero === '') return false
+      if (this.editingClave) this.getDataTrabajador()
+      else this.$refs.inputClave.focus()
     },
     async getTrabajadores() {
       this.setLoading(true)
@@ -268,6 +320,27 @@ export default {
         ])
       }
     },
+    async getDataTrabajador() {
+      this.setLoading(true)
+      const response = await this.getClave([
+        this.sucursal,
+        this.register.Cajero.trim(),
+      ])
+      if (!response.success) this.showAlertDialog([response.message])
+      else {
+        this.disabledCajero = true
+        this.disabledSucursal = true
+        this.disabledClave = false
+        this.disabledRClave = false
+        this.register.Clave = response.data[0].Clave
+        this.register.RepetirClave = response.data[0].Clave
+        this.trabajador.IdTrabajador = response.data[0].IdTrabajador
+        this.trabajador.Nombre = response.data[0].Nombre
+        this.trabajador.Categoria = response.data[0].Categoria
+        this.$refs.inputClave.focus()
+      }
+      this.setLoading(false)
+    },
     async registerClave() {
       this.setLoading(true)
       const response = await this.addClave([
@@ -276,7 +349,6 @@ export default {
         this.register.Cajero.trim(),
         this.trabajador.IdTrabajador,
       ])
-      console.log(response)
       if (!response.success) this.showAlertDialog([response.message])
       else this.showAlertDialog([response.message, 'Exito', 'success'])
       this.setLoading(false)
@@ -303,6 +375,32 @@ export default {
         return false
       }
       return true
+    },
+    prepareUpdateClave() {
+      if (this.validateForm()) {
+        this.showAlertDialogOption([
+          '¿Quiere actualizar la contraseña de ' + this.trabajador.Nombre,
+          'Actualizando contraseña',
+          () => {
+            this.hideAlertDialogOption()
+            this.updateClave()
+          },
+          'warning',
+          'light',
+          this.hideAlertDialogOption,
+        ])
+      }
+    },
+    async updateClave() {
+      this.setLoading(true)
+      const response = await this.updateClaveTrabajador([
+        this.sucursal,
+        this.register.Cajero.trim(),
+        this.register.Clave.trim(),
+      ])
+      if (!response.success) this.showAlertDialog([response.message])
+      else this.showAlertDialog([response.message, 'Exito', 'success'])
+      this.setLoading(false)
     },
   },
 }
