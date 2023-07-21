@@ -2,7 +2,7 @@
   <div>
     <h5 class="text-center my-3">Claves de Asistencias</h5>
     <div v-if="viewRegister">
-      <div class="mb-3">
+      <div v-if="accessChangeSucursal" class="mb-3">
         <b-button :variant="variantSuccess" @click="setView('AGREGAR')">
           <b-icon icon="plus-square-dotted" />
           Agregar Clave
