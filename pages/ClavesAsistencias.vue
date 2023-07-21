@@ -37,10 +37,12 @@
             v-model="register.Cajero"
             type="text"
             autocomplete="false"
+            autofocus
             placeholder="Numero de cajero"
             required
             :class="backgroundInputTheme"
             @keyup.enter="$refs.inputClave.focus()"
+            @keyup.esc="cleanForm"
           ></b-form-input>
         </b-form-group>
         <b-form-group id="gpCla" label="Contraseña:" label-for="ipClave">
@@ -53,7 +55,8 @@
             autocomplete="false"
             required
             :class="backgroundInputTheme"
-            @keyup.enter="$refs.EstatusED.focus()"
+            @keyup.enter="enterClave"
+            @keyup.esc="cleanForm"
           ></b-form-input>
         </b-form-group>
         <b-form-group label="Seleccione Tipo">
@@ -176,6 +179,16 @@ export default {
       this.sucursal = suc
       this.setSucursal(suc)
     },
+    enterClave() {
+      document.getElementById('EstatusED').focus()
+      this.register.estatus = 'ENTRADA DIA'
+    },
+    cleanForm() {
+      this.register.Cajero = ''
+      this.register.Clave = ''
+      this.register.estatus = 'ENTRADA DIA'
+      this.$refs.ipCajero.focus()
+    },
     async registerAsistencia() {
       if (this.validateForm()) {
         this.setLoading(true)
@@ -185,8 +198,10 @@ export default {
           this.register.Clave.trim(),
           this.register.estatus,
         ])
-        if (!response.success) this.showAlertDialog([response.message])
-        else {
+        if (!response.success) {
+          this.showAlertDialog([response.message])
+          this.$refs.ipCajero.focus()
+        } else {
           this.showAlertDialog([response.message, 'Exito', 'success'])
           this.register.Cajero = ''
           this.register.Clave = ''
