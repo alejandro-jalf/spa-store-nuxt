@@ -40,7 +40,6 @@
             autocomplete="off"
             autofocus
             placeholder="Numero de cajero"
-            required
             :class="backgroundInputTheme"
             @keyup.enter="$refs.inputClave.focus()"
             @keyup.esc="cleanForm"
@@ -55,7 +54,6 @@
             placeholder="Contraseña"
             autocomplete="off"
             name="ClaveParaCajero"
-            required
             :class="backgroundInputTheme"
             @keyup.enter="enterClave"
             @keyup.esc="cleanForm"
