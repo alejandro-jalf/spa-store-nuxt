@@ -15,11 +15,11 @@
           @change="selectSucursal"
         ></b-form-select>
       </b-input-group>
-      <b-form-group id="gpCaj" label="Cajero:" label-for="ipCajero">
+      <b-form-group id="gpCaj" label="Cajero:" label-for="ipCajeroA">
         <b-input-group>
           <b-form-input
-            id="ipCajero"
-            ref="ipCajero"
+            id="ipCajeroA"
+            ref="ipCajeroA"
             v-model="register.Cajero"
             :disabled="disabledCajero"
             type="text"
@@ -28,6 +28,7 @@
             required
             :class="backgroundInputTheme"
             @keyup.enter="enterCajero"
+            @focus="$refs.ipCajeroA.select()"
           ></b-form-input>
           <b-input-group-append v-if="editingClave || editingTrabajador">
             <b-button variant="info" @click="getDataTrabajador">
@@ -48,6 +49,7 @@
           required
           :class="backgroundInputTheme"
           @keyup.enter="$refs.inputClaveR.focus()"
+          @focus="$refs.inputClave.select()"
         ></b-form-input>
       </b-form-group>
       <b-form-group id="gpCla" label="Repetir Contraseña:" label-for="ipClave">
@@ -57,11 +59,12 @@
           v-model="register.RepetirClave"
           type="password"
           placeholder="Repetir Contraseña"
-          autocomplete="off"
+          autocomplete="new-password"
           :disabled="disabledRClave"
           required
           :class="backgroundInputTheme"
           @keyup.enter="$refs.btnSelect.focus()"
+          @focus="$refs.inputClaveR.select()"
         ></b-form-input>
       </b-form-group>
       <div class="my-2">
@@ -326,7 +329,7 @@ export default {
       this.trabajador.Nombre = ''
       this.trabajador.Categoria = ''
       this.register.Cajero = ''
-      this.$refs.ipCajero.focus()
+      this.$refs.ipCajeroA.focus()
     },
     prepareAddClave() {
       if (this.validateForm()) {

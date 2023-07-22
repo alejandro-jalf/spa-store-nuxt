@@ -43,6 +43,7 @@
             :class="backgroundInputTheme"
             @keyup.enter="$refs.inputClave.focus()"
             @keyup.esc="cleanForm"
+            @focus="$refs.ipCajero.select()"
           ></b-form-input>
         </b-form-group>
         <b-form-group id="gpCla" label="Contraseña:" label-for="ipClave">
@@ -52,11 +53,12 @@
             v-model="register.Clave"
             type="password"
             placeholder="Contraseña"
-            autocomplete="off"
+            autocomplete="new-password"
             name="ClaveParaCajero"
             :class="backgroundInputTheme"
             @keyup.enter="enterClave"
             @keyup.esc="cleanForm"
+            @focus="$refs.inputClave.select()"
           ></b-form-input>
         </b-form-group>
         <b-form-group label="Seleccione Tipo">
