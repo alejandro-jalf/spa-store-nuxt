@@ -15,6 +15,10 @@
           <b-icon icon="person-badge-fill" />
           Reasignar Trabajador
         </b-button>
+        <b-button :variant="variantClean" @click="setView('EDITARPRIVILEGIOS')">
+          <b-icon icon="arrow-down-up" />
+          Cambiar Privilegios
+        </b-button>
       </div>
       <b-card
         class="w-75"

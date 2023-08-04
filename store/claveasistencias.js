@@ -153,7 +153,10 @@ export const actions = {
       }
     }
   },
-  async addClave({ commit }, [sucursal, Clave, Cajero, IdTrabajador]) {
+  async addClave(
+    { commit },
+    [sucursal, Clave, Cajero, IdTrabajador, Privilegios]
+  ) {
     try {
       const url =
         process.env.spastore_url_backend +
@@ -163,7 +166,7 @@ export const actions = {
       const response = await this.$axios({
         url,
         method: 'post',
-        data: { Clave, Cajero, IdTrabajador },
+        data: { Clave, Cajero, IdTrabajador, Privilegios },
       })
 
       if (response.data.success) commit('setView', 'REGISTRO')
@@ -223,6 +226,36 @@ export const actions = {
         url,
         method: 'put',
         data: { IdTrabajador },
+      })
+
+      if (response.data.success) commit('setView', 'REGISTRO')
+
+      return response.data
+    } catch (error) {
+      if (error.response) {
+        return error.response.data
+      }
+      return {
+        success: false,
+        message: 'Error con el servidor',
+        error,
+      }
+    }
+  },
+  async updateLevel({ commit }, [sucursal, Cajero, Privilegios]) {
+    try {
+      const url =
+        process.env.spastore_url_backend +
+        'api/v1/trabajadores/claves/' +
+        sucursal +
+        '/' +
+        Cajero +
+        '/privilegios'
+
+      const response = await this.$axios({
+        url,
+        method: 'put',
+        data: { Privilegios },
       })
 
       if (response.data.success) commit('setView', 'REGISTRO')

@@ -15,6 +15,15 @@
           @change="selectSucursal"
         ></b-form-select>
       </b-input-group>
+      <b-input-group prepend="Nivel" class="mb-2 mt-4">
+        <b-form-select
+          ref="selectPrivilegios"
+          v-model="register.Privilegios"
+          :options="optionsPrioritys"
+          :class="backgroundInputTheme"
+          :disabled="disabledPrivilegios"
+        ></b-form-select>
+      </b-input-group>
       <b-form-group id="gpCaj" label="Cajero:" label-for="ipCajeroA">
         <b-input-group>
           <b-form-input
@@ -30,7 +39,9 @@
             @keyup.enter="enterCajero"
             @focus="$refs.ipCajeroA.select()"
           ></b-form-input>
-          <b-input-group-append v-if="editingClave || editingTrabajador">
+          <b-input-group-append
+            v-if="editingClave || editingTrabajador || editingPrivilegios"
+          >
             <b-button variant="info" @click="getDataTrabajador">
               Buscar
             </b-button>
@@ -105,7 +116,7 @@
         :class="backgroundInputTheme"
       ></b-form-input>
       <b-button
-        v-if="!editingClave && !editingTrabajador"
+        v-if="!editingClave && !editingTrabajador && !editingPrivilegios"
         ref="btnRegister"
         variant="primary"
         class="mt-3"
@@ -190,9 +201,11 @@ export default {
       disabledCajero: false,
       disabledSucursal: false,
       disabledClave: false,
+      disabledPrivilegios: false,
       disabledRClave: false,
       sucursal: 'ZR',
       register: {
+        Privilegios: '03',
         Cajero: '',
         Clave: '',
         RepetirClave: '',
@@ -218,6 +231,13 @@ export default {
         { key: 'Direccion', label: 'Direccion', sortable: true },
         { key: 'Seleccionar', label: 'Seleccionar', sortable: true },
       ],
+      optionsPrioritys: [
+        { value: '00', text: 'Administrador de Sistemas' },
+        { value: '01', text: 'Oficina' },
+        { value: '02', text: 'Encargado' },
+        { value: '03', text: 'Cajero' },
+        { value: '04', text: 'Trabajador' },
+      ],
     }
   },
   computed: {
@@ -239,6 +259,8 @@ export default {
         ? 'Registro de Clave'
         : view === 'EDITARCLAVE'
         ? 'Editando Contraseña'
+        : view === 'EDITARPRIVILEGIOS'
+        ? 'Editando Privilegios'
         : 'Reasignando Trabajador'
     },
     editingClave() {
@@ -246,6 +268,9 @@ export default {
     },
     editingTrabajador() {
       return this.$store.state.claveasistencias.view === 'EDITARTRABAJADOR'
+    },
+    editingPrivilegios() {
+      return this.$store.state.claveasistencias.view === 'EDITARPRIVILEGIOS'
     },
     titleSelect() {
       return (
@@ -264,10 +289,16 @@ export default {
   },
   mounted() {
     this.setSucursalForUser()
-    if (this.editingClave || this.editingTrabajador) {
+    if (
+      this.editingClave ||
+      this.editingTrabajador ||
+      this.editingPrivilegios
+    ) {
       this.disabledClave = true
       this.disabledRClave = true
       this.disabledSelect = true
+      this.disabledPrivilegios = true
+      this.$refs.ipCajeroA.focus()
     }
   },
   methods: {
@@ -285,7 +316,14 @@ export default {
       getClave: 'claveasistencias/getClave',
       updateClaveTrabajador: 'claveasistencias/updateClaveTrabajador',
       updateIdTrabajador: 'claveasistencias/updateIdTrabajador',
+      updateLevel: 'claveasistencias/updateLevel',
     }),
+    getTipoPrivilegios(nivel) {
+      const nivelFinded = this.optionsPrioritys.find(
+        (level) => level.value === nivel
+      )
+      return nivelFinded.text
+    },
     setSucursalForUser() {
       if (!this.accessChangeSucursal) {
         this.sucursal = utils.getSucursalByName(
@@ -307,7 +345,12 @@ export default {
     },
     enterCajero() {
       if (this.register.Cajero === '') return false
-      if (this.editingClave || this.editingTrabajador) this.getDataTrabajador()
+      if (
+        this.editingClave ||
+        this.editingTrabajador ||
+        this.editingPrivilegios
+      )
+        this.getDataTrabajador()
       else this.$refs.inputClave.focus()
     },
     async getTrabajadores() {
@@ -323,6 +366,7 @@ export default {
         this.disabledRClave = true
       }
       if (this.editingTrabajador) this.disabledSelect = true
+      if (this.editingPrivilegios) this.disabledPrivilegios = true
       this.disabledCajero = false
       this.disabledSucursal = false
       this.register.Clave = ''
@@ -338,6 +382,8 @@ export default {
         const message =
           'Datos para la clave <br/> Nombre: ' +
           this.trabajador.Nombre +
+          '<br/>Nivel de Clave: ' +
+          this.getTipoPrivilegios(this.register.Privilegios) +
           '<br/>IdTrabajador: ' +
           this.trabajador.IdTrabajador +
           '<br/>Cajero: ' +
@@ -368,8 +414,13 @@ export default {
         if (this.editingClave) {
           this.disabledClave = false
           this.disabledRClave = false
+          this.$refs.inputClave.focus()
         }
         if (this.editingTrabajador) this.disabledSelect = false
+        if (this.editingPrivilegios) {
+          this.disabledPrivilegios = false
+          this.$refs.selectPrivilegios.focus()
+        }
         this.disabledCajero = true
         this.disabledSucursal = true
         this.register.Clave = response.data[0].Clave
@@ -377,7 +428,7 @@ export default {
         this.trabajador.IdTrabajador = response.data[0].IdTrabajador
         this.trabajador.Nombre = response.data[0].Nombre
         this.trabajador.Categoria = response.data[0].Categoria
-        this.$refs.inputClave.focus()
+        this.register.Privilegios = response.data[0].Privilegios
       }
       this.setLoading(false)
     },
@@ -388,6 +439,7 @@ export default {
         this.register.Clave.trim(),
         this.register.Cajero.trim(),
         this.trabajador.IdTrabajador,
+        this.register.Privilegios,
       ])
       if (!response.success) this.showAlertDialog([response.message])
       else this.showAlertDialog([response.message, 'Exito', 'success'])
@@ -418,6 +470,7 @@ export default {
     },
     switchUpdate() {
       if (this.editingClave) this.prepareUpdateClave()
+      else if (this.editingPrivilegios) this.prepareUpdatePrivilegios()
       else this.prepareUpdateTrabajador()
     },
     prepareUpdateClave() {
@@ -428,7 +481,6 @@ export default {
           () => {
             this.hideAlertDialogOption()
             this.updateClave()
-            this.getAllClaves(this.sucursal)
           },
           'warning',
           'light',
@@ -446,6 +498,7 @@ export default {
       if (!response.success) this.showAlertDialog([response.message])
       else this.showAlertDialog([response.message, 'Exito', 'success'])
       this.setLoading(false)
+      this.getAllClaves(this.sucursal)
     },
     prepareUpdateTrabajador() {
       if (this.validateForm()) {
@@ -455,7 +508,6 @@ export default {
           () => {
             this.hideAlertDialogOption()
             this.updateTrabajador()
-            this.getAllClaves(this.sucursal)
           },
           'warning',
           'light',
@@ -473,6 +525,36 @@ export default {
       if (!response.success) this.showAlertDialog([response.message])
       else this.showAlertDialog([response.message, 'Exito', 'success'])
       this.setLoading(false)
+      this.getAllClaves(this.sucursal)
+    },
+    prepareUpdatePrivilegios() {
+      if (this.validateForm()) {
+        this.showAlertDialogOption([
+          `¿Quiere hacer [${this.getTipoPrivilegios(
+            this.register.Privilegios
+          )}] al trabajador [${this.trabajador.Nombre}]`,
+          'Cambiando Privilegios',
+          () => {
+            this.hideAlertDialogOption()
+            this.updatePrivilegios()
+          },
+          'warning',
+          'light',
+          this.hideAlertDialogOption,
+        ])
+      }
+    },
+    async updatePrivilegios() {
+      this.setLoading(true)
+      const response = await this.updateLevel([
+        this.sucursal,
+        this.register.Cajero.trim(),
+        this.register.Privilegios,
+      ])
+      if (!response.success) this.showAlertDialog([response.message])
+      else this.showAlertDialog([response.message, 'Exito', 'success'])
+      this.setLoading(false)
+      this.getAllClaves(this.sucursal)
     },
   },
 }
