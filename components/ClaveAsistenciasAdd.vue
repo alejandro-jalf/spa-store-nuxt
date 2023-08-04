@@ -395,7 +395,6 @@ export default {
           () => {
             this.hideAlertDialogOption()
             this.registerClave()
-            this.getAllClaves(this.sucursal)
           },
           'warning',
           'light',
@@ -444,6 +443,7 @@ export default {
       if (!response.success) this.showAlertDialog([response.message])
       else this.showAlertDialog([response.message, 'Exito', 'success'])
       this.setLoading(false)
+      this.getAllClaves(this.sucursal)
     },
     validateForm() {
       if (this.register.Cajero.trim() === '') {

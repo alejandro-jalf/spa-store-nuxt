@@ -298,7 +298,11 @@ export default {
           this.encargado.Error = `No se encontro clave del encargado ${this.encargado.Cajero}`
         else if (cajeroFind.Clave !== this.encargado.Clave.trim())
           this.encargado.Error = 'Contraseña incorrecta'
-        else if (cajeroFind.Privilegios !== '00')
+        else if (
+          cajeroFind.Privilegios !== '00' &&
+          cajeroFind.Privilegios !== '01' &&
+          cajeroFind.Privilegios !== '02'
+        )
           this.encargado.Error = 'No tiene suficiente permisos'
         else {
           this.registerAsistencia()
@@ -327,7 +331,11 @@ export default {
         } else if (cajeroFind.Clave !== this.register.Clave.trim()) {
           this.showAlertDialog([`Contraseña incorrecta`, 'No autorizado'])
           this.getAllClaves(this.sucursal)
-        } else if (cajeroFind.Privilegios !== '00') {
+        } else if (
+          cajeroFind.Privilegios !== '00' &&
+          cajeroFind.Privilegios !== '01' &&
+          cajeroFind.Privilegios !== '02'
+        ) {
           this.$bvModal.show('modalAuth')
           this.encargado.Error = ''
           this.getAllClaves(this.sucursal)
