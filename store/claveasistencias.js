@@ -7,8 +7,12 @@ export const state = () => ({
   data: sessionStorage.getItem('spastore_claves_asist_data')
     ? JSON.parse(sessionStorage.getItem('spastore_claves_asist_data'))
     : { data: [] },
+  claves: localStorage.getItem('spastore_claves_asist_claves')
+    ? JSON.parse(localStorage.getItem('spastore_claves_asist_claves'))
+    : { data: [] },
   sucursal: sessionStorage.getItem('spastore_claves_asist_sucursal'),
   sucConsult: sessionStorage.getItem('spastore_claves_asist_consult'),
+  sucClaves: localStorage.getItem('spastore_claves_asist_succlaves'),
   view: sessionStorage.getItem('spastore_claves_asist_view'),
 })
 
@@ -17,6 +21,10 @@ export const mutations = {
     state.data = data
     sessionStorage.setItem('spastore_claves_asist_data', JSON.stringify(data))
   },
+  setClaves(state, claves) {
+    state.claves = claves
+    localStorage.setItem('spastore_claves_asist_claves', JSON.stringify(claves))
+  },
   setSucursal(state, sucursal) {
     state.sucursal = sucursal
     sessionStorage.setItem('spastore_claves_asist_sucursal', sucursal)
@@ -24,6 +32,10 @@ export const mutations = {
   setSucConsult(state, sucConsult) {
     state.sucConsult = sucConsult
     sessionStorage.setItem('spastore_claves_asist_consult', sucConsult)
+  },
+  setSucClaves(state, sucClaves) {
+    state.sucClaves = sucClaves
+    localStorage.setItem('spastore_claves_asist_succlaves', sucClaves)
   },
   setView(state, view) {
     state.view = view
@@ -80,6 +92,33 @@ export const actions = {
       if (error.response) {
         return error.response.data
       }
+      return {
+        success: false,
+        message: 'Error con el servidor',
+        error,
+      }
+    }
+  },
+  async getAllClaves({ commit }, sucursal) {
+    try {
+      const url =
+        process.env.spastore_url_backend +
+        'api/v1/trabajadores/claves/' +
+        sucursal
+
+      const response = await this.$axios({
+        url,
+        method: 'get',
+      })
+
+      if (response.data.success) {
+        commit('setClaves', response.data)
+        commit('setSucClaves', sucursal)
+      }
+
+      return response.data
+    } catch (error) {
+      if (error.response) return error.response.data
       return {
         success: false,
         message: 'Error con el servidor',

@@ -44,6 +44,8 @@
             @keyup.enter="$refs.inputClave.focus()"
             @keyup.esc="cleanForm"
             @focus="$refs.ipCajero.select()"
+            @keyup="pressKeyCajero"
+            @keypress="consumeKey"
           ></b-form-input>
         </b-form-group>
         <b-form-group id="gpCla" label="Contraseña:" label-for="ipClave">
@@ -70,7 +72,7 @@
             v-model="register.estatus"
             name="some-radios"
             :value="opt.value"
-            @keyup.enter="registerAsistencia"
+            @keyup.enter="validateDataWithCache"
             >{{ opt.text }}</b-form-radio
           >
         </b-form-group>
@@ -79,7 +81,7 @@
             ref="btnSend"
             variant="primary"
             class="float-right"
-            @click="registerAsistencia"
+            @click="validateDataWithCache"
           >
             Aceptar
           </b-button>
@@ -93,6 +95,48 @@
       </b-button>
       <ClaveAsistenciasAddVue />
     </div>
+    <b-modal
+      id="modalAuth"
+      title="Clave de Encargado"
+      centered
+      hide-footer
+      header-bg-variant="info"
+      header-text-variant="light"
+      @shown="focusCajero"
+    >
+      <b-form-group id="gpCaj" label="Cajero:" label-for="ipCajeroA">
+        <b-form-input
+          id="ipCajeroA"
+          ref="ipCajeroA"
+          v-model="encargado.Cajero"
+          type="text"
+          name="NumeroDeCajeroA"
+          autocomplete="off"
+          autofocus
+          placeholder="Numero de cajero"
+          :class="backgroundInputTheme"
+          @keyup.enter="$refs.inputClaveA.focus()"
+          @focus="$refs.ipCajeroA.select()"
+          @keyup="pressKeyEncargado"
+          @keypress="consumeKey"
+        ></b-form-input>
+      </b-form-group>
+      <b-form-group id="gpCla" label="Contraseña:" label-for="ipClaveA">
+        <b-form-input
+          id="ipClaveA"
+          ref="inputClaveA"
+          v-model="encargado.Clave"
+          type="password"
+          placeholder="Contraseña"
+          autocomplete="new-password"
+          name="ClaveParaCajeroA"
+          :class="backgroundInputTheme"
+          @keyup.enter="validateAutorizacion"
+          @focus="$refs.inputClaveA.select()"
+        ></b-form-input>
+      </b-form-group>
+      <p class="text-danger">{{ encargado.Error }}</p>
+    </b-modal>
   </div>
 </template>
 
@@ -112,6 +156,11 @@ export default {
         Cajero: '',
         Clave: '',
         estatus: 'ENTRADA DIA',
+      },
+      encargado: {
+        Cajero: '',
+        Clave: '',
+        Error: '',
       },
       optionsRadious: [
         { text: 'ENTRADA DIA', value: 'ENTRADA DIA', ref: 'EstatusED' },
@@ -155,6 +204,12 @@ export default {
   },
   mounted() {
     this.setSucursalForUser()
+    this.$root.$on('bv::modal::hidden', (evt) => {
+      if (evt.componentId === 'modalAuth') {
+        this.encargado.Cajero = ''
+        this.encargado.Clave = ''
+      }
+    })
   },
   methods: {
     ...mapMutations({
@@ -165,6 +220,7 @@ export default {
     }),
     ...mapActions({
       registerA: 'claveasistencias/registerA',
+      getAllClaves: 'claveasistencias/getAllClaves',
     }),
     setSucursalForUser() {
       if (!this.accessChangeSucursal) {
@@ -191,6 +247,89 @@ export default {
       this.register.estatus = 'ENTRADA DIA'
       this.$refs.ipCajero.focus()
     },
+    pressKeyCajero(evt) {
+      if (
+        evt.keyCode !== 9 &&
+        evt.keyCode !== 16 &&
+        evt.keyCode !== 37 &&
+        evt.keyCode !== 38 &&
+        evt.keyCode !== 39 &&
+        evt.keyCode !== 40 &&
+        this.register.Cajero.trim().length >= 2
+      )
+        this.$refs.inputClave.focus()
+    },
+    pressKeyEncargado(evt) {
+      if (
+        evt.keyCode !== 9 &&
+        evt.keyCode !== 16 &&
+        evt.keyCode !== 37 &&
+        evt.keyCode !== 38 &&
+        evt.keyCode !== 39 &&
+        evt.keyCode !== 40 &&
+        this.encargado.Cajero.trim().length >= 2
+      )
+        this.$refs.inputClaveA.focus()
+    },
+    consumeKey(evt) {
+      if ((evt.keyCode < 48 || evt.keyCode > 57) && evt.keyCode !== 13)
+        evt.preventDefault()
+    },
+    focusCajero() {
+      this.$refs.ipCajeroA.focus()
+    },
+    validateAutorizacion() {
+      if (
+        !this.$store.state.claveasistencias.sucClaves ||
+        this.$store.state.claveasistencias.sucClaves !== this.sucursal ||
+        this.$store.state.claveasistencias.claves.data.length === 0
+      )
+        this.getAllClaves(this.sucursal)
+      else {
+        const claves = this.$store.state.claveasistencias.claves.data
+        const cajeroFind = claves.find(
+          (cajero) => cajero.Cajero === this.encargado.Cajero.trim()
+        )
+        if (!cajeroFind)
+          this.encargado.Error = `No se encontro clave del encargado ${this.encargado.Cajero}`
+        else if (cajeroFind.Clave !== this.encargado.Clave.trim())
+          this.encargado.Error = 'Contraseña incorrecta'
+        else if (cajeroFind.Privilegios !== '00')
+          this.encargado.Error = 'No tiene suficiente permisos'
+        else {
+          this.registerAsistencia()
+          this.$bvModal.hide('modalAuth')
+        }
+      }
+    },
+    validateDataWithCache() {
+      if (
+        !this.$store.state.claveasistencias.sucClaves ||
+        this.$store.state.claveasistencias.sucClaves !== this.sucursal ||
+        this.$store.state.claveasistencias.claves.data.length === 0
+      )
+        this.registerAsistencia()
+      else {
+        const claves = this.$store.state.claveasistencias.claves.data
+        const cajeroFind = claves.find(
+          (cajero) => cajero.Cajero === this.register.Cajero.trim()
+        )
+        if (!cajeroFind) {
+          this.showAlertDialog([
+            `No se encontro clave para el cajero ${this.register.Cajero}`,
+            'Cajero no encontrado',
+          ])
+          this.getAllClaves(this.sucursal)
+        } else if (cajeroFind.Clave !== this.register.Clave.trim()) {
+          this.showAlertDialog([`Contraseña incorrecta`, 'No autorizado'])
+          this.getAllClaves(this.sucursal)
+        } else if (cajeroFind.Privilegios !== '00') {
+          this.$bvModal.show('modalAuth')
+          this.encargado.Error = ''
+          this.getAllClaves(this.sucursal)
+        } else this.registerAsistencia()
+      }
+    },
     async registerAsistencia() {
       if (this.validateForm()) {
         this.setLoading(true)
@@ -212,6 +351,7 @@ export default {
         }
         this.setLoading(false)
       }
+      this.getAllClaves(this.sucursal)
     },
     validateForm() {
       if (this.register.Cajero.trim() === '') {

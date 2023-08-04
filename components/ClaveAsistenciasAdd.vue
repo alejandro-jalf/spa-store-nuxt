@@ -279,6 +279,7 @@ export default {
       hideAlertDialogOption: 'general/hideAlertDialogOption',
     }),
     ...mapActions({
+      getAllClaves: 'claveasistencias/getAllClaves',
       changeData: 'claveasistencias/changeData',
       addClave: 'claveasistencias/addClave',
       getClave: 'claveasistencias/getClave',
@@ -314,6 +315,7 @@ export default {
       const response = await this.changeData(this.sucursal)
       if (!response.success) this.showAlertDialog([response.message])
       this.setLoading(false)
+      this.getAllClaves(this.sucursal)
     },
     cleanCamps() {
       if (this.editingClave) {
@@ -347,6 +349,7 @@ export default {
           () => {
             this.hideAlertDialogOption()
             this.registerClave()
+            this.getAllClaves(this.sucursal)
           },
           'warning',
           'light',
@@ -425,6 +428,7 @@ export default {
           () => {
             this.hideAlertDialogOption()
             this.updateClave()
+            this.getAllClaves(this.sucursal)
           },
           'warning',
           'light',
@@ -451,6 +455,7 @@ export default {
           () => {
             this.hideAlertDialogOption()
             this.updateTrabajador()
+            this.getAllClaves(this.sucursal)
           },
           'warning',
           'light',
