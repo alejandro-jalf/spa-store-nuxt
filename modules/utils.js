@@ -718,6 +718,18 @@ const utils = (() => {
     return newFormat
   }
 
+  const parseFechaMoment = (stringFecha, withHour = false) => {
+    if (typeof stringFecha === 'undefined') return '00/00/0000'
+    const fecha = moment(stringFecha.replace('T', ' ').replace('Z', ''))
+    let newFormat = `${fecha.format('DD')} de ${
+      _arrayMonths[fecha.format('MM') - 1]
+    } del ${fecha.format('YYYY')}`
+    if (withHour) {
+      newFormat += ` a las ${fecha.format('hh:mm')}`
+    }
+    return newFormat
+  }
+
   const aplyFormatNumeric = (numberString, withComa = true) => {
     const signo = numberString < 0 ? '-' : ''
     if (numberString === null || typeof numberString === 'undefined') {
@@ -999,6 +1011,7 @@ const utils = (() => {
     showToast,
     getDateNow,
     parseFecha,
+    parseFechaMoment,
     refactorHora,
     parseToPorcent,
     getDataSucursal,
