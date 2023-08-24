@@ -204,10 +204,11 @@
             </b-dropdown-item>
             <b-dropdown-item
               v-if="visibleButton(row.item, 'precios')"
-              @click="createPdf(row.item, true)"
+              variant="danger"
+              @click="prepareOmitePrecios(row.item)"
             >
               <b-icon icon="currency-dollar" />
-              Precios en 0
+              Omitir Precios
             </b-dropdown-item>
           </b-dropdown>
         </template>
@@ -506,7 +507,7 @@ En estatus que aparece en la tabla de ofertas dice lo siguiente de cada oferta:
           else return false
         case 3:
           if (typeButton === 'views' || typeButton === 'pdf') return true
-          if (typeButton === 'check') {
+          if (typeButton === 'check' || typeButton === 'precios') {
             const dateActual = this.utils.getDateNow()
             const fechaFin = dataOffer.fechaFin
               .replace('T', ' ')
@@ -723,6 +724,49 @@ En estatus que aparece en la tabla de ofertas dice lo siguiente de cada oferta:
         } else {
           this.showAlertDialog([response.data.message])
         }
+      } catch (error) {
+        this.setLoading(false)
+        if (error.response) this.showAlertDialog([error.response.data.message])
+        else this.showAlertDialog(['Error con el servidor'])
+      }
+    },
+    prepareOmitePrecios(master) {
+      this.showAlertDialogOption([
+        'Este boton pone a los precios 2, 3, 4, etc. en 0 piezas para cambio de precio, esto evita que esos precios afecten a la oferta.<br/>Posteriormente despues de terminada la oferta los precios se tienen que regresar de manera manual.<br/>¿Continuar?',
+        'Omitiendo Precios',
+        () => {
+          this.hideAlertDialogOption()
+          this.omitePrecios(master)
+        },
+        'warning',
+        'light',
+        this.hideAlertDialogOption,
+      ])
+    },
+    async omitePrecios(master) {
+      try {
+        const urlBase = process.env.spastore_url_backend
+        this.setLoading(true)
+        const response = await this.$axios({
+          url:
+            urlBase +
+            'api/v1/ofertas/' +
+            master.sucursal +
+            '/maestros/' +
+            master.uuid +
+            '/precios',
+          method: 'put',
+        })
+        this.setLoading(false)
+
+        if (response.data.success) {
+          const total = response.data.data[1]
+          this.showAlertDialog([
+            `Se ha puesto 0 piezas para cambio de precios a un total de [${total}] niveles de precios`,
+            'Exito',
+            'success',
+          ])
+        } else this.showAlertDialog([response.data.message])
       } catch (error) {
         this.setLoading(false)
         if (error.response) this.showAlertDialog([error.response.data.message])
