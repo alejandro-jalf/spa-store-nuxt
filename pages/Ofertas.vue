@@ -202,6 +202,13 @@
               <b-icon icon="printer-fill" />
               {{ messageButtonIcons('PDF') }}
             </b-dropdown-item>
+            <b-dropdown-item
+              v-if="visibleButton(row.item, 'precios')"
+              @click="createPdf(row.item, true)"
+            >
+              <b-icon icon="currency-dollar" />
+              Precios en 0
+            </b-dropdown-item>
           </b-dropdown>
         </template>
         <template #cell(sucursal)="row">
