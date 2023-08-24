@@ -472,6 +472,7 @@ En estatus que aparece en la tabla de ofertas dice lo siguiente de cada oferta:
     const date = new Date()
     this.textDateY = date.getFullYear().toString()
     this.textDateM = utils._arrayMonths[date.getMonth()] + '/' + this.textDateY
+    this.deleteOldOffers()
   },
   methods: {
     closeStepper() {
@@ -582,6 +583,15 @@ En estatus que aparece en la tabla de ofertas dice lo siguiente de cada oferta:
         else this.showAlertDialog(['Error con el servidor'])
         return false
       }
+    },
+    async deleteOldOffers() {
+      try {
+        const urlBase = process.env.spastore_url_backend
+        await this.$axios({
+          url: urlBase + 'api/v1/ofertas/old',
+          method: 'delete',
+        })
+      } catch (error) {}
     },
     async verifyArticlesOffered(dataOffer) {
       try {
