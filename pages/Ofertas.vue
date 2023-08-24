@@ -508,13 +508,25 @@ En estatus que aparece en la tabla de ofertas dice lo siguiente de cada oferta:
           else return false
         case 3:
           if (typeButton === 'views' || typeButton === 'pdf') return true
-          if (typeButton === 'check' || typeButton === 'precios') {
+          if (typeButton === 'check') {
             const dateActual = this.utils.getDateNow()
             const fechaFin = dataOffer.fechaFin
               .replace('T', ' ')
               .replace('Z', '')
             const dateEnd = utils.toMoment(fechaFin)
             return dateActual.isBefore(dateEnd)
+          }
+          if (typeButton === 'precios') {
+            const dateActual = this.utils.getDateNow()
+            const fechaFin = dataOffer.fechaFin
+              .replace('T', ' ')
+              .replace('Z', '')
+            const fechaInicio = dataOffer.fechaInicio
+              .replace('T', ' ')
+              .replace('Z', '')
+            const dateEnd = utils.toMoment(fechaFin)
+            const dateStart = utils.toMoment(fechaInicio)
+            return dateActual.isBetween(dateStart, dateEnd, 'days', '[]')
           }
           if (typeButton === 'excel') return this.tipoUser === 'manager'
           else return false
