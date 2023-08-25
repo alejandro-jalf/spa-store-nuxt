@@ -78,6 +78,12 @@ export const state = () => ({
           nickname: 'Estadistica',
           icon: 'graph-up',
         },
+        {
+          path: '/ventasporarticulo',
+          name: 'ventasporarticulo',
+          nickname: 'Por Articulo',
+          icon: 'graph-up',
+        },
       ],
       name: '',
       nickname: 'Ventas',
