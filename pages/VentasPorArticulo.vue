@@ -76,64 +76,18 @@
       </template>
     </b-form-tags>
 
-    <div class="h4 my-3">{{ leyenda + sucursal }}</div>
+    <div v-if="!emptyData">
+      <div class="h4 my-3">{{ leyenda + sucursal }}</div>
 
-    <b-table
-      v-if="width > 991"
-      id="tableVentasDiarias"
-      responsive
-      striped
-      hover
-      :fields="fields"
-      :items="dataRefactor"
-      head-variant="dark"
-      class="mt-3"
-      :class="variantThemeTableBody"
-      foot-clone
-    >
-      <template #cell(Fecha)="row">
-        {{ utils.toDate(row.item.Fecha) }}
-      </template>
-      <template #cell(Zaragoza)="row">
-        {{ dataFormated(row.item.Zaragoza) }}
-      </template>
-      <template #cell(Victoria)="row">
-        {{ dataFormated(row.item.Victoria) }}
-      </template>
-      <template #cell(Enriquez)="row">
-        {{ dataFormated(row.item.Enriquez) }}
-      </template>
-      <template #cell(Oluta)="row">
-        {{ dataFormated(row.item.Oluta) }}
-      </template>
-      <template #cell(Sayula)="row">
-        {{ dataFormated(row.item.Sayula) }}
-      </template>
-      <template #cell(Jaltipan)="row">
-        {{ dataFormated(row.item.Jaltipan) }}
-      </template>
-      <template #foot(Fecha)>{{ 'Totales' }}</template>
-      <template #foot(Zaragoza)>
-        {{ dataFormated(totalesRefactor.Zaragoza) }}
-      </template>
-      <template #foot(Victoria)>
-        {{ dataFormated(totalesRefactor.Victoria) }}
-      </template>
-      <template #foot(Enriquez)>
-        {{ dataFormated(totalesRefactor.Enriquez) }}
-      </template>
-      <template #foot(Oluta)>
-        {{ dataFormated(totalesRefactor.Oluta) }}
-      </template>
-      <template #foot(Sayula)>
-        {{ dataFormated(totalesRefactor.Sayula) }}
-      </template>
-      <template #foot(Jaltipan)>
-        {{ dataFormated(totalesRefactor.Jaltipan) }}
-      </template>
-    </b-table>
-    <div v-else>
-      <VentasDiariasCard
+      <b-tabs content-class="mt-3">
+        <b-tab v-for="(tabA, indexTab) in tabs" :key="indexTab" :title="tabA">
+          <VentasPorArticuloTab :utils="utils" :article="tabA" />
+        </b-tab>
+      </b-tabs>
+    </div>
+
+    <!-- <div v-else>
+      <ventasporarticuloCard
         v-for="(dia, indexDia) in dataRefactor"
         :key="indexDia"
         :sucursal="dia"
@@ -141,13 +95,13 @@
         :show-details="updateVentas"
         class="mb-2"
       />
-      <VentasDiariasCard
+      <ventasporarticuloCard
         :sucursal="totalesRefactor"
         :data-formated="dataFormated"
         :show-details="updateVentas"
         class="mb-2"
       />
-    </div>
+    </div> -->
     <div v-if="!emptyData">
       <h2>Grafico</h2>
       <div class="mb-5">
@@ -160,7 +114,7 @@
           Linea
         </b-button>
       </div>
-      <VentasDiariasChart
+      <!-- <ventasporarticuloChart
         v-if="showGraph"
         :datos-reactor="dataRefactor"
         :utils="utils"
@@ -169,21 +123,23 @@
       />
       <div v-else class="spin">
         <b-spinner variant="primary" label="Spinning"></b-spinner>
-      </div>
+      </div> -->
     </div>
   </div>
 </template>
 
 <script>
 import { mapMutations, mapActions } from 'vuex'
-import VentasDiariasChart from '../components/VentasDiariasChart'
-import VentasDiariasCard from '../components/VentasDiariasCard'
+// import ventasporarticuloChart from '../components/ventasporarticuloChart'
+// import ventasporarticuloCard from '../components/ventasporarticuloCard'
+import VentasPorArticuloTab from '../components/VentasPorArticuloTab'
 import utils from '../modules/utils'
 
 export default {
   components: {
-    VentasDiariasChart,
-    VentasDiariasCard,
+    // ventasporarticuloChart,
+    // ventasporarticuloCard,
+    VentasPorArticuloTab,
   },
   data() {
     return {
@@ -204,28 +160,6 @@ export default {
       dateEnd: '',
       dateInitLetra: '',
       dateEndLetra: '',
-      fields: [
-        'Fecha',
-        'Zaragoza',
-        'Victoria',
-        'Enriquez',
-        'Oluta',
-        'Sayula',
-        'Jaltipan',
-        'Totales',
-      ],
-      totales: {
-        Fecha: 'Resumen de Ventas',
-        VentaTotal: 0,
-        CostoTotal: 0,
-        UtilidadTotal: 0,
-        UtilidadPorcentual: 0,
-        UnidadesVendidas: 0,
-        TicketsTotales: 0,
-        MejorTicket: 0,
-        PeorTicket: 0,
-        TicketPromedio: 0,
-      },
       utils,
     }
   },
@@ -233,74 +167,58 @@ export default {
     width() {
       return this.$store.state.general.widthWindow
     },
-    dataUser() {
-      return this.$store.state.user.user
-    },
-    variantThemeTableBody() {
-      return this.$store.state.general.themesComponents.themeTableBody
-    },
-    dataRefactor() {
-      return []
-    },
-    totalesRefactor() {
-      const totales = {
-        Fecha: 'Resumen de Ventas',
-        Zaragoza: 0,
-        Victoria: 0,
-        Enriquez: 0,
-        Oluta: 0,
-        Sayula: 0,
-        Jaltipan: 0,
-      }
-      return this.$store.state.ventasdiarias.data.data.length !== 0
-        ? this.totales
-        : totales
-    },
     leyenda() {
       return (
         'Reporte de ventas del ' +
-        this.$store.state.ventasdiarias.dateInit +
+        this.$store.state.ventasporarticulo.dateInit +
         ' Al ' +
-        this.$store.state.ventasdiarias.dateEnd +
+        this.$store.state.ventasporarticulo.dateEnd +
         ' De la sucursal '
       )
     },
     sucursal() {
-      return this.$store.state.ventasdiarias.data.data[0]
-        ? this.$store.state.ventasdiarias.data.data[0].Sucursal.toUpperCase()
+      return this.$store.state.ventasporarticulo.data.Sucursal
+        ? this.$store.state.ventasporarticulo.data.Sucursal.toUpperCase()
         : ''
     },
     emptyData() {
-      return this.$store.state.ventasdiarias.data.data.length <= 0
+      return this.$store.state.ventasporarticulo.data.Sucursal === 'null'
+    },
+    tabs() {
+      return Object.keys(this.$store.state.ventasporarticulo.data.Totales)
+    },
+    dataRefactor() {
+      const datos = [...this.$store.state.ventasporarticulo.data.data]
+      return datos
     },
     graficoBar() {
-      return this.$store.state.ventasdiarias.tipo === 'bar'
+      return this.$store.state.ventasporarticulo.tipo === 'bar'
         ? 'check-circle-fill'
         : 'circle'
     },
     graficoLine() {
-      return this.$store.state.ventasdiarias.tipo !== 'bar'
+      return this.$store.state.ventasporarticulo.tipo !== 'bar'
         ? 'check-circle-fill'
         : 'circle'
     },
     showGraph() {
-      return this.$store.state.ventasdiarias.showGraph
+      return this.$store.state.ventasporarticulo.showGraph
     },
     tipoGrafico() {
-      return this.$store.state.ventasdiarias.tipo
+      return this.$store.state.ventasporarticulo.tipo
     },
   },
   mounted() {
-    const tableVentasDiarias = document.getElementById('tableVentasDiarias')
-    const sucSel = this.$store.state.ventasdiarias.sucursal
+    const tablevXarticulo = document.getElementById('tablevXarticulo')
+    const sucSel = this.$store.state.ventasporarticulo.sucursal
     this.selected = sucSel
     this.setDateInitials()
 
-    if (tableVentasDiarias) {
-      tableVentasDiarias.addEventListener('touchstart', (evt) => {
+    if (tablevXarticulo) {
+      tablevXarticulo.addEventListener('touchstart', (evt) => {
         this.setMoveTouch(false)
       })
-      tableVentasDiarias.addEventListener('touchend', (evt) => {
+      tablevXarticulo.addEventListener('touchend', (evt) => {
         this.setMoveTouch(true)
       })
     }
@@ -310,12 +228,12 @@ export default {
       setMoveTouch: 'general/setMoveTouch',
       setLoading: 'general/setLoading',
       showAlertDialog: 'general/showAlertDialog',
-      setSucursal: 'ventasdiarias/setSucursal',
-      setTipoGrafico: 'ventasdiarias/setTipoGrafico',
-      setShowGraph: 'ventasdiarias/setShowGraph',
+      setSucursal: 'ventasporarticulo/setSucursal',
+      setTipoGrafico: 'ventasporarticulo/setTipoGrafico',
+      setShowGraph: 'ventasporarticulo/setShowGraph',
     }),
     ...mapActions({
-      changeData: 'ventasdiarias/changeData',
+      changeData: 'ventasporarticulo/changeData',
     }),
     onContextDI(ctx) {
       this.dateInitLetra = ctx.selectedFormatted
@@ -325,8 +243,8 @@ export default {
     },
     validateData() {
       if (
-        this.$store.state.ventasdiarias.sucursal === null ||
-        this.$store.state.ventasdiarias.sucursal === 'null'
+        this.$store.state.ventasporarticulo.sucursal === null ||
+        this.$store.state.ventasporarticulo.sucursal === 'null'
       ) {
         this.showAlertDialog(['Necesita seleccionar una sucursal'])
         return false
@@ -344,22 +262,21 @@ export default {
     async updateVentas() {
       if (!this.validateData()) return false
       this.setLoading(true)
-      this.setShowGraph(false)
+      // this.setShowGraph(false)
+      console.log(this.dateEnd.replace(/-/g, ''))
       const response = await this.changeData([
-        this.$store.state.ventasdiarias.sucursal,
+        this.$store.state.ventasporarticulo.sucursal,
         this.dateInit.replace(/-/g, ''),
         this.dateEnd.replace(/-/g, ''),
         this.dateInitLetra,
         this.dateEndLetra,
+        this.articles,
       ])
       this.setLoading(false)
-      this.setShowGraph(true)
+      // this.setShowGraph(true)
+      console.log(response)
       if (!response.success)
         this.showAlertDialog([response.message, 'Error inesperado'])
-    },
-    dataFormated(value) {
-      if (value === null || value === undefined) return '-'
-      return utils.aplyFormatNumeric(utils.roundTo(value))
     },
     setDateInitials() {
       const dayActual = utils.getDateNow()
