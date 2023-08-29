@@ -97,6 +97,7 @@
             :utils="utils"
             :article="tabA"
             :view="selectViewBy"
+            :data-article="getTotalByAticle(tabA)"
           />
         </b-tab>
       </b-tabs>
@@ -267,6 +268,10 @@ export default {
     onContextDE(ctx) {
       this.dateEndLetra = ctx.selectedFormatted
     },
+    getTotalByAticle(article) {
+      const datos = { ...this.$store.state.ventasporarticulo.data.Totales }
+      return datos[`${article}`]
+    },
     validateData() {
       if (
         this.$store.state.ventasporarticulo.sucursal === null ||
@@ -289,7 +294,6 @@ export default {
       if (!this.validateData()) return false
       this.setLoading(true)
       // this.setShowGraph(false)
-      console.log(this.dateEnd.replace(/-/g, ''))
       const response = await this.changeData([
         this.$store.state.ventasporarticulo.sucursal,
         this.dateInit.replace(/-/g, ''),
@@ -300,7 +304,6 @@ export default {
       ])
       this.setLoading(false)
       // this.setShowGraph(true)
-      console.log(response)
       if (!response.success)
         this.showAlertDialog([response.message, 'Error inesperado'])
     },
