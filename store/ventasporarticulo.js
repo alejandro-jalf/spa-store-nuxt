@@ -15,6 +15,9 @@ export const state = () => ({
   dateInit: localStorage.getItem('spastore_ventasxarticulo_dateInit'),
   dateEnd: localStorage.getItem('spastore_ventasxarticulo_dateEnd'),
   tipo: localStorage.getItem('spastore_ventasxarticulo_tipo'),
+  articles: (
+    localStorage.getItem('spastore_ventasxarticulo_articles') || ''
+  ).split(','),
   showGraph: true,
 })
 
@@ -45,6 +48,13 @@ export const mutations = {
   setTipoGrafico(state, tipo) {
     state.tipo = tipo
     localStorage.setItem('spastore_ventasxarticulo_tipo', tipo)
+  },
+  setArticles(state, articles) {
+    state.articles = articles
+    localStorage.setItem(
+      'spastore_ventasxarticulo_articles',
+      articles.toString()
+    )
   },
   setShowGraph(state, showGraph) {
     state.showGraph = showGraph

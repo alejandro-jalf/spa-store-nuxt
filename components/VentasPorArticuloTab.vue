@@ -73,6 +73,11 @@ export default {
       type: String,
       required: true,
     },
+    view: {
+      default: 'Piezas',
+      type: String,
+      required: false,
+    },
   },
   data() {
     return {
@@ -127,7 +132,6 @@ export default {
             row[`${suc}`] &&
             row[`${suc}`][`${this.article}`]
           ) {
-            console.log(totales[`${suc}`], suc)
             totales[`${suc}`].Piezas += row[`${suc}`][`${this.article}`].Piezas
             totales[`${suc}`].Cajas += row[`${suc}`][`${this.article}`].Cajas
             totales[`${suc}`].Valor += row[`${suc}`][`${this.article}`].Valor
@@ -142,12 +146,9 @@ export default {
       if (value === null || value === undefined || !value) return '-'
       const conteo = from === 'Total' ? value : value[`${this.article}`]
       if (!conteo) return '-'
-      console.log(conteo.Piezas, from)
-      return this.utils.aplyFormatNumeric(this.utils.roundTo(conteo.Piezas))
-    },
-    dataZaragoza(value) {
-      if (value.ZR && value.ZR['0101007']) return value.ZR['0101007'].Piezas
-      else return '-'
+      return this.utils.aplyFormatNumeric(
+        this.utils.roundTo(conteo[`${this.view}`])
+      )
     },
   },
 }

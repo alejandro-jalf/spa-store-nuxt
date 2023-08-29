@@ -39,6 +39,7 @@
       no-outer-focus
       class="mb-2"
       tag-variant="primary"
+      @input="setArticles"
     >
       <template
         v-slot="{
@@ -79,9 +80,24 @@
     <div v-if="!emptyData">
       <div class="h4 my-3">{{ leyenda + sucursal }}</div>
 
+      <div>
+        <b-form-group label="Vizualizar Resultados en:">
+          <b-form-radio-group
+            id="radio-group-1"
+            v-model="selectViewBy"
+            :options="optionsViewBY"
+            name="radio-options"
+          ></b-form-radio-group>
+        </b-form-group>
+      </div>
+
       <b-tabs content-class="mt-3">
         <b-tab v-for="(tabA, indexTab) in tabs" :key="indexTab" :title="tabA">
-          <VentasPorArticuloTab :utils="utils" :article="tabA" />
+          <VentasPorArticuloTab
+            :utils="utils"
+            :article="tabA"
+            :view="selectViewBy"
+          />
         </b-tab>
       </b-tabs>
     </div>
@@ -155,6 +171,12 @@ export default {
         { value: 'SC', text: 'Soconusco', disabled: true },
         { value: 'BO', text: 'Bodega', disabled: true },
       ],
+      optionsViewBY: [
+        { text: 'Piezas', value: 'Piezas' },
+        { text: 'Cajas', value: 'Cajas' },
+        { text: 'Pesos', value: 'Valor' },
+      ],
+      selectViewBy: 'Piezas',
       articles: [],
       dateInit: '',
       dateEnd: '',
@@ -177,9 +199,11 @@ export default {
       )
     },
     sucursal() {
-      return this.$store.state.ventasporarticulo.data.Sucursal
-        ? this.$store.state.ventasporarticulo.data.Sucursal.toUpperCase()
-        : ''
+      const sucs = this.options
+      const suc = this.$store.state.ventasporarticulo.data.Sucursal
+      const sucFinded = sucs.find((s) => s.value === suc.toUpperCase())
+      if (!suc) return ''
+      return sucFinded.text
     },
     emptyData() {
       return this.$store.state.ventasporarticulo.data.Sucursal === 'null'
@@ -213,6 +237,7 @@ export default {
     const sucSel = this.$store.state.ventasporarticulo.sucursal
     this.selected = sucSel
     this.setDateInitials()
+    this.articles = [...this.$store.state.ventasporarticulo.articles]
 
     if (tablevXarticulo) {
       tablevXarticulo.addEventListener('touchstart', (evt) => {
@@ -231,6 +256,7 @@ export default {
       setSucursal: 'ventasporarticulo/setSucursal',
       setTipoGrafico: 'ventasporarticulo/setTipoGrafico',
       setShowGraph: 'ventasporarticulo/setShowGraph',
+      setArticles: 'ventasporarticulo/setArticles',
     }),
     ...mapActions({
       changeData: 'ventasporarticulo/changeData',
