@@ -87,6 +87,7 @@
             v-model="selectViewBy"
             :options="optionsViewBY"
             name="radio-options"
+            @change="updateGraphics"
           ></b-form-radio-group>
         </b-form-group>
       </div>
@@ -99,6 +100,30 @@
             :view="selectViewBy"
             :data-article="getTotalByAticle(tabA)"
           />
+          <h2>Grafico</h2>
+          <div class="mb-5">
+            <b-button variant="info" @click="changeGrafico('bar')">
+              <b-icon :icon="graficoBar" />
+              Barra
+            </b-button>
+            <b-button variant="info" @click="changeGrafico('line')">
+              <b-icon :icon="graficoLine" />
+              Linea
+            </b-button>
+          </div>
+          <VentasPorArticuloChart
+            v-if="showGraph"
+            :datos-reactor="dataRefactor"
+            :fields="options"
+            :utils="utils"
+            :tipo="tipoGrafico"
+            :article="tabA"
+            :view="selectViewBy"
+            class="mb-5"
+          />
+          <div v-else class="spin">
+            <b-spinner variant="primary" label="Spinning"></b-spinner>
+          </div>
         </b-tab>
       </b-tabs>
     </div>
@@ -119,42 +144,19 @@
         class="mb-2"
       />
     </div> -->
-    <div v-if="!emptyData">
-      <h2>Grafico</h2>
-      <div class="mb-5">
-        <b-button variant="info" @click="changeGrafico('bar')">
-          <b-icon :icon="graficoBar" />
-          Barra
-        </b-button>
-        <b-button variant="info" @click="changeGrafico('line')">
-          <b-icon :icon="graficoLine" />
-          Linea
-        </b-button>
-      </div>
-      <!-- <ventasporarticuloChart
-        v-if="showGraph"
-        :datos-reactor="dataRefactor"
-        :utils="utils"
-        :tipo="tipoGrafico"
-        class="mb-5"
-      />
-      <div v-else class="spin">
-        <b-spinner variant="primary" label="Spinning"></b-spinner>
-      </div> -->
-    </div>
   </div>
 </template>
 
 <script>
 import { mapMutations, mapActions } from 'vuex'
-// import ventasporarticuloChart from '../components/ventasporarticuloChart'
+import VentasPorArticuloChart from '../components/VentasPorArticuloChart'
 // import ventasporarticuloCard from '../components/ventasporarticuloCard'
 import VentasPorArticuloTab from '../components/VentasPorArticuloTab'
 import utils from '../modules/utils'
 
 export default {
   components: {
-    // ventasporarticuloChart,
+    VentasPorArticuloChart,
     // ventasporarticuloCard,
     VentasPorArticuloTab,
   },
@@ -258,14 +260,18 @@ export default {
       setTipoGrafico: 'ventasporarticulo/setTipoGrafico',
       setShowGraph: 'ventasporarticulo/setShowGraph',
       setArticles: 'ventasporarticulo/setArticles',
+      setDateInitM: 'ventasporarticulo/setDateInitM',
+      setDateEndM: 'ventasporarticulo/setDateEndM',
     }),
     ...mapActions({
       changeData: 'ventasporarticulo/changeData',
     }),
     onContextDI(ctx) {
+      this.setDateInitM(ctx.selectedYMD)
       this.dateInitLetra = ctx.selectedFormatted
     },
     onContextDE(ctx) {
+      this.setDateEndM(ctx.selectedYMD)
       this.dateEndLetra = ctx.selectedFormatted
     },
     getTotalByAticle(article) {
@@ -293,7 +299,7 @@ export default {
     async updateVentas() {
       if (!this.validateData()) return false
       this.setLoading(true)
-      // this.setShowGraph(false)
+      this.setShowGraph(false)
       const response = await this.changeData([
         this.$store.state.ventasporarticulo.sucursal,
         this.dateInit.replace(/-/g, ''),
@@ -303,18 +309,29 @@ export default {
         this.articles,
       ])
       this.setLoading(false)
-      // this.setShowGraph(true)
+      this.setShowGraph(true)
       if (!response.success)
         this.showAlertDialog([response.message, 'Error inesperado'])
     },
     setDateInitials() {
       const dayActual = utils.getDateNow()
       const dayLast = utils.getDateNow().add(-7, 'days')
-      this.dateInit = dayLast.format('yyyy-MM-DD')
-      this.dateEnd = dayActual.format('yyyy-MM-DD')
+      const dateStartSaved = this.$store.state.ventasporarticulo.dateInitM
+      const dateEndSaved = this.$store.state.ventasporarticulo.dateEndM
+
+      if (!dateStartSaved || dateStartSaved === null)
+        this.dateInit = dayLast.format('yyyy-MM-DD')
+      else this.dateInit = dateStartSaved
+      if (!dateEndSaved || dateEndSaved === null)
+        this.dateEnd = dayActual.format('yyyy-MM-DD')
+      else this.dateEnd = dateEndSaved
     },
     changeSuc(suc) {
       this.setSucursal(suc)
+    },
+    updateGraphics() {
+      const typeBar = this.$store.state.ventasporarticulo.tipo
+      this.changeGrafico(typeBar)
     },
     changeGrafico(tipo) {
       const that = this

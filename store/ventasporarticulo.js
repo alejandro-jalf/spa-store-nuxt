@@ -13,7 +13,9 @@ export const state = () => ({
     : { data: [], Sucursal: 'null', Totales: {} },
   sucursal: localStorage.getItem('spastore_ventasxarticulo_sucursal'),
   dateInit: localStorage.getItem('spastore_ventasxarticulo_dateInit'),
+  dateInitM: localStorage.getItem('spastore_ventasxarticulo_dateInitM') || null,
   dateEnd: localStorage.getItem('spastore_ventasxarticulo_dateEnd'),
+  dateEndM: localStorage.getItem('spastore_ventasxarticulo_dateEndM') || null,
   tipo: localStorage.getItem('spastore_ventasxarticulo_tipo'),
   articles: (
     localStorage.getItem('spastore_ventasxarticulo_articles') || ''
@@ -41,9 +43,17 @@ export const mutations = {
     state.dateInit = dateInit
     localStorage.setItem('spastore_ventasxarticulo_dateInit', dateInit)
   },
+  setDateInitM(state, dateInitM) {
+    state.dateInitM = dateInitM
+    localStorage.setItem('spastore_ventasxarticulo_dateInitM', dateInitM)
+  },
   setDateEnd(state, dateEnd) {
     state.dateEnd = dateEnd
     localStorage.setItem('spastore_ventasxarticulo_dateEnd', dateEnd)
+  },
+  setDateEndM(state, dateEndM) {
+    state.dateEndM = dateEndM
+    localStorage.setItem('spastore_ventasxarticulo_dateEndM', dateEndM)
   },
   setTipoGrafico(state, tipo) {
     state.tipo = tipo
