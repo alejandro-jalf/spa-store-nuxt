@@ -430,7 +430,6 @@ export default {
         items.DataBaseName,
         nameBackup,
       ])
-      console.log(response)
       if (!response.success)
         this.showAlertDialog([response.message, 'Error inesperado'])
     },

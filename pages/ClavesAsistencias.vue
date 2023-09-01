@@ -207,6 +207,7 @@ export default {
     },
   },
   mounted() {
+    this.showPosition()
     this.setSucursalForUser()
     this.$root.$on('bv::modal::hidden', (evt) => {
       if (evt.componentId === 'modalAuth') {
@@ -226,6 +227,11 @@ export default {
       registerA: 'claveasistencias/registerA',
       getAllClaves: 'claveasistencias/getAllClaves',
     }),
+    async showPosition() {
+      const location = await utils.getLocationGps()
+      const message = `Latitud: ${location.lat}, Longitud: ${location.long}`
+      this.showAlertDialog([message, 'Posicion'])
+    },
     setSucursalForUser() {
       if (!this.accessChangeSucursal) {
         this.sucursal = utils.getSucursalByName(

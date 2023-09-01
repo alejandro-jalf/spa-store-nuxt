@@ -969,33 +969,36 @@ const utils = (() => {
     }
   }
 
-  const getLocationGps = () => {
+  const getLocationGps = async () => {
     // eslint-disable-next-line no-negated-in-lhs
-    if (!('geolocation' in navigator)) {
-      return alert(
-        'Tu navegador no soporta el acceso a la ubicación. Intenta con otro'
-      )
-    }
-
-    const onUbicacionConcedida = (ubicacion) => {
-      console.log('Tengo la ubicación: ', ubicacion)
-    }
-
-    const onErrorDeUbicacion = (err) => {
-      console.log('Error obteniendo ubicación: ', err)
-    }
+    if (!('geolocation' in navigator))
+      return {
+        error: true,
+        long: null,
+        lat: null,
+        message: 'Tu navegador no soporta el acceso a la ubicación',
+      }
 
     const opcionesDeSolicitud = {
       enableHighAccuracy: true, // Alta precisión
       maximumAge: 0, // No queremos caché
       timeout: 5000, // Esperar solo 5 segundos
     }
-    // Solicitar
-    navigator.geolocation.getCurrentPosition(
-      onUbicacionConcedida,
-      onErrorDeUbicacion,
-      opcionesDeSolicitud
-    )
+
+    const position = await new Promise((resolve, reject) => {
+      navigator.geolocation.getCurrentPosition(
+        resolve,
+        reject,
+        opcionesDeSolicitud
+      )
+    })
+
+    if (position.coords)
+      return {
+        long: position.coords.longitude,
+        lat: position.coords.latitude,
+      }
+    else return { long: null, lat: null }
   }
 
   return {
