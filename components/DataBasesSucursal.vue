@@ -146,6 +146,7 @@
         hover
         head-variant="dark"
         outlined
+        responsive
         :fields="fieldsFiles"
         :items="itemsFiles"
       ></b-table>

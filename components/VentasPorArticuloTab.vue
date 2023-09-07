@@ -136,6 +136,25 @@ export default {
     },
     dataRefactor() {
       const datos = [...this.$store.state.ventasporarticulo.data.data]
+      datos.forEach((dia, index) => {
+        const cells = Object.keys(dia)
+        cells.forEach((suc) => {
+          if (dia[`${suc}`].Fail) {
+            datos[index]._cellVariants = {}
+            if (suc === 'ZR') datos[index]._cellVariants.Zaragoza = 'danger'
+            else if (suc === 'VC')
+              datos[index]._cellVariants.Victoria = 'danger'
+            else if (suc === 'ER')
+              datos[index]._cellVariants.Enriquez = 'danger'
+            else if (suc === 'OU') datos[index]._cellVariants.Oluta = 'danger'
+            else if (suc === 'SY') datos[index]._cellVariants.Sayula = 'danger'
+            else if (suc === 'JL')
+              datos[index]._cellVariants.Jaltipan = 'danger'
+            else if (suc === 'SC')
+              datos[index]._cellVariants.Victoria = 'danger'
+          }
+        })
+      })
       return datos
     },
     totalesRefactor() {
@@ -169,10 +188,13 @@ export default {
   methods: {
     dataFormated(value, from) {
       if (value === null || value === undefined || !value) return '-'
+      if (value.Fail) return '!'
       const conteo = from === 'Total' ? value : value[`${this.article}`]
       if (!conteo) return '-'
-      return this.utils.aplyFormatNumeric(
-        this.utils.roundTo(conteo[`${this.view}`])
+      const comp = this.view === 'Valor' ? '$ ' : ''
+      return (
+        comp +
+        this.utils.aplyFormatNumeric(this.utils.roundTo(conteo[`${this.view}`]))
       )
     },
     formatedExistences(value) {

@@ -80,7 +80,7 @@
     <div v-if="!emptyData">
       <div class="h4 my-3">{{ leyenda + sucursal }}</div>
 
-      <div>
+      <div class="container-tipo">
         <b-form-group label="Vizualizar Resultados en:">
           <b-form-radio-group
             id="radio-group-1"
@@ -91,6 +91,26 @@
           ></b-form-radio-group>
         </b-form-group>
       </div>
+
+      <b-dropdown
+        id="df"
+        ref="dropdown"
+        size="lg"
+        variant="light"
+        toggle-class="text-decoration-none"
+        class="filter-down"
+      >
+        <template #button-content>
+          <b-icon icon="filter" />
+        </template>
+        <b-dropdown-form>
+          <AllSelector
+            title="Sucursales"
+            :options="optionsFilter"
+            un-select-all-message="Deseleccionar"
+          />
+        </b-dropdown-form>
+      </b-dropdown>
 
       <b-tabs content-class="mt-3">
         <b-tab v-for="(tabA, indexTab) in tabs" :key="indexTab" :title="tabA">
@@ -152,6 +172,7 @@ import { mapMutations, mapActions } from 'vuex'
 import VentasPorArticuloChart from '../components/VentasPorArticuloChart'
 // import ventasporarticuloCard from '../components/ventasporarticuloCard'
 import VentasPorArticuloTab from '../components/VentasPorArticuloTab'
+import AllSelector from '../components/AllSelector'
 import utils from '../modules/utils'
 
 export default {
@@ -159,6 +180,7 @@ export default {
     VentasPorArticuloChart,
     // ventasporarticuloCard,
     VentasPorArticuloTab,
+    AllSelector,
   },
   data() {
     return {
@@ -173,6 +195,14 @@ export default {
         { value: 'JL', text: 'Jaltipan' },
         { value: 'SC', text: 'Soconusco', disabled: true },
         { value: 'BO', text: 'Bodega', disabled: true },
+      ],
+      optionsFilter: [
+        { value: 'ZR', text: 'Zaragoza' },
+        { value: 'VC', text: 'Victoria' },
+        { value: 'ER', text: 'Enriquez' },
+        { value: 'OU', text: 'Oluta' },
+        { value: 'SY', text: 'Sayula' },
+        { value: 'JL', text: 'Jaltipan' },
       ],
       optionsViewBY: [
         { text: 'Piezas', value: 'Piezas' },
@@ -348,6 +378,17 @@ export default {
 <style scoped>
 .inputs {
   width: (33% - 8px);
+  margin-bottom: 10px;
+  display: inline-block;
+}
+
+.container-tipo {
+  margin-bottom: 10px;
+  display: inline-block;
+}
+
+.filter-down {
+  margin-left: 30px;
   margin-bottom: 10px;
   display: inline-block;
 }
