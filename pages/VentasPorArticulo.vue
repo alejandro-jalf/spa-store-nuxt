@@ -107,6 +107,8 @@
           <AllSelector
             title="Sucursales"
             :options="optionsFilter"
+            :set-options="setSucursales"
+            :initials="$store.state.ventasporarticulo.sucursales"
             un-select-all-message="Deseleccionar"
           />
         </b-dropdown-form>
@@ -292,6 +294,7 @@ export default {
       setArticles: 'ventasporarticulo/setArticles',
       setDateInitM: 'ventasporarticulo/setDateInitM',
       setDateEndM: 'ventasporarticulo/setDateEndM',
+      setSucursales: 'ventasporarticulo/setSucursales',
     }),
     ...mapActions({
       changeData: 'ventasporarticulo/changeData',

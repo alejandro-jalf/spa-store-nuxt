@@ -17,13 +17,14 @@
       <template v-slot="{ ariaDescribedby }">
         <b-form-checkbox-group
           id="flavors"
-          v-model="selected"
+          v-model="selecteds"
           :options="options"
           :aria-describedby="ariaDescribedby"
           name="flavors"
           class="ml-4"
           aria-label="Item"
           stacked
+          @change="selectItems"
         ></b-form-checkbox-group>
       </template>
     </b-form-group>
@@ -51,16 +52,26 @@ export default {
       required: false,
       default: 'Deseleccionar Todo',
     },
+    setOptions: {
+      type: Function,
+      required: false,
+      default: (items) => {},
+    },
+    initials: {
+      type: Array,
+      required: false,
+      default: (() => [])(),
+    },
   },
   data() {
     return {
-      selected: [],
+      selecteds: [],
       allSelected: false,
       indeterminate: false,
     }
   },
   watch: {
-    selected(newValue, oldValue) {
+    selecteds(newValue, oldValue) {
       if (newValue.length === 0) {
         this.indeterminate = false
         this.allSelected = false
@@ -73,10 +84,18 @@ export default {
       }
     },
   },
+  mounted() {
+    const itemsInit = [...this.initials]
+    this.selecteds = itemsInit
+  },
   methods: {
     toggleAll(checked) {
       const all = this.options.map((item) => item.value || item)
-      this.selected = checked ? all : []
+      this.selecteds = checked ? all : []
+      this.setOptions(checked ? all : [])
+    },
+    selectItems(items) {
+      this.setOptions(items)
     },
   },
 }

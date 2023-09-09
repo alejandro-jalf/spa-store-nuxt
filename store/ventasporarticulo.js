@@ -20,6 +20,10 @@ export const state = () => ({
   articles: (
     localStorage.getItem('spastore_ventasxarticulo_articles') || ''
   ).split(','),
+  sucursales: (
+    localStorage.getItem('spastore_ventasxarticulo_sucursales') ||
+    'ZR,VZ,ER,OU,JL,SY'
+  ).split(','),
   showGraph: true,
 })
 
@@ -64,6 +68,13 @@ export const mutations = {
     localStorage.setItem(
       'spastore_ventasxarticulo_articles',
       articles.toString()
+    )
+  },
+  setSucursales(state, sucursales) {
+    state.sucursales = sucursales
+    localStorage.setItem(
+      'spastore_ventasxarticulo_sucursales',
+      sucursales.toString()
     )
   },
   setShowGraph(state, showGraph) {

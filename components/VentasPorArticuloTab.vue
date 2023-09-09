@@ -25,7 +25,7 @@
       responsive
       striped
       hover
-      :fields="fields"
+      :fields="fieldsVisibles"
       :items="dataRefactor"
       head-variant="dark"
       class="mt-3"
@@ -134,13 +134,49 @@ export default {
     variantThemeTableBody() {
       return this.$store.state.general.themesComponents.themeTableBody
     },
+    fieldsVisibles() {
+      const sucsVisibles = [...this.$store.state.ventasporarticulo.sucursales]
+      const fields = sucsVisibles.reduce(
+        (headers, item) => {
+          if (item === 'ZR') headers.push('Zaragoza')
+          else if (item === 'VC') headers.push('Victoria')
+          else if (item === 'ER') headers.push('Enriquez')
+          else if (item === 'OU') headers.push('Oluta')
+          else if (item === 'SY') headers.push('Sayula')
+          else if (item === 'JL') headers.push('Jaltipan')
+          return headers
+        },
+        ['Fecha']
+      )
+      fields.push('Totales')
+      return fields
+    },
     dataRefactor() {
-      const datos = [...this.$store.state.ventasporarticulo.data.data]
+      const data = [...this.$store.state.ventasporarticulo.data.data]
+      const datos = []
+      const sucsVisibles = [...this.$store.state.ventasporarticulo.sucursales]
+      const allSucs = ['ZR', 'VC', 'ER', 'OU', 'SY', 'JL']
+      const sucsNotFinded = allSucs.filter(
+        (suc) => !sucsVisibles.find((item) => item === suc)
+      )
+
+      data.forEach((dia) => {
+        const newDay = {}
+        const cells = Object.keys(dia)
+        cells.forEach((suc) => {
+          let newCell
+          if (suc === 'Fecha' || suc === 'FechaMoment') newCell = dia[`${suc}`]
+          else newCell = { ...dia[`${suc}`] }
+          newDay[`${suc}`] = newCell
+        })
+        datos.push(newDay)
+      })
+
       datos.forEach((dia, index) => {
         const cells = Object.keys(dia)
         cells.forEach((suc) => {
           if (dia[`${suc}`].Fail) {
-            datos[index]._cellVariants = {}
+            if (!datos[index]._cellVariants) datos[index]._cellVariants = {}
             if (suc === 'ZR') datos[index]._cellVariants.Zaragoza = 'danger'
             else if (suc === 'VC')
               datos[index]._cellVariants.Victoria = 'danger'
@@ -152,6 +188,22 @@ export default {
               datos[index]._cellVariants.Jaltipan = 'danger'
             else if (suc === 'SC')
               datos[index]._cellVariants.Victoria = 'danger'
+            if (suc === 'Totales') datos[index]._cellVariants.Totales = 'dark'
+          } else {
+            if (!datos[index]._cellVariants) datos[index]._cellVariants = {}
+            if (suc === 'Totales') datos[index]._cellVariants.Totales = 'dark'
+            const sf = sucsNotFinded.find((item) => item === suc)
+            if (
+              !!sf &&
+              datos[index].Totales[`${this.article}`] &&
+              datos[index][`${suc}`][`${this.article}`]
+            ) {
+              const total = { ...datos[index].Totales[`${this.article}`] }
+              total.Piezas -= datos[index][`${suc}`][`${this.article}`].Piezas
+              total.Cajas -= datos[index][`${suc}`][`${this.article}`].Cajas
+              total.Valor -= datos[index][`${suc}`][`${this.article}`].Valor
+              datos[index].Totales[`${this.article}`] = total
+            }
           }
         })
       })
@@ -159,6 +211,11 @@ export default {
     },
     totalesRefactor() {
       const data = [...this.$store.state.ventasporarticulo.data.data]
+      const sucsVisibles = [...this.$store.state.ventasporarticulo.sucursales]
+      const allSucs = ['ZR', 'VC', 'ER', 'OU', 'SY', 'JL']
+      const sucsNotFinded = allSucs.filter(
+        (suc) => !sucsVisibles.find((item) => item === suc)
+      )
       const totales = {
         ZR: { Piezas: 0, Cajas: 0, Valor: 0 },
         VC: { Piezas: 0, Cajas: 0, Valor: 0 },
@@ -170,6 +227,7 @@ export default {
       }
       data.forEach((row) => {
         Object.keys(row).forEach((suc) => {
+          const sf = sucsNotFinded.find((item) => item === suc)
           if (
             totales[`${suc}`] &&
             row[`${suc}`] &&
@@ -178,6 +236,11 @@ export default {
             totales[`${suc}`].Piezas += row[`${suc}`][`${this.article}`].Piezas
             totales[`${suc}`].Cajas += row[`${suc}`][`${this.article}`].Cajas
             totales[`${suc}`].Valor += row[`${suc}`][`${this.article}`].Valor
+            if (sf) {
+              totales.Totales.Piezas -= row[`${suc}`][`${this.article}`].Piezas
+              totales.Totales.Cajas -= row[`${suc}`][`${this.article}`].Cajas
+              totales.Totales.Valor -= row[`${suc}`][`${this.article}`].Valor
+            }
           }
         })
       })
