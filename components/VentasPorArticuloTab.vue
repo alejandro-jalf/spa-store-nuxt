@@ -136,14 +136,18 @@ export default {
     },
     fieldsVisibles() {
       const sucsVisibles = [...this.$store.state.ventasporarticulo.sucursales]
-      const fields = sucsVisibles.reduce(
+      const sucsAviables = [
+        { value: 'ZR', text: 'Zaragoza' },
+        { value: 'VC', text: 'Victoria' },
+        { value: 'ER', text: 'Enriquez' },
+        { value: 'OU', text: 'Oluta' },
+        { value: 'SY', text: 'Sayula' },
+        { value: 'JL', text: 'Jaltipan' },
+      ]
+      const fields = sucsAviables.reduce(
         (headers, item) => {
-          if (item === 'ZR') headers.push('Zaragoza')
-          else if (item === 'VC') headers.push('Victoria')
-          else if (item === 'ER') headers.push('Enriquez')
-          else if (item === 'OU') headers.push('Oluta')
-          else if (item === 'SY') headers.push('Sayula')
-          else if (item === 'JL') headers.push('Jaltipan')
+          const sucFinded = sucsVisibles.find((suc) => suc === item.value)
+          if (sucFinded) headers.push(item.text)
           return headers
         },
         ['Fecha']

@@ -107,7 +107,7 @@
           <AllSelector
             title="Sucursales"
             :options="optionsFilter"
-            :set-options="setSucursales"
+            :set-options="selectSucursales"
             :initials="$store.state.ventasporarticulo.sucursales"
             un-select-all-message="Deseleccionar"
           />
@@ -121,6 +121,11 @@
             :article="tabA"
             :view="selectViewBy"
             :data-article="getTotalByAticle(tabA)"
+          />
+          <VentasPorArticuloExistencia
+            :utils="utils"
+            :article="tabA"
+            :view="selectViewBy"
           />
           <h2>Grafico</h2>
           <div class="mb-5">
@@ -174,6 +179,7 @@ import { mapMutations, mapActions } from 'vuex'
 import VentasPorArticuloChart from '../components/VentasPorArticuloChart'
 // import ventasporarticuloCard from '../components/ventasporarticuloCard'
 import VentasPorArticuloTab from '../components/VentasPorArticuloTab'
+import VentasPorArticuloExistencia from '../components/VentasPorArticuloExistencia'
 import AllSelector from '../components/AllSelector'
 import utils from '../modules/utils'
 
@@ -182,6 +188,7 @@ export default {
     VentasPorArticuloChart,
     // ventasporarticuloCard,
     VentasPorArticuloTab,
+    VentasPorArticuloExistencia,
     AllSelector,
   },
   data() {
@@ -299,6 +306,10 @@ export default {
     ...mapActions({
       changeData: 'ventasporarticulo/changeData',
     }),
+    selectSucursales(sucs) {
+      this.setSucursales(sucs)
+      this.updateGraphics()
+    },
     onContextDI(ctx) {
       this.setDateInitM(ctx.selectedYMD)
       this.dateInitLetra = ctx.selectedFormatted

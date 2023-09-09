@@ -66,9 +66,13 @@ export default {
       else if (suc === 'SC') return '#ff00f2'
     },
     dataConvert(datos) {
-      const labels = this.fields.filter(
-        (suc) => suc.value !== 'ALL' && suc.value !== 'SC' && suc.value !== 'BO'
-      )
+      const sucsVisibles = [...this.$store.state.ventasporarticulo.sucursales]
+      const labels = this.fields.filter((suc) => {
+        const sf = sucsVisibles.find((sucF) => sucF === suc.value)
+        return (
+          suc.value !== 'ALL' && suc.value !== 'SC' && suc.value !== 'BO' && sf
+        )
+      })
       const fechas = []
       const dataSets = []
       datos.forEach((dia) => {

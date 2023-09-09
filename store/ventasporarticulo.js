@@ -10,7 +10,7 @@ if (!localStorage.getItem('spastore_ventasxarticulo_tipo'))
 export const state = () => ({
   data: sessionStorage.getItem('spastore_ventasxarticulo_data')
     ? JSON.parse(sessionStorage.getItem('spastore_ventasxarticulo_data'))
-    : { data: [], Sucursal: 'null', Totales: {} },
+    : { data: [], Sucursal: 'null', Totales: {}, Existencias: {} },
   sucursal: localStorage.getItem('spastore_ventasxarticulo_sucursal'),
   dateInit: localStorage.getItem('spastore_ventasxarticulo_dateInit'),
   dateInitM: localStorage.getItem('spastore_ventasxarticulo_dateInitM') || null,
