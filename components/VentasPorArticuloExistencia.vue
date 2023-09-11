@@ -12,8 +12,8 @@
       class="mt-3"
       :class="variantThemeTableBody"
     >
-      <template #cell(Articulo)="row">
-        {{ row.item.Fecha }}
+      <template #cell(Total)="row">
+        {{ dataFormated(row.item.Total) }}
       </template>
       <template #cell(Zaragoza)="row">
         {{ dataFormated(row.item.ZR) }}
@@ -33,8 +33,8 @@
       <template #cell(Jaltipan)="row">
         {{ dataFormated(row.item.JL) }}
       </template>
-      <template #cell(Totales)="row">
-        {{ dataFormated(row.item.Totales) }}
+      <template #cell(Bodega)="row">
+        {{ dataFormated(row.item.BO) }}
       </template>
     </b-table>
   </div>
@@ -67,7 +67,7 @@ export default {
         'Oluta',
         'Sayula',
         'Jaltipan',
-        'Total',
+        'Bodega',
       ],
     }
   },
@@ -84,6 +84,7 @@ export default {
         { value: 'OU', text: 'Oluta' },
         { value: 'SY', text: 'Sayula' },
         { value: 'JL', text: 'Jaltipan' },
+        { value: 'BO', text: 'Bodega' },
       ]
       const fields = sucsAviables.reduce(
         (headers, item) => {
@@ -91,9 +92,9 @@ export default {
           if (sucFinded) headers.push(item.text)
           return headers
         },
-        ['Articulo']
+        ['Total']
       )
-      fields.push('Total')
+      fields.push('Bodega')
       return fields
     },
     dataRefactor() {
@@ -103,64 +104,42 @@ export default {
       const onlyVisibles = allSucs.filter((suc) =>
         sucsVisibles.find((item) => item === suc)
       )
+      const total = {
+        CostoExistenciaNeto: 0,
+        ExistenciaActual: 0,
+        ExistenciaActualUC: 0,
+      }
 
-      console.log(exist, this.article, sucsVisibles)
       if (!exist[`${this.article}`]) return []
       const allData = exist[`${this.article}`]
-      console.log(allData, onlyVisibles)
       const suc = {}
       onlyVisibles.forEach((item) => {
         suc[`${item}`] = allData[`${item}`]
+        total.CostoExistenciaNeto += allData[`${item}`].CostoExistenciaNeto
+        total.ExistenciaActual += allData[`${item}`].ExistenciaActual
+        total.ExistenciaActualUC += allData[`${item}`].ExistenciaActualUC
       })
+      suc.BO = { ...allData.BO }
+      suc.Total = total
 
-      // datos.forEach((dia, index) => {
-      //   const cells = Object.keys(dia)
-      //   cells.forEach((suc) => {
-      //     if (!datos[index]._cellVariants) datos[index]._cellVariants = {}
-      //     if (dia[`${suc}`].Fail) {
-      //       if (suc === 'ZR') datos[index]._cellVariants.Zaragoza = 'danger'
-      //       else if (suc === 'VC')
-      //         datos[index]._cellVariants.Victoria = 'danger'
-      //       else if (suc === 'ER')
-      //         datos[index]._cellVariants.Enriquez = 'danger'
-      //       else if (suc === 'OU') datos[index]._cellVariants.Oluta = 'danger'
-      //       else if (suc === 'SY') datos[index]._cellVariants.Sayula = 'danger'
-      //       else if (suc === 'JL')
-      //         datos[index]._cellVariants.Jaltipan = 'danger'
-      //       else if (suc === 'SC')
-      //         datos[index]._cellVariants.Victoria = 'danger'
-      //       if (suc === 'Totales') datos[index]._cellVariants.Totales = 'dark'
-      //     } else {
-      //       if (suc === 'Totales') datos[index]._cellVariants.Totales = 'dark'
-      //       const sf = sucsNotFinded.find((item) => item === suc)
-      //       if (
-      //         !!sf &&
-      //         datos[index].Totales[`${this.article}`] &&
-      //         datos[index][`${suc}`][`${this.article}`]
-      //       ) {
-      //         const total = { ...datos[index].Totales[`${this.article}`] }
-      //         total.Piezas -= datos[index][`${suc}`][`${this.article}`].Piezas
-      //         total.Cajas -= datos[index][`${suc}`][`${this.article}`].Cajas
-      //         total.Valor -= datos[index][`${suc}`][`${this.article}`].Valor
-      //         datos[index].Totales[`${this.article}`] = total
-      //       }
-      //     }
-      //   })
-      // })
       return [suc]
     },
   },
   mounted() {},
   methods: {
-    dataFormated(value, from) {
+    dataFormated(value) {
       if (value === null || value === undefined || !value) return '-'
       if (value.Fail) return '!'
-      const conteo = from === 'Total' ? value : value[`${this.article}`]
-      if (!conteo) return '-'
+      const valor =
+        this.view === 'Piezas'
+          ? 'ExistenciaActual'
+          : this.view === 'Cajas'
+          ? 'ExistenciaActualUC'
+          : 'CostoExistenciaNeto'
       const comp = this.view === 'Valor' ? '$ ' : ''
       return (
         comp +
-        this.utils.aplyFormatNumeric(this.utils.roundTo(conteo[`${this.view}`]))
+        this.utils.aplyFormatNumeric(this.utils.roundTo(value[`${valor}`]))
       )
     },
   },
