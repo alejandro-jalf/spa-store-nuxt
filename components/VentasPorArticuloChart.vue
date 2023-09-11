@@ -39,7 +39,10 @@ export default {
     const ctx = document.getElementById('planet-chart-' + this.article)
     const that = this
     // eslint-disable-next-line no-new
-    new Chart(ctx, that.dataConvert(that.datosReactor))
+    new Chart(
+      ctx,
+      that.dataOnly(that.datosReactor) || that.dataConvert(that.datosReactor)
+    )
   },
   methods: {
     aplyFormat(value) {
@@ -64,6 +67,54 @@ export default {
       else if (suc === 'SY') return '#00f2ff'
       else if (suc === 'JL') return '#8400ff'
       else if (suc === 'SC') return '#ff00f2'
+    },
+    dataOnly(datos) {
+      const sucActual = this.$store.state.ventasporarticulo.data.Sucursal
+      if (sucActual.toUpperCase() === 'ALL') return undefined
+      const sucFinded = this.fields.find(
+        (suc) => suc.value.toUpperCase() === sucActual.toUpperCase()
+      )
+      const fechas = []
+      const dataSets = [
+        {
+          label: sucFinded.text,
+          data: [],
+          backgroundColor: this.getBackground(sucFinded),
+          borderColor: this.getColor(sucFinded),
+          borderWidth: 3,
+        },
+      ]
+      datos.forEach((dia) => {
+        if (dia.Articulo === this.article) {
+          const dateFinded = fechas.find((fecha) => fecha === dia.Fecha)
+          if (!dateFinded) fechas.push(dia.Fecha)
+          let conteo = dia.VentasValor
+          if (this.view === 'Piezas') conteo = dia.VentasPza
+          else if (this.view === 'Cajas') conteo = dia.VentasCja
+          dataSets[0].data.push(conteo)
+        }
+      })
+      return {
+        type: this.tipo,
+        data: {
+          labels: fechas,
+          datasets: dataSets,
+        },
+        options: {
+          responsive: true,
+          lineTension: 1,
+          scales: {
+            yAxes: [
+              {
+                ticks: {
+                  beginAtZero: true,
+                  padding: 25,
+                },
+              },
+            ],
+          },
+        },
+      }
     },
     dataConvert(datos) {
       const sucsVisibles = [...this.$store.state.ventasporarticulo.sucursales]

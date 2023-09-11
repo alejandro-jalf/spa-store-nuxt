@@ -93,6 +93,7 @@
       </div>
 
       <b-dropdown
+        v-if="allSucursals"
         id="df"
         ref="dropdown"
         size="lg"
@@ -117,17 +118,26 @@
       <b-tabs content-class="mt-3">
         <b-tab v-for="(tabA, indexTab) in tabs" :key="indexTab" :title="tabA">
           <VentasPorArticuloTab
+            v-if="allSucursals"
+            :utils="utils"
+            :article="tabA"
+            :view="selectViewBy"
+            :data-article="getTotalByAticle(tabA)"
+          />
+          <VentasPorArticuloOnly
+            v-else
             :utils="utils"
             :article="tabA"
             :view="selectViewBy"
             :data-article="getTotalByAticle(tabA)"
           />
           <VentasPorArticuloExistencia
+            v-if="allSucursals"
             :utils="utils"
             :article="tabA"
             :view="selectViewBy"
           />
-          <h2>Grafico</h2>
+          <h4>Grafico de ventas</h4>
           <div class="mb-5">
             <b-button variant="info" @click="changeGrafico('bar')">
               <b-icon :icon="graficoBar" />
@@ -154,31 +164,14 @@
         </b-tab>
       </b-tabs>
     </div>
-
-    <!-- <div v-else>
-      <ventasporarticuloCard
-        v-for="(dia, indexDia) in dataRefactor"
-        :key="indexDia"
-        :sucursal="dia"
-        :data-formated="dataFormated"
-        :show-details="updateVentas"
-        class="mb-2"
-      />
-      <ventasporarticuloCard
-        :sucursal="totalesRefactor"
-        :data-formated="dataFormated"
-        :show-details="updateVentas"
-        class="mb-2"
-      />
-    </div> -->
   </div>
 </template>
 
 <script>
 import { mapMutations, mapActions } from 'vuex'
 import VentasPorArticuloChart from '../components/VentasPorArticuloChart'
-// import ventasporarticuloCard from '../components/ventasporarticuloCard'
 import VentasPorArticuloTab from '../components/VentasPorArticuloTab'
+import VentasPorArticuloOnly from '../components/VentasPorArticuloOnly'
 import VentasPorArticuloExistencia from '../components/VentasPorArticuloExistencia'
 import AllSelector from '../components/AllSelector'
 import utils from '../modules/utils'
@@ -186,7 +179,7 @@ import utils from '../modules/utils'
 export default {
   components: {
     VentasPorArticuloChart,
-    // ventasporarticuloCard,
+    VentasPorArticuloOnly,
     VentasPorArticuloTab,
     VentasPorArticuloExistencia,
     AllSelector,
@@ -249,6 +242,12 @@ export default {
     },
     emptyData() {
       return this.$store.state.ventasporarticulo.data.Sucursal === 'null'
+    },
+    allSucursals() {
+      return (
+        this.$store.state.ventasporarticulo.data.Sucursal.toUpperCase() ===
+        'ALL'
+      )
     },
     tabs() {
       return Object.keys(this.$store.state.ventasporarticulo.data.Totales)
