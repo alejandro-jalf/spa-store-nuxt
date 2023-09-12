@@ -85,14 +85,11 @@ export default {
         },
       ]
       datos.forEach((dia) => {
-        if (dia.Articulo === this.article) {
-          const dateFinded = fechas.find((fecha) => fecha === dia.Fecha)
-          if (!dateFinded) fechas.push(dia.Fecha)
-          let conteo = dia.VentasValor
-          if (this.view === 'Piezas') conteo = dia.VentasPza
-          else if (this.view === 'Cajas') conteo = dia.VentasCja
-          dataSets[0].data.push(conteo)
-        }
+        const dateFinded = fechas.find((fecha) => fecha === dia.Fecha)
+        if (!dateFinded) fechas.push(dia.Fecha)
+        if (dia[`${this.article}`])
+          dataSets[0].data.push(dia[`${this.article}`][`${this.view}`])
+        else dataSets[0].data.push(0)
       })
       return {
         type: this.tipo,

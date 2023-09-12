@@ -38,6 +38,9 @@
       <template #cell(Cantidad)="row">
         {{ dataFormated(row.item) }}
       </template>
+      <template #cell(Articulo)> {{ dataArticle.Articulo }} </template>
+      <template #cell(Nombre)> {{ dataArticle.Nombre }} </template>
+      <template #cell(Relacion)> {{ dataArticle.Relacion }} </template>
       <template #foot(Fecha)> {{ totalesRefactor.Fecha }} </template>
       <template #foot(Articulo)> {{ totalesRefactor.Articulo }} </template>
       <template #foot(Nombre)> {{ totalesRefactor.Nombre }} </template>
@@ -80,21 +83,12 @@ export default {
       return this.$store.state.general.themesComponents.themeTableBody
     },
     dataRefactor() {
-      const data = [...this.$store.state.ventasporarticulo.data.data]
-      return data
+      const datos = [...this.$store.state.ventasporarticulo.data.data]
+      return datos
     },
     totalesRefactor() {
-      const data = [...this.$store.state.ventasporarticulo.data.data]
-      let total = 0
-      const tipo =
-        this.view === 'Piezas'
-          ? 'VentasPza'
-          : this.view === 'Cajas'
-          ? 'VentasCja'
-          : 'VentasValor'
-      data.forEach((row) => {
-        if (row.Articulo === this.article) total += row[`${tipo}`]
-      })
+      const totales = this.$store.state.ventasporarticulo.data.Totales
+      const total = totales[`${this.article}`][`${this.view}`]
       return {
         Fecha: 'Total',
         Articulo: '',
@@ -107,12 +101,9 @@ export default {
   methods: {
     dataFormated(value, from) {
       if (value === null || value === undefined || !value) return '-'
-      let conteo = value
-      if (from !== 'total') {
-        if (this.view === 'Piezas') conteo = value.VentasPza
-        else if (this.view === 'Cajas') conteo = value.VentasCja
-        else conteo = value.VentasValor
-      }
+      let conteo = from === 'total' ? value : value[`${this.article}`]
+      if (!conteo) return '-'
+      if (from !== 'total') conteo = value[`${this.article}`][`${this.view}`]
       const comp = this.view === 'Valor' ? '$ ' : ''
       return comp + this.utils.aplyFormatNumeric(this.utils.roundTo(conteo))
     },
