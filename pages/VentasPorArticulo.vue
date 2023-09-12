@@ -6,6 +6,7 @@
         <b-form-select
           v-model="selected"
           :options="options"
+          :disabled="!isManager"
           @change="changeSuc"
         ></b-form-select>
       </b-input-group>
@@ -221,6 +222,9 @@ export default {
     }
   },
   computed: {
+    isManager() {
+      return this.$store.state.user.user.tipo_user === 'manager'
+    },
     width() {
       return this.$store.state.general.widthWindow
     },
@@ -275,8 +279,7 @@ export default {
   },
   mounted() {
     const tablevXarticulo = document.getElementById('tablevXarticulo')
-    const sucSel = this.$store.state.ventasporarticulo.sucursal
-    this.selected = sucSel
+    this.setSucursalInitial()
     this.setDateInitials()
     this.articles = [...this.$store.state.ventasporarticulo.articles]
 
@@ -305,6 +308,17 @@ export default {
     ...mapActions({
       changeData: 'ventasporarticulo/changeData',
     }),
+    setSucursalInitial() {
+      if (!this.isManager) {
+        this.selected = utils.getSucursalByName(
+          this.$store.state.user.user.sucursal_user
+        )
+        this.setSucursal(this.selected)
+      } else {
+        const sucSelected = this.$store.state.ventasporarticulo.sucursal
+        this.selected = sucSelected
+      }
+    },
     selectSucursales(sucs) {
       this.setSucursales(sucs)
       this.updateGraphics()
