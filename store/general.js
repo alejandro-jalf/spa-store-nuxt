@@ -285,6 +285,12 @@ export const state = () => ({
           nickname: 'Exist. Antiguedad',
           icon: 'file-earmark-pdf-fill',
         },
+        {
+          path: '/documentoswin',
+          name: 'documentoswin',
+          nickname: 'Dcoumentos Win',
+          icon: 'file-earmark-pdf-fill',
+        },
       ],
       name: '',
       nickname: 'Reportes',
