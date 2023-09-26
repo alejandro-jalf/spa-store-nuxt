@@ -207,7 +207,7 @@ export default {
     },
   },
   mounted() {
-    this.showPosition()
+    // this.showPosition()
     this.setSucursalForUser()
     this.$root.$on('bv::modal::hidden', (evt) => {
       if (evt.componentId === 'modalAuth') {
