@@ -19,7 +19,7 @@
           v-model="document"
           placeholder="Enter(Buscar) ó ctrl+Enter(Listar)"
           :class="backgroundInputTheme"
-          @keyup.enter="searchByDocument"
+          @keyup.enter="searchByDocument('documento')"
         />
       </b-input-group>
       <b-input-group prepend="Referencia" class="docref">
@@ -27,6 +27,7 @@
           v-model="referencia"
           placeholder="Enter(Buscar) ó ctrl+Enter(Listar)"
           :class="backgroundInputTheme"
+          @keyup.enter="searchByDocument('referencia')"
         />
       </b-input-group>
     </b-form>
@@ -55,7 +56,7 @@
           :variant="variantClean"
           :block="width < 528"
           class="mt-2"
-          @click="setConsolidacionActual({ data: [] })"
+          @click="setData({ articles: 0, dataDoc: {}, data: [] })"
         >
           <b-icon icon="arrow-left-right" />
           Limpiar detalles
@@ -355,6 +356,7 @@ export default {
       setDataBases: 'documentoswin/setDataBases',
       setLoading: 'general/setLoading',
       showAlertDialog: 'general/showAlertDialog',
+      setData: 'documentoswin/setData',
     }),
     ...mapActions({
       changeData: 'documentoswin/changeData',
@@ -420,12 +422,14 @@ export default {
     validate(Observaciones) {
       return Observaciones === 'Entrada No Encontrada' ? 'danger' : ''
     },
-    async searchByDocument() {
+    async searchByDocument(from = 'documento') {
       this.setLoading(true)
+      const doc = from === 'documento' ? this.document : this.referencia
       const response = await this.changeData([
         this.selected,
-        this.document,
+        doc,
         this.selectedDB,
+        from,
       ])
       if (!response.success) this.showAlertDialog([response.message])
       else if (response.articles === 0)

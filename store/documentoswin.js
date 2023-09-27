@@ -37,16 +37,15 @@ export const mutations = {
 }
 
 export const actions = {
-  async changeData({ commit }, [sucursal, documento = '', database = '']) {
+  async changeData(
+    { commit },
+    [sucursal, documento = '', database = '', from]
+  ) {
     try {
       const url =
         process.env.spastore_url_backend +
         'api/v1/reportes/movimientos/' +
-        sucursal +
-        '/documento/' +
-        documento +
-        '?database=' +
-        database
+        `${sucursal}/${from}/${documento}?database=${database}`
 
       const response = await this.$axios({
         url,
