@@ -87,7 +87,7 @@
             {{ dataDoc.NombreTercero }}
           </span>
         </div>
-        <div class="mb-2">
+        <div class="mb-2" :class="colorEstatus(dataDoc.Estatus)">
           Estatus:
           <span class="font-weight-bold">
             {{ getEstatus(dataDoc.Estatus) }}
@@ -144,52 +144,13 @@
         responsive="sm"
         :class="variantThemeTableBody"
       >
-        <!-- <template #cell(CantUV)="row">
+        <template #cell(CantidadRegular)="row">
           {{ formatNumber(row.item.CantidadRegular) }}
         </template>
-        <template #cell(CantUC)="row">
-          {{ formatNumber(row.item.CantidadRegularUC) }}
-        </template>
-        <template #cell(CostoUV)="row">
-          {{
-            formatNumberWithFooter(row.item.CostoUnitarioNeto, row.item.footer)
-          }}
-        </template>
-        <template #cell(CostoIvaUV)="row">
-          <span class="font-weight-bold">
-            {{
-              formatNumberWithFooter(
-                row.item.CostoUnitarioNetoIva,
-                row.item.footer
-              )
-            }}
-          </span>
-        </template>
-        <template #cell(CostoUC)="row">
-          {{
-            formatNumberWithFooter(
-              row.item.CostoUnitarioNetoUC,
-              row.item.footer
-            )
-          }}
-        </template>
-        <template #cell(CostoIvaUC)="row">
-          <span class="font-weight-bold">
-            {{
-              formatNumberWithFooter(
-                row.item.CostoUnitarioNetoUCIva,
-                row.item.footer
-              )
-            }}
-          </span>
-        </template> -->
-        <template #cell(CostoValorNeto)="row">
-          <span class="font-weight-bold">
-            {{ formatNumber(row.item.CostoValorNeto) }}
-          </span>
+        <template #cell(Subtotal)="row">
+          {{ formatNumber(row.item.Subtotal) }}
         </template>
       </b-table>
-      <Divider class="my-3" />
       <div>
         (
         {{ utils.numeroALetras(dataDoc.Total, {}, false) }}
@@ -222,6 +183,9 @@
         </div>
       </div>
     </div>
+    <div class="container-search">
+      <DocumentosWinSearchVue :documents="documents" />
+    </div>
   </div>
 </template>
 
@@ -230,8 +194,12 @@ import { mapMutations, mapActions } from 'vuex'
 import { jsPDF } from 'jspdf'
 import utils from '../modules/utils'
 import 'jspdf-autotable'
+import DocumentosWinSearchVue from '~/components/DocumentosWinSearch.vue'
 
 export default {
+  components: {
+    DocumentosWinSearchVue,
+  },
   data() {
     return {
       sucursales: [],
@@ -265,18 +233,18 @@ export default {
       document: '',
       referencia: '',
       documents: [
-        { key: 'A', label: 'Transferencia de Entrada(A)' },
-        { key: 'C', label: 'Compra(C)' },
-        { key: 'D', label: 'Devolucion a Cliente(D)' },
-        { key: 'E', label: 'Ajuste de Entrada(E)' },
-        { key: 'I', label: 'Consumo Interno(I)' },
-        { key: 'M', label: 'Merma(M)' },
-        { key: 'P', label: 'Devolucion a Proveedor(P)' },
-        { key: 'S', label: 'Ajuste de Salida(S)' },
-        { key: 'T', label: 'Transferencia de Salida(T)' },
-        { key: 'V', label: 'Venta(V)' },
-        { key: 'X', label: '' },
-        { key: 'Z', label: '' },
+        { value: 'A', text: 'Transferencia de Entrada(A)' },
+        { value: 'C', text: 'Compra(C)' },
+        { value: 'D', text: 'Devolucion a Cliente(D)' },
+        { value: 'E', text: 'Ajuste de Entrada(E)' },
+        { value: 'I', text: 'Consumo Interno(I)' },
+        { value: 'M', text: 'Merma(M)' },
+        { value: 'P', text: 'Devolucion a Proveedor(P)' },
+        { value: 'S', text: 'Ajuste de Salida(S)' },
+        { value: 'T', text: 'Transferencia de Salida(T)' },
+        { value: 'V', text: 'Venta(V)' },
+        { value: 'X', text: '' },
+        { value: 'Z', text: '' },
       ],
     }
   },
@@ -318,33 +286,6 @@ export default {
     articles() {
       return this.$store.state.documentoswin.data.data
     },
-    total() {
-      return this.$store.state.documentoswin.details.data.reduce(
-        (sum, article) => {
-          sum += article.CostoConIva
-          return sum
-        },
-        0
-      )
-    },
-    iva() {
-      return this.$store.state.documentoswin.details.data.reduce(
-        (sum, article) => {
-          sum += article.Iva
-          return sum
-        },
-        0
-      )
-    },
-    subTotal() {
-      return this.$store.state.documentoswin.details.data.reduce(
-        (sum, article) => {
-          sum += article.CostoValorNeto
-          return sum
-        },
-        0
-      )
-    },
   },
   mounted() {
     this.setSucursalForUser()
@@ -362,11 +303,14 @@ export default {
       changeData: 'documentoswin/changeData',
     }),
     getTipoDocumento(tipoDocumento) {
-      const nameDoc = this.documents.find((doc) => doc.key === tipoDocumento)
-      return nameDoc ? nameDoc.label : tipoDocumento
+      const nameDoc = this.documents.find((doc) => doc.value === tipoDocumento)
+      return nameDoc ? nameDoc.text : tipoDocumento
     },
     getEstatus(estatus) {
       return estatus === 'E' ? 'Vigente' : 'Cancelado'
+    },
+    colorEstatus(estatus) {
+      return estatus === 'E' ? 'success' : 'danger'
     },
     showTercero(tipoDocumento) {
       return tipoDocumento === 'C' || tipoDocumento === 'P'
@@ -419,9 +363,6 @@ export default {
         this.selected = sucSelected
       }
     },
-    validate(Observaciones) {
-      return Observaciones === 'Entrada No Encontrada' ? 'danger' : ''
-    },
     async searchByDocument(from = 'documento') {
       this.setLoading(true)
       const doc = from === 'documento' ? this.document : this.referencia
@@ -437,10 +378,6 @@ export default {
       this.setLoading(false)
     },
     formatNumber(value) {
-      return utils.aplyFormatNumeric(utils.roundTo(value))
-    },
-    formatNumberWithFooter(value, footer) {
-      if (footer) return ''
       return utils.aplyFormatNumeric(utils.roundTo(value))
     },
     async loadDataBase(sucursal) {
@@ -664,7 +601,23 @@ export default {
 }
 
 .danger {
-  background: rgb(203, 0, 0);
+  background: rgb(130, 0, 0);
   color: rgb(255, 255, 255);
+}
+
+.success {
+  background: rgb(0, 130, 0);
+  color: rgb(255, 255, 255);
+}
+
+.container-search {
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 100%;
+  background: rgba(52, 52, 52, 0.648);
+  padding: 30px;
+  z-index: 10;
 }
 </style>
