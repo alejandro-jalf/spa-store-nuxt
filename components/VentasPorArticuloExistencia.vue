@@ -106,6 +106,11 @@ export default {
         if (!allData[`${item}`]) suc._cellVariants[`${item}`] = 'danger'
       })
       suc.BO = { ...allData.BO }
+      if (suc.BO) {
+        total.Valor += suc.BO ? suc.BO.Valor : 0
+        total.Piezas += suc.BO ? suc.BO.Piezas : 0
+        total.Cajas += suc.BO ? suc.BO.Cajas : 0
+      } else suc._cellVariants.BO = 'danger'
       suc.Total = total
 
       return [suc]
