@@ -195,11 +195,12 @@ export const actions = {
         return responsez.data
       }
 
+      const newNameFile = nameBackup.replace('.BAK', '')
       const responseU = await this.$axios({
         method: 'post',
         timeout: 600000,
         url: urlUpload,
-        data: { source, nameFile: nameBackup },
+        data: { source, nameFile: newNameFile },
         cancelToken: abortU.token,
       })
 
