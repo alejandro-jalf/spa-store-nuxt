@@ -917,7 +917,7 @@ const utils = (() => {
       case 'ZR':
         return 'C:\\backups'
       case 'VC':
-        return 'D:\\backups'
+        return 'C:\\backups'
       case 'ER':
         return 'C:\\backups'
       case 'OU':
