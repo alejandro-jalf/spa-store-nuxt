@@ -16,18 +16,22 @@
     <b-form inline>
       <b-input-group prepend="Documento" class="docref">
         <b-form-input
+          ref="inputDoc"
           v-model="document"
           placeholder="Enter(Buscar) ó ctrl+Enter(Listar)"
           :class="backgroundInputTheme"
-          @keyup.enter="searchByDocument('documento')"
+          @keyup="eventDownDoc"
+          @focus="$refs.inputDoc.select()"
         />
       </b-input-group>
       <b-input-group prepend="Referencia" class="docref">
         <b-form-input
+          ref="inputRef"
           v-model="referencia"
           placeholder="Enter(Buscar) ó ctrl+Enter(Listar)"
           :class="backgroundInputTheme"
-          @keyup.enter="searchByDocument('referencia')"
+          @keyup="eventDownRef"
+          @focus="$refs.inputRef.select()"
         />
       </b-input-group>
     </b-form>
@@ -183,8 +187,15 @@
         </div>
       </div>
     </div>
-    <div class="container-search">
-      <DocumentosWinSearchVue :documents="documents" />
+    <div v-if="showSearch" class="container-search">
+      <DocumentosWinSearchVue
+        :documents="documents"
+        :rec-referencia="referencia"
+        :rec-document="document"
+        :set-show-search="setShowSearch"
+        :sucursal="selected"
+        :data-base="selectedDB"
+      />
     </div>
   </div>
 </template>
@@ -259,6 +270,9 @@ export default {
       const sucursales = this.sucursales
       return sucursales[`${this.$store.state.documentoswin.sucursal}`]
     },
+    showSearch() {
+      return this.$store.state.documentoswin.showSearch
+    },
     backgroundInputTheme() {
       return this.$store.state.general.themesComponents.themeInputBackground
     },
@@ -298,10 +312,19 @@ export default {
       setLoading: 'general/setLoading',
       showAlertDialog: 'general/showAlertDialog',
       setData: 'documentoswin/setData',
+      setShowSearch: 'documentoswin/setShowSearch',
     }),
     ...mapActions({
       changeData: 'documentoswin/changeData',
     }),
+    eventDownDoc(e) {
+      if (e.ctrlKey && e.keyCode === 13) this.setShowSearch(true)
+      else if (e.keyCode === 13) this.searchByDocument('documento')
+    },
+    eventDownRef(e) {
+      if (e.ctrlKey && e.keyCode === 13) this.setShowSearch(true)
+      else if (e.keyCode === 13) this.searchByDocument('referencia')
+    },
     getTipoDocumento(tipoDocumento) {
       const nameDoc = this.documents.find((doc) => doc.value === tipoDocumento)
       return nameDoc ? nameDoc.text : tipoDocumento

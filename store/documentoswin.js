@@ -12,6 +12,7 @@ export const state = () => ({
     ? JSON.parse(localStorage.getItem('spastore_docwin_db'))
     : { ZR: [], VC: [], ER: [], OU: [], Sy: [], JL: [], BO: [], SC: [] },
   sucursal: localStorage.getItem('spastore_docwin_sucursal'),
+  showSearch: Boolean(sessionStorage.getItem('spastore_docwin_show') || false),
 })
 
 export const mutations = {
@@ -33,6 +34,10 @@ export const mutations = {
   setSucursal(state, sucursal) {
     state.sucursal = sucursal
     localStorage.setItem('spastore_docwin_sucursal', sucursal)
+  },
+  setShowSearch(state, showSearch) {
+    state.showSearch = showSearch
+    sessionStorage.setItem('spastore_docwin_show', showSearch)
   },
 }
 
@@ -74,6 +79,7 @@ export const actions = {
       typeDoc = '',
       likeDoc = '',
       likeRef = '',
+      article = '',
       order = 'DESC',
     ]
   ) {
@@ -82,7 +88,7 @@ export const actions = {
         process.env.spastore_url_backend +
         'api/v1/reportes/movimientos/' +
         sucursal +
-        '?database' +
+        '?database=' +
         database +
         '&typeDoc=' +
         typeDoc +
@@ -90,6 +96,8 @@ export const actions = {
         likeDoc +
         '&likeRef=' +
         likeRef +
+        '&article=' +
+        article +
         '&order=' +
         order
       const response = await this.$axios({
