@@ -147,6 +147,7 @@ export default {
         VC: 'SPACENTRO',
         OU: 'SPAOLUTA',
         JL: 'SPAJALTIPAN',
+        SC: 'SPASOCONUSCO',
         ER: 'SPAENRIQUEZ',
         BO: 'SPABODEGA',
       },

@@ -397,6 +397,7 @@ export default {
         { value: 'SY', text: 'Sayula' },
         { value: 'TY', text: 'Sayula Tortilleria', disabled: true },
         { value: 'JL', text: 'Jaltipan' },
+        { value: 'SC', text: 'Soconusco' },
         { value: 'BO', text: 'Bodega' },
       ],
       fieldsVentas: ['Tipo', 'Subtotal', 'Ieps', 'Iva', 'Total'],

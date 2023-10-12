@@ -381,6 +381,7 @@ export default {
       if (sucursal === 'SAYULAT') return 'SPASAYULAT'
       if (sucursal === 'JALTIPAN') return 'SPAJALTIPAN'
       if (sucursal === 'BODEGA') return 'SPABODEGA'
+      if (sucursal === 'SOCONUSCO') return 'SPASOCONUSCO'
       if (sucursal === 'HUAMUCHL') return 'HUAMUCHL'
       if (sucursal === 'CAASA SUPER') return 'AUTOSERVICIO'
       if (sucursal === 'CAASA MAYOREO') return 'MEDIOMAYOREO'
@@ -405,6 +406,7 @@ export default {
           { value: 'SPASAYULAT', text: 'Sayula Tortilleria' },
           { value: 'SPAJALTIPAN', text: 'Jaltipan' },
           { value: 'SPABODEGA', text: 'Bodega' },
+          { value: 'SPASOCONUSCO', text: 'Soconusco' },
           { value: 'HUAMUCHL', text: 'Huamuchil', disabled: true },
         ]
       } else {

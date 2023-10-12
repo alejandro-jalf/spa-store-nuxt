@@ -73,6 +73,7 @@ export default {
         { key: 'OU', label: 'Oluta' },
         { key: 'SY', label: 'Sayula' },
         { key: 'JL', label: 'Jaltipan' },
+        { key: 'SC', label: 'Soconusco' },
         { key: 'BO', label: 'Bodega' },
       ]
       const fields = sucsAviables.reduce(

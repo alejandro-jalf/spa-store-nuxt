@@ -269,6 +269,7 @@ export default {
         ER: 'SPAENRIQUEZ',
         SY: 'SPASAYULA',
         BO: 'SPABODEGA',
+        SC: 'SPASOCONUSCO',
       },
       selected: null,
       options: [
@@ -279,6 +280,7 @@ export default {
         { value: 'JL', text: 'SPAJALTIPAN' },
         { value: 'ER', text: 'SPAENRIQUEZ' },
         { value: 'SY', text: 'SPASAYULA' },
+        { value: 'SC', text: 'SPASOCONUSCO' },
         { value: 'BO', text: 'SPABODEGA' },
       ],
       transferenciaActual: {},

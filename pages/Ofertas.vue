@@ -297,6 +297,7 @@ export default {
         { value: 'OU', text: 'SPAOLUTA' },
         { value: 'SY', text: 'SPASAYULA' },
         { value: 'JL', text: 'SPAJALTIPAN' },
+        { value: 'SC', text: 'SPASOCONUSCO' },
       ],
       limit: 100,
       showStepper: false,
@@ -923,6 +924,7 @@ En estatus que aparece en la tabla de ofertas dice lo siguiente de cada oferta:
       if (suc.toUpperCase() === 'OU') return 'SPAOLUTA'
       if (suc.toUpperCase() === 'SY') return 'SPASAYULA'
       if (suc.toUpperCase() === 'JL') return 'SPAJALTIPAN'
+      if (suc.toUpperCase() === 'SC') return 'SPASOCONUSCO'
       return 'SPA'
     },
     async generateExcel(master) {

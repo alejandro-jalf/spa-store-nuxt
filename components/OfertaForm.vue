@@ -186,6 +186,7 @@ export default {
         { value: 'ER', text: 'SPAENRIQUEZ' },
         { value: 'OU', text: 'SPAOLUTA' },
         { value: 'SY', text: 'SPASAYULA' },
+        { value: 'SC', text: 'SPASOCONUSCO' },
         { value: 'JL', text: 'SPAJALTIPAN' },
       ],
     }

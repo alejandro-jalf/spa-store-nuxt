@@ -226,6 +226,7 @@ export default {
         'Jaltipan',
         'Bodega',
         'Oficina',
+        'Soconusco',
         'CAASA MAYOREO',
         'CAASA SUPER',
         'CAASA BODEGA',

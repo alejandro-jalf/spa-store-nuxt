@@ -240,6 +240,7 @@ export default {
         { value: 'OU', text: 'SPAOLUTA' },
         { value: 'SY', text: 'SPASAYULA' },
         { value: 'JL', text: 'SPAJALTIPAN' },
+        { value: 'SC', text: 'SPASOCONUSCO' },
         { value: 'BO', text: 'SPABODEGA' },
       ],
       articleActual: {

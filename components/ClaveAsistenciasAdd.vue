@@ -222,6 +222,7 @@ export default {
         { value: 'OU', text: 'Oluta' },
         { value: 'SY', text: 'Sayula' },
         { value: 'JL', text: 'Jaltipan' },
+        { value: 'SC', text: 'Soconusco' },
         { value: 'BO', text: 'Bodega' },
       ],
       fields: [

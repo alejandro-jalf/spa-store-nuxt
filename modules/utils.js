@@ -251,6 +251,7 @@ const utils = (() => {
     ENRIQUEZ: 'ER',
     SAYULA: 'SY',
     BODEGA: 'BO',
+    SOCONUSCO: 'SC',
     OFICINA: 'ZR',
     // 'CAASA ENRIQUEZ': 'EN',
     'CAASA SAYULA': 'SA',
@@ -270,6 +271,7 @@ const utils = (() => {
     { name: 'ENRIQUEZ', alias: 'ER' },
     { name: 'SAYULA', alias: 'SY' },
     { name: 'SAYULAT', alias: 'ST' },
+    { name: 'SOCONUSCO', alias: 'SC' },
     { name: 'OFICINA', alias: 'ZR' },
     { name: 'CAASA SAYULA', alias: 'SA' },
     { name: 'CAASA SAYULAB', alias: 'SB' },
@@ -924,6 +926,8 @@ const utils = (() => {
         return 'C:\\backups'
       case 'SY':
         return 'D:\\backups'
+      case 'SC':
+        return 'C:\\backups'
       case 'JL':
         return 'C:\\backups'
       case 'BO':
@@ -943,6 +947,8 @@ const utils = (() => {
         return 5
       case 'SY':
         return 9
+      case 'SC':
+        return 10
       case 'JL':
         return 4
       case 'BO':
@@ -964,6 +970,8 @@ const utils = (() => {
         return 16
       case 'JL':
         return 7
+      case 'SC':
+        return 25
       case 'BO':
         return 21
     }
