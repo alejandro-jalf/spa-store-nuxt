@@ -45,8 +45,8 @@ export const actions = {
         method: 'get',
       })
 
-      if (response.data.response.success) {
-        commit('setData', response.data.response)
+      if (response.data.success) {
+        commit('setData', response.data)
         commit('setSucursalConsult', sucursal)
       }
 
