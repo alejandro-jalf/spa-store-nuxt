@@ -32,7 +32,8 @@
             v-model="register.Cajero"
             :disabled="disabledCajero"
             type="text"
-            autocomplete="off"
+            name="Caje_ADD"
+            autocomplete="nope"
             placeholder="Numero de cajero"
             required
             :class="backgroundInputTheme"
@@ -55,7 +56,8 @@
           v-model="register.Clave"
           type="password"
           placeholder="Contraseña"
-          autocomplete="off"
+          name="Pass_ADD"
+          autocomplete="nope"
           :disabled="disabledClave"
           required
           :class="backgroundInputTheme"
@@ -120,6 +122,7 @@
         ref="btnRegister"
         variant="primary"
         class="mt-3"
+        type="button"
         @click="prepareAddClave"
       >
         <b-icon icon="clipboard-check" />
@@ -130,6 +133,7 @@
           ref="btnUpdated"
           variant="primary"
           class="mt-3"
+          type="button"
           @click="switchUpdate"
         >
           <b-icon icon="clipboard-check" />

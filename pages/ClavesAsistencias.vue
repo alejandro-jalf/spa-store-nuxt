@@ -41,7 +41,7 @@
             v-model="register.Cajero"
             type="text"
             name="NumeroDeCajero"
-            autocomplete="off"
+            autocomplete="nope"
             autofocus
             placeholder="Numero de cajero"
             :class="backgroundInputTheme"
@@ -85,6 +85,7 @@
             ref="btnSend"
             variant="primary"
             class="float-right"
+            type="button"
             @click="validateDataWithCache"
           >
             Aceptar
@@ -115,7 +116,7 @@
           v-model="encargado.Cajero"
           type="text"
           name="NumeroDeCajeroA"
-          autocomplete="off"
+          autocomplete="nope"
           autofocus
           placeholder="Numero de cajero"
           :class="backgroundInputTheme"
