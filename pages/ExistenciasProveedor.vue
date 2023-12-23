@@ -201,6 +201,7 @@ export default {
         { value: 'ER', text: 'Enriquez' },
         { value: 'OU', text: 'Oluta' },
         { value: 'SY', text: 'Sayula' },
+        { value: 'SC', text: 'Soconusco' },
         { value: 'JL', text: 'Jaltipan' },
         { value: 'BO', text: 'Bodega' },
         { value: 'ALL', text: 'Todas' },

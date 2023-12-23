@@ -304,9 +304,22 @@ export const state = () => ({
       icon: 'star-fill',
     },
     {
-      path: '/mayoristas',
-      childrens: [],
-      name: 'mayoristas',
+      path: '',
+      childrens: [
+        {
+          path: '/mayoristas',
+          name: 'mayoristas',
+          nickname: 'Compras',
+          icon: 'front',
+        },
+        {
+          path: '/cotizacionmayoristas',
+          name: 'cotizacionmayoristas',
+          nickname: 'Cotizacion',
+          icon: 'front',
+        },
+      ],
+      name: '',
       nickname: 'Mayoristas',
       icon: 'front',
     },

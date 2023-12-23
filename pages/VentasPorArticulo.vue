@@ -196,7 +196,7 @@ export default {
         { value: 'OU', text: 'Oluta' },
         { value: 'SY', text: 'Sayula' },
         { value: 'JL', text: 'Jaltipan' },
-        { value: 'SC', text: 'Soconusco', disabled: true },
+        { value: 'SC', text: 'Soconusco' },
         { value: 'BO', text: 'Bodega', disabled: true },
       ],
       optionsFilter: [
@@ -205,6 +205,7 @@ export default {
         { value: 'ER', text: 'Enriquez' },
         { value: 'OU', text: 'Oluta' },
         { value: 'SY', text: 'Sayula' },
+        { value: 'SC', text: 'Soconusco' },
         { value: 'JL', text: 'Jaltipan' },
       ],
       optionsViewBY: [

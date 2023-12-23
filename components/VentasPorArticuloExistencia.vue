@@ -30,6 +30,9 @@
       <template #cell(SY)="row">
         {{ dataFormated(row.item.SY) }}
       </template>
+      <template #cell(SC)="row">
+        {{ dataFormated(row.item.SC) }}
+      </template>
       <template #cell(JL)="row">
         {{ dataFormated(row.item.JL) }}
       </template>
@@ -90,7 +93,7 @@ export default {
     dataRefactor() {
       const exist = { ...this.$store.state.ventasporarticulo.data.Existencias }
       const sucsVisibles = [...this.$store.state.ventasporarticulo.sucursales]
-      const allSucs = ['ZR', 'VC', 'ER', 'OU', 'SY', 'JL']
+      const allSucs = ['ZR', 'VC', 'ER', 'OU', 'SY', 'SC', 'JL']
       const onlyVisibles = allSucs.filter((suc) =>
         sucsVisibles.find((item) => item === suc)
       )

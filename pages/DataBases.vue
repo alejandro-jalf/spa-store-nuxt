@@ -58,7 +58,7 @@
         <DatabBasesSucursal sucursal="BO" />
         <DatabBasesSucursalChart v-if="showGraph" sucursal="BO" />
       </b-tab>
-      <b-tab title="Soconusco" disabled>
+      <b-tab title="Soconusco">
         <DatabBasesSucursal sucursal="SC" />
         <DatabBasesSucursalChart v-if="showGraph" sucursal="SC" />
       </b-tab>

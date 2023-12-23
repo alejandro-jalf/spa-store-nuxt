@@ -117,9 +117,7 @@ export default {
       const sucsVisibles = [...this.$store.state.ventasporarticulo.sucursales]
       const labels = this.fields.filter((suc) => {
         const sf = sucsVisibles.find((sucF) => sucF === suc.value)
-        return (
-          suc.value !== 'ALL' && suc.value !== 'SC' && suc.value !== 'BO' && sf
-        )
+        return suc.value !== 'ALL' && suc.value !== 'BO' && sf
       })
       const fechas = []
       const dataSets = []

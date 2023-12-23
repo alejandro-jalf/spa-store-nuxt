@@ -22,7 +22,7 @@ export const state = () => ({
   ).split(','),
   sucursales: (
     localStorage.getItem('spastore_ventasxarticulo_sucursales') ||
-    'ZR,VZ,ER,OU,JL,SY'
+    'ZR,VZ,ER,OU,JL,SY,SC'
   ).split(','),
   showGraph: true,
 })

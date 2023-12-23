@@ -50,6 +50,9 @@
       <template #cell(Sayula)="row">
         {{ dataFormated(row.item.SY) }}
       </template>
+      <template #cell(Soconusco)="row">
+        {{ dataFormated(row.item.SC) }}
+      </template>
       <template #cell(Jaltipan)="row">
         {{ dataFormated(row.item.JL) }}
       </template>
@@ -71,6 +74,9 @@
       </template>
       <template #foot(Sayula)>
         {{ dataFormated(totalesRefactor.SY, 'Total') }}
+      </template>
+      <template #foot(Soconusco)>
+        {{ dataFormated(totalesRefactor.SC, 'Total') }}
       </template>
       <template #foot(Jaltipan)>
         {{ dataFormated(totalesRefactor.JL, 'Total') }}
@@ -112,6 +118,7 @@ export default {
         'Enriquez',
         'Oluta',
         'Sayula',
+        'Soconusco',
         'Jaltipan',
         'Totales',
       ],
@@ -122,6 +129,7 @@ export default {
         ER: { Piezas: 0, Cajas: 0, Valor: 0 },
         OU: { Piezas: 0, Cajas: 0, Valor: 0 },
         SY: { Piezas: 0, Cajas: 0, Valor: 0 },
+        SC: { Piezas: 0, Cajas: 0, Valor: 0 },
         JL: { Piezas: 0, Cajas: 0, Valor: 0 },
         Totales: { Piezas: 0, Cajas: 0, Valor: 0 },
       },
@@ -142,6 +150,7 @@ export default {
         { value: 'ER', text: 'Enriquez' },
         { value: 'OU', text: 'Oluta' },
         { value: 'SY', text: 'Sayula' },
+        { value: 'SC', text: 'Soconusco' },
         { value: 'JL', text: 'Jaltipan' },
       ]
       const fields = sucsAviables.reduce(
@@ -159,7 +168,7 @@ export default {
       const data = [...this.$store.state.ventasporarticulo.data.data]
       const datos = []
       const sucsVisibles = [...this.$store.state.ventasporarticulo.sucursales]
-      const allSucs = ['ZR', 'VC', 'ER', 'OU', 'SY', 'JL']
+      const allSucs = ['ZR', 'VC', 'ER', 'OU', 'SY', 'SC', 'JL']
       const sucsNotFinded = allSucs.filter(
         (suc) => !sucsVisibles.find((item) => item === suc)
       )
@@ -216,7 +225,7 @@ export default {
     totalesRefactor() {
       const data = [...this.$store.state.ventasporarticulo.data.data]
       const sucsVisibles = [...this.$store.state.ventasporarticulo.sucursales]
-      const allSucs = ['ZR', 'VC', 'ER', 'OU', 'SY', 'JL']
+      const allSucs = ['ZR', 'VC', 'ER', 'OU', 'SY', 'SC', 'JL']
       const sucsNotFinded = allSucs.filter(
         (suc) => !sucsVisibles.find((item) => item === suc)
       )
@@ -226,6 +235,7 @@ export default {
         ER: { Piezas: 0, Cajas: 0, Valor: 0 },
         OU: { Piezas: 0, Cajas: 0, Valor: 0 },
         SY: { Piezas: 0, Cajas: 0, Valor: 0 },
+        SC: { Piezas: 0, Cajas: 0, Valor: 0 },
         JL: { Piezas: 0, Cajas: 0, Valor: 0 },
         Totales: { Piezas: 0, Cajas: 0, Valor: 0 },
       }

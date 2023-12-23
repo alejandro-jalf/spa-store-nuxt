@@ -174,6 +174,7 @@ export default {
         { value: 'OU', text: 'Oluta' },
         { value: 'SY', text: 'Sayula' },
         { value: 'TY', text: 'Sayula Tortilleria' },
+        { value: 'SC', text: 'Soconusco' },
         { value: 'JL', text: 'Jaltipan' },
         { value: 'BO', text: 'Bodega' },
         { value: 'BO%TRANSITO', text: 'Bodega - Transito' },
@@ -388,6 +389,10 @@ export default {
         this.selected = sucursal
         this.setTienda(4)
         this.setAlmacen(7)
+      } else if (sucursal === 'SC') {
+        this.selected = sucursal
+        this.setTienda(10)
+        this.setAlmacen(25)
       }
     },
     async validaInventario() {

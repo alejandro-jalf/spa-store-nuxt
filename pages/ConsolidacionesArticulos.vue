@@ -155,6 +155,15 @@
             :variant="getVariantFinded(row.item.SY)"
           />
         </template>
+        <template #cell(SC)="row">
+          <b-icon
+            v-b-tooltip.hover
+            scale="1.5"
+            :title="getMessageFinded(row.item.SC, 'Soconusco')"
+            :icon="getIconFinded(row.item.SC)"
+            :variant="getVariantFinded(row.item.SC)"
+          />
+        </template>
         <template #cell(JL)="row">
           <b-icon
             v-b-tooltip.hover
@@ -279,6 +288,20 @@
               </div>
               <div
                 class="container-suc"
+                :class="getColorClass(consolidacion.SC)"
+              >
+                SC
+                <b-icon
+                  v-b-tooltip.hover
+                  class="mx-1"
+                  scale="1.5"
+                  :title="getMessageFinded(consolidacion.SC, 'Soconusco')"
+                  :icon="getIconFinded(consolidacion.SC)"
+                  :variant="getVariantFinded(consolidacion.SC)"
+                />
+              </div>
+              <div
+                class="container-suc"
                 :class="getColorClass(consolidacion.JL)"
               >
                 JL
@@ -347,6 +370,7 @@ export default {
         { key: 'ER' },
         { key: 'OU' },
         { key: 'SY' },
+        { key: 'SC' },
         { key: 'JL' },
         { key: 'BO' },
         { key: 'Acciones' },
