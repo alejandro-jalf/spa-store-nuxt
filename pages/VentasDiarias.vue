@@ -410,6 +410,7 @@ export default {
           { value: 'OU', text: 'Oluta' },
           { value: 'SY', text: 'Sayula' },
           { value: 'TY', text: 'Sayula Tortilleria' },
+          { value: 'SC', text: 'Soconusco' },
           { value: 'JL', text: 'Jaltipan' },
           { value: 'BO', text: 'Bodega' },
         ]
