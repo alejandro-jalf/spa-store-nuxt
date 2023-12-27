@@ -204,6 +204,8 @@ export default {
         { value: 'SC', text: 'Soconusco' },
         { value: 'JL', text: 'Jaltipan' },
         { value: 'BO', text: 'Bodega' },
+        { value: 'SN', text: 'San Andres' },
+        { value: 'SNP', text: 'San Andres P' },
         { value: 'ALL', text: 'Todas' },
       ],
       proveedor: '',

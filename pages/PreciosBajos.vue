@@ -186,6 +186,8 @@ export default {
         { value: 'JL', text: 'SPAJALTIPAN' },
         { value: 'SC', text: 'SPASOCONUSCO' },
         { value: 'BO', text: 'SPABODEGA' },
+        { value: 'SN', text: 'SPASANANDRES' },
+        { value: 'SNP', text: 'SPASANANDRESP' },
       ],
       porcentaje: 10,
       fields: [

@@ -179,6 +179,9 @@ export default {
         { value: 'BO', text: 'Bodega' },
         { value: 'BO%TRANSITO', text: 'Bodega - Transito' },
         { value: 'BO%ESPERANZA', text: 'Bodega - La esperanza' },
+        { value: 'SN', text: 'San Andres' },
+        { value: 'SN%BODEGA', text: 'San Andres Bodega' },
+        { value: 'SNP', text: 'San Andres Promotora' },
       ],
     }
   },
@@ -235,6 +238,14 @@ export default {
         this.$store.state.valuacioninventario.sucursalData === 'BO%ESPERANZA'
       )
         return 'SPABODEGA - LA ESPERANZA'
+      else if (this.$store.state.valuacioninventario.sucursalData === 'SN')
+        return 'SPASANANDRES'
+      else if (
+        this.$store.state.valuacioninventario.sucursalData === 'SN%BODEGA'
+      )
+        return 'SPASANANDRES - BODEGA'
+      else if (this.$store.state.valuacioninventario.sucursalData === 'SNP')
+        return 'SPASANANDRES - PROMOTORA'
       return ''
     },
     inventarioList() {
@@ -349,9 +360,12 @@ export default {
         if (sucArray[1] === 'TRANSITO') {
           this.setTienda(6)
           this.setAlmacen(15)
-        } else {
+        } else if (sucArray[1] === 'ESPERANZA') {
           this.setTienda(6)
           this.setAlmacen(1)
+        } else if (sucArray[1] === 'BODEGA') {
+          this.setTienda(7)
+          this.setAlmacen(11)
         }
       } else if (sucursal === 'BO') {
         this.selected = sucursal
@@ -393,6 +407,14 @@ export default {
         this.selected = sucursal
         this.setTienda(10)
         this.setAlmacen(25)
+      } else if (sucursal === 'SN') {
+        this.selected = sucursal
+        this.setTienda(7)
+        this.setAlmacen(12)
+      } else if (sucursal === 'SNP') {
+        this.selected = sucursal
+        this.setTienda(8)
+        this.setAlmacen(13)
       }
     },
     async validaInventario() {

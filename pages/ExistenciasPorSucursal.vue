@@ -129,6 +129,8 @@ export default {
         { value: 'SY', text: 'Sayula' },
         { value: 'JL', text: 'Jaltipan' },
         { value: 'SC', text: 'Soconusco' },
+        { value: 'SN', text: 'San Andres' },
+        { value: 'SNP', text: 'San Andres P' },
         { value: 'BO', text: 'Bodega' },
       ],
       fields: [

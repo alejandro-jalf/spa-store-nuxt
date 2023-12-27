@@ -1,7 +1,7 @@
 <template>
   <div id="containerConexiones">
     <float-button :click-float="loadConexiones"></float-button>
-    <b-list-group class="pt-5">
+    <b-list-group class="pt-5 mb-5">
       <conexiones-item-skeleton
         v-if="!thereAreConections"
       ></conexiones-item-skeleton>
