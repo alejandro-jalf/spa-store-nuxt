@@ -64,6 +64,14 @@
       </b-tab>
       <b-tab title="T Acayucan" disabled><p>T Acayucan</p></b-tab>
       <b-tab title="T Sayula" disabled><p>T Sayula</p></b-tab>
+      <b-tab title="San Andres">
+        <DatabBasesSucursal sucursal="SN" />
+        <DatabBasesSucursalChart v-if="showGraph" sucursal="SN" />
+      </b-tab>
+      <b-tab title="San Andres P">
+        <DatabBasesSucursal sucursal="SNP" />
+        <DatabBasesSucursalChart v-if="showGraph" sucursal="SNP" />
+      </b-tab>
     </b-tabs>
   </div>
 </template>

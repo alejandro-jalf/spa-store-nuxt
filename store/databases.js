@@ -68,6 +68,8 @@ export const actions = {
                 { suc: 'SC', data: [], count: 0 },
                 { suc: 'TF', data: [], count: 0 },
                 { suc: 'TY', data: [], count: 0 },
+                { suc: 'SN', data: [], count: 0 },
+                { suc: 'SNP', data: [], count: 0 },
               ],
             }
 

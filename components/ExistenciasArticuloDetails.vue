@@ -42,7 +42,7 @@
     />
 
     <b-card
-      v-for="(sucursal, indexSuc) in details.existencias"
+      v-for="(sucursal, indexSuc) in listSucursals"
       :key="indexSuc"
       :header-bg-variant="colorHeader(sucursal)"
       header="Sucursal Zaragoza"
@@ -341,6 +341,9 @@ export default {
     }
   },
   computed: {
+    accessChangeSucursal() {
+      return this.$store.state.user.user.tipo_user === 'manager'
+    },
     variantBodyCard() {
       return this.$store.state.general.themesComponents.themeCardBody
     },
@@ -356,6 +359,18 @@ export default {
           precioPromedio: 0,
         }
       return this.details.proveedores
+    },
+    listSucursals() {
+      const isManager = this.$store.state.user.user.tipo_user === 'manager'
+      const filterList = this.details.existencias.filter((sucursal) => {
+        if (
+          sucursal.sucursal !== 'SANANDRES' &&
+          sucursal.sucursal !== 'SANANDRESP'
+        )
+          return sucursal
+      })
+      if (isManager) return this.details.existencias
+      return filterList
     },
     tipo_user() {
       return this.$store.state.user.user.tipo_user || 'invited'
