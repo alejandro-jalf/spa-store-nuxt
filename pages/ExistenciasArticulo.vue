@@ -10,6 +10,17 @@
     </transition>
     <b-form-group id="input-group-1" label-for="inpSearch" class="pt-5">
       <div class="text-left mb-1">
+        <b-input-group
+          v-if="accessChangeSucursal"
+          prepend="Tiendas"
+          class="mb-3"
+        >
+          <b-form-select
+            v-model="selectedTipo"
+            :options="optionsTipo"
+            @change="setTipoSucursal"
+          ></b-form-select>
+        </b-input-group>
         <span class="font-weight-bold">Busqueda por:</span>
         <b-button-group class="ml-2" size="md">
           <b-button
@@ -148,9 +159,18 @@ export default {
       stateList: true,
       stateDetails: false,
       showFloatButton: false,
+      selectedTipo: 'TAC',
+      optionsTipo: [
+        { value: 'ALL', text: 'Todas' },
+        { value: 'TAC', text: 'SPA Acayucan' },
+        { value: 'TSN', text: 'SPA San Andres' },
+      ],
     }
   },
   computed: {
+    accessChangeSucursal() {
+      return this.$store.state.user.user.tipo_user === 'manager'
+    },
     blockButton() {
       return this.$store.state.general.widthWindow <= 500
     },
@@ -214,6 +234,7 @@ export default {
     window.addEventListener('resize', () => {
       this.isMovil = this.isDiplayMovil()
     })
+    this.setTipoTiendaDefault()
   },
   methods: {
     ...mapActions({
@@ -226,7 +247,15 @@ export default {
       setListArticulos: 'existenciasarticulo/setListArticulos',
       setArticulosFinded: 'existenciasarticulo/setArticulosFinded',
       setArticuloDetails: 'existenciasarticulo/setArticuloDetails',
+      setTipoSucursal: 'existenciasarticulo/setTipoSucursal',
     }),
+    setTipoTiendaDefault() {
+      if (!this.accessChangeSucursal) {
+        this.setTipoSucursal('TAC')
+        this.selectedTipo = 'TAC'
+      } else
+        this.selectedTipo = this.$store.state.existenciasarticulo.tipoSucursal
+    },
     cleanListArticles() {
       this.setListArticulos({ data: [] })
       this.setArticulosFinded(0)
@@ -247,12 +276,18 @@ export default {
       }
       this.setLoading(true)
       if (this.inputSearch.selected === 'nombre') {
-        const response = await this.getListArticulos(search)
+        const response = await this.getListArticulos([
+          search,
+          this.selectedTipo,
+        ])
         this.listArt = response.data
         this.finded = response.count
         this.stateBtn('list')
       } else {
-        const response = await this.getDetailsArticulo(search)
+        const response = await this.getDetailsArticulo([
+          search,
+          this.selectedTipo,
+        ])
         if (Object.values(response).length === 0) {
           this.setLoading(false)
           this.showAlertDialog([`El codigo de articulo ${search} no existe`])
@@ -267,7 +302,10 @@ export default {
     },
     async showDetails(articulo) {
       this.setLoading(true)
-      const response = await this.getDetailsArticulo(articulo)
+      const response = await this.getDetailsArticulo([
+        articulo,
+        this.selectedTipo,
+      ])
       this.detailsArticulo = response
       this.stateBtn('details')
       this.setLoading(false)

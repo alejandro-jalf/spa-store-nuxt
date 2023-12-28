@@ -4,8 +4,12 @@ if (!localStorage.getItem('spastore_articulos_count'))
 if (!localStorage.getItem('spastore_articulos_details'))
   localStorage.setItem('spastore_articulos_details', '{}')
 
+if (!localStorage.getItem('spastore_articulos_tipo'))
+  localStorage.setItem('spastore_articulos_tipo', 'TAC')
+
 export const state = () => ({
   articulosFinded: localStorage.getItem('spastore_articulos_count'),
+  tipoSucursal: localStorage.getItem('spastore_articulos_tipo'),
   listArticulos: JSON.parse(
     localStorage.getItem('spastore_articulos_existencias')
   ) || { data: [], count: 0 },
@@ -25,17 +29,22 @@ export const mutations = {
     state.details = details
     localStorage.setItem('spastore_articulos_details', JSON.stringify(details))
   },
+  setTipoSucursal(state, tipoSucursal) {
+    state.tipoSucursal = tipoSucursal
+    localStorage.setItem('spastore_articulos_tipo', tipoSucursal)
+  },
 }
 
 export const actions = {
-  async getListArticulos({ commit }, articulo) {
+  async getListArticulos({ commit }, [articulo, tiendas]) {
     try {
       const response = await this.$axios({
         url:
           process.env.spastore_url_backend +
           'api/v1/articulos/' +
           articulo +
-          '/existencias',
+          '/existencias/' +
+          tiendas,
         method: 'get',
       })
 
@@ -55,14 +64,15 @@ export const actions = {
       return { data: [], count: 0 }
     }
   },
-  async getDetailsArticulo({ commit }, articulo) {
+  async getDetailsArticulo({ commit }, [articulo, tiendas]) {
     try {
       const response = await this.$axios({
         url:
           process.env.spastore_url_backend +
           'api/v1/articulos/' +
           articulo +
-          '/existencias/detalles',
+          '/existencias/detalles/' +
+          tiendas,
         method: 'get',
       })
 
