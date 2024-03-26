@@ -450,6 +450,31 @@ const utils = (() => {
     doc.text(sucursal, 200, 43, 'right')
     doc.text('Consultado al ' + horaImpresion, 10, 43, 'left')
 
+    const dataFormated = (value) => {
+      if (value === null) return '-'
+      return utils.aplyFormatNumeric(utils.roundTo(value))
+    }
+
+    const refactorCalculo = (
+      calculo,
+      FactorVenta,
+      UnidadCompra = '',
+      UnidadVenta = ''
+    ) => {
+      const sugerido = Math.round(calculo)
+      if (sugerido < FactorVenta && FactorVenta - sugerido < 100)
+        return '1.00 ' + UnidadCompra
+      if (FactorVenta - sugerido > 100)
+        return dataFormated(sugerido) + ' ' + UnidadVenta
+
+      const enteros = parseInt(sugerido / FactorVenta)
+      const modulo = sugerido % FactorVenta
+
+      const incremento = Math.round(modulo / FactorVenta)
+
+      return dataFormated(enteros + incremento) + ' ' + UnidadCompra
+    }
+
     const body = data.reduce((acumData, dato) => {
       acumData.push([
         { content: dato.Articulo },
@@ -474,7 +499,13 @@ const utils = (() => {
         },
         { content: dato.Relacion },
         {
-          content: utils.aplyFormatNumeric(utils.roundTo(dato.CalculoRotacion)),
+          // content: utils.aplyFormatNumeric(utils.roundTo(dato.CalculoRotacion)),
+          content: refactorCalculo(
+            dato.CalculoRotacion,
+            dato.FactorVenta,
+            dato.UnidadCompra,
+            dato.UnidadVenta
+          ),
         },
       ])
       return acumData

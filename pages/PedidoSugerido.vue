@@ -100,7 +100,14 @@
         {{ dataFormated(row.item.StockMinimo) }}
       </template>
       <template #cell(Sugerido)="row">
-        {{ dataFormated(row.item.CalculoRotacion) }}
+        {{
+          refactorCalculo(
+            row.item.CalculoRotacion,
+            row.item.FactorVenta,
+            row.item.UnidadCompra,
+            row.item.UnidadVenta
+          )
+        }}
       </template>
       <template #cell(Acciones)="row">
         <b-button
@@ -261,6 +268,20 @@ export default {
     ...mapActions({
       changeData: 'pedidosujerido/changeData',
     }),
+    refactorCalculo(calculo, FactorVenta, UnidadCompra = '', UnidadVenta = '') {
+      const sugerido = Math.round(calculo)
+      if (sugerido < FactorVenta && FactorVenta - sugerido < 100)
+        return '1.00 ' + UnidadCompra
+      if (FactorVenta - sugerido > 100)
+        return this.dataFormated(sugerido) + ' ' + UnidadVenta
+
+      const enteros = parseInt(sugerido / FactorVenta)
+      const modulo = sugerido % FactorVenta
+
+      const incremento = Math.round(modulo / FactorVenta)
+
+      return this.dataFormated(enteros + incremento) + ' ' + UnidadCompra
+    },
     titleTooltip(article = '') {
       return `Copiar codigo de articulo "${article}"`
     },
