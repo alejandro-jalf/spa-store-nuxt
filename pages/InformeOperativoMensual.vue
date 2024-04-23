@@ -5,6 +5,7 @@
         v-model="selected"
         :options="options"
         :disabled="!accessChangeSucursal"
+        @change="selectSucursal"
       ></b-form-select>
     </b-input-group>
     <div class="containerInp">
@@ -550,6 +551,10 @@ export default {
     ...mapActions({
       changeData: 'informeoperativomensual/changeData',
     }),
+    selectSucursal(sucursal) {
+      console.log(sucursal)
+      this.setSucursal(sucursal)
+    },
     setSucursalForUser() {
       if (!this.accessChangeSucursal) {
         const sucursalUser = utils.getSucursalByName(
