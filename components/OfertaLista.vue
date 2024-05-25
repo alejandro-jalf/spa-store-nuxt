@@ -643,7 +643,9 @@ export default {
         ])
         return false
       }
-      if (!this.status_utulidad) {
+
+      const tipoUser = this.$store.state.user.user.tipo_user
+      if (tipoUser !== 'manager' && !this.status_utulidad) {
         this.showAlertDialog(['La utilidad no puede ser menor que el 10%'])
         return false
       }
