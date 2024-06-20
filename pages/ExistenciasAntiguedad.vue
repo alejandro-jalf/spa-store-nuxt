@@ -85,6 +85,7 @@
       :fields="fields"
       :items="dataExistencias"
       :class="variantThemeTableBody"
+      foot-clone
       class="mt-0"
     >
       <template #cell(ExistUV)="row">
@@ -105,6 +106,19 @@
       <template #cell(StockMaximo)="row">
         {{ formatNumber(row.item.StockMaximo) }}
       </template>
+
+      <template #foot(Subfamilia)>{{ 'Totales' }}</template>
+      <template #foot(Articulo)>{{ formatNumber(rows) }}</template>
+      <template #foot(Nombre)>{{ '' }}</template>
+      <template #foot(ExistUV)>{{ formatNumber(unidades) }}</template>
+      <template #foot(Relacion)>{{ '' }}</template>
+      <template #foot(CostoNet)>{{ '' }}</template>
+      <template #foot(CostoExist)>{{ formatNumber(totalNeto) }}</template>
+      <template #foot(FechaCompra)>{{ '' }}</template>
+      <template #foot(StockMinimo)>{{ '' }}</template>
+      <template #foot(Dias)>{{ '' }}</template>
+      <template #foot(StockMaximo)>{{ '' }}</template>
+      <template #foot(Estatus)>{{ '' }}</template>
     </b-table>
 
     <canvas
@@ -125,7 +139,7 @@ export default {
   data() {
     return {
       utils,
-      perPage: 100,
+      perPage: 10,
       dias: 45,
       pageOptions: [5, 10, 15, 20, 50, 100],
       currentPage: 1,
@@ -190,6 +204,22 @@ export default {
     },
     dataExistencias() {
       return this.$store.state.existenciasantiguedad.data.data
+    },
+    unidades() {
+      const data = this.$store.state.existenciasantiguedad.data.data
+      const piezas = data.reduce((pzas, articulo) => {
+        pzas += articulo.ExistUV
+        return pzas
+      }, 0)
+      return piezas
+    },
+    totalNeto() {
+      const data = this.$store.state.existenciasantiguedad.data.data
+      const costo = data.reduce((sumaCosto, articulo) => {
+        sumaCosto += articulo.CostoExist
+        return sumaCosto
+      }, 0)
+      return costo
     },
   },
   mounted() {
@@ -260,6 +290,9 @@ export default {
     createPdfExistencias(sucursal, data, logo, detalles, preview = false) {
       // eslint-disable-next-line new-cap
       const doc = new jsPDF('l', 'mm', 'letter')
+      const articulos = data.length
+      let unidades = 0
+      let totalNeto = 0
 
       const headerPage = () => {
         doc.setFontSize(18)
@@ -278,9 +311,19 @@ export default {
         doc.text(detalles, 265, 36, 'right')
       }
 
+      const getStyleFooter = () => {
+        return {
+          fontStyle: 'bold',
+          fillColor: [0, 125, 208],
+          textColor: [255, 255, 255],
+        }
+      }
+
       headerPage()
 
       const body = data.reduce((acumData, dato) => {
+        unidades += dato.ExistUV
+        totalNeto += dato.CostoExist
         acumData.push([
           { content: dato.Subfamilia },
           { content: dato.Articulo },
@@ -297,6 +340,57 @@ export default {
         ])
         return acumData
       }, [])
+
+      body.push([
+        {
+          content: 'Totales',
+          styles: getStyleFooter(),
+        },
+        {
+          content: this.formatNumber(articulos),
+          styles: getStyleFooter(),
+        },
+        {
+          content: '',
+          styles: getStyleFooter(),
+        },
+        {
+          content: this.formatNumber(unidades),
+          styles: getStyleFooter(),
+        },
+        {
+          content: '',
+          styles: getStyleFooter(),
+        },
+        {
+          content: '',
+          styles: getStyleFooter(),
+        },
+        {
+          content: this.formatNumber(totalNeto),
+          styles: getStyleFooter(),
+        },
+        {
+          content: '',
+          styles: getStyleFooter(),
+        },
+        {
+          content: '',
+          styles: getStyleFooter(),
+        },
+        {
+          content: '',
+          styles: getStyleFooter(),
+        },
+        {
+          content: '',
+          styles: getStyleFooter(),
+        },
+        {
+          content: '',
+          styles: getStyleFooter(),
+        },
+      ])
 
       doc.autoTable({
         startY: 47,
