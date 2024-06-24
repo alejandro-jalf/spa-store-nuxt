@@ -45,6 +45,10 @@
         <b-icon icon="printer-fill" />
         Imprimir PDF
       </b-button>
+      <b-button :variant="variantSuccess" @click="createExcel">
+        <b-icon icon="download" />
+        Descargar EXCEL
+      </b-button>
     </span>
 
     <b-container v-if="dataExistencias.length > 20" fluid="xl" class="mt-4">
@@ -133,6 +137,8 @@
 <script>
 import { mapMutations, mapActions } from 'vuex'
 import { jsPDF } from 'jspdf'
+import XLSX from 'xlsx'
+import FileSaver from 'file-saver'
 import utils from '../modules/utils'
 
 export default {
@@ -407,6 +413,134 @@ export default {
 
       if (preview) doc.output('dataurlnewwindow')
       else doc.save(`Antiguedad Existencias de ${sucursal}.pdf`)
+    },
+
+    createExcel() {
+      const sucurlsal = this.sucConsult
+      const wb = XLSX.utils.book_new()
+      wb.Props = {
+        Title: 'Antiguedad Existencias - ' + sucurlsal,
+        Subject: 'Mas45Dias',
+        Author: this.$store.state.user.name,
+      }
+      wb.SheetNames.push('Hoja')
+
+      const header = [
+        'Subfamilia',
+        'Articulo',
+        'Nombre',
+        'ExistUV',
+        'Relacion',
+        'CostoNeto',
+        'CostoExist',
+        'FechaCompra',
+        'Dias',
+        'Min',
+        'Max',
+        'Estatus',
+      ]
+
+      const existencia45 = [
+        ...this.$store.state.existenciasantiguedad.data.data,
+      ]
+      const listRefactor = []
+      const articles = existencia45.length
+      let unidades = 0
+      let totalCosto = 0
+
+      listRefactor.push(
+        { Subfamilia: 'SUPER PROMOCIONES DE ACAYUCAN SA DE CV' },
+        { Nombre: 'ZARAGOZA #109. CP 96000' },
+        { Subfamilia: 'SUC: ' + sucurlsal },
+        { Nombre: 'ACAYUCAN, VERACRUZ.' },
+        { Subfamilia: 'Antiguedad Existencias ' },
+        {},
+        {},
+        {
+          Subfamilia: 'Subfamilia',
+          Articulo: 'Articulo',
+          Nombre: 'Nombre',
+          ExistUV: 'Exist UV',
+          Relacion: 'Relacion',
+          CostoNeto: 'Costo Neto',
+          CostoExist: 'Costo Exist',
+          FechaCompra: 'Fecha Compra',
+          Dias: 'Dias',
+          Min: 'Min',
+          Max: 'Max',
+          Estatus: 'Estatus',
+        }
+      )
+
+      existencia45.forEach((article) => {
+        unidades += article.ExistUV
+        totalCosto += article.CostoExist
+        listRefactor.push({
+          Subfamilia: article.Subfamilia,
+          Articulo: article.Articulo,
+          Nombre: article.Nombre,
+          ExistUV: article.ExistUV,
+          Relacion: article.Relacion,
+          CostoNeto: article.CostoNet,
+          CostoExist: article.CostoExist,
+          FechaCompra: article.FechaCompra,
+          Dias: article.Dias,
+          Min: article.StockMinimo,
+          Max: article.StockMaximo,
+          Estatus: article.Estatus,
+        })
+      })
+
+      listRefactor.push({
+        Subfamilia: 'Totales',
+        Articulo: articles,
+        Nombre: '',
+        ExistUV: unidades,
+        Relacion: '',
+        CostoNeto: '',
+        CostoExist: totalCosto,
+        FechaCompra: '',
+        Dias: '',
+        Min: '',
+        Max: '',
+        Estatus: '',
+      })
+
+      const data = XLSX.utils.json_to_sheet(listRefactor, {
+        header,
+        skipHeader: true,
+        origin: 'A2',
+      })
+
+      wb.Sheets.Hoja = data
+      wb.Sheets.Hoja['!cols'] = [
+        { wpx: 200 },
+        { wpx: 70 },
+        { wpx: 250 },
+        { wpx: 70 },
+        { wpx: 90 },
+        { wpx: 70 },
+        { wpx: 70 },
+        { wpx: 90 },
+      ]
+
+      const num = 3
+      if (num !== 2) {
+        const fechaA = utils.getDateNow().format('YYYY MMDD')
+        const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'binary' })
+
+        FileSaver.saveAs(
+          new Blob([this.s2ab(wbout)], { type: 'application/octet-stream' }),
+          fechaA + ' - Antiguedad Existencias - ' + sucurlsal + '.xlsx'
+        )
+      }
+    },
+    s2ab(s) {
+      const buf = new ArrayBuffer(s.length)
+      const view = new Uint8Array(buf)
+      // eslint-disable-next-line prettier/prettier
+      for (let i = 0; i < s.length; i++) view[i] = s.charCodeAt(i) & 0xFF
+      return buf
     },
   },
 }
