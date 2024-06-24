@@ -311,11 +311,15 @@ export default {
         doc.text(detalles, 265, 36, 'right')
       }
 
-      const getStyleFooter = () => {
+      const getCell = (value) => {
+        const text = typeof value === 'string' ? value : ''
         return {
-          fontStyle: 'bold',
-          fillColor: [0, 125, 208],
-          textColor: [255, 255, 255],
+          content: value ? this.formatNumber(value) : text,
+          styles: {
+            fontStyle: 'bold',
+            fillColor: [0, 125, 208],
+            textColor: [255, 255, 255],
+          },
         }
       }
 
@@ -342,54 +346,18 @@ export default {
       }, [])
 
       body.push([
-        {
-          content: 'Totales',
-          styles: getStyleFooter(),
-        },
-        {
-          content: this.formatNumber(articulos),
-          styles: getStyleFooter(),
-        },
-        {
-          content: '',
-          styles: getStyleFooter(),
-        },
-        {
-          content: this.formatNumber(unidades),
-          styles: getStyleFooter(),
-        },
-        {
-          content: '',
-          styles: getStyleFooter(),
-        },
-        {
-          content: '',
-          styles: getStyleFooter(),
-        },
-        {
-          content: this.formatNumber(totalNeto),
-          styles: getStyleFooter(),
-        },
-        {
-          content: '',
-          styles: getStyleFooter(),
-        },
-        {
-          content: '',
-          styles: getStyleFooter(),
-        },
-        {
-          content: '',
-          styles: getStyleFooter(),
-        },
-        {
-          content: '',
-          styles: getStyleFooter(),
-        },
-        {
-          content: '',
-          styles: getStyleFooter(),
-        },
+        getCell('Totales'),
+        getCell(articulos),
+        getCell(),
+        getCell(unidades),
+        getCell(),
+        getCell(),
+        getCell(totalNeto),
+        getCell(),
+        getCell(),
+        getCell(),
+        getCell(),
+        getCell(),
       ])
 
       doc.autoTable({
