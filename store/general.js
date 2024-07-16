@@ -104,6 +104,12 @@ export const state = () => ({
           nickname: 'Claves Asist.',
           icon: 'calendar2-week-fill',
         },
+        {
+          path: '/dispositivos',
+          name: 'dispositivos',
+          nickname: 'Dispositivos',
+          icon: 'calendar2-week-fill',
+        },
       ],
       name: '',
       nickname: 'Trabajadores',
