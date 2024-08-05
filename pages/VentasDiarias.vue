@@ -34,6 +34,10 @@
       <b-icon icon="search"></b-icon>
       <span v-if="width < 992">Buscar</span>
     </b-button>
+    <b-tabs v-if="sucConsult === 'ALLS'" content-class="mt-3">
+      <b-tab v-for="(tabA, indexTab) in tabs" :key="indexTab" :title="tabA">
+      </b-tab>
+    </b-tabs>
 
     <div class="h4 my-3">{{ leyenda + sucursal }}</div>
 
@@ -222,6 +226,9 @@ export default {
     variantThemeTableBody() {
       return this.$store.state.general.themesComponents.themeTableBody
     },
+    sucConsult() {
+      return this.$store.state.ventasdiarias.sucursalConsult
+    },
     dataRefactor() {
       const datos = [...this.$store.state.ventasdiarias.data.data]
       datos.forEach((dia, indexDia) => {
@@ -403,6 +410,7 @@ export default {
       if (this.company === 'SPA') {
         this.options = [
           { value: null, text: 'Seleccione una sucursal' },
+          { value: 'ALLS', text: 'Todas' },
           { value: 'ZR', text: 'Zaragoza' },
           { value: 'VC', text: 'Victoria' },
           { value: 'ER', text: 'Enriquez' },

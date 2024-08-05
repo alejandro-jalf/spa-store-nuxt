@@ -12,6 +12,7 @@ export const state = () => ({
     ? JSON.parse(localStorage.getItem('spastore_ventasdiarias_data'))
     : { data: [] },
   sucursal: localStorage.getItem('spastore_ventasdiarias_sucursal'),
+  sucursalConsult: localStorage.getItem('spastore_ventasdiarias_suc_consu'),
   dateInit: localStorage.getItem('spastore_ventasdiarias_dateInit'),
   dateEnd: localStorage.getItem('spastore_ventasdiarias_dateEnd'),
   tipo: localStorage.getItem('spastore_ventasdiarias_tipo'),
@@ -30,6 +31,10 @@ export const mutations = {
   setSucursal(state, sucursal) {
     state.sucursal = sucursal
     localStorage.setItem('spastore_ventasdiarias_sucursal', sucursal)
+  },
+  setSucursalConsult(state, sucursalConsult) {
+    state.sucursalConsult = sucursalConsult
+    localStorage.setItem('spastore_ventasdiarias_suc_consu', sucursalConsult)
   },
   setDateInit(state, dateInit) {
     state.dateInit = dateInit
@@ -71,6 +76,7 @@ export const actions = {
         commit('setData', { data: response.data.data })
         commit('setDateInit', dateStartLetra)
         commit('setDateEnd', dateEndLetra)
+        commit('setSucursalConsult', sucursal)
       }
 
       return response.data
