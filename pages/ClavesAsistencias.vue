@@ -142,10 +142,21 @@
       </b-form-group>
       <p class="text-danger">{{ encargado.Error }}</p>
     </b-modal>
+
+    <b-button
+      ref="generatebtn"
+      variant="primary"
+      type="button"
+      @click="generateCodeQR"
+    >
+      Generar Codigo
+    </b-button>
+    <canvas id="canvasqr" width="500px"></canvas>
   </div>
 </template>
 
 <script>
+import QRCode from 'qrcode'
 import { mapMutations, mapActions } from 'vuex'
 import utils from '../modules/utils'
 import ClaveAsistenciasAddVue from '../components/ClaveAsistenciasAdd'
@@ -229,6 +240,13 @@ export default {
       registerA: 'claveasistencias/registerA',
       getAllClaves: 'claveasistencias/getAllClaves',
     }),
+    generateCodeQR() {
+      const canvasQR = document.getElementById('canvasqr')
+      QRCode.toCanvas(canvasQR, 'https://spastore.herokuapp.com', (error) => {
+        if (error) console.error(error)
+        else console.log('success!')
+      })
+    },
     async showPosition() {
       const location = await utils.getLocationGps()
       const message = `Latitud: ${location.lat}, Longitud: ${location.long}`
