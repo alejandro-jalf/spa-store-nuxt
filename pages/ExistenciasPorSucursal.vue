@@ -53,6 +53,10 @@
           <b-icon icon="printer-fill" />
           Imprimir PDF
         </b-button>
+        <b-button :variant="variantSuccess" @click="createExcel">
+          <b-icon icon="download" />
+          Descargar EXCEL
+        </b-button>
       </span>
       <b-badge variant="info" pill>
         {{ dataExistencias.length }} Articulos
@@ -117,6 +121,8 @@
 <script>
 import { mapMutations, mapActions } from 'vuex'
 import { jsPDF } from 'jspdf'
+import XLSX from 'xlsx'
+import FileSaver from 'file-saver'
 import utils from '../modules/utils'
 
 export default {
@@ -321,6 +327,96 @@ export default {
 
       if (preview) doc.output('dataurlnewwindow')
       else doc.save(`Existencias de sucursal - ${sucursal}.pdf`)
+    },
+
+    createExcel() {
+      const sucurlsal = this.sucConsult
+      const wb = XLSX.utils.book_new()
+      wb.Props = {
+        Title: 'Existencias Actualers - ' + sucurlsal,
+        Subject: 'Sucursal',
+        Author: this.$store.state.user.name,
+      }
+      wb.SheetNames.push('Hoja')
+
+      const header = [
+        'Articulo',
+        'Nombre',
+        'Relacion',
+        'ExistUV',
+        'ExistUC',
+        'CostoNetoUV',
+        'CostoNetoUC',
+      ]
+
+      const existenciaSuc = [...this.dataExistencias]
+      const listRefactor = []
+
+      listRefactor.push(
+        { Nombre: 'SUPER PROMOCIONES DE ACAYUCAN SA DE CV' },
+        { Relacion: 'ZARAGOZA #109. CP 96000' },
+        { Nombre: 'SUC: ' + sucurlsal },
+        { Relacion: 'ACAYUCAN, VERACRUZ.' },
+        { Nombre: 'Antiguedad Existencias ' },
+        {},
+        {},
+        {
+          Articulo: 'Articulo',
+          Nombre: 'Nombre',
+          Relacion: 'Relacion',
+          ExistUV: 'Exist Pza',
+          ExistUC: 'Exist Cja',
+          CostoNetoUV: 'Costo Neto Pza',
+          CostoNetoUC: 'Costo Neto Cja',
+        }
+      )
+
+      existenciaSuc.forEach((article) => {
+        listRefactor.push({
+          Articulo: article.Articulo,
+          Nombre: article.Nombre,
+          Relacion: article.Relacion,
+          ExistUV: article.ExistenciaActualRegular,
+          ExistUC: article.ExistenciaActualUC,
+          CostoNetoUV: article.UltimoCostoNeto,
+          CostoNetoUC: article.UltimoCostoNetoUC,
+        })
+      })
+
+      const data = XLSX.utils.json_to_sheet(listRefactor, {
+        header,
+        skipHeader: true,
+        origin: 'A2',
+      })
+
+      wb.Sheets.Hoja = data
+      wb.Sheets.Hoja['!cols'] = [
+        { wpx: 70 },
+        { wpx: 250 },
+        { wpx: 90 },
+        { wpx: 70 },
+        { wpx: 70 },
+        { wpx: 90 },
+        { wpx: 90 },
+      ]
+
+      const num = 3
+      if (num !== 2) {
+        const fechaA = utils.getDateNow().format('YYYY MMDD')
+        const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'binary' })
+
+        FileSaver.saveAs(
+          new Blob([this.s2ab(wbout)], { type: 'application/octet-stream' }),
+          fechaA + ' - Existencias Actuales - ' + sucurlsal + '.xlsx'
+        )
+      }
+    },
+    s2ab(s) {
+      const buf = new ArrayBuffer(s.length)
+      const view = new Uint8Array(buf)
+      // eslint-disable-next-line prettier/prettier
+      for (let i = 0; i < s.length; i++) view[i] = s.charCodeAt(i) & 0xFF
+      return buf
     },
   },
 }
