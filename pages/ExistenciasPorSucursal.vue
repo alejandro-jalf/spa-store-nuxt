@@ -104,6 +104,12 @@
       <template #cell(ExistenciaActualUC)="row">
         {{ formatNumber(row.item.ExistenciaActualUC) }}
       </template>
+      <template #cell(UltimoCostoNeto)="row">
+        {{ formatNumber(row.item.UltimoCostoNeto) }}
+      </template>
+      <template #cell(UltimoCostoNetoUC)="row">
+        {{ formatNumber(row.item.UltimoCostoNetoUC) }}
+      </template>
     </b-table>
   </div>
 </template>
@@ -139,6 +145,8 @@ export default {
         { key: 'Relacion', label: 'Relacion', sortable: true },
         { key: 'ExistenciaActualRegular', label: 'Exist. Pza', sortable: true },
         { key: 'ExistenciaActualUC', label: 'Exist. Cja', sortable: true },
+        { key: 'UltimoCostoNeto', label: 'Costo Pza', sortable: true },
+        { key: 'UltimoCostoNetoUC', label: 'Costo Cja', sortable: true },
       ],
     }
   },
@@ -221,6 +229,7 @@ export default {
       this.setSucursal(suc)
     },
     formatNumber(value) {
+      if (!value) return ''
       if (value === 'Offline') return value
       return utils.aplyFormatNumeric(utils.roundTo(value))
     },
