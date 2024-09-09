@@ -374,6 +374,12 @@ export const state = () => ({
           nickname: 'Facturas',
           icon: 'tags-fill',
         },
+        {
+          path: '/pareto',
+          name: 'pareto',
+          nickname: 'Pareto(80-20)',
+          icon: 'file-earmark-bar-graph-fill',
+        },
       ],
       name: '',
       nickname: 'Administracion',
