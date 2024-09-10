@@ -324,6 +324,12 @@ export const state = () => ({
           nickname: 'Cotizacion',
           icon: 'front',
         },
+        {
+          path: '/pedidosmayoristas',
+          name: 'pedidosmayoristas',
+          nickname: 'Monitor',
+          icon: 'display',
+        },
       ],
       name: '',
       nickname: 'Mayoristas',
