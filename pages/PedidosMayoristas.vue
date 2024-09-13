@@ -43,7 +43,7 @@
       <span>Buscar</span>
     </b-button>
 
-    <b-container v-if="dataComparativa.length > 20" fluid="xl">
+    <b-container v-if="dataPedidos.length > 20" fluid="xl">
       <b-row cols="1" cols-sm="2">
         <b-col sm="3" md="2" class="mb-2">
           <b-form-select
@@ -80,7 +80,7 @@
       :per-page="perPage"
       :current-page="currentPage"
       :fields="fields"
-      :items="dataComparativa"
+      :items="dataPedidos"
       :class="variantThemeTableBody"
       class="mt-0"
     >
@@ -89,6 +89,26 @@
       </template>
       <template #cell(FechaPedidoEnviado)="row">
         {{ formatDateHour(row.item.FechaPedidoEnviado) }}
+      </template>
+      <template #cell(acciones)="row">
+        <div v-if="visibleButton(row.item, 'load')">
+          <b-spinner
+            v-for="(canti, position) in 9"
+            :key="position"
+            style="width: 6px; height: 6px"
+            class="ml-1"
+            variant="success"
+            type="grow"
+          ></b-spinner>
+        </div>
+        <b-button
+          v-else-if="visibleButton(row.item, 'action')"
+          variant="info"
+          @click="loadData"
+        >
+          <b-icon icon="cart-plus-fill"></b-icon>
+          {{ messageButtonIcons(row.item) }}
+        </b-button>
       </template>
     </b-table>
   </div>
@@ -117,11 +137,24 @@ export default {
     }
   },
   computed: {
-    dataComparativa() {
-      return this.$store.state.pedidosmayoristas.data.data
+    dataPedidos() {
+      const listRequest = [...this.$store.state.pedidosmayoristas.data.data]
+      listRequest.forEach((request) => {
+        const status = request.Estatus
+        if (status === 'PEDIDO ATENDIDO') request._rowVariant = 'success'
+        else if (status === 'PEDIDO ENVIADO') request._rowVariant = 'warning'
+        else request._rowVariant = 'light'
+      })
+      return listRequest
     },
     variantThemeTableBody() {
       return this.$store.state.general.themesComponents.themeTableBody
+    },
+    tipoUser() {
+      return this.$store.state.user.user.tipo_user
+    },
+    rows() {
+      return this.dataPedidos.length
     },
   },
   methods: {
@@ -132,11 +165,49 @@ export default {
     ...mapActions({
       changeData: 'pedidosmayoristas/changeData',
     }),
+    messageButtonIcons(dataReq) {
+      if (dataReq.Estatus === 'PEDIDO ENVIADO') return 'Subir Carga'
+      return 'Volver a Cargar'
+    },
+    visibleButton(dataReq, typeButton) {
+      const status = dataReq.Estatus
+      switch (status) {
+        case 'PEDIDO EN SUCURSAL':
+          if (typeButton === 'load') return true
+          else return false
+        case 'PEDIDO ENVIADO':
+          if (typeButton === 'action') return this.tipoUser === 'manager'
+          else return false
+        case 'PEDIDO ATENDIDO':
+          if (typeButton === 'action') return this.tipoUser === 'manager'
+          else return false
+        default:
+          return false
+      }
+    },
     formatDateHour(date) {
       if (!date || date === null) return '--/--/-- 00:00'
       return utils.formatWithMoment(date, 'DD/MM/YYYY HH:MM a')
     },
+    validateDate() {
+      if (this.dateInit === null || this.dateInit === '') {
+        this.showAlertDialog([
+          'Falta seleccionar fecha inicio',
+          'Saleccione fecha',
+        ])
+        return false
+      }
+      if (this.dateEnd === null || this.dateEnd === '') {
+        this.showAlertDialog([
+          'Falta seleccionar fecha final',
+          'Saleccione fecha',
+        ])
+        return false
+      }
+      return true
+    },
     async loadData() {
+      if (!this.validateDate()) return
       this.setLoading(true)
       console.log(
         this.dateInit.replace(/-/g, ''),
