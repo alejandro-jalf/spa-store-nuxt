@@ -104,7 +104,7 @@
         <b-button
           v-else-if="visibleButton(row.item, 'action')"
           variant="info"
-          @click="loadData"
+          @click="prepareUploadCarga(row.item)"
         >
           <b-icon icon="cart-plus-fill"></b-icon>
           {{ messageButtonIcons(row.item) }}
@@ -161,9 +161,12 @@ export default {
     ...mapMutations({
       setLoading: 'general/setLoading',
       showAlertDialog: 'general/showAlertDialog',
+      showAlertDialogOption: 'general/showAlertDialogOption',
+      hideAlertDialogOption: 'general/hideAlertDialogOption',
     }),
     ...mapActions({
       changeData: 'pedidosmayoristas/changeData',
+      uploadPedido: 'pedidosmayoristas/uploadPedido',
     }),
     messageButtonIcons(dataReq) {
       if (dataReq.Estatus === 'PEDIDO ENVIADO') return 'Subir Carga'
@@ -209,10 +212,6 @@ export default {
     async loadData() {
       if (!this.validateDate()) return
       this.setLoading(true)
-      console.log(
-        this.dateInit.replace(/-/g, ''),
-        this.dateEnd.replace(/-/g, '')
-      )
       const response = await this.changeData([
         this.dateInit.replace(/-/g, ''),
         this.dateEnd.replace(/-/g, ''),
@@ -221,6 +220,40 @@ export default {
       if (!response.success)
         this.showAlertDialog([response.message, 'Error inesperado'])
       else {
+      }
+    },
+    prepareUploadCarga(dataItem) {
+      const msj =
+        dataItem.Estatus === 'PEDIDO ATENDIDO'
+          ? '¿Quiere volver a subir la carga de este pedido?'
+          : '¿Quiere subir la carga de este pedido?'
+      this.showAlertDialogOption([
+        msj,
+        'Subiendo Carga',
+        () => {
+          this.hideAlertDialogOption()
+          this.uploadCarga(dataItem)
+        },
+        'warning',
+        'light',
+        this.hideAlertDialogOption,
+      ])
+    },
+    async uploadCarga(dataItem) {
+      this.setLoading(true)
+      const response = await this.uploadPedido([
+        dataItem.Sucursal,
+        dataItem.Pedido,
+      ])
+      this.setLoading(false)
+      if (!response.success)
+        this.showAlertDialog([response.message, 'Error inesperado'])
+      else {
+        this.showAlertDialog(['Se ha cargado los articulos', 'Carga subida'])
+        const data = this.$store.state.pedidosmayoristas.data
+        this.setLoading(true)
+        await this.changeData([data.fechaInit, data.fechaEnd])
+        this.setLoading(false)
       }
     },
   },

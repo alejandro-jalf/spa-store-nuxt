@@ -1,7 +1,7 @@
 export const state = () => ({
   data: sessionStorage.getItem('spastore_pedidosmayor_data')
     ? JSON.parse(sessionStorage.getItem('spastore_pedidosmayor_data'))
-    : { data: [] },
+    : { data: [], fechaInit: '', fechaEnd: '' },
 })
 
 export const mutations = {
@@ -27,9 +27,36 @@ export const actions = {
       })
 
       if (response.data.success) {
-        commit('setData', response.data)
+        commit('setData', {
+          ...response.data,
+          fechaInit: dateInit,
+          fechaEnd: dateEnd,
+        })
       }
 
+      return response.data
+    } catch (error) {
+      if (error.response) return error.response.data
+      return {
+        success: false,
+        message: 'Error con el servidor',
+        error,
+      }
+    }
+  },
+  async uploadPedido({ commit }, [sucursal, pedido]) {
+    try {
+      const url =
+        process.env.spastore_url_backend +
+        'api/v1/mayoristas/solicitudes/' +
+        sucursal +
+        '/' +
+        pedido
+
+      const response = await this.$axios({
+        url,
+        method: 'post',
+      })
       return response.data
     } catch (error) {
       if (error.response) return error.response.data
