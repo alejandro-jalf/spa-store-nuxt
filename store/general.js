@@ -182,6 +182,12 @@ export const state = () => ({
           nickname: 'Sugerido',
           icon: 'file-earmark-ruled-fill',
         },
+        {
+          path: '/pedidosugeridoproveedor',
+          name: 'pedidosugeridoproveedor',
+          nickname: 'Sugerido Proveedor',
+          icon: 'file-earmark-ruled-fill',
+        },
       ],
       name: '',
       nickname: 'Pedidos',
