@@ -195,6 +195,7 @@
         :set-show-search="setShowSearch"
         :sucursal="selected"
         :data-base="selectedDB"
+        :search-by-document="searchByDocument"
       />
     </div>
   </div>
@@ -386,9 +387,10 @@ export default {
         this.selected = sucSelected
       }
     },
-    async searchByDocument(from = 'documento') {
+    async searchByDocument(from = 'documento', document = '') {
       this.setLoading(true)
-      const doc = from === 'documento' ? this.document : this.referencia
+      let doc = from === 'documento' ? this.document : this.referencia
+      if (document.trim() !== '') doc = document
       const response = await this.changeData([
         this.selected,
         doc,
@@ -635,6 +637,8 @@ export default {
 
 .container-search {
   position: fixed;
+  display: inline-block;
+  overflow-y: auto;
   top: 0px;
   left: 0px;
   width: 100%;

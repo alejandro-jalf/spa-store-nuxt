@@ -81,9 +81,13 @@ export const actions = {
       likeRef = '',
       article = '',
       order = 'DESC',
+      dateInit = '',
+      dateEnd = '',
     ]
   ) {
     try {
+      const queryDateInit = dateInit === '' ? '' : '&dateInit=' + dateInit
+      const queryDateEnd = dateEnd === '' ? '' : '&dateEnd=' + dateEnd
       const url =
         process.env.spastore_url_backend +
         'api/v1/reportes/movimientos/' +
@@ -99,7 +103,9 @@ export const actions = {
         '&article=' +
         article +
         '&order=' +
-        order
+        order +
+        queryDateInit +
+        queryDateEnd
       const response = await this.$axios({
         url,
         method: 'get',

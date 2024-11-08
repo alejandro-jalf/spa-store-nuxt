@@ -71,11 +71,65 @@
           />
           <div class="description">Seleccione</div>
         </span>
+        <span id="input-date-init" class="input-sel">
+          <div class="label">Fecha Inicial</div>
+          <b-form-datepicker
+            id="dateInt"
+            v-model="dateInit"
+            today-button
+            reset-button
+            label-no-date-selected="Fecha no seleccionada"
+            label-calendar="Calendario"
+            label-current-month="Mes Actual"
+            label-next-month="Mes Siguiente"
+            label-prev-month="Mes Anterior"
+            label-next-year="Año Siguiente"
+            label-prev-year="Año anterior"
+            label-help="Seleccione la fecha de Inicio"
+            label-today-button="Hoy"
+            label-reset-button="Deseleccionar"
+          ></b-form-datepicker>
+          <div class="description">Fecha de Inicio(Opcional)</div>
+        </span>
+        <span id="input-date-init" class="input-sel">
+          <div class="label">Fecha Final</div>
+          <b-form-datepicker
+            id="dateEnd"
+            v-model="dateEnd"
+            today-button
+            reset-button
+            label-no-date-selected="Fecha no seleccionada"
+            label-calendar="Calendario"
+            label-current-month="Mes Actual"
+            label-next-month="Mes Siguiente"
+            label-prev-month="Mes Anterior"
+            label-next-year="Año Siguiente"
+            label-prev-year="Año anterior"
+            label-help="Seleccione la fecha de Termino"
+            label-today-button="Hoy"
+            label-reset-button="Deseleccionar"
+          ></b-form-datepicker>
+          <div class="description">Fecha de Final(Opcional)</div>
+        </span>
         <b-button variant="success" class="btn-consult" @click="searchDocs">
           <b-icon icon="search" />
           Consultar
         </b-button>
       </b-form>
+
+      <h4>
+        <b-badge pill variant="info" class="chip mt-3"
+          >Movimientos: {{ dataRefactor.length }}</b-badge
+        >
+      </h4>
+
+      <div v-if="dataRefactor.length > 0" class="mt-3">
+        <b-button variant="warning" class="mt-2" @click="cleanData">
+          <b-icon icon="file-earmark-ruled-fill" />
+          Limpiar tabla
+        </b-button>
+      </div>
+
       <b-table
         id="tableSearchDocument"
         responsive
@@ -83,6 +137,7 @@
         hover
         :fields="fields"
         :items="dataRefactor"
+        :sticky-header="true"
         head-variant="dark"
         class="mt-3"
       >
@@ -91,6 +146,18 @@
         </template>
         <template #cell(Fecha)="row">
           {{ utils.toDate(row.item.Fecha) }}
+        </template>
+        <template #cell(Estatus)="row">
+          {{ refactorEstatus(row.item.Estatus) }}
+        </template>
+        <template #cell(Acciones)="row">
+          <b-button
+            variant="info"
+            size="sm"
+            @click="openDocument(row.item.Documento)"
+          >
+            Abrir
+          </b-button>
         </template>
       </b-table>
     </div>
@@ -124,6 +191,10 @@ export default {
       required: false,
       default: '',
     },
+    searchByDocument: {
+      type: Function,
+      required: true,
+    },
   },
   data() {
     return {
@@ -132,17 +203,20 @@ export default {
       document: '',
       referencia: '',
       articulo: '',
+      dateInit: '',
+      dateEnd: '',
       fields: [
-        'Documento',
-        'Referencia',
+        { key: 'Documento', label: 'Documento', sortable: true },
+        { key: 'Referencia', label: 'Referencia', sortable: true },
         { key: 'DescripcionAlmacen', label: 'Almacen' },
-        'Caja',
+        { key: 'Caja', label: 'Caja', sortable: true },
         'Observaciones',
-        'Fecha',
+        { key: 'Fecha', label: 'Fecha', sortable: true },
         'Hora',
         { key: 'TipoDocumento', label: 'Tipo' },
-        'Estatus',
+        { key: 'Estatus', label: 'Estatus', sortable: true },
         'Articulos',
+        'Acciones',
       ],
       selectOrder: 'DESC',
       optionsOrder: [
@@ -167,10 +241,23 @@ export default {
       setLoading: 'general/setLoading',
       showAlertDialog: 'general/showAlertDialog',
       setShowSearch: 'documentoswin/setShowSearch',
+      setDocuments: 'documentoswin/setDocuments',
     }),
     ...mapActions({
       loadDocuments: 'documentoswin/loadDocuments',
     }),
+    cleanData() {
+      this.setDocuments({ count: 0, data: [] })
+    },
+    refactorEstatus(status) {
+      if (status.trim().toUpperCase() === 'E') return 'Vigente'
+      if (status.trim().toUpperCase() === 'C') return 'Cancelado'
+      return status
+    },
+    openDocument(document) {
+      this.setShowSearch(false)
+      this.searchByDocument('documento', document)
+    },
     async searchDocs() {
       this.setLoading(true)
       const response = await this.loadDocuments([
@@ -181,6 +268,8 @@ export default {
         this.referencia,
         this.articulo,
         this.selectOrder,
+        this.dateInit.replace(/-/g, ''),
+        this.dateEnd.replace(/-/g, ''),
       ])
       if (!response.success) this.showAlertDialog([response.message])
       else if (response.articles === 0)
@@ -192,12 +281,8 @@ export default {
 </script>
 <style scoped>
 .card-search {
-  overflow-y: auto;
-  display: block;
   width: 100%;
   height: 100%;
-  max-height: 100%;
-  min-height: 600px;
   color: black;
   background: #fff;
   padding: 15px;
@@ -267,6 +352,9 @@ export default {
   #input-tipo,
   #input-order {
     margin-bottom: 0px;
+  }
+  #input-date-init {
+    display: inline-block;
   }
   .input-sel {
     width: calc(50% - 10px);
