@@ -137,7 +137,7 @@
         hover
         :fields="fields"
         :items="dataRefactor"
-        :sticky-header="true"
+        sticky-header="500px"
         head-variant="dark"
         class="mt-3"
       >

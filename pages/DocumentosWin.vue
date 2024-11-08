@@ -225,6 +225,7 @@ export default {
         { key: 'Subtotal', label: 'Importe' },
         'Iva',
         'Ieps',
+        { key: 'Descuento', label: 'Desc' },
       ],
       utils,
       selected: 'ZR',
@@ -429,87 +430,89 @@ export default {
     },
     createPdf(preview) {
       this.createPdfTransferencias(
-        this.sucursal,
-        this.$store.state.documentoswin.details.data,
-        this.consolidacionActual,
+        'Enriquez',
+        this.$store.state.documentoswin.data,
         preview
       )
     },
-    createPdfTransferencias(
-      sucursal,
-      data,
-      dataConsolidacion,
-      preview = false
-    ) {
+    createPdfTransferencias(sucursal, data, preview = false) {
       // eslint-disable-next-line new-cap
       const doc = new jsPDF('p', 'mm', 'letter')
+
+      const dataDocument = data.dataDoc
+      const dataArticles = data.data
+
+      const showDataProvider = () => {
+        if (this.showTercero(dataDocument.TipoDocumento)) {
+          doc.text('N° Proveedor: ', 140, 24)
+          doc.text('Proveedor: ', 140, 30)
+          doc.text(dataDocument.Tercero, 162, 24)
+          doc.text(dataDocument.NombreTercero, 140, 36)
+        }
+      }
 
       const headerPage = () => {
         doc.setFontSize(10)
         doc.setFont('helvetica', 'normal')
-        doc.text('SUPER PROMOCIONES DE ACAYUCAN', 105, 15, 'center')
-        doc.setFont('helvetica', 'bold')
-        doc.text('Envia: ' + sucursal, 105, 22, 'center')
-        doc.setFont('helvetica', 'normal')
-
         doc.setFontSize(9)
-        doc.text('Fecha: ', 182, 27, 'right')
 
-        doc.text('Origen: ', 10, 27)
-        doc.text('Documento: ', 10, 33)
-        doc.text('Destino: ', 10, 39)
+        doc.text('Documento: ', 10, 12)
+        doc.text('Referencia: ', 10, 18)
+        doc.text('Almacen: ', 10, 24)
+        doc.text('Caja: ', 10, 30)
+        doc.text('Cajero: ', 10, 36)
+        doc.text('Observaciones: ', 10, 42)
 
-        doc.text(
-          'Observaciones: ' + dataConsolidacion.Observaciones.toUpperCase(),
-          105,
-          46,
-          'center'
-        )
+        doc.text('Tipo: ', 140, 12)
+        doc.text('Fecha: ', 140, 18)
+        doc.text('Estatus: ', 140, 42)
 
         doc.setFont('helvetica', 'bold')
-        doc.text(utils.toDate(dataConsolidacion.Fecha), 200, 27, 'right')
-        doc.text(
-          'Destino: ' + dataConsolidacion.Referencia.toUpperCase(),
-          200,
-          33,
-          'right'
-        )
-        doc.text(
-          'Transfirio: ' + dataConsolidacion.NombreCajero.toUpperCase(),
-          200,
-          39,
-          'right'
-        )
 
-        doc.text(dataConsolidacion.AlmacenOrigen, 24, 27)
-        doc.text(dataConsolidacion.Transferencia, 30, 33)
-        doc.text(dataConsolidacion.AlmacenDestino, 24, 39)
+        doc.text(dataDocument.Documento, 28, 12)
+        doc.text(dataDocument.Referencia, 27, 18)
+        doc.text(dataDocument.DescripcionAlmacen, 24, 24)
+        doc.text(dataDocument.Caja, 20, 30)
+        doc.text(
+          dataDocument.Cajero + ' - ' + dataDocument.NombreCajero,
+          22,
+          36
+        )
+        doc.text(dataDocument.Observaciones, 33, 42)
+
+        doc.text(this.getTipoDocumento(dataDocument.TipoDocumento), 150, 12)
+        doc.text(utils.toDate(dataDocument.Fecha), 152, 18)
+        doc.text(this.getEstatus(dataDocument.Estatus), 162, 42)
+
+        showDataProvider()
       }
 
       headerPage()
 
-      const body = data.reduce((acumData, dato) => {
+      const body = dataArticles.reduce((acumData, dato) => {
         acumData.push([
           { content: dato.Articulo },
+          { content: dato.Nombre },
+          { content: dato.Relacion },
+          {
+            content: this.formatNumber(dato.Costo),
+          },
           {
             content: this.formatNumber(dato.CantidadRegular),
           },
-          { content: dato.Nombre },
+          { content: dato.UnidadVenta },
           {
-            content: this.formatNumber(dato.CantidadRegularUC),
+            content: this.formatNumber(dato.Subtotal),
           },
-          { content: dato.UnidadCompra },
-          { content: dato.Rel },
-          {
-            content: this.formatNumber(dato.CostoConIva),
-          },
-          { content: dato.Tasa },
+          { content: dato.Iva },
+          { content: dato.Ieps },
+          { content: dato.Descuento },
         ])
         return acumData
       }, [])
 
       doc.autoTable({
-        startY: 49,
+        startY: 46,
         tableWidth: 190,
         margin: {
           left: 10,
@@ -524,14 +527,16 @@ export default {
         bodyStyles: { textColor: [0, 0, 0], cellPadding: 1 },
         head: [
           [
-            'Articulo',
-            'PZAS',
-            'Nombre',
+            'ARTICULO',
+            'NOMBRE',
+            'RELACION',
+            'COSTO',
             'CANT',
             'UNIDAD',
-            'RELACION',
-            'IMPORTE + IVA',
-            'TASA',
+            'IMPORTE',
+            'IVA',
+            'IEPS',
+            'DESC',
           ],
         ],
         body,
@@ -540,56 +545,58 @@ export default {
       const finalY = doc.lastAutoTable.finalY
       doc.setFont('helvetica', 'bold')
       doc.setDrawColor(0, 0, 0)
-      if (finalY > 230) {
+      if (finalY > 210) {
         doc.addPage()
         headerPage()
 
         doc.line(10, 70, 200, 70)
         doc.text('Subtotal:', 165, 75, 'right')
-        doc.text('Iva:', 165, 80, 'right')
-        doc.text('Total:', 165, 85, 'right')
-
-        doc.setFont('helvetica', 'normal')
-        doc.text('(' + utils.numeroALetras(this.total, {}, false) + ')', 12, 75)
-        doc.text(this.formatNumber(this.subTotal), 195, 75, 'right')
-        doc.text(this.formatNumber(this.iva), 195, 80, 'right')
-        doc.text(this.formatNumber(this.total), 195, 85, 'right')
-
-        doc.text('Entrego:', 15, 117)
-        doc.line(30, 117, 75, 117)
-        doc.text('Nombre y Firma', 52, 121, 'center')
-        doc.text('Recibio:', 85, 117)
-        doc.line(100, 117, 145, 117)
-        doc.text('Nombre y Firma', 122, 121, 'center')
-
-        doc.text('FOLIO INTERNO', 75, 127, 'center')
-        doc.line(150, 125, 195, 125)
-        doc.text('Vo.Bo.', 172, 128, 'center')
-      } else {
-        doc.line(10, 230, 200, 230)
-        doc.text('Subtotal:', 165, 235, 'right')
-        doc.text('Iva:', 165, 240, 'right')
-        doc.text('Total:', 165, 245, 'right')
+        doc.text('Descuento:', 165, 80, 'right')
+        doc.text('Ieps:', 165, 85, 'right')
+        doc.text('Iva:', 165, 90, 'right')
+        doc.text('Total:', 165, 95, 'right')
 
         doc.setFont('helvetica', 'normal')
         doc.text(
-          '(' + utils.numeroALetras(this.total, {}, false) + ')',
+          '(' + utils.numeroALetras(dataDocument.Total, {}, false) + ')',
           12,
-          235
+          75
         )
-        doc.text(this.formatNumber(this.subTotal), 195, 235, 'right')
-        doc.text(this.formatNumber(this.iva), 195, 240, 'right')
-        doc.text(this.formatNumber(this.total), 195, 245, 'right')
-        doc.text('Entrego:', 15, 257)
-        doc.line(30, 257, 75, 257)
-        doc.text('Nombre y Firma', 52, 261, 'center')
-        doc.text('Recibio:', 85, 257)
-        doc.line(100, 257, 145, 257)
-        doc.text('Nombre y Firma', 122, 261, 'center')
 
-        doc.text('FOLIO INTERNO', 75, 267, 'center')
-        doc.line(150, 265, 195, 265)
-        doc.text('Vo.Bo.', 172, 268, 'center')
+        doc.text(this.formatNumber(dataDocument.Subtotal), 195, 75, 'right')
+        doc.text(this.formatNumber(dataDocument.Descuentos), 195, 80, 'right')
+        doc.text(this.formatNumber(dataDocument.IepsValor), 195, 85, 'right')
+        doc.text(this.formatNumber(dataDocument.IvaValor), 195, 90, 'right')
+        doc.text(this.formatNumber(dataDocument.Total), 195, 95, 'right')
+
+        doc.line(30, 117, 75, 117)
+        doc.text('Realizo', 52, 121, 'center')
+        doc.line(110, 117, 155, 117)
+        doc.text('Superviso', 132, 121, 'center')
+      } else {
+        doc.line(10, 210, 200, 210)
+        doc.text('Subtotal:', 165, 215, 'right')
+        doc.text('Descuento:', 165, 220, 'right')
+        doc.text('Ieps:', 165, 225, 'right')
+        doc.text('Iva:', 165, 230, 'right')
+        doc.text('Total:', 165, 235, 'right')
+
+        doc.setFont('helvetica', 'normal')
+        doc.text(
+          '(' + utils.numeroALetras(dataDocument.Total, {}, false) + ')',
+          12,
+          215
+        )
+        doc.text(this.formatNumber(dataDocument.Subtotal), 195, 215, 'right')
+        doc.text(this.formatNumber(dataDocument.Descuentos), 195, 220, 'right')
+        doc.text(this.formatNumber(dataDocument.IepsValor), 195, 225, 'right')
+        doc.text(this.formatNumber(dataDocument.IvaValor), 195, 230, 'right')
+        doc.text(this.formatNumber(dataDocument.Total), 195, 235, 'right')
+
+        doc.line(30, 257, 75, 257)
+        doc.text('Realizo', 52, 261, 'center')
+        doc.line(110, 257, 155, 257)
+        doc.text('Superviso', 132, 261, 'center')
       }
 
       const countPages = doc.getNumberOfPages()
@@ -600,15 +607,12 @@ export default {
         doc.setPage(page)
         pageCurrent = doc.internal.getCurrentPageInfo().pageNumber
         doc.text(`Pagina ${pageCurrent} de ${countPages}`, 207, 275, 'right')
-        doc.text('Tranferencia: ' + dataConsolidacion.Transferencia, 8, 275)
-        if (pageCurrent === 1) doc.line(10, 56, 200, 56)
+        doc.text('Documento: ' + dataDocument.Documento, 8, 275)
+        if (pageCurrent === 1) doc.line(10, 52, 200, 52)
       }
 
       if (preview) doc.output('dataurlnewwindow')
-      else
-        doc.save(
-          `${sucursal} - Transferencia ${dataConsolidacion.Transferencia}.pdf`
-        )
+      else doc.save(`${sucursal} - Documento.pdf`)
     },
   },
 }
