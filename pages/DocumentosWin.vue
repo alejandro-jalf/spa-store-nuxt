@@ -134,9 +134,19 @@
           {{ dataDoc.Observaciones }}
         </span>
       </div>
-      <h5>
-        <b-badge pill variant="info">{{ countArticles }} Articulos</b-badge>
-      </h5>
+      <span>
+        <h5>
+          <b-badge pill variant="info">{{ countArticles }} Articulos</b-badge>
+        </h5>
+        <b-form-group label="Resaltar Articulos Con:">
+          <b-form-radio-group
+            id="radio-group-1"
+            v-model="selectedHighlight"
+            :options="optionsHighlight"
+            name="radio-options"
+          ></b-form-radio-group>
+        </b-form-group>
+      </span>
       <b-table
         ref="tableSelectProduct"
         head-variant="dark"
@@ -214,6 +224,13 @@ export default {
   },
   data() {
     return {
+      selectedHighlight: 'ninguno',
+      optionsHighlight: [
+        { text: 'Iva', value: 'iva' },
+        { text: 'Ieps', value: 'ieps' },
+        { text: 'Descuento', value: 'descuento' },
+        { text: 'Ninguno', value: 'ninguno' },
+      ],
       sucursales: [],
       fields: [
         'Articulo',
@@ -300,7 +317,19 @@ export default {
       return this.$store.state.documentoswin.data.articles
     },
     articles() {
-      return this.$store.state.documentoswin.data.data
+      const articles = []
+      const highLight = this.selectedHighlight
+      this.$store.state.documentoswin.data.data.forEach((article) => {
+        const data = { ...article }
+
+        if (highLight === 'iva' && data.Iva !== 0) data._rowVariant = 'warning'
+        if (highLight === 'ieps' && data.Ieps !== 0)
+          data._rowVariant = 'warning'
+        if (highLight === 'descuento' && data.Descuento !== 0)
+          data._rowVariant = 'warning'
+        articles.push(data)
+      })
+      return articles
     },
   },
   mounted() {
