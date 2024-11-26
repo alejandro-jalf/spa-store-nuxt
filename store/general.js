@@ -351,6 +351,12 @@ export const state = () => ({
           icon: 'cloud-check-fill',
         },
         {
+          path: '/calculadoradescuentos',
+          name: 'calculadoradescuentos',
+          nickname: 'Calc. Descuentos',
+          icon: 'calculator-fill',
+        },
+        {
           path: '/folios',
           name: 'folios',
           nickname: 'Folios',
