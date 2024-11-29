@@ -403,6 +403,38 @@ export const state = () => ({
       nickname: 'Administracion',
       icon: 'tools',
     },
+    {
+      path: '',
+      childrens: [
+        {
+          path: '/sucursalesinvcea',
+          name: 'sucursalesinvcea',
+          nickname: 'Sucursales',
+          icon: 'list-stars',
+        },
+        {
+          path: '/departamentosinvcea',
+          name: 'departamentosinvcea',
+          nickname: 'Departamentos',
+          icon: 'door-open-fill',
+        },
+        {
+          path: '/tiposequiposinvcea',
+          name: 'tiposequiposinvcea',
+          nickname: 'Tipo de Equipos',
+          icon: 'tv-fill',
+        },
+        {
+          path: '/fichasinvcea',
+          name: 'fichasinvcea',
+          nickname: 'Fichas Tecnicas',
+          icon: 'credit-card2-front-fill',
+        },
+      ],
+      name: '',
+      nickname: 'InventariosCEA',
+      icon: 'archive-fill',
+    },
   ].sort((a, b) => (a.nickname < b.nickname ? -1 : 1)),
   tabActual: 'Inicio',
   themePreferences: localStorage.getItem('spastore_theme_color'),
