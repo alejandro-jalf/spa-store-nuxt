@@ -8,11 +8,11 @@
           <b-form-input
             ref="inputCodigo"
             v-model="Codigo"
-            class="w-100 caja"
+            class="w-100 cajaCodigo"
             placeholder="Codigo"
-            type="text"
+            maxlength="2"
             @focus="$refs.inputCodigo.select()"
-            @keyup.enter="$refs.inputdescuento.focus()"
+            @keyup.enter="$refs.inputDescripcion.focus()"
             @keyup.esc="clean"
           />
           <div class="description">2 Caracteres</div>
@@ -20,12 +20,12 @@
         <span class="input-sel">
           <div class="label">Descripcion</div>
           <b-form-input
-            ref="inputdescuento"
-            v-model="descuento"
+            ref="inputDescripcion"
+            v-model="Descripcion"
             class="w-100 caja"
-            placeholder="Descuento"
-            type="number"
-            @focus="$refs.inputdescuento.select()"
+            placeholder="Nombre de la sucursal"
+            @focus="$refs.inputDescripcion.select()"
+            @keyup.enter="$refs.inputEstado.focus()"
             @keyup.esc="clean"
           />
           <div class="description">50 Caracteres Maximo</div>
@@ -33,69 +33,126 @@
         <span class="input-sel">
           <div class="label">Estado</div>
           <b-form-input
-            ref="inputResultado"
-            v-model="result"
-            class="w-100 resultado"
-            placeholder="Resultado"
-            readonly
-            @focus="$refs.inputResultado.select()"
+            ref="inputEstado"
+            v-model="Estado"
+            class="w-100"
+            @focus="$refs.inputEstado.select()"
+            @keyup.enter="$refs.inputCiudad.focus()"
             @keyup.esc="clean"
           />
+          <div class="description">*</div>
         </span>
         <span class="input-sel">
           <div class="label">Ciudad</div>
           <b-form-input
-            ref="inputResultado"
-            v-model="result"
-            class="w-100 resultado"
-            placeholder="Resultado"
-            readonly
-            @focus="$refs.inputResultado.select()"
+            ref="inputCiudad"
+            v-model="Ciudad"
+            class="w-100"
+            @focus="$refs.inputCiudad.select()"
+            @keyup.enter="$refs.inputCalle.focus()"
             @keyup.esc="clean"
           />
         </span>
-        <span class="input-sel">
+        <span id="spanCalle" class="input-sel">
           <div class="label">Calle</div>
           <b-form-input
-            ref="inputResultado"
-            v-model="result"
-            class="w-100 resultado"
-            placeholder="Resultado"
-            readonly
-            @focus="$refs.inputResultado.select()"
+            ref="inputCalle"
+            v-model="Calle"
+            class="w-100 Calle"
+            @focus="$refs.inputCalle.select()"
+            @keyup.enter="$refs.inputNumero.focus()"
             @keyup.esc="clean"
           />
         </span>
-        <span class="input-sel">
+        <span id="spanNumero" class="input-sel">
           <div class="label">Numero</div>
           <b-form-input
-            ref="inputResultado"
-            v-model="result"
-            class="w-100 resultado"
-            placeholder="Resultado"
-            readonly
-            @focus="$refs.inputResultado.select()"
+            ref="inputNumero"
+            v-model="Numero"
+            class="w-100"
+            placeholder="#"
+            @focus="$refs.inputNumero.select()"
+            @keyup.enter="$refs.inputCP.focus()"
             @keyup.esc="clean"
           />
         </span>
-        <span class="input-sel">
+        <span id="spanCP" class="input-sel">
           <div class="label">CP</div>
           <b-form-input
-            ref="inputResultado"
-            v-model="result"
-            class="w-100 resultado"
-            placeholder="Resultado"
-            readonly
-            @focus="$refs.inputResultado.select()"
+            ref="inputCP"
+            v-model="CP"
+            class="w-100"
+            placeholder="00000"
+            maxlength="6"
+            @focus="$refs.inputCP.select()"
+            @keyup.enter="$refs.btnAgregar.focus()"
             @keyup.esc="clean"
           />
         </span>
       </b-form>
+      <div class="footer-card-add">
+        <b-button
+          ref="btnAgregar"
+          variant="success"
+          type="button"
+          class="float-right"
+          @keyup.esc="clean"
+          @click="prepareCreateSuc"
+        >
+          <b-icon icon="plus-lg" />
+          Agregar
+        </b-button>
+        <b-button
+          ref="btnCancelar"
+          variant="warning"
+          type="button"
+          class="float-right mr-3"
+          @keyup.esc="clean"
+          @keyup.enter="clean"
+          @click="clean"
+        >
+          <b-icon icon="x-lg" />
+          Cancelar (ESC)
+        </b-button>
+      </div>
+    </b-card>
+    <b-card class="mt-3" body-text-variant="dark">
+      <b-button
+        ref="btnRefrescar"
+        variant="info"
+        type="button"
+        @click="loadData"
+      >
+        <b-icon icon="arrow-clockwise" />
+        Refrescar
+      </b-button>
+      <b-table
+        hover
+        head-variant="dark"
+        outlined
+        responsive
+        :items="sucursales"
+        :fields="fields"
+        class="mt-3"
+      >
+        <template #cell(Direccion)="row">
+          {{ address(row.item) }}
+        </template>
+        <template #cell(Acciones)>
+          <b-button variant="warning" size="sm" class="mb-1">
+            <b-icon icon="pencil" />
+          </b-button>
+          <b-button variant="danger" size="sm" class="mb-1">
+            <b-icon icon="trash-fill" />
+          </b-button>
+        </template>
+      </b-table>
     </b-card>
   </div>
 </template>
 
 <script>
+import { mapMutations, mapActions } from 'vuex'
 import utils from '../modules/utils'
 
 export default {
@@ -103,27 +160,109 @@ export default {
     return {
       utils,
       Codigo: '',
-      descuento: 0.0,
-      importe: 0.0,
+      Descripcion: '',
+      Estado: '',
+      Ciudad: '',
+      Calle: '',
+      Numero: 'S/N',
+      CP: '',
+      fields: [
+        'Codigo',
+        'Descripcion',
+        'Estado',
+        'Ciudad',
+        { key: 'Direccion', label: 'Calle y Num' },
+        'CP',
+        'Acciones',
+      ],
     }
   },
   computed: {
-    result() {
-      const desc =
-        this.descuento === '' || isNaN(this.descuento) ? 0 : this.descuento
-      const imp = this.importe === '' || isNaN(this.importe) ? 0 : this.importe
-
-      const res = imp === 0 ? 0 : (desc / imp) * 100
-      return utils.roundTo(isNaN(res) ? 0 : res, 3, true) + ' %'
+    variantThemeTableBody() {
+      return this.$store.state.general.themesComponents.themeTableBody
+    },
+    sucursales() {
+      return this.$store.state.sucursalesinvcea.data.data
     },
   },
   mounted() {},
   methods: {
+    ...mapMutations({
+      setLoading: 'general/setLoading',
+      showAlertDialog: 'general/showAlertDialog',
+      showAlertDialogOption: 'general/showAlertDialogOption',
+      hideAlertDialogOption: 'general/hideAlertDialogOption',
+    }),
+    ...mapActions({
+      changeData: 'sucursalesinvcea/changeData',
+      addSucursal: 'sucursalesinvcea/addSucursal',
+    }),
+    async loadData() {
+      this.setLoading(true)
+      const response = await this.changeData()
+      this.setLoading(false)
+      if (!response.success)
+        this.showAlertDialog([response.message, 'Error inesperado'])
+    },
+    address(items) {
+      return items.Calle + ' ' + items.Numero
+    },
     clean() {
-      this.descuento = 0
-      this.importe = 0
-      this.$refs.inputimporte.focus()
-      this.$refs.inputimporte.select()
+      this.Codigo = ''
+      this.Descripcion = ''
+      this.Estado = ''
+      this.Ciudad = ''
+      this.Calle = ''
+      this.Numero = 'S/N'
+      this.CP = ''
+      this.$refs.inputCodigo.focus()
+    },
+    validateData() {
+      if (this.Codigo.trim().length < 2) {
+        this.showAlertDialog([
+          'Codigo debe tener 2 Caracteres',
+          'Campo requerido',
+        ])
+        return false
+      }
+      if (this.Descripcion.trim() === '') {
+        this.showAlertDialog(['Falta Nombre de la Sucursal', 'Campo requerido'])
+        return false
+      }
+      return true
+    },
+    prepareCreateSuc() {
+      this.showAlertDialogOption([
+        `Quiere agregar una nueva sucursal?`,
+        'Agregando Sucursal',
+        () => {
+          this.hideAlertDialogOption()
+          this.createSucursal()
+        },
+        'warning',
+        'light',
+        this.hideAlertDialogOption,
+      ])
+    },
+    async createSucursal() {
+      if (!this.validateData()) return false
+      this.setLoading(true)
+      const response = await this.addSucursal({
+        Codigo: this.Codigo.toUpperCase(),
+        Descripcion: this.Descripcion,
+        Estado: this.Estado,
+        Ciudad: this.Ciudad,
+        Calle: this.Calle,
+        Numero: this.Numero,
+        CP: this.CP,
+      })
+      this.setLoading(false)
+      if (!response.success)
+        this.showAlertDialog([response.message, 'Error inesperado'])
+      else {
+        this.loadData()
+        this.clean()
+      }
     },
   },
 }
@@ -136,7 +275,18 @@ export default {
 }
 
 #spanCodigo {
-  width: 110px;
+  width: 100%;
+  max-width: 140px;
+}
+
+#spanCalle {
+  width: 50%;
+}
+
+#spanNumero,
+#spanCP {
+  width: 13%;
+  min-width: 110px;
 }
 
 .label {
@@ -145,8 +295,16 @@ export default {
   font-size: 16px;
 }
 
+.cajaCodigo {
+  text-transform: uppercase;
+}
+
 .description {
   font-style: italic;
   color: rgb(127, 127, 127);
+}
+
+.footer-card-add {
+  padding: 15px;
 }
 </style>
