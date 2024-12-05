@@ -1,7 +1,7 @@
 <template>
   <div>
     <h2 class="text-center my-4">Departamentos</h2>
-    <b-card title="Agregando Sucursal" class="text-dark">
+    <b-card title="Agregando Departamento" class="text-dark">
       <b-form inline class="mt-1">
         <span id="spanCodigo" class="input-sel">
           <div class="label">Codigo</div>
@@ -170,11 +170,6 @@ export default {
       const response = await this.addSucursal({
         Codigo: this.Codigo.toUpperCase(),
         Descripcion: this.Descripcion,
-        Estado: this.Estado,
-        Ciudad: this.Ciudad,
-        Calle: this.Calle,
-        Numero: this.Numero,
-        CP: this.CP,
       })
       this.setLoading(false)
       if (!response.success)
