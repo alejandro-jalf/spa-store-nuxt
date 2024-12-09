@@ -3,24 +3,47 @@
     <h2 class="text-center my-4">Fichas Tecnicas</h2>
     <b-card title="Agregando Ficha" class="text-dark">
       <b-form inline class="mt-1">
-        <span id="spanCodigo" class="input-sel mb-3">
-          <div class="label">Folio</div>
+        <span id="spanFolio" class="input-sel mb-3">
+          <div class="label">Codigo de Inventario</div>
           <b-form-input
-            ref="inputCodigo"
-            v-model="Codigo"
-            class="w-100 cajaCodigo"
+            ref="inputFolio"
+            v-model="Folio"
+            class="w-100 cajaFolio"
             placeholder="DXXTXX-XXXX-XXXXXX"
             maxlength="25"
             readonly
-            @focus="$refs.inputCodigo.select()"
+            @focus="$refs.inputFolio.select()"
             @keyup.esc="clean"
           />
         </span>
-        <span class="ml-3 mb-3">
+        <span id="spanCiudad" class="input-sel">
+          <div class="label">Ciudad</div>
+          <b-form-input
+            ref="inputCiudad"
+            v-model="Ciudad"
+            class="w-100 caja"
+            placeholder="Ciudad"
+            @focus="$refs.inputCiudad.select()"
+            @keyup.esc="clean"
+            @keyup.enter="$refs.inputResponsable.focus()"
+          />
+        </span>
+        <span id="spanResponsable" class="input-sel">
+          <div class="label">Responsable</div>
+          <b-form-input
+            ref="inputResponsable"
+            v-model="Responsable"
+            class="w-100 caja"
+            placeholder="Responsable"
+            @focus="$refs.inputResponsable.select()"
+            @keyup.esc="clean"
+          />
+        </span>
+        <span id="spanFechaCaptura" class="input-sel ml-3 mb-3">
           <div class="label">Fecha de Captura</div>
           <b-form-datepicker
             id="dateEnd"
-            v-model="dateCaptura"
+            v-model="FechaCaptura"
             today-button
             reset-button
             label-no-date-selected="Fecha no seleccionada"
@@ -35,11 +58,11 @@
             label-reset-button="Limpiar"
           ></b-form-datepicker>
         </span>
-        <span class="ml-3 mb-3">
+        <span id="spanSucursal" class="input-sel ml-3 mb-3">
           <div class="label">Sucursal</div>
           <b-input-group>
             <b-form-select
-              v-model="sucursalSelected"
+              v-model="Sucursal"
               :options="sucursales"
             ></b-form-select>
             <b-input-group-append>
@@ -49,11 +72,11 @@
             </b-input-group-append>
           </b-input-group>
         </span>
-        <span class="ml-3 mb-3">
+        <span id="spanDepartamento" class="input-sel ml-3 mb-3">
           <div class="label">Departamento</div>
           <b-input-group>
             <b-form-select
-              v-model="departamentoSelected"
+              v-model="Departamento"
               :options="departamentos"
             ></b-form-select>
             <b-input-group-append>
@@ -63,7 +86,7 @@
             </b-input-group-append>
           </b-input-group>
         </span>
-        <span class="ml-3 mb-3">
+        <span id="spanTipoEquipo" class="input-sel ml-3 mb-3">
           <div class="label">Tipo de Equipo</div>
           <b-input-group>
             <b-form-select
@@ -79,16 +102,20 @@
         </span>
         <span id="spanObservaciones" class="input-sel">
           <div class="label">Observaciones</div>
-          <b-form-input
+          <b-form-textarea
+            id="textarea"
             ref="inputObservaciones"
             v-model="Observaciones"
             class="w-100"
+            placeholder="Ingresa tus Observaciones"
+            rows="4"
+            max-rows="6"
             @focus="$refs.inputObservaciones.select()"
             @keyup.enter="$refs.inputModelo.focus()"
             @keyup.esc="clean"
           />
         </span>
-        <span class="input-sel">
+        <span id="spanModelo" class="input-sel">
           <div class="label">Modelo</div>
           <b-form-input
             ref="inputModelo"
@@ -100,7 +127,7 @@
             @keyup.esc="clean"
           />
         </span>
-        <span class="input-sel">
+        <span id="spanMarca" class="input-sel">
           <div class="label">Marca</div>
           <b-form-input
             ref="inputMarca"
@@ -111,7 +138,7 @@
             @keyup.esc="clean"
           />
         </span>
-        <span class="input-sel">
+        <span id="spanPantallaPulgadas" class="input-sel">
           <div class="label">Pulgadas de la Pantalla</div>
           <b-form-input
             ref="inputPantallaPulgadas"
@@ -450,8 +477,8 @@
             @keyup.esc="clean"
           />
         </span>
-        <span id="spanValocidades" class="input-sel">
-          <div class="label">Valocidades</div>
+        <span id="spanVelocidades" class="input-sel">
+          <div class="label">Velocidades</div>
           <b-form-input
             ref="inputValocidades"
             v-model="Valocidades"
@@ -648,28 +675,13 @@ export default {
       loadingSuc: false,
       loadingDep: false,
       loadingTipo: false,
-      sucursalSelected: 'ZR',
-      departamentoSelected: '',
       tipoSelected: '',
-      dateCaptura: '',
-      optionsSucs: [
-        { value: 'ZR', text: 'Zaragoza' },
-        { value: 'VC', text: 'Victoria' },
-        { value: 'ER', text: 'Enriquez' },
-        { value: 'TF', text: 'Tortilleria Acayucan F.' },
-        { value: 'OU', text: 'Oluta' },
-        { value: 'SY', text: 'Sayula' },
-        { value: 'TY', text: 'Sayula Tortilleria' },
-        { value: 'JL', text: 'Jaltipan' },
-        { value: 'SC', text: 'Soconusco' },
-        { value: 'BO', text: 'Bodega' },
-      ],
+      FechaCaptura: '',
       Folio: '',
       Ciudad: '',
-      FechaCaptura: '',
       Responsable: '',
       Sucursal: '',
-      Despartamento: '',
+      Departamento: '',
       Modelo: '',
       Marca: '',
       PantallaPulgadas: 0,
@@ -724,6 +736,32 @@ export default {
         'Acciones',
       ],
     }
+  },
+  watch: {
+    FechaCaptura(newValue, oldValue) {
+      const before =
+        this.Sucursal + this.Departamento + this.tipoSelected + '-00001-'
+      this.Folio = before + newValue.replaceAll('-', '')
+    },
+    Sucursal(newValue, oldValue) {
+      const after =
+        this.Departamento +
+        this.tipoSelected +
+        '-00001-' +
+        this.FechaCaptura.replaceAll('-', '')
+      this.Folio = newValue + after
+    },
+    Departamento(newValue, oldValue) {
+      const before = this.Sucursal
+      const after =
+        this.tipoSelected + '-00001-' + this.FechaCaptura.replaceAll('-', '')
+      this.Folio = before + newValue + after
+    },
+    tipoSelected(newValue, oldValue) {
+      const before = this.Sucursal + this.Departamento
+      const after = '-00001-' + this.FechaCaptura.replaceAll('-', '')
+      this.Folio = before + newValue + after
+    },
   },
   computed: {
     variantThemeTableBody() {
@@ -879,16 +917,72 @@ export default {
 .input-sel {
   margin-left: 10px;
   margin-bottom: 16px;
-  /* width: calc(33% - 30px); */
-}
-
-#spanCodigo {
   width: 100%;
-  max-width: 240px;
 }
 
-#spanCalle {
-  width: 50%;
+#spanResponsable {
+  max-width: 450px;
+}
+#spanFolio,
+#spanSucursal,
+#spanCiudad,
+#spanTemperaturaOperacion {
+  max-width: 250px;
+}
+#spanFechaCaptura {
+  max-width: 400px;
+}
+#spanDepartamento {
+  max-width: 450px;
+}
+#spanTipoEquipo,
+#spanModelo,
+#spanMarca,
+#spanFabricante,
+#spanSerie,
+#spanCodigo,
+#spanClave,
+#spanSO,
+#spanMotherBoard,
+#spanProcesador,
+#spanDiscoDuro,
+#spanRAM,
+#spanConectividad,
+#spanAccesorios,
+#spanToner,
+#spanTambor,
+#spanTipo,
+#spanNumeroSerial,
+#spanMaterial,
+#spanCargador {
+  max-width: 350px;
+}
+#spanPantallaPulgadas,
+#spanTamañoPulgadas,
+#spanPuertoHDMI,
+#spanPuertoVGA,
+#spanColor,
+#spanCapacidad,
+#spanContieneBateria,
+#spanConsumoEnergetico,
+#spanSistemaRefrigeracion,
+#spanCombustible {
+  max-width: 200px;
+}
+
+#spanDigitos,
+#spanLargo,
+#spanAncho,
+#spanGrosor,
+#spanTipoPila,
+#spanDuracionBateria,
+#spanVoltaje,
+#spanGarantia,
+#spanVelocidades,
+#spanNumeroPuertas,
+#spanIluminacion,
+#spanContactos {
+  max-width: 150px;
 }
 
 #spanNumero,
