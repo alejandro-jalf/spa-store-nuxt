@@ -89,10 +89,6 @@ export const actions = {
         data: body,
       })
 
-      if (response.data.success) {
-        console.log(response.data.data)
-      }
-
       return response.data
     } catch (error) {
       if (error.response) {

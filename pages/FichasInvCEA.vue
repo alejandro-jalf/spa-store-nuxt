@@ -92,7 +92,7 @@
           <div class="label">Tipo de Equipo</div>
           <b-input-group>
             <b-form-select
-              v-model="tipoSelected"
+              v-model="TipoEquipo"
               :options="tipos"
               :disabled="!isSelectedSucursal || !isSelectedDepartamento"
               @change="getCamposByType"
@@ -140,7 +140,6 @@
               class="w-100 caja"
               placeholder="Modelo"
               @focus="$refs.inputModelo.select()"
-              @keyup.enter="$refs.inputMarca.focus()"
               @keyup.esc="clean"
             />
           </span>
@@ -151,7 +150,6 @@
               v-model="Marca"
               class="w-100"
               @focus="$refs.inputMarca.select()"
-              @keyup.enter="$refs.inputPantallaPulgadas.focus()"
               @keyup.esc="clean"
             />
           </span>
@@ -167,7 +165,6 @@
               class="w-100"
               type="number"
               @focus="$refs.inputPantallaPulgadas.select()"
-              @keyup.enter="$refs.inputTamañoPulgadas.focus()"
               @keyup.esc="clean"
             />
           </span>
@@ -183,7 +180,6 @@
               class="w-100"
               type="number"
               @focus="$refs.inputTamañoPulgadas.select()"
-              @keyup.enter="$refs.inputFabricante.focus()"
               @keyup.esc="clean"
             />
           </span>
@@ -194,7 +190,6 @@
               v-model="Fabricante"
               class="w-100"
               @focus="$refs.inputFabricante.select()"
-              @keyup.enter="$refs.inputPuertoHDMI.focus()"
               @keyup.esc="clean"
             />
           </span>
@@ -205,8 +200,7 @@
               v-model="PuertoHDMI"
               class="w-100"
               type="number"
-              @focus="$refs.inputPuertoVGA.select()"
-              @keyup.enter="$refs.inputPuertoVGA.focus()"
+              @focus="$refs.inputPuertoHDMI.select()"
               @keyup.esc="clean"
             />
           </span>
@@ -218,7 +212,6 @@
               class="w-100"
               type="number"
               @focus="$refs.inputPuertoVGA.select()"
-              @keyup.enter="$refs.inputColor.focus()"
               @keyup.esc="clean"
             />
           </span>
@@ -229,7 +222,6 @@
               v-model="Color"
               class="w-100"
               @focus="$refs.inputColor.select()"
-              @keyup.enter="$refs.inputSerie.focus()"
               @keyup.esc="clean"
             />
           </span>
@@ -240,7 +232,6 @@
               v-model="Serie"
               class="w-100"
               @focus="$refs.inputSerie.select()"
-              @keyup.enter="$refs.inputCodigo.focus()"
               @keyup.esc="clean"
             />
           </span>
@@ -251,7 +242,6 @@
               v-model="Codigo"
               class="w-100"
               @focus="$refs.inputCodigo.select()"
-              @keyup.enter="$refs.inputClave.focus()"
               @keyup.esc="clean"
             />
           </span>
@@ -262,7 +252,6 @@
               v-model="Clave"
               class="w-100"
               @focus="$refs.inputClave.select()"
-              @keyup.enter="$refs.inputDigitos.focus()"
               @keyup.esc="clean"
             />
           </span>
@@ -274,7 +263,6 @@
               class="w-100"
               type="number"
               @focus="$refs.inputDigitos.select()"
-              @keyup.enter="$refs.inputLargo.focus()"
               @keyup.esc="clean"
             />
           </span>
@@ -286,7 +274,6 @@
               class="w-100"
               type="number"
               @focus="$refs.inputLargo.select()"
-              @keyup.enter="$refs.inputAncho.focus()"
               @keyup.esc="clean"
             />
           </span>
@@ -298,7 +285,6 @@
               class="w-100"
               type="number"
               @focus="$refs.inputAncho.select()"
-              @keyup.enter="$refs.inputGrosor.focus()"
               @keyup.esc="clean"
             />
           </span>
@@ -310,7 +296,6 @@
               class="w-100"
               type="number"
               @focus="$refs.inputGrosor.select()"
-              @keyup.enter="$refs.inputSO.focus()"
               @keyup.esc="clean"
             />
           </span>
@@ -320,7 +305,6 @@
               id="checkAlambrico"
               v-model="Alambrico"
               name="checkAlambrico"
-              @keyup.enter="$refs.inputSO.focus()"
               @keyup.esc="clean"
             >
               Es Alambrico
@@ -333,7 +317,6 @@
               v-model="SO"
               class="w-100"
               @focus="$refs.inputSO.select()"
-              @keyup.enter="$refs.inputMotherBoard.focus()"
               @keyup.esc="clean"
             />
           </span>
@@ -344,7 +327,6 @@
               v-model="MotherBoard"
               class="w-100"
               @focus="$refs.inputMotherBoard.select()"
-              @keyup.enter="$refs.inputProcesador.focus()"
               @keyup.esc="clean"
             />
           </span>
@@ -355,7 +337,6 @@
               v-model="Procesador"
               class="w-100"
               @focus="$refs.inputProcesador.select()"
-              @keyup.enter="$refs.inputDiscoDuro.focus()"
               @keyup.esc="clean"
             />
           </span>
@@ -366,7 +347,6 @@
               v-model="DiscoDuro"
               class="w-100"
               @focus="$refs.inputDiscoDuro.select()"
-              @keyup.enter="$refs.inputDRAM.focus()"
               @keyup.esc="clean"
             />
           </span>
@@ -377,7 +357,6 @@
               v-model="RAM"
               class="w-100"
               @focus="$refs.inputRAM.select()"
-              @keyup.enter="$refs.inputConectividad.focus()"
               @keyup.esc="clean"
             />
           </span>
@@ -392,7 +371,6 @@
               v-model="Conectividad"
               class="w-100"
               @focus="$refs.inputConectividad.select()"
-              @keyup.enter="$refs.inputTipoPila.focus()"
               @keyup.esc="clean"
             />
           </span>
@@ -403,7 +381,6 @@
               v-model="TipoPila"
               class="w-100"
               @focus="$refs.inputTipoPila.select()"
-              @keyup.enter="$refs.inputDuracionBateria.focus()"
               @keyup.esc="clean"
             />
           </span>
@@ -418,7 +395,6 @@
               v-model="DuracionBateria"
               class="w-100"
               @focus="$refs.inputDuracionBateria.select()"
-              @keyup.enter="$refs.inputVoltaje.focus()"
               @keyup.esc="clean"
             />
           </span>
@@ -429,7 +405,6 @@
               v-model="Voltaje"
               class="w-100"
               @focus="$refs.inputVoltaje.select()"
-              @keyup.enter="$refs.inputAccesorios.focus()"
               @keyup.esc="clean"
             />
           </span>
@@ -440,7 +415,6 @@
               v-model="Accesorios"
               class="w-100"
               @focus="$refs.inputAccesorios.select()"
-              @keyup.enter="$refs.inputGarantia.focus()"
               @keyup.esc="clean"
             />
           </span>
@@ -451,7 +425,6 @@
               v-model="Garantia"
               class="w-100"
               @focus="$refs.inputGarantia.select()"
-              @keyup.enter="$refs.inputToner.focus()"
               @keyup.esc="clean"
             />
           </span>
@@ -462,7 +435,6 @@
               v-model="Toner"
               class="w-100"
               @focus="$refs.inputToner.select()"
-              @keyup.enter="$refs.inputTambor.focus()"
               @keyup.esc="clean"
             />
           </span>
@@ -473,7 +445,6 @@
               v-model="Tambor"
               class="w-100"
               @focus="$refs.inputTambor.select()"
-              @keyup.enter="$refs.inputTipo.focus()"
               @keyup.esc="clean"
             />
           </span>
@@ -484,7 +455,6 @@
               v-model="Tipo"
               class="w-100"
               @focus="$refs.inputTipo.select()"
-              @keyup.enter="$refs.inputNumeroSerial.focus()"
               @keyup.esc="clean"
             />
           </span>
@@ -499,7 +469,6 @@
               v-model="NumeroSerial"
               class="w-100"
               @focus="$refs.inputNumeroSerial.select()"
-              @keyup.enter="$refs.inputMaterial.focus()"
               @keyup.esc="clean"
             />
           </span>
@@ -510,7 +479,6 @@
               v-model="Material"
               class="w-100"
               @focus="$refs.inputMaterial.select()"
-              @keyup.enter="$refs.inputVelocidades.focus()"
               @keyup.esc="clean"
             />
           </span>
@@ -521,7 +489,6 @@
               v-model="Velocidades"
               class="w-100"
               @focus="$refs.inputVelocidades.select()"
-              @keyup.enter="$refs.inputCapacidad.focus()"
               @keyup.esc="clean"
             />
           </span>
@@ -532,7 +499,6 @@
               v-model="Capacidad"
               class="w-100"
               @focus="$refs.inputCapacidad.select()"
-              @keyup.enter="$refs.inputContieneBateria.focus()"
               @keyup.esc="clean"
             />
           </span>
@@ -546,7 +512,6 @@
               id="checkContieneBateria"
               v-model="ContieneBateria"
               name="checkContieneBateria"
-              @keyup.enter="$refs.inputNumeroPuertas.focus()"
               @keyup.esc="clean"
             >
               Contiene Bateria
@@ -564,7 +529,6 @@
               class="w-100"
               type="number"
               @focus="$refs.inputNumeroPuertas.select()"
-              @keyup.enter="$refs.inputTemperaturaOperacion.focus()"
               @keyup.esc="clean"
             />
           </span>
@@ -580,7 +544,6 @@
               class="w-100"
               type="number"
               @focus="$refs.inputTemperaturaOperacion.select()"
-              @keyup.enter="$refs.inputConsumoEnergetico.focus()"
               @keyup.esc="clean"
             />
           </span>
@@ -595,7 +558,6 @@
               v-model="ConsumoEnergetico"
               class="w-100"
               @focus="$refs.inputConsumoEnergetico.select()"
-              @keyup.enter="$refs.inputIluminacion.focus()"
               @keyup.esc="clean"
             />
           </span>
@@ -606,7 +568,6 @@
               v-model="Iluminacion"
               class="w-100"
               @focus="$refs.inputIluminacion.select()"
-              @keyup.enter="$refs.inputSistemaRefrigeracion.focus()"
               @keyup.esc="clean"
             />
           </span>
@@ -621,7 +582,6 @@
               v-model="SistemaRefrigeracion"
               class="w-100"
               @focus="$refs.inputSistemaRefrigeracion.select()"
-              @keyup.enter="$refs.inputCombustible.focus()"
               @keyup.esc="clean"
             />
           </span>
@@ -632,7 +592,6 @@
               v-model="Combustible"
               class="w-100"
               @focus="$refs.inputCombustible.select()"
-              @keyup.enter="$refs.inputContactos.focus()"
               @keyup.esc="clean"
             />
           </span>
@@ -644,7 +603,6 @@
               class="w-100"
               type="number"
               @focus="$refs.inputContactos.select()"
-              @keyup.enter="$refs.inputCargador.focus()"
               @keyup.esc="clean"
             />
           </span>
@@ -655,7 +613,6 @@
               v-model="Cargador"
               class="w-100"
               @focus="$refs.inputCargador.select()"
-              @keyup.enter="$refs.btnAgregar.focus()"
               @keyup.esc="clean"
             />
           </span>
@@ -668,7 +625,7 @@
           type="button"
           class="float-right"
           @keyup.esc="clean"
-          @click="prepareCreateSuc"
+          @click="prepareCreateFicha"
         >
           <b-icon icon="plus-lg" />
           Agregar
@@ -687,7 +644,7 @@
         </b-button>
       </div>
     </b-card>
-    <b-card class="mt-3" body-text-variant="dark">
+    <b-card class="my-3" body-text-variant="dark">
       <b-button
         ref="btnRefrescar"
         variant="info"
@@ -702,12 +659,12 @@
         head-variant="dark"
         outlined
         responsive
-        :items="sucursales"
+        :items="fichasTecnicas"
         :fields="fields"
         class="mt-3"
       >
-        <template #cell(Direccion)="row">
-          {{ address(row.item) }}
+        <template #cell(FechaCaptura)="row">
+          {{ refactorFecha(row.item.FechaCaptura) }}
         </template>
         <template #cell(Acciones)>
           <b-button variant="warning" size="sm" class="mb-1">
@@ -738,7 +695,7 @@ export default {
       loadingDep: false,
       loadingTipo: false,
       Consecutivo: -1,
-      tipoSelected: '',
+      TipoEquipo: '',
       FechaCaptura: '',
       Folio: '',
       Ciudad: '',
@@ -791,12 +748,14 @@ export default {
       Observaciones: '',
       listFieldsFicha: [],
       fields: [
-        'Codigo',
-        'Descripcion',
-        'Estado',
+        'Folio',
         'Ciudad',
-        { key: 'Direccion', label: 'Calle y Num' },
-        'CP',
+        { key: 'FechaCaptura', label: 'Fecha de Captura' },
+        'Responsable',
+        'Sucursal',
+        'Departamento',
+        { key: 'TipoEquipo', label: 'Tipo de Equipo' },
+        'Observaciones',
         'Acciones',
       ],
     }
@@ -806,7 +765,7 @@ export default {
       const before =
         (this.Sucursal.trim() === '' ? 'XX' : this.Sucursal) +
         (this.Departamento.trim() === '' ? 'DXX' : this.Departamento) +
-        (this.tipoSelected.trim() === '' ? 'TXX' : this.tipoSelected) +
+        (this.TipoEquipo.trim() === '' ? 'TXX' : this.TipoEquipo) +
         '-XXXXX-'
       this.Folio = before + newValue.replaceAll('-', '')
     },
@@ -817,7 +776,7 @@ export default {
           : this.FechaCaptura.replaceAll('-', '')
       const after =
         (this.Departamento.trim() === '' ? 'DXX' : this.Departamento) +
-        (this.tipoSelected.trim() === '' ? 'TXX' : this.tipoSelected) +
+        (this.TipoEquipo.trim() === '' ? 'TXX' : this.TipoEquipo) +
         '-XXXXX-' +
         dateC
 
@@ -830,12 +789,12 @@ export default {
           : this.FechaCaptura.replaceAll('-', '')
       const before = this.Sucursal.trim() === '' ? 'XX' : this.Sucursal
       const after =
-        (this.tipoSelected.trim() === '' ? 'TXX' : this.tipoSelected) +
+        (this.TipoEquipo.trim() === '' ? 'TXX' : this.TipoEquipo) +
         '-XXXXX-' +
         dateC
       this.Folio = before + newValue + after
     },
-    tipoSelected(newValue, oldValue) {
+    TipoEquipo(newValue, oldValue) {
       const dateC =
         this.FechaCaptura === ''
           ? 'XXXXXXXX'
@@ -854,7 +813,7 @@ export default {
       const before =
         (this.Sucursal.trim() === '' ? 'XX' : this.Sucursal) +
         (this.Departamento.trim() === '' ? 'DXX' : this.Departamento) +
-        (this.tipoSelected.trim() === '' ? 'TXX' : this.tipoSelected)
+        (this.TipoEquipo.trim() === '' ? 'TXX' : this.TipoEquipo)
       const after = dateC
       const CodigoConsecutivo = this.completaConsecutivo(newValue + 1)
       this.Folio = before + '-' + CodigoConsecutivo + '-' + after
@@ -874,7 +833,7 @@ export default {
       return this.loadingTipo ? 'spin-pulse' : ''
     },
     seleccionoTipo() {
-      return this.tipoSelected.trim() !== ''
+      return this.TipoEquipo.trim() !== ''
     },
     isSelectedFecha() {
       return this.FechaCaptura.trim() !== ''
@@ -884,6 +843,9 @@ export default {
     },
     isSelectedDepartamento() {
       return this.Departamento.trim() !== ''
+    },
+    fichasTecnicas() {
+      return this.$store.state.fichastecnicasinvcea.data.data
     },
     sucursales() {
       const sucs = this.$store.state.sucursalesinvcea.data.data
@@ -928,9 +890,13 @@ export default {
       getSucursales: 'sucursalesinvcea/changeData',
       getDepartamentos: 'departamentosinvcea/changeData',
       getTipos: 'tiposequiposinvcea/changeData',
-      addFicha: 'sucursalesinvcea/addFicha',
+      changeData: 'fichastecnicasinvcea/changeData',
+      addFicha: 'fichastecnicasinvcea/addFicha',
       getConsecutivo: 'fichastecnicasinvcea/getConsecutivo',
     }),
+    refactorFecha(fecha) {
+      return utils.formatWithMoment(fecha, 'DD/MM/YYYY HH:mm: a')
+    },
     async loadData() {
       this.setLoading(true)
       const response = await this.changeData()
@@ -958,7 +924,7 @@ export default {
       }
     },
     getListFieldsFicha() {
-      const tipoEquipo = this.tipoSelected
+      const tipoEquipo = this.TipoEquipo
       const tiposEquipos = this.$store.state.tiposequiposinvcea.data.data
       if (tipoEquipo.trim() === '') this.listFieldsFicha = []
       const tipoFind = tiposEquipos.find((value) => value.Codigo === tipoEquipo)
@@ -967,19 +933,6 @@ export default {
     vF(field) {
       const fieldFind = this.listFieldsFicha.find((value) => value === field)
       return !!fieldFind
-    },
-    address(items) {
-      return items.Calle + ' ' + items.Numero
-    },
-    clean() {
-      this.Codigo = ''
-      this.Descripcion = ''
-      this.Estado = ''
-      this.Ciudad = ''
-      this.Calle = ''
-      this.Numero = 'S/N'
-      this.CP = ''
-      this.$refs.inputCodigo.focus()
     },
     async updateSucursales() {
       this.loadingSuc = true
@@ -1002,44 +955,76 @@ export default {
       if (!response.success)
         this.showAlertDialog([response.message, 'Error inesperado'])
     },
-    validateData() {
-      if (this.Codigo.trim().length < 2) {
-        this.showAlertDialog([
-          'Codigo debe tener 2 Caracteres',
-          'Campo requerido',
-        ])
-        return false
-      }
-      if (this.Descripcion.trim() === '') {
-        this.showAlertDialog(['Falta Nombre de la Sucursal', 'Campo requerido'])
-        return false
-      }
-      return true
-    },
-    prepareCreateSuc() {
+    prepareCreateFicha() {
       this.showAlertDialogOption([
-        `Quiere agregar una nueva sucursal?`,
-        'Agregando Sucursal',
+        `Quiere agregar una nueva Ficha?`,
+        'Agregando Ficha Tecnica',
         () => {
           this.hideAlertDialogOption()
-          this.createSucursal()
+          this.createFichaTecnica()
         },
-        'warning',
+        'success',
         'light',
         this.hideAlertDialogOption,
       ])
     },
-    async createSucursal() {
-      if (!this.validateData()) return false
+    async createFichaTecnica() {
       this.setLoading(true)
       const response = await this.addFicha({
-        Codigo: this.Codigo.toUpperCase(),
-        Descripcion: this.Descripcion,
-        Estado: this.Estado,
+        Folio: this.Folio,
         Ciudad: this.Ciudad,
-        Calle: this.Calle,
-        Numero: this.Numero,
-        CP: this.CP,
+        FechaCaptura: this.FechaCaptura,
+        Responsable: this.Responsable,
+        Sucursal: this.Sucursal,
+        Departamento: this.Departamento,
+        TipoEquipo: this.TipoEquipo,
+        Consecutivo: this.Consecutivo + 1,
+        Modelo: this.Modelo,
+        Marca: this.Marca,
+        PantallaPulgadas: this.PantallaPulgadas,
+        TamañoPulgadas: this.TamañoPulgadas,
+        Fabricante: this.Fabricante,
+        PuertoHDMI: this.PuertoHDMI,
+        PuertoVGA: this.PuertoVGA,
+        Color: this.Color,
+        Serie: this.Serie,
+        Codigo: this.Codigo,
+        Clave: this.Clave,
+        Digitos: this.Digitos,
+        Largo: this.Largo,
+        Ancho: this.Ancho,
+        Grosor: this.Grosor,
+        Alambrico: this.Alambrico ? 1 : 0,
+        SO: this.SO,
+        MotherBoard: this.MotherBoard,
+        Procesador: this.Procesador,
+        DiscoDuro: this.DiscoDuro,
+        RAM: this.RAM,
+        Conectividad: this.Conectividad,
+        TipoPila: this.TipoPila,
+        DuracionBateria: this.DuracionBateria,
+        Voltaje: this.Voltaje,
+        Accesorios: this.Accesorios,
+        Garantia: this.Garantia,
+        Toner: this.Toner,
+        Tambor: this.Tambor,
+        Tipo: this.Tipo,
+        NumeroSerial: this.NumeroSerial,
+        Material: this.Material,
+        Velocidades: this.Velocidades,
+        Capacidad: this.Capacidad,
+        ContieneBateria: this.ContieneBateria ? 1 : 0,
+        NumeroPuertas: this.NumeroPuertas,
+        TemperaturaOperacion: this.TemperaturaOperacion,
+        ConsumoEnergetico: this.ConsumoEnergetico,
+        Iluminacion: this.Iluminacion,
+        SistemaRefrigeracion: this.SistemaRefrigeracion,
+        Combustible: this.Combustible,
+        Contactos: this.Contactos,
+        Cargador: this.Cargador,
+        Observaciones: this.Observaciones,
+        CreatedBy: this.$store.state.user.user.correo_user,
+        UpdatedBy: this.$store.state.user.user.correo_user,
       })
       this.setLoading(false)
       if (!response.success)
@@ -1048,6 +1033,62 @@ export default {
         this.loadData()
         this.clean()
       }
+    },
+    clean() {
+      this.Consecutivo = -1
+      this.TipoEquipo = ''
+      this.FechaCaptura = ''
+      this.Folio = ''
+      this.Ciudad = ''
+      this.Responsable = ''
+      this.Sucursal = ''
+      this.Departamento = ''
+      this.Modelo = ''
+      this.Marca = ''
+      this.PantallaPulgadas = 0
+      this.TamañoPulgadas = 0
+      this.Fabricante = ''
+      this.PuertoHDMI = 0
+      this.PuertoVGA = 0
+      this.Color = ''
+      this.Serie = ''
+      this.Codigo = ''
+      this.Clave = ''
+      this.Digitos = 0
+      this.Largo = 0
+      this.Ancho = 0
+      this.Grosor = 0
+      this.Alambrico = false
+      this.SO = ''
+      this.MotherBoard = ''
+      this.Procesador = ''
+      this.DiscoDuro = ''
+      this.RAM = ''
+      this.Conectividad = ''
+      this.TipoPila = ''
+      this.DuracionBateria = ''
+      this.Voltaje = ''
+      this.Accesorios = ''
+      this.Garantia = ''
+      this.Toner = ''
+      this.Tambor = ''
+      this.Tipo = ''
+      this.NumeroSerial = ''
+      this.Material = ''
+      this.Velocidades = ''
+      this.Capacidad = ''
+      this.ContieneBateria = false
+      this.NumeroPuertas = 0
+      this.TemperaturaOperacion = 0
+      this.ConsumoEnergetico = ''
+      this.Iluminacion = ''
+      this.SistemaRefrigeracion = ''
+      this.Combustible = ''
+      this.Contactos = 0
+      this.Cargador = ''
+      this.Observaciones = ''
+      this.listFieldsFicha = []
+      this.$refs.inputCiudad.focus()
     },
   },
 }
