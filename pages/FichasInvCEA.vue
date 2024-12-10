@@ -132,7 +132,7 @@
           </b-card>
         </div>
         <span v-else>
-          <span id="spanModelo" class="input-sel">
+          <span v-if="vF('Modelo')" id="spanModelo" class="input-sel">
             <div class="label">Modelo</div>
             <b-form-input
               ref="inputModelo"
@@ -144,7 +144,7 @@
               @keyup.esc="clean"
             />
           </span>
-          <span id="spanMarca" class="input-sel">
+          <span v-if="vF('Marca')" id="spanMarca" class="input-sel">
             <div class="label">Marca</div>
             <b-form-input
               ref="inputMarca"
@@ -155,7 +155,11 @@
               @keyup.esc="clean"
             />
           </span>
-          <span id="spanPantallaPulgadas" class="input-sel">
+          <span
+            v-if="vF('PantallaPulgadas')"
+            id="spanPantallaPulgadas"
+            class="input-sel"
+          >
             <div class="label">Pulgadas de la Pantalla</div>
             <b-form-input
               ref="inputPantallaPulgadas"
@@ -167,7 +171,11 @@
               @keyup.esc="clean"
             />
           </span>
-          <span id="spanTamañoPulgadas" class="input-sel">
+          <span
+            v-if="vF('TamañoPulgadas')"
+            id="spanTamañoPulgadas"
+            class="input-sel"
+          >
             <div class="label">Tamaño de Pulgadas</div>
             <b-form-input
               ref="inputTamañoPulgadas"
@@ -179,7 +187,7 @@
               @keyup.esc="clean"
             />
           </span>
-          <span id="spanFabricante" class="input-sel">
+          <span v-if="vF('Fabricante')" id="spanFabricante" class="input-sel">
             <div class="label">Fabricante</div>
             <b-form-input
               ref="inputFabricante"
@@ -190,7 +198,7 @@
               @keyup.esc="clean"
             />
           </span>
-          <span id="spanPuertoHDMI" class="input-sel">
+          <span v-if="vF('PuertoHDMI')" id="spanPuertoHDMI" class="input-sel">
             <div class="label">Numero de Puertos HDMI</div>
             <b-form-input
               ref="inputPuertoHDMI"
@@ -202,7 +210,7 @@
               @keyup.esc="clean"
             />
           </span>
-          <span id="spanPuertoVGA" class="input-sel">
+          <span v-if="vF('PuertoVGA')" id="spanPuertoVGA" class="input-sel">
             <div class="label">Numero de Puertos VGA</div>
             <b-form-input
               ref="inputPuertoVGA"
@@ -214,7 +222,7 @@
               @keyup.esc="clean"
             />
           </span>
-          <span id="spanColor" class="input-sel">
+          <span v-if="vF('Color')" id="spanColor" class="input-sel">
             <div class="label">Color</div>
             <b-form-input
               ref="inputColor"
@@ -225,7 +233,7 @@
               @keyup.esc="clean"
             />
           </span>
-          <span id="spanSerie" class="input-sel">
+          <span v-if="vF('Serie')" id="spanSerie" class="input-sel">
             <div class="label">Numero de Serie</div>
             <b-form-input
               ref="inputSerie"
@@ -236,7 +244,7 @@
               @keyup.esc="clean"
             />
           </span>
-          <span id="spanCodigo" class="input-sel">
+          <span v-if="vF('Codigo')" id="spanCodigo" class="input-sel">
             <div class="label">Codigo</div>
             <b-form-input
               ref="inputCodigo"
@@ -247,7 +255,7 @@
               @keyup.esc="clean"
             />
           </span>
-          <span id="spanClave" class="input-sel">
+          <span v-if="vF('Clave')" id="spanClave" class="input-sel">
             <div class="label">Clave</div>
             <b-form-input
               ref="inputClave"
@@ -258,7 +266,7 @@
               @keyup.esc="clean"
             />
           </span>
-          <span id="spanDigitos" class="input-sel">
+          <span v-if="vF('Digitos')" id="spanDigitos" class="input-sel">
             <div class="label">Digitos</div>
             <b-form-input
               ref="inputDigitos"
@@ -270,7 +278,7 @@
               @keyup.esc="clean"
             />
           </span>
-          <span id="spanLargo" class="input-sel">
+          <span v-if="vF('Largo')" id="spanLargo" class="input-sel">
             <div class="label">Largo</div>
             <b-form-input
               ref="inputLargo"
@@ -282,7 +290,7 @@
               @keyup.esc="clean"
             />
           </span>
-          <span id="spanAncho" class="input-sel">
+          <span v-if="vF('Ancho')" id="spanAncho" class="input-sel">
             <div class="label">Ancho</div>
             <b-form-input
               ref="inputAncho"
@@ -294,7 +302,7 @@
               @keyup.esc="clean"
             />
           </span>
-          <span id="spanGrosor" class="input-sel">
+          <span v-if="vF('Grosor')" id="spanGrosor" class="input-sel">
             <div class="label">Grosor</div>
             <b-form-input
               ref="inputGrosor"
@@ -306,7 +314,7 @@
               @keyup.esc="clean"
             />
           </span>
-          <span id="spanGrosor" class="input-sel">
+          <span v-if="vF('Alambrico')" id="spanGrosor" class="input-sel">
             <div class="label">Conectividad</div>
             <b-form-checkbox
               id="checkAlambrico"
@@ -318,7 +326,7 @@
               Es Alambrico
             </b-form-checkbox>
           </span>
-          <span id="spanSO" class="input-sel">
+          <span v-if="vF('SO')" id="spanSO" class="input-sel">
             <div class="label">Sistema Operativo</div>
             <b-form-input
               ref="inputSO"
@@ -329,7 +337,7 @@
               @keyup.esc="clean"
             />
           </span>
-          <span id="spanMotherBoard" class="input-sel">
+          <span v-if="vF('MotherBoard')" id="spanMotherBoard" class="input-sel">
             <div class="label">Mother Board</div>
             <b-form-input
               ref="inputMotherBoard"
@@ -340,7 +348,7 @@
               @keyup.esc="clean"
             />
           </span>
-          <span id="spanProcesador" class="input-sel">
+          <span v-if="vF('Procesador')" id="spanProcesador" class="input-sel">
             <div class="label">Tipo de Procesador</div>
             <b-form-input
               ref="inputProcesador"
@@ -351,7 +359,7 @@
               @keyup.esc="clean"
             />
           </span>
-          <span id="spanDiscoDuro" class="input-sel">
+          <span v-if="vF('DiscoDuro')" id="spanDiscoDuro" class="input-sel">
             <div class="label">Capacidad de Disco Duro</div>
             <b-form-input
               ref="inputDiscoDuro"
@@ -362,7 +370,7 @@
               @keyup.esc="clean"
             />
           </span>
-          <span id="spanRAM" class="input-sel">
+          <span v-if="vF('RAM')" id="spanRAM" class="input-sel">
             <div class="label">RAM</div>
             <b-form-input
               ref="inputRAM"
@@ -373,7 +381,11 @@
               @keyup.esc="clean"
             />
           </span>
-          <span id="spanConectividad" class="input-sel">
+          <span
+            v-if="vF('Conectividad')"
+            id="spanConectividad"
+            class="input-sel"
+          >
             <div class="label">Conectividad</div>
             <b-form-input
               ref="inputConectividad"
@@ -384,7 +396,7 @@
               @keyup.esc="clean"
             />
           </span>
-          <span id="spanTipoPila" class="input-sel">
+          <span v-if="vF('TipoPila')" id="spanTipoPila" class="input-sel">
             <div class="label">Tipo de Pila</div>
             <b-form-input
               ref="inputTipoPila"
@@ -395,7 +407,11 @@
               @keyup.esc="clean"
             />
           </span>
-          <span id="spanDuracionBateria" class="input-sel">
+          <span
+            v-if="vF('DuracionBateria')"
+            id="spanDuracionBateria"
+            class="input-sel"
+          >
             <div class="label">Duracion de Bateria</div>
             <b-form-input
               ref="inputDuracionBateria"
@@ -406,7 +422,7 @@
               @keyup.esc="clean"
             />
           </span>
-          <span id="spanVoltaje" class="input-sel">
+          <span v-if="vF('Voltaje')" id="spanVoltaje" class="input-sel">
             <div class="label">Voltaje</div>
             <b-form-input
               ref="inputVoltaje"
@@ -417,7 +433,7 @@
               @keyup.esc="clean"
             />
           </span>
-          <span id="spanAccesorios" class="input-sel">
+          <span v-if="vF('Accesorios')" id="spanAccesorios" class="input-sel">
             <div class="label">Accesorios</div>
             <b-form-input
               ref="inputAccesorios"
@@ -428,7 +444,7 @@
               @keyup.esc="clean"
             />
           </span>
-          <span id="spanGarantia" class="input-sel">
+          <span v-if="vF('Garantia')" id="spanGarantia" class="input-sel">
             <div class="label">Garantia</div>
             <b-form-input
               ref="inputGarantia"
@@ -439,7 +455,7 @@
               @keyup.esc="clean"
             />
           </span>
-          <span id="spanToner" class="input-sel">
+          <span v-if="vF('Toner')" id="spanToner" class="input-sel">
             <div class="label">Toner</div>
             <b-form-input
               ref="inputToner"
@@ -450,7 +466,7 @@
               @keyup.esc="clean"
             />
           </span>
-          <span id="spanTambor" class="input-sel">
+          <span v-if="vF('Tambor')" id="spanTambor" class="input-sel">
             <div class="label">Tambor</div>
             <b-form-input
               ref="inputTambor"
@@ -461,7 +477,7 @@
               @keyup.esc="clean"
             />
           </span>
-          <span id="spanTipo" class="input-sel">
+          <span v-if="vF('Tipo')" id="spanTipo" class="input-sel">
             <div class="label">Tipo</div>
             <b-form-input
               ref="inputTipo"
@@ -472,7 +488,11 @@
               @keyup.esc="clean"
             />
           </span>
-          <span id="spanNumeroSerial" class="input-sel">
+          <span
+            v-if="vF('NumeroSerial')"
+            id="spanNumeroSerial"
+            class="input-sel"
+          >
             <div class="label">Numero Serial</div>
             <b-form-input
               ref="inputNumeroSerial"
@@ -483,29 +503,29 @@
               @keyup.esc="clean"
             />
           </span>
-          <span id="spanMaterial" class="input-sel">
+          <span v-if="vF('Material')" id="spanMaterial" class="input-sel">
             <div class="label">Material</div>
             <b-form-input
               ref="inputMaterial"
               v-model="Material"
               class="w-100"
               @focus="$refs.inputMaterial.select()"
-              @keyup.enter="$refs.inputValocidades.focus()"
+              @keyup.enter="$refs.inputVelocidades.focus()"
               @keyup.esc="clean"
             />
           </span>
-          <span id="spanVelocidades" class="input-sel">
+          <span v-if="vF('Velocidades')" id="spanVelocidades" class="input-sel">
             <div class="label">Velocidades</div>
             <b-form-input
-              ref="inputValocidades"
-              v-model="Valocidades"
+              ref="inputVelocidades"
+              v-model="Velocidades"
               class="w-100"
-              @focus="$refs.inputValocidades.select()"
+              @focus="$refs.inputVelocidades.select()"
               @keyup.enter="$refs.inputCapacidad.focus()"
               @keyup.esc="clean"
             />
           </span>
-          <span id="spanCapacidad" class="input-sel">
+          <span v-if="vF('Capacidad')" id="spanCapacidad" class="input-sel">
             <div class="label">Capacidad</div>
             <b-form-input
               ref="inputCapacidad"
@@ -516,7 +536,11 @@
               @keyup.esc="clean"
             />
           </span>
-          <span id="spanContieneBateria" class="input-sel">
+          <span
+            v-if="vF('ContieneBateria')"
+            id="spanContieneBateria"
+            class="input-sel"
+          >
             <div class="label">Bateria</div>
             <b-form-checkbox
               id="checkContieneBateria"
@@ -528,7 +552,11 @@
               Contiene Bateria
             </b-form-checkbox>
           </span>
-          <span id="spanNumeroPuertas" class="input-sel">
+          <span
+            v-if="vF('NumeroPuertas')"
+            id="spanNumeroPuertas"
+            class="input-sel"
+          >
             <div class="label">Numero de Puertas</div>
             <b-form-input
               ref="inputNumeroPuertas"
@@ -540,7 +568,11 @@
               @keyup.esc="clean"
             />
           </span>
-          <span id="spanTemperaturaOperacion" class="input-sel">
+          <span
+            v-if="vF('TemperaturaOperacion')"
+            id="spanTemperaturaOperacion"
+            class="input-sel"
+          >
             <div class="label">Temperatura de Operacion</div>
             <b-form-input
               ref="inputTemperaturaOperacion"
@@ -552,7 +584,11 @@
               @keyup.esc="clean"
             />
           </span>
-          <span id="spanConsumoEnergetico" class="input-sel">
+          <span
+            v-if="vF('ConsumoEnergetico')"
+            id="spanConsumoEnergetico"
+            class="input-sel"
+          >
             <div class="label">Consumo Energetico</div>
             <b-form-input
               ref="inputConsumoEnergetico"
@@ -563,7 +599,7 @@
               @keyup.esc="clean"
             />
           </span>
-          <span id="spanIluminacion" class="input-sel">
+          <span v-if="vF('Iluminacion')" id="spanIluminacion" class="input-sel">
             <div class="label">Iluminacion</div>
             <b-form-input
               ref="inputIluminacion"
@@ -574,7 +610,11 @@
               @keyup.esc="clean"
             />
           </span>
-          <span id="spanSistemaRefrigeracion" class="input-sel">
+          <span
+            v-if="vF('SistemaRefrigeracion')"
+            id="spanSistemaRefrigeracion"
+            class="input-sel"
+          >
             <div class="label">Sistema de Refrigeracion</div>
             <b-form-input
               ref="inputSistemaRefrigeracion"
@@ -585,7 +625,7 @@
               @keyup.esc="clean"
             />
           </span>
-          <span id="spanCombustible" class="input-sel">
+          <span v-if="vF('Combustible')" id="spanCombustible" class="input-sel">
             <div class="label">Combustible</div>
             <b-form-input
               ref="inputCombustible"
@@ -596,7 +636,7 @@
               @keyup.esc="clean"
             />
           </span>
-          <span id="spanContactos" class="input-sel">
+          <span v-if="vF('Contactos')" id="spanContactos" class="input-sel">
             <div class="label">Contactos</div>
             <b-form-input
               ref="inputContactos"
@@ -608,7 +648,7 @@
               @keyup.esc="clean"
             />
           </span>
-          <span id="spanCargador" class="input-sel">
+          <span v-if="vF('Cargador')" id="spanCargador" class="input-sel">
             <div class="label">Cargador</div>
             <b-form-input
               ref="inputCargador"
@@ -737,7 +777,7 @@ export default {
       Tipo: '',
       NumeroSerial: '',
       Material: '',
-      Valocidades: '',
+      Velocidades: '',
       Capacidad: '',
       ContieneBateria: false,
       NumeroPuertas: 0,
@@ -749,6 +789,7 @@ export default {
       Contactos: 0,
       Cargador: '',
       Observaciones: '',
+      listFieldsFicha: [],
       fields: [
         'Codigo',
         'Descripcion',
@@ -919,11 +960,13 @@ export default {
     getListFieldsFicha() {
       const tipoEquipo = this.tipoSelected
       const tiposEquipos = this.$store.state.tiposequiposinvcea.data.data
-      if (tipoEquipo.trim() === '') return []
+      if (tipoEquipo.trim() === '') this.listFieldsFicha = []
       const tipoFind = tiposEquipos.find((value) => value.Codigo === tipoEquipo)
-      const array = tipoFind.Campos.split(',')
-      console.log(array)
-      return array
+      this.listFieldsFicha = tipoFind.Campos.split(',')
+    },
+    vF(field) {
+      const fieldFind = this.listFieldsFicha.find((value) => value === field)
+      return !!fieldFind
     },
     address(items) {
       return items.Calle + ' ' + items.Numero
