@@ -274,7 +274,7 @@ export default {
       const codigo = items.Codigo
       const Descripcion = items.Descripcion
       this.showAlertDialogOption([
-        `Quiere eliminar a las sucursal [${codigo} - ${Descripcion}]?`,
+        `Quiere eliminar a la sucursal [${codigo} - ${Descripcion}]?`,
         'Eliminando Sucursal',
         () => {
           this.hideAlertDialogOption()

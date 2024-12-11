@@ -37,7 +37,7 @@ export const actions = {
       }
     }
   },
-  async addSucursal({ commit }, body) {
+  async add({ commit }, body) {
     try {
       const url =
         process.env.spastore_url_backend + 'api/v1/inventarioscea/departamentos'
@@ -47,9 +47,28 @@ export const actions = {
         data: body,
       })
 
-      if (response.data.success) {
-        console.log(response.data.data)
+      return response.data
+    } catch (error) {
+      if (error.response) {
+        return error.response.data
       }
+      return {
+        success: false,
+        message: 'Error con el servidor',
+        error,
+      }
+    }
+  },
+  async delete({ commit }, Codigo) {
+    try {
+      const url =
+        process.env.spastore_url_backend +
+        'api/v1/inventarioscea/departamentos/' +
+        Codigo
+      const response = await this.$axios({
+        url,
+        method: 'delete',
+      })
 
       return response.data
     } catch (error) {

@@ -666,11 +666,16 @@
         <template #cell(FechaCaptura)="row">
           {{ refactorFecha(row.item.FechaCaptura) }}
         </template>
-        <template #cell(Acciones)>
+        <template #cell(Acciones)="row">
           <b-button variant="warning" size="sm" class="mb-1">
             <b-icon icon="pencil" />
           </b-button>
-          <b-button variant="danger" size="sm" class="mb-1">
+          <b-button
+            variant="danger"
+            size="sm"
+            class="mb-1"
+            @click="prepareDeleteFicha(row.item)"
+          >
             <b-icon icon="trash-fill" />
           </b-button>
         </template>
@@ -892,6 +897,7 @@ export default {
       getTipos: 'tiposequiposinvcea/changeData',
       changeData: 'fichastecnicasinvcea/changeData',
       addFicha: 'fichastecnicasinvcea/addFicha',
+      delete: 'fichastecnicasinvcea/delete',
       getConsecutivo: 'fichastecnicasinvcea/getConsecutivo',
     }),
     refactorFecha(fecha) {
@@ -1032,6 +1038,31 @@ export default {
       else {
         this.loadData()
         this.clean()
+      }
+    },
+    prepareDeleteFicha(items) {
+      const Folio = items.Folio
+      this.showAlertDialogOption([
+        `Quiere eliminar a la ficha [${Folio}]?`,
+        'Eliminando Ficha Tecnica',
+        () => {
+          this.hideAlertDialogOption()
+          this.eliminaFicha(Folio)
+        },
+        'danger',
+        'light',
+        this.hideAlertDialogOption,
+      ])
+    },
+    async eliminaFicha(Folio) {
+      this.setLoading(true)
+      const response = await this.delete(Folio)
+      this.setLoading(false)
+      if (!response.success)
+        this.showAlertDialog([response.message, 'Error inesperado'])
+      else {
+        this.showAlertDialog(['Ficha Eliminada', 'Exito', 'success'])
+        this.loadData()
       }
     },
     clean() {

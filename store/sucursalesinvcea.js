@@ -70,8 +70,6 @@ export const actions = {
         method: 'delete',
       })
 
-      console.log(response.data.data)
-
       return response.data
     } catch (error) {
       if (error.response) {

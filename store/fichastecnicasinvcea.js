@@ -101,4 +101,27 @@ export const actions = {
       }
     }
   },
+  async delete({ commit }, Folio) {
+    try {
+      const url =
+        process.env.spastore_url_backend +
+        'api/v1/inventarioscea/fichas/' +
+        Folio
+      const response = await this.$axios({
+        url,
+        method: 'delete',
+      })
+
+      return response.data
+    } catch (error) {
+      if (error.response) {
+        return error.response.data
+      }
+      return {
+        success: false,
+        message: 'Error con el servidor',
+        error,
+      }
+    }
+  },
 }

@@ -119,11 +119,16 @@
         :fields="fields"
         class="mt-3"
       >
-        <template #cell(Acciones)>
+        <template #cell(Acciones)="row">
           <b-button variant="warning" size="sm" class="mb-1">
             <b-icon icon="pencil" />
           </b-button>
-          <b-button variant="danger" size="sm" class="mb-1">
+          <b-button
+            variant="danger"
+            size="sm"
+            class="mb-1"
+            @click="prepareDeleteTipo(row.item)"
+          >
             <b-icon icon="trash-fill" />
           </b-button>
         </template>
@@ -239,7 +244,8 @@ export default {
     }),
     ...mapActions({
       changeData: 'tiposequiposinvcea/changeData',
-      addSucursal: 'tiposequiposinvcea/addSucursal',
+      add: 'tiposequiposinvcea/add',
+      delete: 'tiposequiposinvcea/delete',
     }),
     splitCampos(campos) {
       return this.options.filter((value) => {
@@ -301,7 +307,7 @@ export default {
     async createtipoequipo() {
       if (!this.validateData()) return false
       this.setLoading(true)
-      const response = await this.addSucursal({
+      const response = await this.add({
         Codigo: this.Codigo.toUpperCase(),
         Descripcion: this.Descripcion,
         Campos: this.selected.toString(),
@@ -312,6 +318,32 @@ export default {
       else {
         this.loadData()
         this.clean()
+      }
+    },
+    prepareDeleteTipo(items) {
+      const codigo = items.Codigo
+      const Descripcion = items.Descripcion
+      this.showAlertDialogOption([
+        `Quiere eliminar a el Tipo de Equipo [${codigo} - ${Descripcion}]?`,
+        'Eliminando Tipo de Equipo',
+        () => {
+          this.hideAlertDialogOption()
+          this.eliminaDepartamento(codigo)
+        },
+        'danger',
+        'light',
+        this.hideAlertDialogOption,
+      ])
+    },
+    async eliminaDepartamento(Codigo) {
+      this.setLoading(true)
+      const response = await this.delete(Codigo)
+      this.setLoading(false)
+      if (!response.success)
+        this.showAlertDialog([response.message, 'Error inesperado'])
+      else {
+        this.showAlertDialog(['Tipo de Equipo Eliminado', 'Exito', 'success'])
+        this.loadData()
       }
     },
   },

@@ -76,11 +76,16 @@
         :fields="fields"
         class="mt-3"
       >
-        <template #cell(Acciones)>
+        <template #cell(Acciones)="row">
           <b-button variant="warning" size="sm" class="mb-1">
             <b-icon icon="pencil" />
           </b-button>
-          <b-button variant="danger" size="sm" class="mb-1">
+          <b-button
+            variant="danger"
+            size="sm"
+            class="mb-1"
+            @click="prepareDeleteDep(row.item)"
+          >
             <b-icon icon="trash-fill" />
           </b-button>
         </template>
@@ -120,7 +125,8 @@ export default {
     }),
     ...mapActions({
       changeData: 'departamentosinvcea/changeData',
-      addSucursal: 'departamentosinvcea/addSucursal',
+      add: 'departamentosinvcea/add',
+      delete: 'departamentosinvcea/delete',
     }),
     async loadData() {
       this.setLoading(true)
@@ -167,7 +173,7 @@ export default {
     async createDepartamento() {
       if (!this.validateData()) return false
       this.setLoading(true)
-      const response = await this.addSucursal({
+      const response = await this.add({
         Codigo: this.Codigo.toUpperCase(),
         Descripcion: this.Descripcion,
       })
@@ -177,6 +183,32 @@ export default {
       else {
         this.loadData()
         this.clean()
+      }
+    },
+    prepareDeleteDep(items) {
+      const codigo = items.Codigo
+      const Descripcion = items.Descripcion
+      this.showAlertDialogOption([
+        `Quiere eliminar a el departamento [${codigo} - ${Descripcion}]?`,
+        'Eliminando Departamento',
+        () => {
+          this.hideAlertDialogOption()
+          this.eliminaDepartamento(codigo)
+        },
+        'danger',
+        'light',
+        this.hideAlertDialogOption,
+      ])
+    },
+    async eliminaDepartamento(Codigo) {
+      this.setLoading(true)
+      const response = await this.delete(Codigo)
+      this.setLoading(false)
+      if (!response.success)
+        this.showAlertDialog([response.message, 'Error inesperado'])
+      else {
+        this.showAlertDialog(['Departamento Eliminado', 'Exito', 'success'])
+        this.loadData()
       }
     },
   },
