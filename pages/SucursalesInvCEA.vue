@@ -138,11 +138,16 @@
         <template #cell(Direccion)="row">
           {{ address(row.item) }}
         </template>
-        <template #cell(Acciones)>
+        <template #cell(Acciones)="row">
           <b-button variant="warning" size="sm" class="mb-1">
             <b-icon icon="pencil" />
           </b-button>
-          <b-button variant="danger" size="sm" class="mb-1">
+          <b-button
+            variant="danger"
+            size="sm"
+            class="mb-1"
+            @click="prepareDeleteSuc(row.item)"
+          >
             <b-icon icon="trash-fill" />
           </b-button>
         </template>
@@ -196,6 +201,7 @@ export default {
     ...mapActions({
       changeData: 'sucursalesinvcea/changeData',
       addSucursal: 'sucursalesinvcea/addSucursal',
+      deleteSucursal: 'sucursalesinvcea/deleteSucursal',
     }),
     async loadData() {
       this.setLoading(true)
@@ -262,6 +268,32 @@ export default {
       else {
         this.loadData()
         this.clean()
+      }
+    },
+    prepareDeleteSuc(items) {
+      const codigo = items.Codigo
+      const Descripcion = items.Descripcion
+      this.showAlertDialogOption([
+        `Quiere eliminar a las sucursal [${codigo} - ${Descripcion}]?`,
+        'Eliminando Sucursal',
+        () => {
+          this.hideAlertDialogOption()
+          this.eliminaSucursal(codigo)
+        },
+        'danger',
+        'light',
+        this.hideAlertDialogOption,
+      ])
+    },
+    async eliminaSucursal(Codigo) {
+      this.setLoading(true)
+      const response = await this.deleteSucursal(Codigo)
+      this.setLoading(false)
+      if (!response.success)
+        this.showAlertDialog([response.message, 'Error inesperado'])
+      else {
+        this.showAlertDialog(['Sucursal Eliminada', 'Exito', 'success'])
+        this.loadData()
       }
     },
   },
