@@ -11,6 +11,7 @@
             class="w-100 cajaCodigo"
             placeholder="Codigo"
             maxlength="3"
+            :disabled="editing"
             @focus="$refs.inputCodigo.select()"
             @keyup.enter="$refs.inputDescripcion.focus()"
             @keyup.esc="clean"
@@ -38,10 +39,10 @@
           type="button"
           class="float-right"
           @keyup.esc="clean"
-          @click="prepareCreateDep"
+          @click="decideSave"
         >
           <b-icon icon="plus-lg" />
-          Agregar
+          {{ textBtnSave }}
         </b-button>
         <b-button
           ref="btnCancelar"
@@ -77,7 +78,12 @@
         class="mt-3"
       >
         <template #cell(Acciones)="row">
-          <b-button variant="warning" size="sm" class="mb-1">
+          <b-button
+            variant="warning"
+            size="sm"
+            class="mb-1"
+            @click="editItems(row.item)"
+          >
             <b-icon icon="pencil" />
           </b-button>
           <b-button
@@ -102,12 +108,16 @@ export default {
   data() {
     return {
       utils,
+      editing: false,
       Codigo: '',
       Descripcion: '',
       fields: ['Codigo', 'Descripcion', 'Acciones'],
     }
   },
   computed: {
+    textBtnSave() {
+      return this.editing ? 'Guardar Cambios' : 'Agregar'
+    },
     variantThemeTableBody() {
       return this.$store.state.general.themesComponents.themeTableBody
     },
@@ -126,6 +136,7 @@ export default {
     ...mapActions({
       changeData: 'departamentosinvcea/changeData',
       add: 'departamentosinvcea/add',
+      update: 'departamentosinvcea/update',
       delete: 'departamentosinvcea/delete',
     }),
     async loadData() {
@@ -135,7 +146,15 @@ export default {
       if (!response.success)
         this.showAlertDialog([response.message, 'Error inesperado'])
     },
+
+    editItems(item) {
+      this.editing = true
+      this.Codigo = item.Codigo
+      this.Descripcion = item.Descripcion
+      this.$refs.inputDescripcion.focus()
+    },
     clean() {
+      this.editing = false
       this.Codigo = ''
       this.Descripcion = ''
       this.$refs.inputCodigo.focus()
@@ -157,6 +176,10 @@ export default {
       }
       return true
     },
+    decideSave() {
+      if (this.editing) this.prepareUpdateDep()
+      else this.prepareCreateDep()
+    },
     prepareCreateDep() {
       this.showAlertDialogOption([
         `Quiere agregar un nuevo departamento?`,
@@ -169,6 +192,34 @@ export default {
         'light',
         this.hideAlertDialogOption,
       ])
+    },
+    prepareUpdateDep() {
+      this.showAlertDialogOption([
+        `Quiere actualizar los datos del departamento?`,
+        'Actualizando Datos',
+        () => {
+          this.hideAlertDialogOption()
+          this.updateDepartamento()
+        },
+        'warning',
+        'light',
+        this.hideAlertDialogOption,
+      ])
+    },
+    async updateDepartamento() {
+      if (!this.validateData()) return false
+      this.setLoading(true)
+      const response = await this.update([
+        this.Codigo.toUpperCase(),
+        { Descripcion: this.Descripcion },
+      ])
+      this.setLoading(false)
+      if (!response.success)
+        this.showAlertDialog([response.message, 'Error inesperado'])
+      else {
+        this.loadData()
+        this.clean()
+      }
     },
     async createDepartamento() {
       if (!this.validateData()) return false

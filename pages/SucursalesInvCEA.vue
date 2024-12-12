@@ -11,6 +11,7 @@
             class="w-100 cajaCodigo"
             placeholder="Codigo"
             maxlength="2"
+            :disabled="editing"
             @focus="$refs.inputCodigo.select()"
             @keyup.enter="$refs.inputDescripcion.focus()"
             @keyup.esc="clean"
@@ -97,10 +98,10 @@
           type="button"
           class="float-right"
           @keyup.esc="clean"
-          @click="prepareCreateSuc"
+          @click="decideSave"
         >
           <b-icon icon="plus-lg" />
-          Agregar
+          {{ textBtnSave }}
         </b-button>
         <b-button
           ref="btnCancelar"
@@ -139,7 +140,12 @@
           {{ address(row.item) }}
         </template>
         <template #cell(Acciones)="row">
-          <b-button variant="warning" size="sm" class="mb-1">
+          <b-button
+            variant="warning"
+            size="sm"
+            class="mb-1"
+            @click="editItems(row.item)"
+          >
             <b-icon icon="pencil" />
           </b-button>
           <b-button
@@ -164,6 +170,7 @@ export default {
   data() {
     return {
       utils,
+      editing: false,
       Codigo: '',
       Descripcion: '',
       Estado: '',
@@ -183,6 +190,9 @@ export default {
     }
   },
   computed: {
+    textBtnSave() {
+      return this.editing ? 'Guardar Cambios' : 'Agregar'
+    },
     variantThemeTableBody() {
       return this.$store.state.general.themesComponents.themeTableBody
     },
@@ -201,6 +211,7 @@ export default {
     ...mapActions({
       changeData: 'sucursalesinvcea/changeData',
       addSucursal: 'sucursalesinvcea/addSucursal',
+      updateSucursal: 'sucursalesinvcea/updateSucursal',
       deleteSucursal: 'sucursalesinvcea/deleteSucursal',
     }),
     async loadData() {
@@ -213,7 +224,18 @@ export default {
     address(items) {
       return items.Calle + ' ' + items.Numero
     },
+    editItems(item) {
+      this.editing = true
+      this.Codigo = item.Codigo
+      this.Descripcion = item.Descripcion
+      this.Estado = item.Estado
+      this.Ciudad = item.Ciudad
+      this.Calle = item.Calle
+      this.Numero = item.Numero
+      this.CP = item.CP
+    },
     clean() {
+      this.editing = false
       this.Codigo = ''
       this.Descripcion = ''
       this.Estado = ''
@@ -237,6 +259,23 @@ export default {
       }
       return true
     },
+    decideSave() {
+      if (this.editing) this.prepareSaveChanged()
+      else this.prepareCreateSuc()
+    },
+    prepareSaveChanged() {
+      this.showAlertDialogOption([
+        `Quiere actualizar los datos de la sucursal?`,
+        'Actualizando Datos',
+        () => {
+          this.hideAlertDialogOption()
+          this.saveSucursal()
+        },
+        'warning',
+        'light',
+        this.hideAlertDialogOption,
+      ])
+    },
     prepareCreateSuc() {
       this.showAlertDialogOption([
         `Quiere agregar una nueva sucursal?`,
@@ -249,6 +288,28 @@ export default {
         'light',
         this.hideAlertDialogOption,
       ])
+    },
+    async saveSucursal() {
+      if (!this.validateData()) return false
+      this.setLoading(true)
+      const response = await this.updateSucursal([
+        this.Codigo.toUpperCase(),
+        {
+          Descripcion: this.Descripcion,
+          Estado: this.Estado,
+          Ciudad: this.Ciudad,
+          Calle: this.Calle,
+          Numero: this.Numero,
+          CP: this.CP,
+        },
+      ])
+      this.setLoading(false)
+      if (!response.success)
+        this.showAlertDialog([response.message, 'Error inesperado'])
+      else {
+        this.loadData()
+        this.clean()
+      }
     },
     async createSucursal() {
       if (!this.validateData()) return false
