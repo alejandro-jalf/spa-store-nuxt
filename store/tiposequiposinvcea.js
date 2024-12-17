@@ -59,6 +59,30 @@ export const actions = {
       }
     }
   },
+  async update({ commit }, [Codigo, body]) {
+    try {
+      const url =
+        process.env.spastore_url_backend +
+        'api/v1/inventarioscea/tipos/' +
+        Codigo
+      const response = await this.$axios({
+        url,
+        method: 'put',
+        data: body,
+      })
+
+      return response.data
+    } catch (error) {
+      if (error.response) {
+        return error.response.data
+      }
+      return {
+        success: false,
+        message: 'Error con el servidor',
+        error,
+      }
+    }
+  },
   async delete({ commit }, Codigo) {
     try {
       const url =

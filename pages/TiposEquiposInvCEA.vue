@@ -11,6 +11,7 @@
             class="w-100 cajaCodigo"
             placeholder="Codigo"
             maxlength="3"
+            :disabled="editing"
             @focus="$refs.inputCodigo.select()"
             @keyup.enter="$refs.inputDescripcion.focus()"
             @keyup.esc="clean"
@@ -81,10 +82,10 @@
           type="button"
           class="float-right"
           @keyup.esc="clean"
-          @click="prepareCreateTipo"
+          @click="decideSave"
         >
           <b-icon icon="plus-lg" />
-          Agregar
+          {{ textBtnSave }}
         </b-button>
         <b-button
           ref="btnCancelar"
@@ -120,7 +121,12 @@
         class="mt-3"
       >
         <template #cell(Acciones)="row">
-          <b-button variant="warning" size="sm" class="mb-1">
+          <b-button
+            variant="warning"
+            size="sm"
+            class="mb-1"
+            @click="editItems(row.item)"
+          >
             <b-icon icon="pencil" />
           </b-button>
           <b-button
@@ -170,6 +176,7 @@ export default {
   data() {
     return {
       utils,
+      editing: false,
       Codigo: '',
       Descripcion: '',
       fields: ['Codigo', 'Descripcion', 'Campos', 'Acciones'],
@@ -225,6 +232,9 @@ export default {
     variantThemeTableBody() {
       return this.$store.state.general.themesComponents.themeTableBody
     },
+    textBtnSave() {
+      return this.editing ? 'Guardar Cambios' : 'Agregar'
+    },
     tipoequipos() {
       const datos = []
       this.$store.state.tiposequiposinvcea.data.data.forEach((row) => {
@@ -245,6 +255,7 @@ export default {
     ...mapActions({
       changeData: 'tiposequiposinvcea/changeData',
       add: 'tiposequiposinvcea/add',
+      update: 'tiposequiposinvcea/update',
       delete: 'tiposequiposinvcea/delete',
     }),
     splitCampos(campos) {
@@ -268,7 +279,15 @@ export default {
       if (!response.success)
         this.showAlertDialog([response.message, 'Error inesperado'])
     },
+    editItems(item) {
+      this.editing = true
+      this.Codigo = item.Codigo
+      this.Descripcion = item.Descripcion
+      this.selected = item.Campos.split(',')
+      this.$refs.inputDescripcion.focus()
+    },
     clean() {
+      this.editing = false
       this.Codigo = ''
       this.Descripcion = ''
       this.selected = []
@@ -290,6 +309,41 @@ export default {
         return false
       }
       return true
+    },
+    decideSave() {
+      if (this.editing) this.prepareUpdateType()
+      else this.prepareCreateTipo()
+    },
+    prepareUpdateType() {
+      this.showAlertDialogOption([
+        `Quiere actualizar los datos del Tipo de Equipo?`,
+        'Actualizando Tipo de Equipo',
+        () => {
+          this.hideAlertDialogOption()
+          this.updateTypeEquipement()
+        },
+        'warning',
+        'light',
+        this.hideAlertDialogOption,
+      ])
+    },
+    async updateTypeEquipement() {
+      if (!this.validateData()) return false
+      this.setLoading(true)
+      const response = await this.update([
+        this.Codigo.toUpperCase(),
+        {
+          Descripcion: this.Descripcion,
+          Campos: this.selected.toString(),
+        },
+      ])
+      this.setLoading(false)
+      if (!response.success)
+        this.showAlertDialog([response.message, 'Error inesperado'])
+      else {
+        this.loadData()
+        this.clean()
+      }
     },
     prepareCreateTipo() {
       this.showAlertDialogOption([
