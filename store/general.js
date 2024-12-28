@@ -226,6 +226,12 @@ export const state = () => ({
           nickname: 'Monitor',
           icon: 'tv-fill',
         },
+        {
+          path: '/articulosvigentes',
+          name: 'articulosvigentes',
+          nickname: 'Articulos Vigentes',
+          icon: 'patch-check-fill',
+        },
       ],
       name: '',
       nickname: 'Articulos',
