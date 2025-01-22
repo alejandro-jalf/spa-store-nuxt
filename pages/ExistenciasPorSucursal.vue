@@ -141,6 +141,7 @@ export default {
         { value: 'SY', text: 'Sayula' },
         { value: 'JL', text: 'Jaltipan' },
         { value: 'SC', text: 'Soconusco' },
+        { value: 'SCB', text: 'Soconusco Bodega' },
         { value: 'SN', text: 'San Andres' },
         { value: 'SNP', text: 'San Andres P' },
         { value: 'BO', text: 'Bodega' },
@@ -229,6 +230,8 @@ export default {
         )
         const optionsR = this.options.filter((suc) => suc.value === sucUser)
         this.options = [...optionsR, { value: 'BO', text: 'Bodega' }]
+        if (sucUser === 'SC')
+          this.options.push({ value: 'SCB', text: 'Soconusco Bodega' })
       }
     },
     selectSucursal(suc) {
