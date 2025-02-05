@@ -64,7 +64,7 @@
             <b-form-select
               v-model="Sucursal"
               :options="sucursales"
-              :disabled="!isSelectedFecha"
+              :disabled="!isSelectedFecha || editing"
             ></b-form-select>
             <b-input-group-append>
               <b-button variant="info" @click="updateSucursales">
@@ -79,7 +79,7 @@
             <b-form-select
               v-model="Departamento"
               :options="departamentos"
-              :disabled="!isSelectedSucursal"
+              :disabled="!isSelectedSucursal || editing"
             ></b-form-select>
             <b-input-group-append>
               <b-button variant="info" @click="updateDepartamentos">
@@ -94,7 +94,9 @@
             <b-form-select
               v-model="TipoEquipo"
               :options="tipos"
-              :disabled="!isSelectedSucursal || !isSelectedDepartamento"
+              :disabled="
+                !isSelectedSucursal || !isSelectedDepartamento || editing
+              "
               @change="getCamposByType"
             ></b-form-select>
             <b-input-group-append>
@@ -625,10 +627,10 @@
           type="button"
           class="float-right"
           @keyup.esc="clean"
-          @click="prepareCreateFicha"
+          @click="decideSave"
         >
           <b-icon icon="plus-lg" />
-          Agregar
+          {{ textBtnSave }}
         </b-button>
         <b-button
           ref="btnCancelar"
@@ -667,7 +669,12 @@
           {{ refactorFecha(row.item.FechaCaptura) }}
         </template>
         <template #cell(Acciones)="row">
-          <b-button variant="warning" size="sm" class="mb-1">
+          <b-button
+            variant="warning"
+            size="sm"
+            class="mb-1"
+            @click="editItems(row.item)"
+          >
             <b-icon icon="pencil" />
           </b-button>
           <b-button
@@ -696,6 +703,7 @@ export default {
   data() {
     return {
       utils,
+      editing: false,
       loadingSuc: false,
       loadingDep: false,
       loadingTipo: false,
@@ -837,6 +845,9 @@ export default {
     animationTipo() {
       return this.loadingTipo ? 'spin-pulse' : ''
     },
+    textBtnSave() {
+      return this.editing ? 'Guardar Cambios' : 'Agregar'
+    },
     seleccionoTipo() {
       return this.TipoEquipo.trim() !== ''
     },
@@ -961,6 +972,41 @@ export default {
       if (!response.success)
         this.showAlertDialog([response.message, 'Error inesperado'])
     },
+    decideSave() {
+      if (this.editing) this.prepareUpdateFicha()
+      else this.prepareCreateFicha()
+    },
+    prepareUpdateFicha() {
+      this.showAlertDialogOption([
+        `Quiere actualizar los datos del Tipo de Equipo?`,
+        'Actualizando Tipo de Equipo',
+        () => {
+          this.hideAlertDialogOption()
+          this.updateFicha()
+        },
+        'warning',
+        'light',
+        this.hideAlertDialogOption,
+      ])
+    },
+    async updateFicha() {
+      if (!this.validateData()) return false
+      this.setLoading(true)
+      const response = await this.update([
+        this.Codigo.toUpperCase(),
+        {
+          Descripcion: this.Descripcion,
+          Campos: this.selected.toString(),
+        },
+      ])
+      this.setLoading(false)
+      if (!response.success)
+        this.showAlertDialog([response.message, 'Error inesperado'])
+      else {
+        this.loadData()
+        this.clean()
+      }
+    },
     prepareCreateFicha() {
       this.showAlertDialogOption([
         `Quiere agregar una nueva Ficha?`,
@@ -1065,7 +1111,65 @@ export default {
         this.loadData()
       }
     },
+    editItems(item) {
+      this.editing = true
+      this.Consecutivo = item.Consecutivo
+      this.TipoEquipo = item.TipoEquipo
+      this.FechaCaptura = item.FechaCaptura
+      this.Folio = item.Folio
+      this.Ciudad = item.Ciudad
+      this.Responsable = item.Responsable
+      this.Sucursal = item.Sucursal
+      this.Departamento = item.Departamento
+      this.Modelo = item.Modelo
+      this.Marca = item.Marca
+      this.PantallaPulgadas = item.PantallaPulgadas
+      this.TamañoPulgadas = item.TamañoPulgadas
+      this.Fabricante = item.Fabricante
+      this.PuertoHDMI = item.PuertoHDMI
+      this.PuertoVGA = item.PuertoVGA
+      this.Color = item.Color
+      this.Serie = item.Serie
+      this.Codigo = item.Codigo
+      this.Clave = item.Clave
+      this.Digitos = item.Digitos
+      this.Largo = item.Largo
+      this.Ancho = item.Ancho
+      this.Grosor = item.Grosor
+      this.Alambrico = item.Alambrico === 1
+      this.SO = item.SO
+      this.MotherBoard = item.MotherBoard
+      this.Procesador = item.Procesador
+      this.DiscoDuro = item.DiscoDuro
+      this.RAM = item.RAM
+      this.Conectividad = item.Conectividad
+      this.TipoPila = item.TipoPila
+      this.DuracionBateria = item.DuracionBateria
+      this.Voltaje = item.Voltaje
+      this.Accesorios = item.Accesorios
+      this.Garantia = item.Garantia
+      this.Toner = item.Toner
+      this.Tambor = item.Tambor
+      this.Tipo = item.Tipo
+      this.NumeroSerial = item.NumeroSerial
+      this.Material = item.Material
+      this.Velocidades = item.Velocidades
+      this.Capacidad = item.Capacidad
+      this.ContieneBateria = item.ContieneBateria === 1
+      this.NumeroPuertas = item.NumeroPuertas
+      this.TemperaturaOperacion = item.TemperaturaOperacion
+      this.ConsumoEnergetico = item.ConsumoEnergetico
+      this.Iluminacion = item.Iluminacion
+      this.SistemaRefrigeracion = item.SistemaRefrigeracion
+      this.Combustible = item.Combustible
+      this.Contactos = item.Contactos
+      this.Cargador = item.Cargador
+      this.Observaciones = item.Observaciones
+      this.getListFieldsFicha()
+      this.$refs.inputCiudad.focus()
+    },
     clean() {
+      this.editing = false
       this.Consecutivo = -1
       this.TipoEquipo = ''
       this.FechaCaptura = ''
