@@ -8,14 +8,7 @@
           prepend="Tipo"
           class="mb-3 p-0 mr-2"
         >
-          <template #prepend>
-            <b-button disabled>Sucursal</b-button>
-          </template>
-          <b-form-select
-            :value="suc"
-            :options="options"
-            @change="selectSucursal"
-          ></b-form-select>
+          <b-form-select :value="suc" :options="options"></b-form-select>
         </b-input-group>
 
         <b-input-group prepend="Tipo" class="mb-3 p-0 mr-2">

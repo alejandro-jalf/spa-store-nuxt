@@ -441,6 +441,20 @@ export const state = () => ({
       nickname: 'InventariosCEA',
       icon: 'archive-fill',
     },
+    {
+      path: '',
+      childrens: [
+        {
+          path: '/bitacoradigitalcompras',
+          name: 'bitacoradigitalcompras',
+          nickname: 'Compras',
+          icon: 'journal-bookmark-fill',
+        },
+      ],
+      name: '',
+      nickname: 'Bitacora',
+      icon: 'palette2',
+    },
   ].sort((a, b) => (a.nickname < b.nickname ? -1 : 1)),
   tabActual: 'Inicio',
   themePreferences: localStorage.getItem('spastore_theme_color'),

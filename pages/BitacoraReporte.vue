@@ -68,6 +68,15 @@
         <b-icon icon="file-earmark-pdf-fill" />
         Limpiar tabla
       </b-button>
+      <b-button
+        :variant="variantInfo"
+        :block="width < 528"
+        class="mt-2"
+        to="/bitacoradigitalcompras"
+      >
+        <b-icon icon="printer-fill" />
+        Ir a la Bitacora
+      </b-button>
     </div>
 
     <b-table-simple
