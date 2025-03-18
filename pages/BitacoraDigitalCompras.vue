@@ -1,8 +1,16 @@
 <template>
   <div>
     <h2 class="text-center my-3">Bitacora de Compras</h2>
+    <b-input-group prepend="Sucursal" class="my-3">
+      <b-form-select
+        v-model="selected"
+        :options="options"
+        :disabled="!accessChangeSucursal"
+        @change="setSucursal"
+      ></b-form-select>
+    </b-input-group>
     <span>
-      <b-button variant="success">
+      <b-button variant="success" @click="setView('SI')">
         <b-icon icon="plus-circle-fill" />
         Agregar
       </b-button>
@@ -117,8 +125,11 @@
         </b-button>
       </template>
     </b-table>
-    <div class="container-tarjeta">
-      <BitacoraDigitalComprasTarjeta />
+    <div v-if="viewCard" class="container-tarjeta">
+      <BitacoraDigitalComprasTarjeta
+        :selected="selected"
+        :change-suc-local="changeSucLocal"
+      />
     </div>
   </div>
 </template>
@@ -137,6 +148,7 @@ export default {
       perPage: 15,
       pageOptions: [5, 10, 15, 20, 50, 100],
       currentPage: 1,
+      selected: 'ZR',
       options: [
         { value: 'ZR', text: 'SPAZARAGOZA' },
         { value: 'VC', text: 'SPAVICTORIA' },
@@ -169,8 +181,14 @@ export default {
     }
   },
   computed: {
+    accessChangeSucursal() {
+      return this.$store.state.user.user.tipo_user === 'manager'
+    },
     variantThemeTableBody() {
       return this.$store.state.general.themesComponents.themeTableBody
+    },
+    viewCard() {
+      return this.$store.state.bitacoradigitalcompras.view === 'SI'
     },
     dataRefactor() {
       let datos = []
@@ -192,6 +210,7 @@ export default {
     },
   },
   mounted() {
+    this.setSucursalForUser()
     const date = new Date()
     this.textDateY = date.getFullYear().toString()
     this.textDateM = utils._arrayMonths[date.getMonth()] + '/' + this.textDateY
@@ -201,10 +220,25 @@ export default {
       setLoading: 'general/setLoading',
       showAlertDialog: 'general/showAlertDialog',
       setSucursal: 'bitacoradigitalcompras/setSucursal',
+      setView: 'bitacoradigitalcompras/setView',
     }),
     ...mapActions({
       getBitacoraCompras: 'bitacoradigitalcompras/getBitacoraCompras',
     }),
+    changeSucLocal(suc) {
+      this.selected = suc
+    },
+    setSucursalForUser() {
+      if (!this.accessChangeSucursal) {
+        this.selected = utils.getSucursalByName(
+          this.$store.state.user.user.sucursal_user
+        )
+        this.setSucursal(this.selected)
+      } else {
+        const sucSelected = this.$store.state.bitacoradigitalcompras.sucursal
+        this.selected = sucSelected
+      }
+    },
     formatNumber(value) {
       if (!value) return '0.00'
       if (value === 'Offline') return value

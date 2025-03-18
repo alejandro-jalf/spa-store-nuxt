@@ -6,6 +6,7 @@ export const state = () => ({
     ? JSON.parse(sessionStorage.getItem('spastore_bit_dig_provider'))
     : { data: [] },
   sucursal: localStorage.getItem('spastore_asistencias_sucursal'),
+  view: sessionStorage.getItem('spastore_bit_dig_view') || 'NO',
 })
 
 export const mutations = {
@@ -23,6 +24,10 @@ export const mutations = {
   setSucursal(state, sucursal) {
     state.sucursal = sucursal
     localStorage.setItem('spastore_asistencias_sucursal', sucursal)
+  },
+  setView(state, view) {
+    state.view = view
+    sessionStorage.setItem('spastore_bit_dig_view', view)
   },
 }
 

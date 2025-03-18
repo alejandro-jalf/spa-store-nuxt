@@ -8,7 +8,7 @@
     >
       <template #header>
         <h6 class="title-card">Agregando Folio</h6>
-        <b-icon icon="x-lg" class="close-card"></b-icon>
+        <b-icon icon="x-lg" class="close-card" @click="setView('NO')"></b-icon>
       </template>
 
       <b-form class="p-2">
@@ -16,7 +16,7 @@
           <b-form-select
             :value="suc"
             :options="options"
-            @change="selectSucursal"
+            @change="changeSucursal"
           ></b-form-select>
         </b-input-group>
 
@@ -124,20 +124,27 @@
 import { mapMutations, mapActions } from 'vuex'
 
 export default {
+  props: {
+    changeSucLocal: {
+      type: Function,
+      required: true,
+    },
+    selected: {
+      type: String,
+      required: true,
+    },
+  },
   data() {
     return {
       suc: 'ZR',
       options: [
-        { value: 'ZR', text: 'Zaragoza' },
-        { value: 'VC', text: 'Victoria' },
-        { value: 'ER', text: 'Enriquez' },
-        { value: 'OU', text: 'Oluta' },
-        { value: 'SY', text: 'Sayula' },
-        { value: 'JL', text: 'Jaltipan' },
-        { value: 'SC', text: 'Soconusco' },
-        { value: 'SN', text: 'San Andres' },
-        { value: 'SNP', text: 'San Andres P' },
-        { value: 'BO', text: 'Bodega' },
+        { value: 'ZR', text: 'SPAZARAGOZA' },
+        { value: 'VC', text: 'SPAVICTORIA' },
+        { value: 'ER', text: 'SPAENRIQUEZ' },
+        { value: 'OU', text: 'SPAOLUTA' },
+        { value: 'SY', text: 'SPASAYULA' },
+        { value: 'SC', text: 'SPASOCONUSCO' },
+        { value: 'BO', text: 'SPABODEGA' },
       ],
       formFolio: {
         sucursal: '',
@@ -154,14 +161,24 @@ export default {
       },
     }
   },
+  mounted() {
+    this.suc = this.selected
+  },
   methods: {
     ...mapMutations({
       setLoading: 'general/setLoading',
       showAlertDialog: 'general/showAlertDialog',
+      setView: 'bitacoradigitalcompras/setView',
+      setSucursal: 'bitacoradigitalcompras/setSucursal',
     }),
     ...mapActions({
       getProveedores: 'bitacoradigitalcompras/getProveedores',
     }),
+    changeSucursal(suc) {
+      this.suc = suc
+      this.changeSucLocal(suc)
+      this.setSucursal(suc)
+    },
     async loadProveedores() {
       this.setLoading(true)
       const response = await this.getProveedores()
