@@ -129,6 +129,7 @@
       <BitacoraDigitalComprasTarjeta
         :selected="selected"
         :change-suc-local="changeSucLocal"
+        :load-list-compras="loadListCompras"
       />
     </div>
   </div>

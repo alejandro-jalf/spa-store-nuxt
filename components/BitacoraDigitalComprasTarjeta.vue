@@ -40,7 +40,7 @@
           ></b-form-input>
         </b-input-group>
 
-        <b-input-group prepend="Prov." class="my-3">
+        <b-input-group prepend="Prov.">
           <b-form-input
             v-model="formFolio.proveedor"
             autocomplete="off"
@@ -140,9 +140,9 @@
             v-model="formFolio.documento"
             type="text"
             required
-            class="bg-white"
+            class="bg-white inputDocument"
             @focus="$refs.inputdocumento.select()"
-            @keyup.enter="$refs.inputsubtotal.focus()"
+            @keyup.enter="$refs.btnAceptar.focus()"
           ></b-form-input>
         </b-input-group>
 
@@ -154,6 +154,11 @@
             readonly
           ></b-form-input>
         </b-input-group>
+
+        <b-button ref="btnAceptar" variant="info" block @click="addRegistro">
+          <b-icon icon="plus-circle-fill" />
+          Aceptar
+        </b-button>
       </b-form>
     </b-card>
   </div>
@@ -167,6 +172,10 @@ export default {
   props: {
     selected: {
       type: String,
+      required: true,
+    },
+    loadListCompras: {
+      type: Function,
       required: true,
     },
   },
@@ -284,8 +293,12 @@ export default {
       )
     },
     getFloatTo(value) {
-      if (value.toString().trim() === '') return 0.0
-      return parseFloat(value)
+      try {
+        if (value.toString().trim() === '') return 0.0
+        return parseFloat(value)
+      } catch (error) {
+        return 0.0
+      }
     },
     selectProvider(prov) {
       this.visibleCard = false
@@ -314,9 +327,79 @@ export default {
           method: 'get',
         })
 
-        if (response.data.success) {
+        if (response.data.success)
           this.formFolio.folio = response.data.data.Folio
+        else this.showAlertDialog(['No se pudo generar el folio', 'Fallo'])
+      } catch (error) {
+        if (error.response) {
+          return error.response.data
+        }
+        return {
+          success: false,
+          message: 'Error Al cargar folio',
+          error,
+        }
+      }
+    },
+    validateForm() {
+      if (this.suc.trim() === '') {
+        this.showAlertDialog(['Fallo al cargar sucursal', 'Campo vacio'])
+        return false
+      }
+      if (this.formFolio.folio.trim() === '') {
+        this.showAlertDialog(['Fallo al cargar el folio', 'Campo vacio'])
+        return false
+      }
+      if (this.formFolio.proveedor.trim() === '') {
+        this.showAlertDialog([
+          'No se ha seleccionado un proveedor',
+          'Campo vacio',
+        ])
+        return false
+      }
+      if (this.getFloatTo(this.formFolio.subtotal) === 0) {
+        this.showAlertDialog([
+          'El subtotal no puede quedar vacio',
+          'Campo vacio',
+        ])
+        return false
+      }
+      if (this.formFolio.documento.trim() === '') {
+        this.showAlertDialog(['Falta Documento', 'Campo vacio'])
+        return false
+      }
+      return true
+    },
+    async addRegistro() {
+      try {
+        if (!this.validateForm()) return false
+        const body = {
+          Sucursal: this.selected,
+          Fecha: utils.getDateNow().format('YYYYMMDD'),
+          Folio: this.formFolio.folio,
+          Proveedor: this.formFolio.proveedor,
+          Subtotal: this.getFloatTo(this.formFolio.subtotal),
+          Descuento: this.getFloatTo(this.formFolio.descuento),
+          Ieps: this.getFloatTo(this.formFolio.ieps),
+          Iva: this.getFloatTo(this.formFolio.iva),
+          Total: this.formFolio.total,
+          Documento: this.formFolio.documento.toUpperCase(),
+        }
+
+        const url =
+          process.env.spastore_url_backend + 'api/v1/bitacoradigital/compras/'
+        const response = await this.$axios({
+          url,
+          method: 'post',
+          data: body,
+        })
+
+        if (response.data.success) {
+          this.showAlertDialog(['Folio generado', 'Exito', 'success'])
+          this.setView('NO')
+          this.loadListCompras()
         } else {
+          this.showAlertDialog(['Fallo al generar folio', 'Fallo'])
         }
       } catch (error) {
         if (error.response) {
@@ -341,10 +424,11 @@ export default {
 .card-providers {
   position: absolute;
   z-index: 8;
-  left: 98px;
   max-height: 350px;
-  width: calc(100% - 98px);
+  width: 100%;
   overflow-y: auto;
+  border: #93979a 2px solid;
+  border-top: 0px;
 }
 
 .not-found {
@@ -378,6 +462,10 @@ export default {
 
 .close-card:hover {
   font-size: 15pt;
+}
+
+.inputDocument {
+  text-transform: uppercase;
 }
 
 .total {

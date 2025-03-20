@@ -70,7 +70,6 @@ export const actions = {
       })
 
       if (response.data.success) {
-        console.log(response.data.data)
         commit('setProviders', { data: response.data.data })
       }
 
