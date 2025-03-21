@@ -28,9 +28,13 @@
         ></b-form-datepicker>
       </b-input-group>
     </div>
-    <b-button variant="info" @click="loadReposiciones">
+    <b-button variant="info" class="mr-3" @click="loadReposiciones">
       <b-icon icon="search" />
       Buscar
+    </b-button>
+    <b-button variant="warning" to="/bitacoradigitalcompras">
+      <b-icon icon="journal-bookmark-fill" />
+      Ir a la Bitacora
     </b-button>
 
     <div class="content-titles">

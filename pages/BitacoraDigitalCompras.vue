@@ -22,7 +22,11 @@
         <b-icon icon="file-earmark-pdf-fill" />
         Ir a Reportes
       </b-button>
-      <b-button variant="warning" @click="viewEmpty(true)">
+      <b-button
+        v-if="accessChangeSucursal"
+        variant="warning"
+        @click="viewEmpty(true)"
+      >
         <b-icon icon="card-heading" />
         Crear Folio Vacio
       </b-button>
