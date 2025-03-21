@@ -32,13 +32,17 @@ export const mutations = {
 }
 
 export const actions = {
-  async getBitacoraCompras({ commit }, [sucursal]) {
+  async getBitacoraCompras({ commit }, [sucursal, fecha = -1]) {
     try {
+      const last = fecha === -1 ? 'last/' : ''
+      const complement = fecha === -1 ? '' : '&fecha=' + fecha
       const url =
         process.env.spastore_url_backend +
-        'api/v1/bitacoradigital/compras/last/' +
+        'api/v1/bitacoradigital/compras/' +
+        last +
         sucursal +
-        '?limit=5000'
+        '?limit=5000' +
+        complement
       const response = await this.$axios({
         url,
         method: 'get',

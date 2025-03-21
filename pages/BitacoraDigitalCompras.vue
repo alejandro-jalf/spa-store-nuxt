@@ -14,7 +14,7 @@
         <b-icon icon="plus-circle-fill" />
         Agregar
       </b-button>
-      <b-button variant="info" @click="loadListCompras">
+      <b-button variant="info" @click="loadListCompras(undefined)">
         <b-icon icon="arrow-repeat" />
         Refrescar
       </b-button>
@@ -22,7 +22,7 @@
         <b-icon icon="file-earmark-pdf-fill" />
         Ir a Reportes
       </b-button>
-      <b-button variant="warning">
+      <b-button variant="warning" @click="viewEmpty(true)">
         <b-icon icon="card-heading" />
         Crear Folio Vacio
       </b-button>
@@ -134,6 +134,50 @@
         :body="body"
       />
     </div>
+    <div v-if="formEmpty.view" class="container-empty">
+      <b-card
+        header-bg-variant="warning"
+        header-text-variant="dark"
+        text-variant="dark"
+        style="width: 100%; max-width: 500px; margin: auto; margin-top: 100px"
+      >
+        <template #header>
+          <h6 class="title-card">Agregando Folio</h6>
+          <b-icon icon="x-lg" class="close-card" @click="viewEmpty(false)">
+          </b-icon>
+        </template>
+
+        <b-form class="p-2">
+          <b-input-group prepend="Sucursal" class="my-3">
+            <b-form-select
+              v-model="formEmpty.sucursal"
+              :options="options"
+            ></b-form-select>
+          </b-input-group>
+
+          <b-input-group prepend="Fecha" class="mb-3 p-0 mr-2">
+            <b-form-datepicker
+              v-model="formEmpty.fecha"
+              locale="es-MX"
+              today-button
+              label-no-date-selected="Fecha no seleccionada"
+              label-calendar="Calendario"
+              label-current-month="Mes Actual"
+              label-next-month="Mes Siguiente"
+              label-prev-month="Mes Anterior"
+              label-next-year="Año Siguiente"
+              label-prev-year="Año anterior"
+              label-help="Seleccione la fecha de Corte"
+              label-today-button="Hoy"
+            ></b-form-datepicker>
+          </b-input-group>
+
+          <b-button variant="success" block @click="prepareCreateEmpty">
+            Generar
+          </b-button>
+        </b-form>
+      </b-card>
+    </div>
   </div>
 </template>
 
@@ -154,6 +198,11 @@ export default {
       selected: 'ZR',
       editing: false,
       body: {},
+      formEmpty: {
+        sucursal: 'ZR',
+        fecha: '',
+        view: false,
+      },
       options: [
         { value: 'ZR', text: 'SPAZARAGOZA' },
         { value: 'VC', text: 'SPAVICTORIA' },
@@ -226,10 +275,15 @@ export default {
       showAlertDialog: 'general/showAlertDialog',
       setSucursal: 'bitacoradigitalcompras/setSucursal',
       setView: 'bitacoradigitalcompras/setView',
+      showAlertDialogOption: 'general/showAlertDialogOption',
+      hideAlertDialogOption: 'general/hideAlertDialogOption',
     }),
     ...mapActions({
       getBitacoraCompras: 'bitacoradigitalcompras/getBitacoraCompras',
     }),
+    viewEmpty(view) {
+      this.formEmpty.view = view
+    },
     openCard(editing, body) {
       this.editing = editing
       this.body = body
@@ -269,13 +323,72 @@ export default {
       else if (this.active === 'today') this.activeDateT = true
       else if (this.active === 'all') this.activeDateA = true
     },
-    async loadListCompras() {
+    async loadListCompras(fecha) {
       const sucursal = this.$store.state.bitacoradigitalcompras.sucursal || 'ZR'
       this.setLoading(true)
-      const response = await this.getBitacoraCompras([sucursal])
+      const response = await this.getBitacoraCompras([sucursal, fecha])
       this.setLoading(false)
       if (!response.success)
         this.showAlertDialog([response.message, 'Error inesperado'])
+    },
+    validateFormEmpty() {
+      if (this.formEmpty.sucursal.trim() === '') {
+        this.showAlertDialog(['No ha seleccionado una sucursal', 'Campo vacio'])
+        return false
+      }
+      if (this.formEmpty.fecha.trim() === '') {
+        this.showAlertDialog(['No ha seleccionado una fecha', 'Campo vacio'])
+        return false
+      }
+      return true
+    },
+    prepareCreateEmpty() {
+      if (!this.validateFormEmpty()) return false
+      const msj = `¿Quiere generar el codigo vacio para la sucursal [${this.formEmpty.sucursal}] en la fecha (${this.formEmpty.fecha})?`
+
+      this.showAlertDialogOption([
+        msj,
+        'Generando Folio',
+        () => {
+          this.hideAlertDialogOption()
+          this.pushFolioEmpty()
+        },
+        'warning',
+        'light',
+        this.hideAlertDialogOption,
+      ])
+    },
+    async pushFolioEmpty() {
+      try {
+        const fecha = this.formEmpty.fecha.replaceAll('-', '')
+        const body = { sucursal: this.formEmpty.sucursal, fecha }
+
+        const url =
+          process.env.spastore_url_backend +
+          'api/v1/bitacoradigital/compras/empty'
+        const response = await this.$axios({
+          url,
+          method: 'post',
+          data: body,
+        })
+
+        if (response.data.success) {
+          this.showAlertDialog(['Folio Generado', 'Exito', 'success'])
+          this.viewEmpty(false)
+          this.loadListCompras(fecha)
+        } else this.showAlertDialog(['Fallo al generar el folio', 'Fallo'])
+      } catch (error) {
+        if (error.response)
+          this.showAlertDialog([
+            error.response.data.message,
+            'Fallo con el servidor',
+          ])
+        else
+          this.showAlertDialog([
+            'Ocurrio un error durante el proceso',
+            'Fallo con el servidor',
+          ])
+      }
     },
   },
 }
@@ -287,7 +400,8 @@ export default {
   margin-top: 5px;
 }
 
-.container-tarjeta {
+.container-tarjeta,
+.container-empty {
   position: fixed;
   z-index: 15;
   top: 0px;
@@ -296,5 +410,14 @@ export default {
   height: 100%;
   background: #0000009e;
   padding: 20px;
+}
+
+.title-card {
+  margin: 0px;
+  display: inline-block;
+}
+
+.close-card {
+  float: right;
 }
 </style>
