@@ -10,7 +10,7 @@
       ></b-form-select>
     </b-input-group>
     <span>
-      <b-button variant="success" @click="setView('SI')">
+      <b-button variant="success" @click="openCard(false, {})">
         <b-icon icon="plus-circle-fill" />
         Agregar
       </b-button>
@@ -119,9 +119,9 @@
       <template #cell(Total)="row">
         {{ formatNumber(row.item.Total) }}
       </template>
-      <template #cell(Acciones)>
-        <b-button variant="info" size="sm">
-          <b-icon icon="files" />
+      <template #cell(Acciones)="row">
+        <b-button variant="warning" size="sm" @click="openCard(true, row.item)">
+          <b-icon icon="pencil" /> Editar
         </b-button>
       </template>
     </b-table>
@@ -130,6 +130,8 @@
         :selected="selected"
         :change-suc-local="changeSucLocal"
         :load-list-compras="loadListCompras"
+        :editing="editing"
+        :body="body"
       />
     </div>
   </div>
@@ -150,6 +152,8 @@ export default {
       pageOptions: [5, 10, 15, 20, 50, 100],
       currentPage: 1,
       selected: 'ZR',
+      editing: false,
+      body: {},
       options: [
         { value: 'ZR', text: 'SPAZARAGOZA' },
         { value: 'VC', text: 'SPAVICTORIA' },
@@ -226,6 +230,11 @@ export default {
     ...mapActions({
       getBitacoraCompras: 'bitacoradigitalcompras/getBitacoraCompras',
     }),
+    openCard(editing, body) {
+      this.editing = editing
+      this.body = body
+      this.setView('SI')
+    },
     changeSucLocal(suc) {
       this.selected = suc
     },

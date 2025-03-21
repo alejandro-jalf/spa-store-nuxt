@@ -1,13 +1,15 @@
 <template>
   <div>
     <b-card
-      header-bg-variant="info"
+      :header-bg-variant="editing ? 'success' : 'info'"
       header-text-variant="light"
       text-variant="dark"
       style="width: 100%; max-width: 500px; margin: auto"
     >
       <template #header>
-        <h6 class="title-card">Agregando Folio</h6>
+        <h6 class="title-card">
+          {{ editing ? 'Editando ID: ' + formFolio.id : 'Agregando Folio' }}
+        </h6>
         <b-icon icon="x-lg" class="close-card" @click="setView('NO')"></b-icon>
       </template>
 
@@ -155,9 +157,14 @@
           ></b-form-input>
         </b-input-group>
 
-        <b-button ref="btnAceptar" variant="info" block @click="addRegistro">
+        <b-button
+          ref="btnAceptar"
+          :variant="editing ? 'success' : 'info'"
+          block
+          @click="pushAceptar"
+        >
           <b-icon icon="plus-circle-fill" />
-          Aceptar
+          {{ editing ? 'Guardar Cambios' : 'Aceptar' }}
         </b-button>
       </b-form>
     </b-card>
@@ -178,6 +185,14 @@ export default {
       type: Function,
       required: true,
     },
+    editing: {
+      type: Boolean,
+      required: true,
+    },
+    body: {
+      type: Object,
+      required: true,
+    },
   },
   data() {
     return {
@@ -194,6 +209,7 @@ export default {
         { value: 'BO', text: 'SPABODEGA' },
       ],
       formFolio: {
+        id: '',
         sucursal: '',
         fecha: '',
         folio: '',
@@ -204,7 +220,7 @@ export default {
         iva: 0,
         total: 0,
         documento: '',
-        estatus: '',
+        estatus: 'A TIEMPO',
       },
     }
   },
@@ -271,18 +287,36 @@ export default {
   },
   mounted() {
     this.suc = this.selected
-    this.formFolio.fecha = utils.getDateNow().format('YYYY-MM-DD')
-    this.generaFolio()
+    if (!this.editing) {
+      this.formFolio.fecha = utils.getDateNow().format('YYYY-MM-DD')
+      this.generaFolio()
+    } else this.setDataBody(this.body)
   },
   methods: {
     ...mapMutations({
       setLoading: 'general/setLoading',
       showAlertDialog: 'general/showAlertDialog',
       setView: 'bitacoradigitalcompras/setView',
+      showAlertDialogOption: 'general/showAlertDialogOption',
+      hideAlertDialogOption: 'general/hideAlertDialogOption',
     }),
     ...mapActions({
       getProveedores: 'bitacoradigitalcompras/getProveedores',
     }),
+    setDataBody(body) {
+      this.suc = body.Sucursal
+      this.formFolio.id = body.id
+      this.formFolio.fecha = body.Fecha
+      this.formFolio.folio = body.Folio
+      this.formFolio.proveedor = body.Proveedor
+      this.formFolio.subtotal = body.Subtotal
+      this.formFolio.descuento = body.Descuento
+      this.formFolio.ieps = body.Ieps
+      this.formFolio.iva = body.Iva
+      this.formFolio.total = body.Total
+      this.formFolio.documento = body.Documento
+      this.formFolio.estatus = body.Estatus
+    },
     calculateTotal(subtotal, descuento, iva, ieps) {
       this.formFolio.total = utils.roundTo(
         this.getFloatTo(subtotal) -
@@ -340,6 +374,21 @@ export default {
           error,
         }
       }
+    },
+    pushAceptar() {
+      if (this.editing) {
+        this.showAlertDialogOption([
+          '¿Quiere actualizar los datos de este registro?',
+          'Actualizando Folio',
+          () => {
+            this.hideAlertDialogOption()
+            this.updateRegistro()
+          },
+          'warning',
+          'light',
+          this.hideAlertDialogOption,
+        ])
+      } else this.addRegistro()
     },
     validateForm() {
       if (this.suc.trim() === '') {
@@ -412,6 +461,47 @@ export default {
         }
       }
     },
+    async updateRegistro() {
+      try {
+        if (!this.validateForm()) return false
+        const body = {
+          Proveedor: this.formFolio.proveedor,
+          Subtotal: this.getFloatTo(this.formFolio.subtotal),
+          Descuento: this.getFloatTo(this.formFolio.descuento),
+          Ieps: this.getFloatTo(this.formFolio.ieps),
+          Iva: this.getFloatTo(this.formFolio.iva),
+          Total: this.formFolio.total,
+          Documento: this.formFolio.documento.toUpperCase(),
+        }
+
+        const url =
+          process.env.spastore_url_backend +
+          'api/v1/bitacoradigital/compras/' +
+          this.formFolio.id
+        const response = await this.$axios({
+          url,
+          method: 'put',
+          data: body,
+        })
+
+        if (response.data.success) {
+          this.showAlertDialog(['Folio Actualizado', 'Exito', 'success'])
+          this.setView('NO')
+          this.loadListCompras()
+        } else this.showAlertDialog(['Fallo al actualizar el folio', 'Fallo'])
+      } catch (error) {
+        if (error.response)
+          this.showAlertDialog([
+            error.response.data.message,
+            'Fallo con el servidor',
+          ])
+        else
+          this.showAlertDialog([
+            'Ocurrio un error durante el proceso',
+            'Fallo con el servidor',
+          ])
+      }
+    },
   },
 }
 </script>
@@ -428,7 +518,9 @@ export default {
   width: 100%;
   overflow-y: auto;
   border: #93979a 2px solid;
+  box-shadow: #757575 2px 4px 4px;
   border-top: 0px;
+  border-left: 0px;
 }
 
 .not-found {
