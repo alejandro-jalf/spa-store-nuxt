@@ -133,6 +133,7 @@
             type="number"
             readonly
             class="total"
+            @focus="$refs.inputdocumento.focus()"
           ></b-form-input>
         </b-input-group>
 

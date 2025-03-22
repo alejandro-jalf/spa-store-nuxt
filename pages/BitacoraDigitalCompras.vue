@@ -414,6 +414,7 @@ export default {
   height: 100%;
   background: #0000009e;
   padding: 20px;
+  overflow-y: auto;
 }
 
 .title-card {
