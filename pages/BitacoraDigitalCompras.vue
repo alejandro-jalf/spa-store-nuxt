@@ -125,7 +125,7 @@
       </template>
       <template #cell(Acciones)="row">
         <b-button variant="warning" size="sm" @click="openCard(true, row.item)">
-          <b-icon icon="pencil" /> Editar
+          <b-icon icon="pencil" /> Modificar
         </b-button>
       </template>
     </b-table>
