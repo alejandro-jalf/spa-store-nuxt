@@ -196,6 +196,7 @@ export default {
         { text: 'Digitos', value: 'Digitos' },
         { text: 'Largo', value: 'Largo' },
         { text: 'Ancho', value: 'Ancho' },
+        { text: 'Alto', value: 'Alto' },
         { text: 'Grosor', value: 'Grosor' },
         { text: 'Alambrico', value: 'Alambrico' },
         { text: 'Sistema Operativo', value: 'SO' },
@@ -225,6 +226,8 @@ export default {
         { text: 'Combustible', value: 'Combustible' },
         { text: 'Contactos', value: 'Contactos' },
         { text: 'Cargador', value: 'Cargador' },
+        { text: 'Costo', value: 'Costo' },
+        { text: 'Divisiones', value: 'Divisiones' },
       ],
     }
   },
