@@ -618,6 +618,50 @@
               @keyup.esc="clean"
             />
           </span>
+          <span v-if="vF('Alto')" id="spanAlto" class="input-sel">
+            <div class="label">Alto</div>
+            <b-form-input
+              ref="inputAlto"
+              v-model="Alto"
+              class="w-100"
+              type="number"
+              @focus="$refs.inputAlto.select()"
+              @keyup.esc="clean"
+            />
+          </span>
+          <span v-if="vF('Divisiones')" id="spanDivisiones" class="input-sel">
+            <div class="label">Divisiones</div>
+            <b-form-input
+              ref="inputDivisiones"
+              v-model="Divisiones"
+              class="w-100"
+              type="number"
+              @focus="$refs.inputDivisiones.select()"
+              @keyup.esc="clean"
+            />
+          </span>
+          <span v-if="vF('Niveles')" id="spanNiveles" class="input-sel">
+            <div class="label">Niveles</div>
+            <b-form-input
+              ref="inputNiveles"
+              v-model="Niveles"
+              class="w-100"
+              type="number"
+              @focus="$refs.inputNiveles.select()"
+              @keyup.esc="clean"
+            />
+          </span>
+          <span v-if="vF('Costo')" id="spanCosto" class="input-sel">
+            <div class="label">Costo</div>
+            <b-form-input
+              ref="inputCosto"
+              v-model="Costo"
+              class="w-100"
+              type="number"
+              @focus="$refs.inputCosto.select()"
+              @keyup.esc="clean"
+            />
+          </span>
         </span>
       </b-form>
       <div class="footer-card-add">
@@ -758,6 +802,10 @@ export default {
       Combustible: '',
       Contactos: 0,
       Cargador: '',
+      Alto: 0,
+      Costo: 0,
+      Divisiones: 0,
+      Niveles: 0,
       Observaciones: '',
       listFieldsFicha: [],
       fields: [
@@ -1074,6 +1122,10 @@ export default {
         Combustible: this.Combustible,
         Contactos: this.Contactos,
         Cargador: this.Cargador,
+        Alto: this.Alto,
+        Costo: this.Costo,
+        Divisiones: this.Divisiones,
+        Niveles: this.Niveles,
         Observaciones: this.Observaciones,
         CreatedBy: this.$store.state.user.user.correo_user,
         UpdatedBy: this.$store.state.user.user.correo_user,
@@ -1164,6 +1216,10 @@ export default {
       this.Combustible = item.Combustible
       this.Contactos = item.Contactos
       this.Cargador = item.Cargador
+      this.Alto = item.Alto
+      this.Costo = item.Costo
+      this.Divisiones = item.Divisiones
+      this.Niveles = item.Niveles
       this.Observaciones = item.Observaciones
       this.getListFieldsFicha()
       this.$refs.inputCiudad.focus()
@@ -1221,6 +1277,10 @@ export default {
       this.Combustible = ''
       this.Contactos = 0
       this.Cargador = ''
+      this.Alto = 0
+      this.Costo = 0
+      this.Divisiones = 0
+      this.Niveles = 0
       this.Observaciones = ''
       this.listFieldsFicha = []
       this.$refs.inputCiudad.focus()
@@ -1298,6 +1358,10 @@ export default {
 #spanVelocidades,
 #spanNumeroPuertas,
 #spanIluminacion,
+#spanAlto,
+#spanCosto,
+#spanDivisiones,
+#spanNiveles,
 #spanContactos {
   max-width: 150px;
 }

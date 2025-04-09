@@ -228,6 +228,7 @@ export default {
         { text: 'Cargador', value: 'Cargador' },
         { text: 'Costo', value: 'Costo' },
         { text: 'Divisiones', value: 'Divisiones' },
+        { text: 'Niveles', value: 'Niveles' },
       ],
     }
   },
