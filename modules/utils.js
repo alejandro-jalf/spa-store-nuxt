@@ -1040,6 +1040,24 @@ const utils = (() => {
     else return { long: null, lat: null }
   }
 
+  const splitArray = (array = [], maxItems = 0) => {
+    if (!Array.isArray(array) || maxItems === 0) return []
+    const size = array.length
+    if (size < maxItems) return [array]
+    const extra = size % maxItems === 0 ? 0 : 1
+    const divisiones = parseInt(size / maxItems)
+
+    const arraySplited = []
+    for (let vuelta = 0; vuelta < divisiones + extra; vuelta++) {
+      const start = maxItems * vuelta
+      let end = (vuelta + 1) * maxItems - 1
+      if (vuelta === divisiones) end = undefined
+      arraySplited.push(array.slice(start, end))
+    }
+
+    return arraySplited
+  }
+
   return {
     _arrayMonths,
     sucursalesByName,
@@ -1071,6 +1089,7 @@ const utils = (() => {
     getSourceBySuc,
     getTiendaBySuc,
     getAlmacenBySuc,
+    splitArray,
   }
 })()
 

@@ -6,6 +6,7 @@
         :value="sucursalSelected"
         :options="options"
         class="w-150"
+        disabled
         @change="selectSucursal"
       ></b-form-select>
       <b-input-group-append>
@@ -34,8 +35,8 @@
           Puede usar los ** para mejorar la busqueda
         </b-form-text>
       </b-card>
-      <span v-if="countExistencias > 0" class="d-block">
-        <b-button
+      <span v-if="countExistencias > 0" class="d-block pb-4">
+        <!-- <b-button
           :variant="variantSuccess"
           :block="width < 528"
           class="mt-2 mb-1"
@@ -43,8 +44,8 @@
         >
           <b-icon icon="download" />
           Descargar PDF
-        </b-button>
-        <b-button
+        </b-button> -->
+        <!-- <b-button
           :variant="variantInfo"
           :block="width < 528"
           class="mb-1 mt-2"
@@ -52,12 +53,23 @@
         >
           <b-icon icon="printer-fill" />
           Imprimir PDF
-        </b-button>
+        </b-button> -->
         <b-button :variant="variantSuccess" @click="createExcel">
           <b-icon icon="download" />
           Descargar EXCEL
         </b-button>
       </span>
+
+      <Colors
+        class="space-colors"
+        :show-warning="true"
+        :show-success="true"
+        title-warning="Costos"
+        title-success="Existencias"
+        content-message-warning="Columna de Costos"
+        content-message-success="Columna de Existencias"
+      />
+
       <b-badge variant="info" pill>
         {{ dataExistencias.length }} Articulos
       </b-badge>
@@ -111,8 +123,47 @@
       <template #cell(Precio1IVAUV)="row">
         {{ formatNumber(row.item.Precio1IVAUV) }}
       </template>
+      <template #cell(UltimoCostoVC)="row">
+        {{ formatNumber(row.item.UltimoCostoVC) }}
+      </template>
+      <template #cell(UltimoCostoER)="row">
+        {{ formatNumber(row.item.UltimoCostoER) }}
+      </template>
+      <template #cell(UltimoCostoSY)="row">
+        {{ formatNumber(row.item.UltimoCostoSY) }}
+      </template>
+      <template #cell(UltimoCostoSC)="row">
+        {{ formatNumber(row.item.UltimoCostoSC) }}
+      </template>
+      <template #cell(ExistenciaVC)="row">
+        {{ formatNumber(row.item.ExistenciaVC) }}
+      </template>
+      <template #cell(ExistenciaER)="row">
+        {{ formatNumber(row.item.ExistenciaER) }}
+      </template>
+      <template #cell(ExistenciaSY)="row">
+        {{ formatNumber(row.item.ExistenciaSY) }}
+      </template>
+      <template #cell(ExistenciaSC)="row">
+        {{ formatNumber(row.item.ExistenciaSC) }}
+      </template>
+      <template #cell(ExistenciaTot)="row">
+        {{ formatNumber(row.item.ExistenciaTot) }}
+      </template>
       <template #cell(FechaUltimaCompra)="row">
         {{ parseFecha(row.item.FechaUltimaCompra) }}
+      </template>
+      <template #cell(UltimaCompraVC)="row">
+        {{ parseFecha(row.item.UltimaCompraVC) }}
+      </template>
+      <template #cell(UltimaCompraER)="row">
+        {{ parseFecha(row.item.UltimaCompraER) }}
+      </template>
+      <template #cell(UltimaCompraSY)="row">
+        {{ parseFecha(row.item.UltimaCompraSY) }}
+      </template>
+      <template #cell(UltimaCompraSC)="row">
+        {{ parseFecha(row.item.UltimaCompraSC) }}
       </template>
       <template #cell(FechaUltimoMovimiento)="row">
         {{ parseFecha(row.item.FechaUltimoMovimiento) }}
@@ -135,32 +186,42 @@ export default {
       perPage: 20,
       pageOptions: [5, 10, 15, 20, 50, 100],
       currentPage: 1,
-      sucursalSelected: this.$store.state.articulosvigentes.sucursal,
+      // sucursalSelected: this.$store.state.articulosvigentes.sucursal,
+      sucursalSelected: 'ALL',
       options: [
-        { value: 'ZR', text: 'Zaragoza' },
+        { value: 'ALL', text: 'Todas' },
         { value: 'VC', text: 'Victoria' },
         { value: 'ER', text: 'Enriquez' },
-        { value: 'OU', text: 'Oluta' },
         { value: 'SY', text: 'Sayula' },
-        { value: 'JL', text: 'Jaltipan' },
         { value: 'SC', text: 'Soconusco' },
-        { value: 'SN', text: 'San Andres' },
-        { value: 'SNP', text: 'San Andres P' },
-        { value: 'BO', text: 'Bodega' },
       ],
       fields: [
         { key: 'Articulo', label: 'Articulo', sortable: true },
-        { key: 'NombreA', label: 'Nombre', sortable: true },
+        { key: 'Nombre', label: 'Nombre', sortable: true },
         { key: 'Relacion', label: 'Relacion', sortable: true },
-        { key: 'ExistenciaActualRegular', label: 'Exist. Pza', sortable: true },
-        { key: 'UltimoCostoNeto', label: 'Costo Pza', sortable: true },
-        { key: 'Precio1IVAUV', label: 'Precio Venta', sortable: true },
-        { key: 'FechaUltimaCompra', label: 'Ultima Compra', sortable: true },
-        {
-          key: 'FechaUltimoMovimiento',
-          label: 'Ultimo Movimiento',
-          sortable: true,
-        },
+        { key: 'ExistenciaVC', label: 'Exist ViC', sortable: true },
+        { key: 'UltimoCostoVC', label: 'UCosto ViC', sortable: true },
+        { key: 'UltimaCompraVC', label: 'UCompra ViC', sortable: true },
+        { key: 'ExistenciaER', label: 'Exist Enr', sortable: true },
+        { key: 'UltimoCostoER', label: 'UCosto Enr', sortable: true },
+        { key: 'UltimaCompraER', label: 'UCompra Enr', sortable: true },
+        { key: 'ExistenciaSY', label: 'Exist Say', sortable: true },
+        { key: 'UltimoCostoSY', label: 'UCosto Say', sortable: true },
+        { key: 'UltimaCompraSY', label: 'UCompra Say', sortable: true },
+        { key: 'ExistenciaSC', label: 'Exist Soc', sortable: true },
+        { key: 'UltimoCostoSC', label: 'UCosto Soc', sortable: true },
+        { key: 'UltimaCompraSC', label: 'UCompra Soc', sortable: true },
+        { key: 'ExistenciaTot', label: 'Exist Total', sortable: true },
+
+        // { key: 'ExistenciaActualRegular', label: 'Exist. Pza', sortable: true },
+        // { key: 'UltimoCostoNeto', label: 'Costo Pza', sortable: true },
+        // { key: 'Precio1IVAUV', label: 'Precio Venta', sortable: true },
+        // { key: 'FechaUltimaCompra', label: 'Ultima Compra', sortable: true },
+        // {
+        //   key: 'FechaUltimoMovimiento',
+        //   label: 'Ultimo Movimiento',
+        //   sortable: true,
+        // },
       ],
     }
   },
@@ -190,21 +251,40 @@ export default {
       return this.$store.state.general.themesComponents.themeTableBody
     },
     countExistencias() {
-      const resumen = this.$store.state.articulosvigentes.data.resumen
-      if (resumen && resumen.length !== 0) return resumen.length
-      else return this.$store.state.articulosvigentes.data.data.length
+      let resumen = 0
+      try {
+        resumen = parseInt(this.$store.state.articulosvigentes.data.count)
+      } catch (error) {}
+
+      return resumen
     },
     dataExistencias() {
       const filter = this.filter.replaceAll('*', '.*')
       const filterEspace = filter.replaceAll(' ', '.*')
       const datos = []
+
       const expresion = new RegExp(`.*${filterEspace}.*`, 'gi')
       this.$store.state.articulosvigentes.data.data.forEach((existencia) => {
         const data = { ...existencia }
+        data._cellVariants = {}
+        data._cellVariants.ExistenciaVC = 'success'
+        data._cellVariants.ExistenciaER = 'success'
+        data._cellVariants.ExistenciaSY = 'success'
+        data._cellVariants.ExistenciaSC = 'success'
+        data._cellVariants.ExistenciaTot = 'success'
+        data._cellVariants.UltimoCostoVC = 'warning'
+        data._cellVariants.UltimoCostoER = 'warning'
+        data._cellVariants.UltimoCostoSY = 'warning'
+        data._cellVariants.UltimoCostoSC = 'warning'
+        data.ExistenciaTot =
+          data.ExistenciaVC +
+          data.ExistenciaER +
+          data.ExistenciaSY +
+          data.ExistenciaSC
         datos.push(data)
       })
       return datos.filter((existencia) => {
-        return existencia.NombreA.match(expresion) !== null
+        return existencia.Nombre.match(expresion) !== null
       })
     },
     rows() {
@@ -215,7 +295,8 @@ export default {
     },
   },
   mounted() {
-    this.setSucursalForUser()
+    this.setSucursal('ALL')
+    // this.setSucursalForUser()
   },
   methods: {
     ...mapMutations({
@@ -226,17 +307,55 @@ export default {
     ...mapActions({
       changeData: 'articulosvigentes/changeData',
     }),
-    setSucursalForUser() {
-      if (!this.accessChangeSucursal) {
-        const sucUser = utils.getSucursalByName(
-          this.$store.state.user.user.sucursal_user
-        )
-        const optionsR = this.options.filter((suc) => suc.value === sucUser)
-        this.options = [...optionsR, { value: 'BO', text: 'Bodega' }]
-      }
-    },
+    // setSucursalForUser() {
+    //   if (!this.accessChangeSucursal) {
+    //     const sucUser = utils.getSucursalByName(
+    //       this.$store.state.user.user.sucursal_user
+    //     )
+    //     const optionsR = this.options.filter((suc) => suc.value === sucUser)
+    //     this.options = [...optionsR, { value: 'BO', text: 'Bodega' }]
+    //   }
+    // },
     selectSucursal(suc) {
       this.setSucursal(suc)
+      if (suc === 'ALL') {
+        this.fields = [
+          { key: 'Articulo', label: 'Articulo', sortable: true },
+          { key: 'Nombre', label: 'Nombre', sortable: true },
+          { key: 'Relacion', label: 'Relacion', sortable: true },
+          { key: 'ExistenciaVC', label: 'Exist Vic', sortable: true },
+          { key: 'UltimoCostoVC', label: 'U.Costo Vic', sortable: true },
+          { key: 'UltimaCompraVC', label: 'U.Compra Vic', sortable: true },
+          { key: 'ExistenciaER', label: 'Exist Enr', sortable: true },
+          { key: 'UltimoCostoER', label: 'U.Costo Enr', sortable: true },
+          { key: 'UltimaCompraER', label: 'U.Compra Enr', sortable: true },
+          { key: 'ExistenciaSY', label: 'Exist Say', sortable: true },
+          { key: 'UltimoCostoSY', label: 'U.Costo Say', sortable: true },
+          { key: 'UltimaCompraSY', label: 'U.Compra Say', sortable: true },
+          { key: 'ExistenciaSC', label: 'Exist Soc', sortable: true },
+          { key: 'UltimoCostoSC', label: 'U.Costo Soc', sortable: true },
+          { key: 'UltimaCompraSC', label: 'U.Compra Soc', sortable: true },
+        ]
+      } else {
+        this.fields = [
+          { key: 'Articulo', label: 'Articulo', sortable: true },
+          { key: 'NombreA', label: 'Nombre', sortable: true },
+          { key: 'Relacion', label: 'Relacion', sortable: true },
+          {
+            key: 'ExistenciaActualRegular',
+            label: 'Exist. Pza',
+            sortable: true,
+          },
+          { key: 'UltimoCostoNeto', label: 'Costo Pza', sortable: true },
+          { key: 'Precio1IVAUV', label: 'Precio Venta', sortable: true },
+          { key: 'FechaUltimaCompra', label: 'Ultima Compra', sortable: true },
+          {
+            key: 'FechaUltimoMovimiento',
+            label: 'Ultimo Movimiento',
+            sortable: true,
+          },
+        ]
+      }
     },
     formatNumber(value) {
       if (!value) return '--'
@@ -245,10 +364,11 @@ export default {
     },
     parseFecha(fecha) {
       if (!fecha) return '--'
-      return utils.toMoment(fecha).format('DD-MM-YYYY')
+      return utils.toMoment(fecha).format('DD/MM/YYYY')
     },
     async loadData() {
-      const sucursal = this.$store.state.articulosvigentes.sucursal
+      // const sucursal = this.$store.state.articulosvigentes.sucursal
+      const sucursal = 'ALL'
       const dateActual = utils.getDateNow()
       const dateConsult =
         dateActual.format('DD-MM-YYYY') +
@@ -260,6 +380,7 @@ export default {
         dateConsult,
         '20230101',
       ])
+      console.log(response)
       this.setLoading(false)
       if (!response.success)
         this.showAlertDialog([response.message, 'Error inesperado'])
