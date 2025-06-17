@@ -362,14 +362,20 @@ export default {
     },
     listSucursals() {
       const isManager = this.$store.state.user.user.tipo_user === 'manager'
+      if (isManager) return this.details.existencias
+
+      const viewSoco =
+        this.$store.state.user.user.sucursal_user === 'Soconusco' ||
+        this.$store.state.user.user.sucursal_user === 'Enriquez'
       const filterList = this.details.existencias.filter((sucursal) => {
+        if (sucursal.sucursal === 'ZARAGOZA') return false
         if (
-          sucursal.sucursal !== 'SANANDRES' &&
-          sucursal.sucursal !== 'SANANDRESP'
+          sucursal.sucursal !== 'SOCONUSCO' &&
+          sucursal.sucursal !== 'SOCONUSCO B'
         )
           return sucursal
+        else if (viewSoco) return sucursal
       })
-      if (isManager) return this.details.existencias
       return filterList
     },
     tipo_user() {
